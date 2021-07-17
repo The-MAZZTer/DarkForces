@@ -33,6 +33,60 @@ From the main menu you're welcome to explore. You can add mods/level files to al
 
 I dropped some helper classes unrelated to Dark Forces into the Unity project which I used in the showcase. These are useful in a general sense as well.
 
+## Files
+
+A quick breakdown of where everything is.
+
+**Assets\\** - The Unity code and resource files.
+
+**Assets\\Components\\** - Unity classes relating to managing component states in the editor and at rutime. In particular interest is `Singleton` which makes it easy to manage and access a single instance of a class, and configure it to persist across scenes if desired.
+
+**Assets\\Dark Forces\\** - Classes and assets relating to Dark Forces designed for general use, not specific to the showcase.
+
+**Assets\\Dark Forces\\Audio\\** - GMD/GMID and VOC/VOIC playback.
+
+**Assets\\Dark Forces\\File Formats\\** - The drop folder for the .NET Standard Dark Forces library DLLs and dependencies. See below for more details on each DLL.
+
+**Assets\\Dark Forces\\Geometry\\** - Level geometry generation and rendering
+
+**Assets\\Dark Forces\\Loading\\** - These classes wrap the file formats DLL. Adds Unity-specific functionality for finding files, caching loaded files, and converting to Unity assets at runtime.
+
+**Assets\\Dark Forces\\Map\\** - Automap rendering funcitonlaity.
+
+**Assets\\Dark Forces\\Objects\\** - Rendering Dark Forces objects including frames, WAX/sprites, 3DOs, and playing VUEs.
+
+**Assets\\Dark Forces\\Shaders\\** - Texture shaders for Dark Forces level/object rendering.
+
+**Assets\\Dark Forces\\Shaders\\Color.shader** - Solid color texture, used for 3DOs.
+
+**Assets\\Dark Forces\\Shaders\\Plane.shader** - Sky/pit pixel shader.
+
+**Assets\\Dark Forces\\Shaders\\Plane test.shader** - An attempt to write a less expensive vertex shader of the plane shader (doesn't work right).
+
+**Assets\\Dark Forces\\Shaders\\Simple.shader** - Shader for normal geometry textures and sprites.
+
+**Assets\\Dark Forces\\Shaders\\Transparent.shader** - Shader for walls with cutouts (if I apply this to everywhere Simple shader is used weird Z order things happen so I separated it).
+
+**Assets\\Dark Forces Showcase\\** - All the showcase specific code and assets which will be less useful in other projects. This includes all the scenes.
+
+**Assets\\Dark Forces Showcase\\LevelExplorer\\** - Code and assets relating to the Level Explorer tool.
+
+**Assets\\Dark Forces Showcase\\Map Generator\\** - Code and assets relating to the Map Generator tool.
+
+**Assets\\Dark Forces Showcase\\Mod Dialog\\** - Code and assets relating to the Mod configuration dialog.
+
+**Assets\\Data Binding\\** - General purpose code and editor support for data binding C# objects to the Unity GameObject hierarchy. Supports databinding entire objects with overrideded subclass logic to render the objects visually, or binding individual members to form controls without needing to write custom code.
+
+**Assets\\Data Binding\\List\\** - Databinds a list of objects to a Unity GameObject, automaticallty creating and destroying child GameObjects using a prefab template as items are added and removed from the list. I've found this code endlessly useful.
+
+**Assets\\Data Binding\\UI Controls\\** - Databinds indivudal members of an object to specific form controls to allow for display, editing, and modifing the original object as desired.
+
+**Assets\\Extensions\\** - .NET extension classes which bridge the gap between the library DLLs (specifically the Dark Forces File Formats DLL and SkiaSharp) and Unity, making it easier to marshal data types back and forth.
+
+**Assets\\File Browser\\** - A Unity-based file browser. I experimented with some libraries but ultimately I want to allow for navigation inside of GOBs/LFDs for a tool I want to do so I had to roll my own. Makes heavy use of databinding classes.
+
+**Assets\\Libraries\\** - Third-party libraries and assets.
+
 ## Stuff I'm Working On
 
 * Add full map generator sample to showcase.
