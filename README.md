@@ -14,7 +14,7 @@ The Unity specific components should be compatible with the latest versions of U
 
 ## Showcase
 
-Included in this repo is a showcase project holding all the Unity-specific code in the form of a showcase to help show it all off. A bunch of different scenes are included to showcase what is possible with the included library.
+Included in this repo is a Unity project holding all the Unity-specific code in the form of a showcase to help show it all off. A bunch of different scenes are included to showcase what is possible with the included library.
 
 You need to own a copy of Dark Forces on Steam or from the original CD release. Be sure you've installed the game on Steam or done a full install from the CD.
 
@@ -87,6 +87,20 @@ A quick breakdown of where everything is.
 
 **Assets\\Libraries\\** - Third-party libraries and assets.
 
+**MZZT.DarkForces\\** - The .NET Standard library.
+
+**MZZT.DarkForces\\MZZT.DarkForces.FileFormats\\** - The classes for all of the Dark Forces file formats.
+
+**MZZT.DarkForces\\MZZT.FileFormats.Audio\\** - Classes for MIDI and WAV, used for testing GMID/VOC parsing via conversion.
+
+**MZZT.DarkForces\\MZZT.FileFormats.Base\\** - Base classes for file formats, defines standard load/save methods.
+
+**MZZT.DarkForces\\MZZT.Input.ProgramArguments\\** - Used by the showcase to parse command line arguments.
+
+**MZZT.DarkForces\\MZZT.Steam\\** - Used by the showcase to parse Steam's library folders file.
+
+**MZZT.DarkForces\\Test\\** - Test app used mainly for dumping files from GOBs/LFDs and testing file format parsing by converting files to modern formats. Lots of unorganized commented out code in here which can be useful, and showcases using the file formats library from .NET code.
+
 ## Stuff I'm Working On
 
 * Add full map generator sample to showcase.
@@ -102,6 +116,7 @@ A quick breakdown of where everything is.
 * Load INF data in Level Explorer and do things like play ambient sounds or even add some of the INF logic in.
 * Do sign textures in shader.
 * Look at adapting [this](https://medium.com/@jmickle_/writing-a-doom-style-shader-for-unity-63fa13678634) for Dark Forces colormaps. Current implementation generates 32-bit textures on the CPU side.
+* Add support for reading/writing the PlayStation port file formats (mostly they took the text-based file formats like 3DOs and made binary formats). Would be fun to see if mods could be converted to run on the PlayStation port.
 
 ## Crazy Ideas You Could Make With This, Maybe
 
@@ -129,7 +144,7 @@ Material Design Icons - https://github.com/google/material-design-icons/tree/mas
 
 CSharpSynthForUnity - https://github.com/kewlniss/CSharpSynthForUnity (MIT License)
 
-Sample code for line intersections - https://github.com/Habrador/Computational-geometry (NIT License)
+Sample code for line intersections - https://github.com/Habrador/Computational-geometry (MIT License)
 
 ## Thanks
 
