@@ -1,19 +1,13 @@
-﻿using MZZT.DarkForces.FileFormats;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace MZZT.DarkForces.Showcase {
-	public class PauseMenu : Singleton<PauseMenu> {
-		[SerializeField, Header("References")]
-		private GameObject background = null;
-		[SerializeField]
-		private Image loading = null;
+	public class LevelExplorerPauseMenu : PauseMenu {
 		[SerializeField]
 		private LevelNameList levelSelection = null;
 		[SerializeField]
@@ -47,55 +41,14 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private Toggle warnings = null;
 
-		private void Start() {
+		protected override void Start() {
+			base.Start();
+
 			LevelMusic.Instance.GetComponent<AudioSource>().mute = PlayerPrefs.GetInt("PlayMusic", 1) == 0;
 			LevelMusic.Instance.GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("Volume", 1);
-
-			PlayerInput.all[0].SwitchCurrentActionMap("Player");
 		}
 
-		private int loadingCount;
-		public async Task BeginLoadingAsync() {
-			if (this.loadingCount == 0) {
-				this.MenuOpen = false;
-				Time.timeScale = 0;
-
-				if (this.loading.sprite == null) {
-					DfPalette waitPal = await ResourceCache.Instance.GetPaletteAsync("WAIT.PAL");
-					if (waitPal != null) {
-						DfBitmap waitBm = await ResourceCache.Instance.GetBitmapAsync("WAIT.BM");
-						if (waitBm != null) {
-							Texture2D wait = ResourceCache.Instance.ImportBitmap(waitBm, waitPal);
-							Rect rect = new Rect(0, 0, wait.width, wait.height);
-							this.loading.sprite = Sprite.Create(wait, rect, new Vector2(0.5f, 0.5f));
-						}
-					}
-				}
-
-				this.loading.gameObject.SetActive(true);
-			}
-			
-			this.loadingCount++;
-		}
-
-		public void EndLoading() {
-			this.loadingCount--;
-
-			if (this.loadingCount == 0) {
-				this.loading.gameObject.SetActive(false);
-				Time.timeScale = 1;
-			}
-		}
-
-		private bool MenuOpen {
-			get => this.background.activeSelf;
-			set {
-				this.background.SetActive(value);
-				Time.timeScale = value ? 0 : 1;
-				PlayerInput.all[0].SwitchCurrentActionMap(value ? "UI" : "Player");
-			}
-		}
-
+		private int[] layers;
 		private void PopulateLayers() {
 			this.layerSelection.ClearOptions();
 			this.layerSelection.options.Add(new TMP_Dropdown.OptionData("All"));
@@ -116,7 +69,9 @@ namespace MZZT.DarkForces.Showcase {
 			}
 		}
 
-		private void GenerateMenu() {
+		protected override void GenerateMenu() {
+			base.GenerateMenu();
+
 			this.PopulateLayers();
 
 			this.playMusic.value = LevelMusic.Instance.GetComponent<AudioSource>().mute ? 0 : 1;
@@ -124,33 +79,13 @@ namespace MZZT.DarkForces.Showcase {
 			this.warnings.isOn = ResourceCache.Instance.ShowWarnings;
 		}
 
-		private bool init = false;
-		private int[] layers;
-		public async void OnMenuAsync(InputAction.CallbackContext context) {
-			if (this.loadingCount > 0 || context.phase != InputActionPhase.Started) {
-				return;
-			}
+		public override void ApplyMenuChanges() {
+			base.ApplyMenuChanges();
 
-			if (this.MenuOpen) {
-				await this.CloseMenuAsync();
-				return;
-			}
-
-			if (!this.init) {
-				this.GenerateMenu();
-				this.init = true;
-			}
-
-			this.MenuOpen = true;
-		}
-
-		public void ApplyMenuChanges() {
 			PlayerPrefs.SetInt("ShowWarnings", (ResourceCache.Instance.ShowWarnings = this.warnings.isOn) ? 1 : 0);
 		}
 
-		public async Task CloseMenuAsync() {
-			this.ApplyMenuChanges();
-
+		public override async Task CloseMenuAsync() {
 			Toggle[] toggles;
 			bool lightingChanged = false;
 			bool levelVisChanged = false;
@@ -212,7 +147,8 @@ namespace MZZT.DarkForces.Showcase {
 					ResourceCache.Instance.Clear();
 				}
 
-				await LevelLoader.Instance.LoadAsync(this.levelSelection.SelectedValue);
+				await LevelExplorer.Instance.LoadAndRenderLevelAsync(this.levelSelection.SelectedValue);
+				PlayerInput.all[0].SwitchCurrentActionMap(this.actionMap);
 				this.PopulateLayers();
 			} else {
 				if (lightingChanged) {
@@ -226,17 +162,15 @@ namespace MZZT.DarkForces.Showcase {
 				}
 			}
 
-			this.MenuOpen = false;
+			await base.CloseMenuAsync();
 		}
 
-		public async void OnCloseAsync() {
-			await this.CloseMenuAsync();
-		}
+		public override void EndLoading() {
+			base.EndLoading();
 
-		public void OnReturnToMenu() {
-			this.ApplyMenuChanges();
-
-			SceneManager.LoadScene("Menu");
+			if (this.loadingCount == 0) {
+				PlayerInput.all[0].SwitchCurrentActionMap(this.actionMap);
+			}
 		}
 
 		public async void OnPlayMusicValueChangedAsync(int value) {

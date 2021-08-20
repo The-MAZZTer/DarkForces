@@ -24,6 +24,12 @@ namespace MZZT.DarkForces.Showcase {
 		private TMP_Text darkForcesFolderText = null;
 		[SerializeField]
 		private TMP_Text modText = null;
+		[SerializeField]
+		private ShowcaseList showcaseList = null;
+		[SerializeField]
+		private TMP_Text description = null;
+		[SerializeField]
+		private GameObject actionsBar = null;
 
 		private static bool init;
 		private void ParseCommandLine() {
@@ -73,7 +79,7 @@ namespace MZZT.DarkForces.Showcase {
 			HelpOrder = 100,
 			ValueName = "TOOLNAME",
 			PrependedGroupName = "Tools:",
-			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer"
+			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer, MapGenerator"
 		)]
 		public string CommandLineTool { get; set; }
 
@@ -178,6 +184,24 @@ namespace MZZT.DarkForces.Showcase {
 				await DfMessageBox.Instance.ShowAsync(this.showHelp);
 				this.showHelp = null;
 			}
+
+			this.showcaseList.AddRange(new[] {
+				new Showcase() {
+					Name = "Level Explorer",
+					SceneName = "LevelExplorer",
+					Description = "Renders level geometry, objects, and more, and allows you to fly around in free cam mode to explore.\n\nUse the mouse to look around, arrow or WASD keys to move, mouse 3 and 5 or E and Q to move up and down. Hold Shift for a speed boost. Use Escape to change options or return to this menu.\n\nThis tool could be used as the basis for a level editor 3d preview, or even the basis for a game engine clone."
+				},
+				new Showcase() {
+					Name = "Map Generator",
+					SceneName = "MapGenerator",
+					Description = "Attempts to emulate the DF automap and various level editors to draw a top-down map view.\n\nClick and drag with the mouse to pan around the map. Use right click and move the mouse left and right to rotate. Use the scroll wheel to zoom. A menu bar on top can be used to adjust options or export a PNG of the map.\n\nThis tool could be used as the basis for an automap or level editor map component."
+				},
+				new Showcase(),
+				new Showcase() {
+					Name = "Command Line Help",
+					Description = ProgramArguments.GetHelp<Menu>()
+				}
+			});
 
 			this.menu.SetActive(true);
 
@@ -304,16 +328,21 @@ namespace MZZT.DarkForces.Showcase {
 			await this.UpdateModTextAsync();
 		}
 
-		public void OnLevelExplorerClicked() {
-			SceneManager.LoadScene("LevelExplorer");
-		}
-
 		public void OnCloseClicked() {
 			Application.Quit();
 		}
 
-		public async void ShowHelpAsync() {
-			await DfMessageBox.Instance.ShowAsync(ProgramArguments.GetHelp<Menu>());
+		public void OnSelectedShowcaseChanged() {
+			Showcase showcase = this.showcaseList.SelectedValue;
+
+			this.description.text = showcase?.Description ?? "";
+			this.actionsBar.SetActive(showcase?.SceneName != null);
+		}
+
+		public void OnRunClicked() {
+			Showcase showcase = this.showcaseList.SelectedValue;
+
+			SceneManager.LoadScene(showcase.SceneName);
 		}
 	}
 }

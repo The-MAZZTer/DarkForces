@@ -250,7 +250,7 @@ namespace MZZT.DarkForces.FileFormats {
 					//ScopedStream scoped = new(this.data, info.FileSize);
 					//mem = scoped;
 					mem = new MemoryStream((int)info.FileSize);
-					await this.data.CopyToWithLimitAsync(this.data, (int)info.FileSize);
+					await this.data.CopyToWithLimitAsync(mem, (int)info.FileSize);
 					mem.Position = 0;
 				} else {
 					stream.Seek(info.FilePointer, SeekOrigin.Begin);

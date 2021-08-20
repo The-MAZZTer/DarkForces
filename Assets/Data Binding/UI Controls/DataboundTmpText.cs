@@ -1,7 +1,6 @@
 ﻿using MZZT.Components;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MZZT.DataBinding {
 	[RequireComponent(typeof(TMP_Text)),

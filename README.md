@@ -51,8 +51,6 @@ A quick breakdown of where everything is.
 
 **Assets\\Dark Forces\\Loading\\** - These classes wrap the file formats DLL. Adds Unity-specific functionality for finding files, caching loaded files, and converting to Unity assets at runtime.
 
-**Assets\\Dark Forces\\Map\\** - Automap rendering funcitonlaity.
-
 **Assets\\Dark Forces\\Objects\\** - Rendering Dark Forces objects including frames, WAX/sprites, 3DOs, and playing VUEs.
 
 **Assets\\Dark Forces\\Shaders\\** - Texture shaders for Dark Forces level/object rendering.
@@ -72,6 +70,8 @@ A quick breakdown of where everything is.
 **Assets\\Dark Forces Showcase\\LevelExplorer\\** - Code and assets relating to the Level Explorer tool.
 
 **Assets\\Dark Forces Showcase\\Map Generator\\** - Code and assets relating to the Map Generator tool.
+
+**Assets\\Dark Forces Showcase\\Menu\\** - Code and assets relating to the Main Menu.
 
 **Assets\\Dark Forces Showcase\\Mod Dialog\\** - Code and assets relating to the Mod configuration dialog.
 
@@ -101,9 +101,19 @@ A quick breakdown of where everything is.
 
 **MZZT.DarkForces\\Test\\** - Test app used mainly for dumping files from GOBs/LFDs and testing file format parsing by converting files to modern formats. Lots of unorganized commented out code in here which can be useful, and showcases using the file formats library from .NET code.
 
+## Reporting Bugs / Feature Requests 
+
+Feel free to use GitHub Issues. Try to make sure any issue you have is consistently reproducable if consistent steps are followed, this will make it easier for me to help you.
+
+Log files made by the showcase are stored in `C:\Users\\\<username\>\AppData\LocalLow\MZZT\Dark Forces Showcase\Player.log`. You can use this to try and get an error message and stack trace which usually makes things far easier for me.
+
+I'm doing this all as an opportunity to teach myself more Unity skills and as well as a passion project. No guarantees on updates, bug fixes or features.
+
+You're welcome to fork this project and issue pull requests.
+
 ## Stuff I'm Working On
 
-* Add full map generator sample to showcase.
+* Super secret showcase idea (!!!)
 * Add more Unity helper classes and showcases such as data import/export tool and resource viewer/playback, and cutscene browser/playback.
 
 ## Stuff I See Could Use Improvement

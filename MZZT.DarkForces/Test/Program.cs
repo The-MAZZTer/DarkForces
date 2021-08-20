@@ -212,17 +212,17 @@ namespace Test {
 
 			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\Levels\DTIDE2\DTIDE2.GOB", true);
 
-			/*DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
-			DfLevelList lvl = await dark.GetFileAsync<DfLevelList>("JEDI.LVL");
-			DfLevelGoals gol = await dark.GetFileAsync<DfLevelGoals>("SECBASE.GOL");
-			DfLevel lev = await dark.GetFileAsync<DfLevel>("SECBASE.LEV");
+			DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
+			//DfLevelList lvl = await dark.GetFileAsync<DfLevelList>("JEDI.LVL");
+			//DfLevelGoals gol = await dark.GetFileAsync<DfLevelGoals>("SECBASE.GOL");
+			//DfLevel lev = await dark.GetFileAsync<DfLevel>("SECBASE.LEV");
 			DfLevelInformation inf = await dark.GetFileAsync<DfLevelInformation>("SECBASE.INF");
-			inf.LoadSectorReferences(lev);
-			DfLevelObjects o = await dark.GetFileAsync<DfLevelObjects>("SECBASE.O");
-			Df3dObject _3do = await dark.GetFileAsync<Df3dObject>("DEATH.3DO");
-			_3do = await dark.GetFileAsync<Df3dObject>("KYL3DO.3DO");
-			_3do = await dark.GetFileAsync<Df3dObject>("MOUSEBOT.3DO");
-			_3do = await dark.GetFileAsync<Df3dObject>("TIELO-3.3DO");*/
+			//inf.LoadSectorReferences(lev);
+			//DfLevelObjects o = await dark.GetFileAsync<DfLevelObjects>("SECBASE.O");
+			//Df3dObject _3do = await dark.GetFileAsync<Df3dObject>("DEATH.3DO");
+			//_3do = await dark.GetFileAsync<Df3dObject>("KYL3DO.3DO");
+			//_3do = await dark.GetFileAsync<Df3dObject>("MOUSEBOT.3DO");
+			//_3do = await dark.GetFileAsync<Df3dObject>("TIELO-3.3DO");
 
 			//Gob sprites = await Gob.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\SPRITES.GOB");
 			//Wax wax = await sprites.GetFileAsync<Wax>("STORMFIN.WAX");

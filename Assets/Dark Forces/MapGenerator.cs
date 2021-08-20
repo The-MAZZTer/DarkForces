@@ -49,17 +49,17 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		public LineProperties InactiveLayer { get => this.inactiveLayer; set => this.inactiveLayer = value; }
 		[SerializeField]
-		private LineProperties adjoinedSameHeight = new LineProperties(new Color(0, 0.5f, 0), 1);
+		private LineProperties adjoined = new LineProperties(new Color(0, 0.5f, 0), 1);
 		/// <summary>
 		/// Adjoined walls where the sectors are the same floor height.
 		/// </summary>
-		public LineProperties AdjoinedSameHeight { get => this.adjoinedSameHeight; set => this.adjoinedSameHeight = value; }
+		public LineProperties Adjoined { get => this.adjoined; set => this.adjoined = value; }
 		[SerializeField]
-		private LineProperties adjoined = new LineProperties(new Color(0, 0.5f, 0), 2);
+		private LineProperties ledge = new LineProperties(new Color(0, 0.5f, 0), 2);
 		/// <summary>
 		/// Adjoined walls with a step up or down.
 		/// </summary>
-		public LineProperties Adjoined { get => this.adjoined; set => this.adjoined = value; }
+		public LineProperties Ledge { get => this.ledge; set => this.ledge = value; }
 		[SerializeField]
 		private LineProperties unadjoined = new LineProperties(Color.green, 3);
 		/// <summary>
@@ -86,11 +86,18 @@ namespace MZZT.DarkForces {
 		public LineProperties WallTrigger { get => this.wallTrigger; set => this.wallTrigger = value; }
 
 		[SerializeField]
-		private int layer = 0;
+		private bool allowLevelToOverrideWallTypes = true;
 		/// <summary>
-		/// The layer to draw, if only one layer is to be drawn.
+		/// Allow a level's wall flags to override the type of wall we draw.
 		/// </summary>
-		public int Layer { get => this.layer; set => this.layer = value; }
+		public bool AllowLevelToOverrideWallTypes { get => this.allowLevelToOverrideWallTypes; set => this.allowLevelToOverrideWallTypes = value; }
+
+		[SerializeField]
+		private int[] layers = new int[] { };
+		/// <summary>
+		/// The layers to treat as "active" for the purposes of drawing.
+		/// </summary>
+		public int[] Layers { get => this.layers; set => this.layers = value; }
 
 		/// <summary>
 		/// What to do with unselected layers.
@@ -120,7 +127,7 @@ namespace MZZT.DarkForces {
 		/// <summary>
 		/// How to adjust the viewport of the map.
 		/// </summary>
-		public enum ViewportModes {
+		public enum BoundingModes {
 			/// <summary>
 			/// Fit all visible lines.
 			/// </summary>
@@ -132,7 +139,7 @@ namespace MZZT.DarkForces {
 			/// <summary>
 			/// Fit to current layer bounds even if it cuts off unactive layers.
 			/// </summary>
-			FitToCurrentLayer,
+			FitToActiveLayers,
 			/// <summary>
 			/// Manually specify bounds.
 			/// </summary>
@@ -140,11 +147,11 @@ namespace MZZT.DarkForces {
 		}
 
 		[SerializeField]
-		private ViewportModes viewportMode;
+		private BoundingModes viewportFitMode;
 		/// <summary>
 		/// How to adjust the viewport of the map.
 		/// </summary>
-		public ViewportModes ViewportMode { get => this.viewportMode; set => this.viewportMode = value; }
+		public BoundingModes ViewportFitMode { get => this.viewportFitMode; set => this.viewportFitMode = value; }
 
 		/// <summary>
 		/// How much padding to add to the map viewport.
@@ -168,11 +175,11 @@ namespace MZZT.DarkForces {
 		public PaddingUnits PaddingUnit { get => this.paddingUnit; set => this.paddingUnit = value; }
 
 		[SerializeField]
-		private Rect padding;
+		private Vector4 padding;
 		/// <summary>
 		/// How much padding to add to the map viewport on all sides.
 		/// </summary>
-		public Rect Padding { get => this.padding; set => this.padding = value; }
+		public Vector4 Padding { get => this.padding; set => this.padding = value; }
 
 		[SerializeField]
 		private float zoom = 1;
@@ -182,11 +189,11 @@ namespace MZZT.DarkForces {
 		public float Zoom { get => this.zoom; set => this.zoom = value; }
 
 		[SerializeField]
-		private bool autoZoomToFit;
+		private BoundingModes zoomFitMode = BoundingModes.Manual;
 		/// <summary>
 		/// Automatically zooms to fit the desired viewport.
 		/// </summary>
-		public bool AutoZoomToFit { get => this.autoZoomToFit; set => this.autoZoomToFit = value; }
+		public BoundingModes ZoomFitMode { get => this.zoomFitMode; set => this.zoomFitMode = value; }
 
 		[SerializeField]
 		private Rect viewport;
@@ -215,25 +222,11 @@ namespace MZZT.DarkForces {
 			public Vector2 RightVertex;
 		}
 
-		/// <summary>
-		/// Generate a map texture.
-		/// </summary>
-		/// <param name="level">The level data.</param>
-		/// <param name="inf">The level information.</param>
-		/// <returns>The texture.</returns>
-		public Texture2D Generate(DfLevel level, DfLevelInformation inf) {
-			// Group sectors by layer.
-			Dictionary<int, Sector[]> byLayer = level.Sectors
-				.GroupBy(x => x.Layer).ToDictionary(x => x.Key, x => x.ToArray());
-
+		private (Line[], Vector2Int) GenerateLinesAndViewport(DfLevel level, DfLevelInformation inf) {
 			// Filter sectors to visible ones.
 			IEnumerable<Sector> visibleSectors;
 			if (this.unselectedLayersRenderMode == UnselectedLayersRenderModes.Hide) {
-				if (byLayer.TryGetValue(this.layer, out Sector[] sectors)) {
-					visibleSectors = sectors;
-				} else {
-					visibleSectors = Enumerable.Empty<Sector>();
-				}
+				visibleSectors = level.Sectors.Where(x => Array.IndexOf(this.layers, x.Layer) >= 0).ToArray();
 			} else {
 				visibleSectors = level.Sectors;
 			}
@@ -256,29 +249,47 @@ namespace MZZT.DarkForces {
 					float cos = Mathf.Cos(angle);
 
 					// Figure out which color etc we are using for this wall.
-					LineProperties properties;
-					bool isLayer = x.x.Layer == this.layer;
-					if (this.unselectedLayersRenderMode == UnselectedLayersRenderModes.ShowInactive && !isLayer) {
-						properties = this.inactiveLayer;
-					} else if (wallsScripts.ContainsKey(x.y)) {
-						properties = this.wallTrigger;
-					} else if (sectorsScripts.TryGetValue(x.x, out DfLevelInformation.Item[] sectorScripts)) {
-						if (sectorScripts.Any(x => {
-							string[] lines = x.Script.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-							Dictionary<string, string[]> logic = lines.SelectMany(x => TextBasedFile.SplitKeyValuePairs(TextBasedFile.TokenizeLine(x)))
-								.GroupBy(x => x.Key.ToUpper()).ToDictionary(x => x.Key, x => x.Last().Value);
-							return logic.TryGetValue("CLASS", out string[] strClass) && strClass.Length > 0 && strClass[0].ToLower() == "elevator";
-						})) {
-							properties = this.elevator;
-						} else {
-							properties = this.sectorTrigger;
-						}
-					} else if (x.y.Adjoined == null) {
-						properties = this.unadjoined;
-					} else if (x.y.Adjoined.Sector.Floor.Y == x.x.Floor.Y) {
-						properties = this.adjoinedSameHeight;
+					LineProperties properties = default;
+					bool isLayer = Array.IndexOf(this.layers, x.x.Layer) >= 0;
+					if (this.allowLevelToOverrideWallTypes && x.y.TextureAndMapFlags.HasFlag(WallTextureAndMapFlags.HiddenOnMap)) {
+						properties = default;
 					} else {
-						properties = this.adjoined;
+						HashSet<LineProperties> candidates = new HashSet<LineProperties>();
+						if (this.unselectedLayersRenderMode == UnselectedLayersRenderModes.ShowInactive && !isLayer) {
+							candidates.Add(this.inactiveLayer);
+						}
+						if (this.allowLevelToOverrideWallTypes && x.y.TextureAndMapFlags.HasFlag(WallTextureAndMapFlags.DoorOnMap)) {
+							candidates.Add(this.elevator);
+						}
+						if (this.allowLevelToOverrideWallTypes && x.y.TextureAndMapFlags.HasFlag(WallTextureAndMapFlags.LedgeOnMap)) {
+							candidates.Add(this.ledge);
+						}
+						if (this.allowLevelToOverrideWallTypes && x.y.TextureAndMapFlags.HasFlag(WallTextureAndMapFlags.NormalOnMap)) {
+							candidates.Add(this.unadjoined);
+						}
+						if (wallsScripts.ContainsKey(x.y)) {
+							candidates.Add(this.wallTrigger);
+						}
+						if (sectorsScripts.TryGetValue(x.x, out DfLevelInformation.Item[] sectorScripts)) {
+							if (sectorScripts.Any(x => {
+								string[] lines = x.Script.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+								Dictionary<string, string[]> logic = lines.SelectMany(x => TextBasedFile.SplitKeyValuePairs(TextBasedFile.TokenizeLine(x)))
+									.GroupBy(x => x.Key.ToUpper()).ToDictionary(x => x.Key, x => x.Last().Value);
+								return logic.TryGetValue("CLASS", out string[] strClass) && strClass.Length > 0 && strClass[0].ToLower() == "elevator";
+							})) {
+								candidates.Add(this.elevator);
+							}
+							candidates.Add(this.sectorTrigger);
+						}
+						if (x.y.Adjoined == null) {
+							candidates.Add(this.unadjoined);
+						} else {
+							if (x.y.Adjoined.Sector.Floor.Y != x.x.Floor.Y) {
+								candidates.Add(this.ledge);
+							}
+							candidates.Add(this.adjoined);
+						}
+						properties = candidates.Where(x => x.Draw).OrderByDescending(x => x.Priority).FirstOrDefault();
 					}
 
 					Vector2 left = new Vector2() {
@@ -290,29 +301,32 @@ namespace MZZT.DarkForces {
 						y = x.y.RightVertex.Position.X * sin + x.y.RightVertex.Position.Y * cos
 					};
 
+					if (!properties.Draw) {
+						return default;
+					}
+
 					return new Line() {
 						Properties = properties,
 						LeftVertex = left,
 						RightVertex = right
 					};
 				})
+				.Where(x => x.Properties.Draw)
 				.ToArray();
 
-			Vector2[] vertices;
+			float maxLineWidth = new[] { this.inactiveLayer, this.elevator, this.unadjoined, this.adjoined,
+				this.ledge, this.sectorTrigger, this.wallTrigger }.Select(x => x.Width).Max();
+
 			Rect viewport = this.viewport;
 			// Determine viewport
-			if (this.viewportMode != ViewportModes.Manual) {
+			if (this.viewportFitMode != BoundingModes.Manual) {
 				IEnumerable<Sector> boundingSectors;
-				switch (this.viewportMode) {
-					case ViewportModes.FitToAllLayers:
+				switch (this.viewportFitMode) {
+					case BoundingModes.FitToAllLayers:
 						boundingSectors = level.Sectors;
 						break;
-					case ViewportModes.FitToCurrentLayer:
-						if (byLayer.TryGetValue(this.layer, out Sector[] sectors)) {
-							boundingSectors = sectors;
-						} else {
-							boundingSectors = Enumerable.Empty<Sector>();
-						}
+					case BoundingModes.FitToActiveLayers:
+						boundingSectors = level.Sectors.Where(x => Array.IndexOf(this.layers, x.Layer) >= 0).ToArray();
 						break;
 					default:
 						boundingSectors = visibleSectors;
@@ -320,7 +334,7 @@ namespace MZZT.DarkForces {
 				}
 
 				// Get bounding box
-				vertices = boundingSectors
+				Vector2[] vertices = boundingSectors
 					.SelectMany(x => x.Walls)
 					.SelectMany(x => new[] {
 						x.LeftVertex.Position.ToUnity(),
@@ -339,17 +353,17 @@ namespace MZZT.DarkForces {
 					.Distinct()
 					.ToArray();
 
-				float minX = vertices.Min(x => x.x);
-				float maxX = vertices.Max(x => x.x);
-				float minY = vertices.Min(x => x.y);
-				float maxY = vertices.Max(x => x.y);
+				float minX = vertices.Min(x => x.x - maxLineWidth / 2);
+				float maxX = vertices.Max(x => x.x + maxLineWidth / 2);
+				float minY = vertices.Min(x => x.y - maxLineWidth / 2);
+				float maxY = vertices.Max(x => x.y + maxLineWidth / 2);
 
 				// Add padding
 				if (this.paddingUnit == PaddingUnits.GameUnits) {
-					minX -= this.padding.xMin;
-					minY -= this.padding.yMin;
-					maxX += this.padding.xMax;
-					maxY += this.padding.yMax;
+					minX -= this.padding.x;
+					minY -= this.padding.y;
+					maxX += this.padding.z;
+					maxY += this.padding.w;
 				}
 
 				// Adjust for zoom
@@ -359,64 +373,93 @@ namespace MZZT.DarkForces {
 				maxY *= this.zoom;
 
 				if (this.paddingUnit == PaddingUnits.Pixels) {
-					minX -= this.padding.xMin;
-					minY -= this.padding.yMin;
-					maxX += this.padding.xMax;
-					maxY += this.padding.yMax;
+					minX -= this.padding.x;
+					minY -= this.padding.y;
+					maxX += this.padding.z;
+					maxY += this.padding.w;
 				}
 
-				viewport = new Rect(minX, minY, maxX - minX, maxY - minY);
-			} else {
-				// We'll still need these later.
-				vertices = lines
+				viewport = new Rect((minX + maxX) / 2 / this.zoom, (minY + maxY) / 2 / this.zoom, maxX - minX, maxY - minY);
+			}
+
+			this.viewport = viewport;
+
+			float zoom = this.zoom;
+			if (this.zoomFitMode != BoundingModes.Manual) {
+				IEnumerable<Sector> boundingSectors;
+				switch (this.zoomFitMode) {
+					case BoundingModes.FitToAllLayers:
+						boundingSectors = level.Sectors;
+						break;
+					case BoundingModes.FitToActiveLayers:
+						boundingSectors = level.Sectors.Where(x => Array.IndexOf(this.layers, x.Layer) >= 0).ToArray();
+						break;
+					default:
+						boundingSectors = visibleSectors;
+						break;
+				}
+
+				// Get bounding box
+				Vector2[] vertices = boundingSectors
+					.SelectMany(x => x.Walls)
 					.SelectMany(x => new[] {
-						x.LeftVertex,
-						x.RightVertex
+						x.LeftVertex.Position.ToUnity(),
+						x.RightVertex.Position.ToUnity()
+					})
+					.Select(x => {
+						float angle = Mathf.Deg2Rad * this.rotation;
+						float sin = Mathf.Sin(angle);
+						float cos = Mathf.Cos(angle);
+
+						return new Vector2() {
+							x = x.x * cos - x.y * sin,
+							y = x.x * sin + x.y * cos
+						};
 					})
 					.Distinct()
 					.ToArray();
+
+				float minX = vertices.Min(x => x.x - maxLineWidth / 2);
+				float maxX = vertices.Max(x => x.x + maxLineWidth / 2);
+				float minY = vertices.Min(x => x.y - maxLineWidth / 2);
+				float maxY = vertices.Max(x => x.y + maxLineWidth / 2);
+
+				// Add padding
+				if (this.paddingUnit == PaddingUnits.GameUnits) {
+					minX -= this.padding.x;
+					minY -= this.padding.y;
+					maxX += this.padding.z;
+					maxY += this.padding.w;
+				}
+
+				float width = Math.Max(maxX - viewport.x, viewport.x - minY) * 2;
+				float height = Math.Max(maxY - viewport.y, viewport.y - minY) * 2;
+
+				float viewportWidth = viewport.width;
+				float viewportHeight = viewport.height;
+
+				if (this.paddingUnit == PaddingUnits.Pixels) {
+					viewportWidth -= this.padding.x;
+					viewportHeight -= this.padding.y;
+					viewportWidth -= this.padding.z;
+					viewportHeight -= this.padding.w;
+				}
+
+				float zoomX = viewportWidth / width;
+				float zoomY = viewportHeight / height;
+				this.zoom = zoom = Mathf.Min(zoomX, zoomY);
 			}
 
 			// Pad the viewport if it's not an integer size.
 			if (viewport.width % 1 != 0) {
-				float delta = viewport.width % 1;
+				float delta = 1 - (viewport.width % 1);
 				viewport.width += delta;
 				viewport.x -= delta / 2;
 			}
 			if (viewport.height % 1 != 0) {
-				float delta = viewport.height % 1;
+				float delta = 1 - (viewport.height % 1);
 				viewport.height += delta;
 				viewport.x -= delta / 2;
-			}
-
-			float zoom = this.zoom;
-			if (this.autoZoomToFit) {
-				// Get bounding box of vertices.
-				float minX = vertices.Min(x => x.x);
-				float maxX = vertices.Max(x => x.x);
-				float minY = vertices.Min(x => x.y);
-				float maxY = vertices.Max(x => x.y);
-
-				// Adjust for padding
-				if (this.paddingUnit == PaddingUnits.GameUnits) {
-					minX -= this.padding.xMin;
-					minY -= this.padding.yMin;
-					maxX += this.padding.xMax;
-					maxY += this.padding.yMax;
-				} else if (this.paddingUnit == PaddingUnits.Pixels) {
-					viewport.x += this.padding.x;
-					viewport.y += this.padding.y;
-					viewport.width -= this.padding.width;
-					viewport.height -= this.padding.height;
-				}
-
-				float zoomX = viewport.x / (maxX - minX);
-				float zoomY = viewport.y / (maxY - minY);
-				zoom = Mathf.Min(zoomX, zoomY);
-
-				Vector2 center = new Vector2((minX + maxX) / 2, (minY + maxY) / 2);
-				viewport.x = center.x * zoom - viewport.width / 2;
-				viewport.y = center.y * zoom - viewport.height / 2;
 			}
 
 			Rect fixedViewport = new Rect(
@@ -427,8 +470,8 @@ namespace MZZT.DarkForces {
 			// Exclude drawing any lines that don't overlap with the viewport.
 			lines = lines
 				.Select(x => {
-					x.LeftVertex = x.LeftVertex * zoom - viewport.position;
-					x.RightVertex = x.RightVertex * zoom - viewport.position;
+					x.LeftVertex = x.LeftVertex * zoom - (viewport.position * zoom - (viewport.size / 2));
+					x.RightVertex = x.RightVertex * zoom - (viewport.position * zoom - (viewport.size / 2));
 					return x;
 				})
 				.Where(x => {
@@ -451,15 +494,27 @@ namespace MZZT.DarkForces {
 				})
 				.OrderBy(x => x.Properties.Priority)
 				.ToArray();
+			return (lines, new Vector2Int((int)viewport.width, (int)viewport.height));
+		}
+
+		/// <summary>
+		/// Generate a map texture.
+		/// </summary>
+		/// <param name="level">The level data.</param>
+		/// <param name="inf">The level information.</param>
+		/// <returns>The texture.</returns>
+		public Texture2D GenerateTexture(DfLevel level, DfLevelInformation inf) {
+			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
 
 			// Create the SkiaSharp image.
-			SKImageInfo info = new SKImageInfo((int)viewport.width, (int)viewport.height);
+			SKImageInfo info = new SKImageInfo(viewport.x, viewport.y);
 			using SKSurface surface = SKSurface.Create(info);
 			SKCanvas canvas = surface.Canvas;
 			using SKPaint paint = new SKPaint() {
 				BlendMode = SKBlendMode.SrcOver,
 				IsAntialias = true,
-				IsStroke = true
+				IsStroke = true,
+				StrokeCap = SKStrokeCap.Round
 			};
 
 			// Draw all the lines
@@ -480,9 +535,9 @@ namespace MZZT.DarkForces {
 			using SKPixmap pixmap = surface.PeekPixels();
 
 			TextureFormat format = (info.ColorType == SKColorType.Rgba8888) ? TextureFormat.RGBA32 : TextureFormat.BGRA32;
-			Texture2D texture = new Texture2D((int)viewport.width, (int)viewport.height, format, false, true) {
+			Texture2D texture = new Texture2D(viewport.x, viewport.y, format, false, true) {
 #if UNITY_EDITOR
-					alphaIsTransparency = true
+				alphaIsTransparency = true
 #endif
 			};
 
@@ -495,6 +550,46 @@ namespace MZZT.DarkForces {
 			texture.LoadRawTextureData(pixels);
 			texture.Apply(true, true);
 			return texture;
+		}
+
+		/// <summary>
+		/// Generate a map and grab the raw PNG data.
+		/// </summary>
+		/// <param name="level">The level data.</param>
+		/// <param name="inf">The level information.</param>
+		/// <returns>The PNG data.</returns>
+		public SKData GeneratePng(DfLevel level, DfLevelInformation inf) {
+			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
+
+			// Create the SkiaSharp image.
+			SKImageInfo info = new SKImageInfo(viewport.x, viewport.y);
+			using SKSurface surface = SKSurface.Create(info);
+			SKCanvas canvas = surface.Canvas;
+			using SKPaint paint = new SKPaint() {
+				BlendMode = SKBlendMode.SrcOver,
+				IsAntialias = true,
+				IsStroke = true,
+				StrokeCap = SKStrokeCap.Round
+			};
+
+			// Draw all the lines
+			foreach (Line line in lines) {
+				paint.Color = line.Properties.Color.ToSkia();
+				paint.StrokeWidth = line.Properties.Width;
+
+				canvas.DrawLine(new SKPoint(
+					line.LeftVertex.x,
+					info.Height - line.LeftVertex.y
+				), new SKPoint(
+					line.RightVertex.x,
+					info.Height - line.RightVertex.y
+				), paint);
+			}
+
+			// Grab the resulting raster data and convert to a texture.
+			using SKPixmap pixmap = surface.PeekPixels();
+
+			return pixmap.Encode(SKEncodedImageFormat.Png, 100);
 		}
 	}
 }

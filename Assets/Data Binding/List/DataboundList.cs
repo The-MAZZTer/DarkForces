@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace MZZT.DataBinding {
@@ -68,7 +69,17 @@ namespace MZZT.DataBinding {
 			this.RemoveAt(index);
 			return true;
 		}
-		public virtual void RemoveAt(int index) => DestroyImmediate(this.transform.GetChild(index).gameObject);
+		public virtual void RemoveAt(int index) {
+			Databound<T> child = this.transform.GetChild(index).GetComponent<Databound<T>>();
+			if (this.ToggleGroup != null) {
+				Toggle toggle = child.Toggle;
+				if (toggle != null) {
+					toggle.onValueChanged.RemoveListener(this.OnToggleValueChanged);
+				}
+			}
+
+			DestroyImmediate(child.gameObject);
+		}
 
 		protected virtual Databound<T> Instantiate(T item) {
 			GameObject gameObject = Instantiate(this.databinderTemplate);
@@ -82,10 +93,12 @@ namespace MZZT.DataBinding {
 					ret.Toggle = toggle = ret.GetComponentInChildren<Toggle>(true);
 				}
 				if (toggle != null) {
+					toggle.onValueChanged.AddListener(this.OnToggleValueChanged);
 					toggle.isOn = !this.ToggleGroup.allowSwitchOff && !this.ToggleGroup
 						.GetComponentsInChildren<Toggle>(true)
 						.Any(x => x.group == this.toggleGroup && x.isOn);
 					toggle.group = this.ToggleGroup;
+					this.OnToggleValueChanged(toggle.isOn);
 				}
 			}
 
@@ -186,6 +199,17 @@ namespace MZZT.DataBinding {
 				return default;
 			}
 			set => this.SelectedDatabound = this.GetDatabinder(value);
+		}
+
+		public UnityEvent SelectedValueChanged = new UnityEvent();
+		private Databound<T> lastSelected;
+		private void OnToggleValueChanged(bool value) {
+			if (this.SelectedDatabound == this.lastSelected) {
+				return;
+			}
+			this.lastSelected = this.SelectedDatabound;
+
+			this.SelectedValueChanged.Invoke();
 		}
 
 		int IList.Add(object value) {
