@@ -34,7 +34,9 @@ namespace MZZT.DarkForces {
 				-obj.Position.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
 				obj.Position.Z * LevelGeometryGenerator.GEOMETRY_SCALE
 			);
-			Quaternion rotation = Quaternion.Euler(obj.EulerAngles.ToUnity());
+			Vector3 euler = obj.EulerAngles.ToUnity();
+			euler = new Vector3(-euler.x, euler.y, euler.z);
+			Quaternion rotation = Quaternion.Euler(euler);
 
 			// Grab item logic.
 			string[] lines = obj.Logic?.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();

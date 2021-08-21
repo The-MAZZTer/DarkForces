@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6599116595520089108}
   - component: {fileID: 272277011043178893}
   - component: {fileID: 5951928296158202226}
+  - component: {fileID: 7011708175990812916}
   m_Layer: 5
   m_Name: Size
   m_TagString: Untagged
@@ -100,7 +101,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -109,9 +110,9 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -151,6 +152,26 @@ MonoBehaviour:
   changeListenMode: 0
   valueChangedEventName: 
   autoApplyOnChange: 0
+--- !u!114 &7011708175990812916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103648797291436648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: 0
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &7221255322607446935
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,9 +282,9 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -335,6 +356,7 @@ GameObject:
   - component: {fileID: 3171299539279898839}
   - component: {fileID: 4215608984343232197}
   - component: {fileID: 6530827657726356384}
+  - component: {fileID: 7088506954664412598}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -432,7 +454,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -474,6 +496,26 @@ MonoBehaviour:
   changeListenMode: 0
   valueChangedEventName: 
   autoApplyOnChange: 0
+--- !u!114 &7088506954664412598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7634614926343986124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: 36
+  m_MinHeight: -1
+  m_PreferredWidth: 36
+  m_PreferredHeight: -1
+  m_FlexibleWidth: 0
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &8557827401440997045
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,3 +707,4 @@ MonoBehaviour:
   collapsed: {fileID: 0}
   expanded: {fileID: 0}
   node: {fileID: 3019695183125824968}
+  size: {fileID: 7011708175990812916}

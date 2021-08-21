@@ -53,7 +53,9 @@ namespace MZZT.DarkForces {
 			// Get the proper sequence for the angle the camera can see.
 			SpriteRenderer renderer = this.GetComponent<SpriteRenderer>();
 
-			Vector3 forward = Quaternion.Euler(this.Object.EulerAngles.ToUnity()) * Vector3.forward;
+			Vector3 euler = this.Object.EulerAngles.ToUnity();
+			euler = new Vector3(-euler.x, euler.y, euler.z);
+			Vector3 forward = Quaternion.Euler(euler) * Vector3.forward;
 			Vector3 camera = -Camera.main.transform.forward;
 			float angle = Vector3.SignedAngle(camera, forward, Vector3.up);
 			int index = (int)((-angle + 360 + 5.625) % 360 / 11.25f);

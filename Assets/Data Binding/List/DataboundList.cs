@@ -147,12 +147,19 @@ namespace MZZT.DataBinding {
 					throw new InvalidOperationException();
 				}
 
-				Toggle toggle = this.ToggleGroup.GetComponentsInChildren<Toggle>(true)
-					.FirstOrDefault(x => x.group == this.toggleGroup && x.isOn);
-				if (toggle == null) {
+				Toggle[] toggles = this.ToggleGroup.GetComponentsInChildren<Toggle>(true)
+					.Where(x => x.group == this.toggleGroup && x.isOn).ToArray();
+				if (toggles.Length == 0) {
 					return null;
 				}
-				return toggle.GetComponentsInParent<Databound<T>>(true).FirstOrDefault();
+				if (toggles.Length > 1) {
+					toggles = toggles.Where(x => x.isActiveAndEnabled).ToArray();
+				}
+				if (toggles.Length != 1) {
+					return null;
+				}
+
+				return toggles[0].GetComponentsInParent<Databound<T>>(true).FirstOrDefault();
 			}
 			set {
 				Databound<T> old = this.SelectedDatabound;

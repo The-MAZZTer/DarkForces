@@ -210,13 +210,13 @@ namespace Test {
 				});
 			}*/
 
-			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\Levels\DTIDE2\DTIDE2.GOB", true);
+			DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\Downloads\ats2lp_modern\ATS2LP.GOB", true);
 
-			DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
+			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
 			//DfLevelList lvl = await dark.GetFileAsync<DfLevelList>("JEDI.LVL");
 			//DfLevelGoals gol = await dark.GetFileAsync<DfLevelGoals>("SECBASE.GOL");
 			//DfLevel lev = await dark.GetFileAsync<DfLevel>("SECBASE.LEV");
-			DfLevelInformation inf = await dark.GetFileAsync<DfLevelInformation>("SECBASE.INF");
+			//DfLevelInformation inf = await dark.GetFileAsync<DfLevelInformation>("SECBASE.INF");
 			//inf.LoadSectorReferences(lev);
 			//DfLevelObjects o = await dark.GetFileAsync<DfLevelObjects>("SECBASE.O");
 			//Df3dObject _3do = await dark.GetFileAsync<Df3dObject>("DEATH.3DO");
@@ -277,7 +277,7 @@ namespace Test {
 				paletteBuffer[i * 4 + 3] = 255;
 			}*/
 
-			/*string dir = Path.Combine(AppContext.BaseDirectory, "DTIDE2.GOB");
+			string dir = Path.Combine(AppContext.BaseDirectory, "ATS2LP.GOB");
 			if (!Directory.Exists(dir)) {
 				Directory.CreateDirectory(dir);
 			}
@@ -382,12 +382,12 @@ namespace Test {
 				bitmap.UnlockBits(bitmapData);
 
 				bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}.PNG"), ImageFormat.Png);*/
-			/*}
+			}
 
 			Process.Start(new ProcessStartInfo() {
 				FileName = dir,
 				UseShellExecute = true
-			});*/
+			});
 		}
 	}
 }

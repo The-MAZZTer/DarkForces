@@ -240,7 +240,9 @@ namespace MZZT.DarkForces {
 					animation.Stop();
 				}
 
-				this.transform.rotation = Quaternion.Euler(this.Object.EulerAngles.ToUnity());
+				Vector3 euler = this.Object.EulerAngles.ToUnity();
+				euler = new Vector3(-euler.x, euler.y, euler.z);
+				this.transform.rotation = Quaternion.Euler(euler);
 			}
 		}
 	}

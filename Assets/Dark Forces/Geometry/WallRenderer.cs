@@ -28,9 +28,19 @@ namespace MZZT.DarkForces {
 		public static async Task<GameObject> CreateMeshAsync(float minY, float maxY, WallSurface surface,
 			Wall wall, bool forcePlaneShader = false) {
 
+			string textureFile = surface.TextureFile;
+			if (wall.Sector.Flags.HasFlag(SectorFlags.DrawWallsAsSkyPit)) {
+				// TODO this is not correct.
+				// Should probably create a new shader to have sky texture on upper half of screen and pit on lower half
+				// Potentially this material would also be applied to sky and pit surfaces in general.
+				// If you get thrown into the sky, or into a pit, do the walls of the sky/pit
+				// (past the normal ceiling/floor) only show the sky/pit texture, or both, same as this flag?
+				textureFile = wall.Sector.Ceiling.TextureFile;
+			}
+
 			DfBitmap bm = null;
-			if (!string.IsNullOrEmpty(surface.TextureFile)) {
-				bm = await ResourceCache.Instance.GetBitmapAsync(surface.TextureFile);
+			if (!string.IsNullOrEmpty(textureFile)) {
+				bm = await ResourceCache.Instance.GetBitmapAsync(textureFile);
 			} else {
 				bm = await ResourceCache.Instance.GetBitmapAsync("DEFAULT.BM");
 			}

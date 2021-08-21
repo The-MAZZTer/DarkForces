@@ -1,5 +1,6 @@
 ﻿using MZZT.DataBinding;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -23,6 +24,8 @@ namespace MZZT {
 		private GameObject expanded = null;
 		[SerializeField]
 		private Toggle node = null;
+		[SerializeField]
+		private LayoutElement size = null;
 		/// <summary>
 		/// The Toggle for the current node.
 		/// </summary>
@@ -32,6 +35,10 @@ namespace MZZT {
 			base.Invalidate();
 
 			this.gameObject.name = this.Value.DisplayName;
+
+			if (this.size != null) {
+				this.size.minWidth = this.size.preferredWidth = LayoutUtility.GetPreferredWidth((RectTransform)this.size.transform);
+			}
 
 			if (this.childView == null) {
 				return;
