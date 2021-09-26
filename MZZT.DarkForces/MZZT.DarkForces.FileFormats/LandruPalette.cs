@@ -1,6 +1,8 @@
 ﻿using MZZT.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -8,7 +10,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Landru PLTT file.
 	/// </summary>
-	public class LandruPalette : DfFile<LandruPalette> {
+	public class LandruPalette : DfFile<LandruPalette>, ICloneable {
 		/// <summary>
 		/// The PLTT header.
 		/// </summary>
@@ -76,5 +78,12 @@ namespace MZZT.DarkForces.FileFormats {
 				await stream.WriteAsync(color);
 			}
 		}
+
+		object ICloneable.Clone() => this.Clone();
+		public LandruPalette Clone() => new() {
+			First = this.First,
+			Last = this.Last,
+			Palette = this.Palette.ToArray()
+		};
 	}
 }

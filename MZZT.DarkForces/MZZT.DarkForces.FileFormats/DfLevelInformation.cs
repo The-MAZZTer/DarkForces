@@ -11,7 +11,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces INF file.
 	/// </summary>
-	public class DfLevelInformation : TextBasedFile<DfLevelInformation> {
+	public class DfLevelInformation : TextBasedFile<DfLevelInformation>, ICloneable {
 		/// <summary>
 		/// Types of scripts.
 		/// </summary>
@@ -33,7 +33,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A script.
 		/// </summary>
-		public class Item {
+		public class Item : ICloneable {
 			/// <summary>
 			/// The type of script.
 			/// </summary>
@@ -52,6 +52,16 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The script body.
 			/// </summary>
 			public string Script { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Item Clone() => new() {
+				Script = this.Script,
+				Sector = null,
+				SectorName = this.SectorName,
+				Wall = null,
+				WallNum = this.WallNum,
+				Type = this.Type
+			};
 		}
 
 		/// <summary>
@@ -97,7 +107,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.SequenceEqual(new[] { "INF", "1.0" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "INF", "1.0" }) ?? false)) {
 				this.AddWarning("INF file format not found!");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);
@@ -105,6 +115,7 @@ namespace MZZT.DarkForces.FileFormats {
 
 			this.Items.Clear();
 
+			int lastWall = -1;
 			while (line != null) {
 				switch (line[0].ToUpper()) {
 					case "LEVELNAME": {
@@ -169,9 +180,15 @@ namespace MZZT.DarkForces.FileFormats {
 										numString.Length < 1 ||
 										!int.TryParse(numString[0], NumberStyles.Integer, null, out int num)) {
 
-										this.AddWarning("Invalid wall definition.");
-										continue;
+										if (lastWall >= 0) {
+											this.AddWarning("Invalid wall definition, assuming same as last wall number.");
+											num = lastWall;
+										} else {
+											this.AddWarning("Invalid wall definition.");
+											continue;
+										}
 									}
+									lastWall = num;
 									item.WallNum = num;
 								} break;
 							}
@@ -187,7 +204,7 @@ namespace MZZT.DarkForces.FileFormats {
 							StringBuilder script = new();
 							string text = (await reader.ReadLineAsync()).Trim();
 							if (text != null) {
-								this.CurrentLine++;
+								this.IncrementCurrentLine();
 							}
 							while (text != null && text.ToUpper() != "SEQEND") {
 								if (script.Length > 0) {
@@ -197,7 +214,7 @@ namespace MZZT.DarkForces.FileFormats {
 								script.Append(text);
 								text = (await reader.ReadLineAsync()).Trim();
 								if (text != null) {
-									this.CurrentLine++;
+									this.IncrementCurrentLine();
 								}
 							}
 							item.Script = script.ToString();
@@ -251,6 +268,15 @@ namespace MZZT.DarkForces.FileFormats {
 				await writer.WriteLineAsync(item.Script);
 				await writer.WriteLineAsync("seqend");
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfLevelInformation Clone() {
+			DfLevelInformation clone = new() {
+				LevelFile = this.LevelFile
+			};
+			clone.Items.AddRange(this.Items.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

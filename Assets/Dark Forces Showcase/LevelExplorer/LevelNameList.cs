@@ -14,7 +14,9 @@ namespace MZZT.DarkForces.Showcase {
 		public void Refresh() {
 			this.Clear();
 			this.AddRange(Enumerable.Range(0, LevelLoader.Instance.LevelList.Levels.Count));
-			this.SelectedValue = LevelLoader.Instance.CurrentLevelIndex;
+			if (this.ToggleGroup != null) {
+				this.SelectedValue = LevelLoader.Instance.CurrentLevelIndex;
+			}
 		}
 	}
 }

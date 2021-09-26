@@ -105,8 +105,6 @@ namespace MZZT.DarkForces {
 
 			await PauseMenu.Instance.BeginLoadingAsync();
 
-			string levelFile = this.CurrentLevelName;
-
 			this.Palette = await ResourceCache.Instance.GetPaletteAsync(this.Level.PaletteFile);
 
 			PauseMenu.Instance.EndLoading();
@@ -174,7 +172,7 @@ namespace MZZT.DarkForces {
 		/// Load a level's O file.
 		/// </summary>
 		public async Task LoadObjectsAsync() {
-			this.Information = null;
+			this.Objects = null;
 
 			await PauseMenu.Instance.BeginLoadingAsync();
 

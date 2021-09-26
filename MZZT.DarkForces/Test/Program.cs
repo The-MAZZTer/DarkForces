@@ -210,12 +210,12 @@ namespace Test {
 				});
 			}*/
 
-			DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\Downloads\ats2lp_modern\ATS2LP.GOB", true);
+			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\Downloads\ats2lp_modern\ATS2LP.GOB", true);
 
-			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
+			DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\HOTELRND.GOB");
 			//DfLevelList lvl = await dark.GetFileAsync<DfLevelList>("JEDI.LVL");
 			//DfLevelGoals gol = await dark.GetFileAsync<DfLevelGoals>("SECBASE.GOL");
-			//DfLevel lev = await dark.GetFileAsync<DfLevel>("SECBASE.LEV");
+			//DfLevel lev = await dark.GetFileAsync<DfLevel>($"{lvl.Levels[0].FileName}.LEV");
 			//DfLevelInformation inf = await dark.GetFileAsync<DfLevelInformation>("SECBASE.INF");
 			//inf.LoadSectorReferences(lev);
 			//DfLevelObjects o = await dark.GetFileAsync<DfLevelObjects>("SECBASE.O");
@@ -227,19 +227,63 @@ namespace Test {
 			//Gob sprites = await Gob.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\SPRITES.GOB");
 			//Wax wax = await sprites.GetFileAsync<Wax>("STORMFIN.WAX");
 			//Wax wax2 = await sprites.GetFileAsync<Wax>("REDLIT.WAX");
-			//Gob textures = await Gob.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB");
+			//DfGobContainer textures = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB");
 
 			//DfGobContainer sounds = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\SOUNDS.GOB");
 
-			/*DfPalette pal = await dark.GetFileAsync<DfPalette>("TALAY.PAL");
+			/*using (Bitmap bitmap = new(256, levels.Levels.Count, PixelFormat.Format32bppArgb)) {
+				BitmapData bitmapData = bitmap.LockBits(new(Point.Empty, bitmap.Size), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+				using (Bitmap bitmap2 = new(256, 32 * levels.Levels.Count, PixelFormat.Format32bppArgb)) {
+					BitmapData bitmapData2 = bitmap2.LockBits(new(Point.Empty, bitmap2.Size), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+					foreach ((DfLevelList.Level level, int y) in levels.Levels.Select((x, i) => (x, i))) {
+						string name = level.FileName;
+
+						DfPalette pal = await dark.GetFileAsync<DfPalette>($"{name}.PAL");
+						Color[] palette = pal.Palette.Select(x => Color.FromArgb(
+							(int)Math.Clamp(Math.Round(x.R * 255 / 63f), 0, 255),
+							(int)Math.Clamp(Math.Round(x.G * 255 / 63f), 0, 255),
+							(int)Math.Clamp(Math.Round(x.B * 255 / 63f), 0, 255)
+						)).ToArray();
+						byte[] paletteBuffer = new byte[4 * 256];
+						foreach ((Color color, int i) in palette.Select((x, i) => (x, i))) {
+							paletteBuffer[i * 4 + 0] = color.B;
+							paletteBuffer[i * 4 + 1] = color.G;
+							paletteBuffer[i * 4 + 2] = color.R;
+							paletteBuffer[i * 4 + 3] = 255;
+						}
+
+						for (int x = 0; x < palette.Length; x++) {
+							Marshal.Copy(paletteBuffer, x * 4, bitmapData.Scan0 + ((bitmap.Height - 1 - y) * bitmapData.Stride) + (x * 4), 4);
+						}
+
+						DfColormap cmp = await dark.GetFileAsync<DfColormap>($"{name}.CMP") ??
+							await textures.GetFileAsync<DfColormap>($"{name}.CMP");
+						foreach ((byte[] map, int lightLevel) in cmp.PaletteMaps.Select((x, i) => (x, i))) {
+							for (int x = 0; x < map.Length; x++) {
+								Marshal.Copy(paletteBuffer, map[x] * 4, bitmapData2.Scan0 + ((bitmap2.Height - 1 - (y * 32 + lightLevel)) * bitmapData2.Stride) + (x * 4), 4);
+							}
+						}
+					}
+
+					bitmap2.UnlockBits(bitmapData2);
+					bitmap2.Save(Path.Combine(AppContext.BaseDirectory, "colormaps.png"), ImageFormat.Png);
+				}
+
+				bitmap.UnlockBits(bitmapData);
+				bitmap.Save(Path.Combine(AppContext.BaseDirectory, "palettes.png"), ImageFormat.Png);
+			}*/
+
+			/*DfPalette pal = await dark.GetFileAsync<DfPalette>("SECBASE.PAL");
 			Color[] palette = pal.Palette.Select(x => Color.FromArgb(
-				(int)Math.Round(x.R * 255 / 63f),
-				(int)Math.Round(x.G * 255 / 63f),
-				(int)Math.Round(x.B * 255 / 63f)
+				(int)Math.Clamp(Math.Round(x.R * 255 / 63f), 0, 255),
+				(int)Math.Clamp(Math.Round(x.G * 255 / 63f), 0, 255),
+				(int)Math.Clamp(Math.Round(x.B * 255 / 63f), 0, 255)
 			)).ToArray();
 
-			DfColormap cmp = await dark.GetFileAsync<DfColormap>("TALAY.CMP");
-			Color target = palette[cmp.PaletteMaps[0][255]];
+			DfColormap cmp = await dark.GetFileAsync<DfColormap>("SECBASE.CMP");
+			/*Color target = palette[cmp.PaletteMaps[0][255]];
 			Color[] lit = cmp.PaletteMaps[31].Select(x => palette[x]).ToArray();
 			int full = lit.Skip(16).Sum(x => x.R + x.G + x.B);
 
@@ -251,21 +295,20 @@ namespace Test {
 					Console.WriteLine(lit[j]);
 					Console.WriteLine(x[j]);
 				}
-			}
+			}*/
 
 			//Color[] transparentPalette = new Color[256];
 			//Array.Copy(palette, transparentPalette, 256);
 			//transparentPalette[0] = Color.FromArgb(0);
 
 			/*for (int i = 0; i < 32; i++) {
-				using (FileStream stream = new(Path.Combine(AppContext.BaseDirectory, $"talay-{i}.pal"), FileMode.Create, FileAccess.Write, FileShare.None)) {
-					using StreamWriter writer = new(stream, Encoding.ASCII);
-					await writer.WriteLineAsync("JASC-PAL");
-					await writer.WriteLineAsync("0100");
-					await writer.WriteLineAsync("256");
-					foreach (Color color in cmp.PaletteMaps[i].Select(x => palette[x])) {
-						await writer.WriteLineAsync($"{color.R} {color.G} {color.B}");
-					}
+				using FileStream stream = new(Path.Combine(AppContext.BaseDirectory, $"secbase-{i}.pal"), FileMode.Create, FileAccess.Write, FileShare.None);
+				using StreamWriter writer = new(stream, Encoding.ASCII);
+				await writer.WriteLineAsync("JASC-PAL");
+				await writer.WriteLineAsync("0100");
+				await writer.WriteLineAsync("256");
+				foreach (Color color in cmp.PaletteMaps[i].Select(x => palette[x])) {
+					await writer.WriteLineAsync($"{color.R} {color.G} {color.B}");
 				}
 			}*/
 
@@ -275,9 +318,20 @@ namespace Test {
 				paletteBuffer[i * 4 + 1] = color.G;
 				paletteBuffer[i * 4 + 2] = color.R;
 				paletteBuffer[i * 4 + 3] = 255;
+			}
+
+			byte[] cmpBuffer0 = new byte[4 * 256];
+			byte[] map = cmp.PaletteMaps[0];
+			for (int i = 0; i < map.Length; i++) {
+				Buffer.BlockCopy(paletteBuffer, map[i] * 4, cmpBuffer0, i * 4, 4);
+			}
+			byte[] cmpBuffer31 = new byte[4 * 256];
+			map = cmp.PaletteMaps[31];
+			for (int i = 0; i < map.Length; i++) {
+				Buffer.BlockCopy(paletteBuffer, map[i] * 4, cmpBuffer31, i * 4, 4);
 			}*/
 
-			string dir = Path.Combine(AppContext.BaseDirectory, "ATS2LP.GOB");
+			string dir = Path.Combine(AppContext.BaseDirectory, "HOTELRND.GOB");
 			if (!Directory.Exists(dir)) {
 				Directory.CreateDirectory(dir);
 			}
@@ -356,6 +410,45 @@ namespace Test {
 						wave.SampleRate = wavData[0].Frequency;
 						wave.Data = wavData.SelectMany(x => x.Data).ToArray();
 						await wave.SaveAsync(stream);
+					}
+				}*/
+
+				/*if (name.ToUpper().EndsWith(".BM")) {
+					DfBitmap bm = await textures.GetFileAsync<DfBitmap>(name);
+					DfBitmap.Page page = bm.Pages[0];
+					int width = page.Width;
+					int height = page.Height;
+
+					using (Bitmap bitmap = new(width, height, PixelFormat.Format32bppArgb)) {
+						BitmapData bitmapData = bitmap.LockBits(new(Point.Empty, bitmap.Size), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+						for (int y = 0; y < height; y++) {
+							for (int x = 0; x < width; x++) {
+								byte color = page.Pixels[(height - y - 1) * width + x];
+								if (color > 0 || !page.Flags.HasFlag(DfBitmap.Flags.Transparent)) {
+									Marshal.Copy(cmpBuffer0, color * 4, bitmapData.Scan0 + (y * bitmapData.Stride) + (x * 4), 4);
+								}
+							}
+						}
+
+						bitmap.UnlockBits(bitmapData);
+						bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}-0.PNG"), ImageFormat.Png);
+					}
+
+					using (Bitmap bitmap = new(width, height, PixelFormat.Format32bppArgb)) {
+						BitmapData bitmapData = bitmap.LockBits(new(Point.Empty, bitmap.Size), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+						for (int y = 0; y < height; y++) {
+							for (int x = 0; x < width; x++) {
+								byte color = page.Pixels[(height - y - 1) * width + x];
+								if (color > 0 || !page.Flags.HasFlag(DfBitmap.Flags.Transparent)) {
+									Marshal.Copy(cmpBuffer31, color * 4, bitmapData.Scan0 + (y * bitmapData.Stride) + (x * 4), 4);
+								}
+							}
+						}
+
+						bitmap.UnlockBits(bitmapData);
+						bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}-31.PNG"), ImageFormat.Png);
 					}
 				}
 

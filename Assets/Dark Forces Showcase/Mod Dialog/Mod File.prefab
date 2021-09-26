@@ -762,7 +762,7 @@ MonoBehaviour:
     m_Options:
     - m_Text: DFBRIEF.LFD
       m_Image: {fileID: 0}
-    - m_Text: FTEXTCRA.LDS
+    - m_Text: FTEXTCRA.LFD
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:

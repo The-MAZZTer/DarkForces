@@ -11,7 +11,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces O file.
 	/// </summary>
-	public class DfLevelObjects : TextBasedFile<DfLevelObjects> {
+	public class DfLevelObjects : TextBasedFile<DfLevelObjects>, ICloneable {
 		/// <summary>
 		/// Different types of objects.
 		/// </summary>
@@ -56,7 +56,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A level object.
 		/// </summary>
-		public class Object {
+		public class Object : ICloneable {
 			/// <summary>
 			/// Object type.
 			/// </summary>
@@ -81,6 +81,16 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The logic script this object uses.
 			/// </summary>
 			public string Logic { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Object Clone() => new() {
+				Difficulty = this.Difficulty,
+				EulerAngles = this.EulerAngles,
+				FileName = this.FileName,
+				Logic = this.Logic,
+				Position = this.Position,
+				Type = this.Type
+			};
 		}
 
 		/// <summary>
@@ -100,7 +110,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.SequenceEqual(new[] { "O", "1.1" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "O", "1.1" }) ?? false)) {
 				this.AddWarning("O file format not found!");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);
@@ -300,7 +310,7 @@ namespace MZZT.DarkForces.FileFormats {
 								StringBuilder logic = new();
 								string text = (await reader.ReadLineAsync()).Trim();
 								if (text != null) {
-									this.CurrentLine++;
+									this.IncrementCurrentLine();
 								}
 								while (text != null && text.ToUpper() != "SEQEND") {
 									if (logic.Length > 0) {
@@ -310,7 +320,7 @@ namespace MZZT.DarkForces.FileFormats {
 									logic.Append(text);
 									text = (await reader.ReadLineAsync()).Trim();
 									if (text != null) {
-										this.CurrentLine++;
+										this.IncrementCurrentLine();
 									}
 								}
 								obj.Logic = logic.ToString();
@@ -366,13 +376,22 @@ namespace MZZT.DarkForces.FileFormats {
 
 			await this.WriteLineAsync(writer, $"OBJECTS {this.Objects.Count}");
 			foreach (Object obj in this.Objects) {
-				await this.WriteLineAsync(writer, $"CLASS: {(obj.Type == ObjectTypes.ThreeD ? "3DO" : obj.Type.ToString().ToUpper())} DATA: {Array.IndexOf(tables[obj.Type], obj.FileName)} X: {obj.Position.X:0.00} Y: {obj.Position.Y:0.00} Z: {obj.Position.Z:0.00} PCH: {obj.EulerAngles.X:0.00} YAW: {obj.EulerAngles.Y:0.00} ROL: {obj.EulerAngles.Z:0.00} DIFF: {(int)obj.Difficulty}");
+				await this.WriteLineAsync(writer, $"CLASS: {(obj.Type == ObjectTypes.ThreeD ? "3D" : obj.Type.ToString().ToUpper())} DATA: {Array.IndexOf(tables[obj.Type], obj.FileName)} X: {obj.Position.X:0.00} Y: {obj.Position.Y:0.00} Z: {obj.Position.Z:0.00} PCH: {obj.EulerAngles.X:0.00} YAW: {obj.EulerAngles.Y:0.00} ROL: {obj.EulerAngles.Z:0.00} DIFF: {(int)obj.Difficulty}");
 				if (obj.Logic != null) {
 					await writer.WriteLineAsync("SEQ");
 					await writer.WriteLineAsync(obj.Logic);
 					await writer.WriteLineAsync("SEQEND");
 				}
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfLevelObjects Clone() {
+			DfLevelObjects clone = new() {
+				LevelFile = this.LevelFile
+			};
+			clone.Objects.AddRange(this.Objects.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

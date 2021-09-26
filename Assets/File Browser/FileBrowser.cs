@@ -161,7 +161,10 @@ namespace MZZT {
 				Type = FileSystemItemTypes.Folder
 			};
 			if (options.StartSelectedFile != null) {
-				options.StartPath = Path.GetDirectoryName(options.StartSelectedFile);
+				string path = Path.GetDirectoryName(options.StartSelectedFile);
+				if (!string.IsNullOrEmpty(path)) {
+					options.StartPath = path;
+				}
 			}
 			if (options.StartPath != null) {
 				bool dirExists = Directory.Exists(options.StartPath);
@@ -493,6 +496,10 @@ namespace MZZT {
 						return false;
 					}
 
+					if (selected.Type == FileSystemItemTypes.FileContainee) {
+						return true;
+					}
+
 					return File.Exists(Path.Combine(this.fileList.Container.FilePath, this.fileInput.text));
 				}
 
@@ -572,7 +579,7 @@ namespace MZZT {
 					if (!dirExists) {
 						bool fileExists = File.Exists(path);
 						if (fileExists) {
-							string ext = Path.GetExtension(options.RootPath).ToUpper();
+							string ext = Path.GetExtension(path).ToUpper();
 							if ((ext == ".GOB" && options.AllowNavigateGob) ||
 								(ext == ".LFD" && options.AllowNavigateLfd)) {
 

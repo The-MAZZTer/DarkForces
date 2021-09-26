@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Dark Forces Showcase/Map Generator/MapGenerator.unity
     guid: 65f3f0331b35f7e48ab0190c76a4e007
+  - enabled: 1
+    path: Assets/Dark Forces Showcase/Randomizer/Randomizer.unity
+    guid: b580213e31f75b548abd9851d2ccc782
   m_configObjects: {}

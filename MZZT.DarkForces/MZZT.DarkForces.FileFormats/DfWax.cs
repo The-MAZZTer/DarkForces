@@ -10,7 +10,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces WAX file.
 	/// </summary>
-	public class DfWax : DfFile<DfWax> {
+	public class DfWax : DfFile<DfWax>, ICloneable {
 		/// <summary>
 		/// WAX file header.
 		/// </summary>
@@ -133,7 +133,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A sprite state.
 		/// </summary>
-		public class SubWax {
+		public class SubWax : ICloneable {
 			internal WaxHeader header;
 
 			/// <summary>
@@ -162,18 +162,59 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Animation sequences in this sprite. Typically there are 32, for different angles of view.
 			/// </summary>
 			public List<Sequence> Sequences { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public SubWax Clone(Dictionary<Sequence, Sequence> sequenceClones = null,
+				Dictionary<DfFrame, DfFrame> frameClones = null,
+				Dictionary<byte[], byte[]> cellClones = null) {
+
+				sequenceClones ??= new();
+				frameClones ??= new();
+				cellClones ??= new();
+				
+				SubWax clone = new() {
+					Framerate = this.Framerate,
+					WorldHeight = this.WorldHeight,
+					WorldWidth = this.WorldWidth
+				};
+				foreach (Sequence sequence in this.Sequences) {
+					if (!sequenceClones.TryGetValue(sequence, out Sequence sequenceClone)) {
+						sequenceClone = sequence.Clone(frameClones, cellClones);
+					}
+					clone.Sequences.Add(sequenceClone);
+				}
+				return clone;
+			}
 		}
 
 		/// <summary>
 		/// The animation of a sprite for a specific angle of view.
 		/// </summary>
-		public class Sequence {
+		public class Sequence : ICloneable {
 			internal SequenceHeader header;
 
 			/// <summary>
 			/// The frames of animation for this sequence.
 			/// </summary>
 			public List<DfFrame> Frames { get; } = new();
+
+			// TODO handle shared frames/sequences/waxes by only cloning once.
+			object ICloneable.Clone() => this.Clone();
+			public Sequence Clone(Dictionary<DfFrame, DfFrame> frameClones = null,
+				Dictionary<byte[], byte[]> cellClones = null) {
+
+				frameClones ??= new();
+				cellClones ??= new();
+
+				Sequence clone = new();
+				foreach (DfFrame frame in this.Frames) {
+					if (!frameClones.TryGetValue(frame, out DfFrame frameClone)) {
+						frameClone = frame.Clone(cellClones);
+					}
+					clone.Frames.Add(frameClone);
+				}
+				return clone;
+			}
 		}
 
 		public override bool CanLoad => true;
@@ -354,6 +395,22 @@ namespace MZZT.DarkForces.FileFormats {
 					await cellData[cell].CopyToAsync(stream);
 				}
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfWax Clone() {
+			DfWax clone = new();
+			Dictionary<SubWax, SubWax> waxClones = new();
+			Dictionary<Sequence, Sequence> sequenceClones = new();
+			Dictionary<DfFrame, DfFrame> frameClones = new();
+			Dictionary<byte[], byte[]> cellClones = new();
+			foreach (SubWax wax in this.Waxes) {
+				if (!waxClones.TryGetValue(wax, out SubWax waxClone)) {
+					waxClone = wax.Clone(sequenceClones, frameClones, cellClones);
+				}
+				clone.Waxes.Add(waxClone);
+			}
+			return clone;
 		}
 	}
 }

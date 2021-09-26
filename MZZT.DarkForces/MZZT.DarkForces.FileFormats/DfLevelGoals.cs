@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces GOL file.
 	/// </summary>
-	public class DfLevelGoals : TextBasedFile<DfLevelGoals> {
+	public class DfLevelGoals : TextBasedFile<DfLevelGoals>, ICloneable {
 		/// <summary>
 		/// Types of goals.
 		/// </summary>
@@ -57,7 +58,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A goal.
 		/// </summary>
-		public class Goal {
+		public class Goal : ICloneable {
 			/// <summary>
 			/// The type of goal.
 			/// </summary>
@@ -70,6 +71,13 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The goal trigger number associated with this goal.
 			/// </summary>
 			public int Trigger { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Goal Clone() => new() {
+				Item = this.Item,
+				Trigger = this.Trigger,
+				Type = this.Type
+			};
 		}
 
 		/// <summary>
@@ -85,7 +93,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line.SequenceEqual(new[] { "GOL", "1.0" }))) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "GOL", "1.0" })) ?? false) {
 				this.AddWarning("GOL file header not found!");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);
@@ -138,6 +146,13 @@ namespace MZZT.DarkForces.FileFormats {
 					await this.WriteLineAsync(writer, $"GOAL: {i} TRIG: {goal.Trigger}");
 				}
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfLevelGoals Clone() {
+			DfLevelGoals clone = new();
+			clone.Goals.AddRange(this.Goals.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Component = UnityEngine.Component;
 
 namespace MZZT.DataBinding {
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
@@ -19,7 +20,8 @@ namespace MZZT.DataBinding {
 		protected IDataboundObject DataboundObject {
 			get {
 				if (this.databoundObject == null) {
-					this.databoundObject = this.GetComponentInParent<IDataboundObject>();
+					this.databoundObject = this.GetComponentsInParent<IDataboundObject>(true)
+						.First(x => ((Component)x).gameObject != this.gameObject);
 				}
 				return this.databoundObject;
 			}
@@ -296,8 +298,18 @@ namespace MZZT.DataBinding {
 			this.subscribed = false;
 		}
 
-		protected virtual void OnEnable() => this.SubscribeObject();
-		protected virtual void OnDisable() => this.UnsubscribeObject();
+		protected virtual void OnEnable() {
+			this.SubscribeObject();
+
+			if (this.changeListenMode.HasFlag(ChangeListenModes.PollOnEnable)) {
+				object val = this.Value;
+				if (val != this.lastValue) {
+					this.lastValue = val;
+					this.Invalidate();
+				}
+			}
+		}
+		//protected virtual void OnDisable() => this.UnsubscribeObject();
 
 		private void Update() {
 			if (!this.subscribed && this.transform.hasChanged) {
@@ -319,7 +331,8 @@ namespace MZZT.DataBinding {
 		SubscribeToINotifyPropertyChangedEvent = 1,
 		SubscribeToOtherDotNetEvent = 2,
 		SubscribeToUnityEvent = 4,
-		PollEachFrame = 8
+		PollEachFrame = 8,
+		PollOnEnable = 16
 	}
 
 	public interface IDataboundUi {

@@ -11,11 +11,11 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces MSG file.
 	/// </summary>
-	public class DfMessages : TextBasedFile<DfMessages> {
+	public class DfMessages : TextBasedFile<DfMessages>, ICloneable {
 		/// <summary>
 		/// A message.
 		/// </summary>
-		public class Message {
+		public class Message : ICloneable {
 			/// <summary>
 			/// The priority of the message.
 			/// </summary>
@@ -24,6 +24,12 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The text of the message.
 			/// </summary>
 			public string Text { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Message Clone() => new() {
+				Priority = this.Priority,
+				Text = this.Text
+			};
 		}
 
 		/// <summary>
@@ -41,7 +47,7 @@ namespace MZZT.DarkForces.FileFormats {
 			bool readExtraLine = false;
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.SequenceEqual(new[] { "MSG", "1.0" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "MSG", "1.0" }) ?? false)) {
 				this.AddWarning("MSG file header not found.");
 			} else {
 				readExtraLine = true;
@@ -106,6 +112,15 @@ namespace MZZT.DarkForces.FileFormats {
 			foreach ((int id, Message message) in this.Messages) {
 				await this.WriteLineAsync(writer, $"{id} {message.Priority}: {this.Escape(message.Text)}");
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfMessages Clone() {
+			DfMessages clone = new();
+			foreach ((int key, Message value) in this.Messages) {
+				clone.Messages[key] = value.Clone();
+			}
+			return clone;
 		}
 	}
 }

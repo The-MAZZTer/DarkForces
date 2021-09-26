@@ -24,6 +24,18 @@ namespace MZZT.DarkForces.FileFormats {
 			[typeof(LandruPalette)] = "PLTT",
 			[typeof(CreativeVoice)] = "VOIC"
 		};
+		/// <summary>
+		/// Map of type names to the internal types used.
+		/// </summary>
+		public readonly static IReadOnlyDictionary<string, Type> FileTypes = new Dictionary<string, Type>() {
+			["ANIM"] = typeof(LandruAnimation),
+			["DELT"] = typeof(LandruDelt),
+			["FILM"] = typeof(LandruFilm),
+			["FONT"] = typeof(LandruFont),
+			["GMID"] = typeof(DfGeneralMidi),
+			["PLTT"] = typeof(LandruPalette),
+			["VOIC"] = typeof(CreativeVoice)
+		};
 
 		/// <summary>
 		/// A header defining a single file.
@@ -220,16 +232,10 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Read an embedded file.
 		/// </summary>
-		/// <param name="type">The type of the embedded file.</param>
 		/// <param name="name">The name of the embedded file, without type or extension.</param>
-		/// <param name="typeName">The type field value, or null to autodetect based on type.</param>
-		/// <returns>The read embedded file object.</returns>
-		public async Task<IFile> GetFileAsync(Type type, string name, string typeName = null) {
-			if (typeName == null) {
-				if (!FileTypeNames.TryGetValue(type, out typeName)) {
-					throw new ArgumentException($"Invalid Landru file type.");
-				}
-			}
+		/// <param name="typeName">The type field value.</param>
+		/// <returns>A stream for the embedded file.</returns>
+		public async Task<Stream> GetFileStreamAsync(string name, string typeName) {
 			typeName = typeName.ToUpper();
 			uint offset = (uint)Marshal.SizeOf<FileHeader>() * (uint)(this.files.Count + 2);
 			long size = -1;
@@ -242,7 +248,7 @@ namespace MZZT.DarkForces.FileFormats {
 				offset += (uint)(info.Size + Marshal.SizeOf<FileHeader>());
 			}
 			if (size < 0) {
-				throw new FileNotFoundException();
+				return null;
 			}
 
 			if (offset < this.pos) {
@@ -260,14 +266,67 @@ namespace MZZT.DarkForces.FileFormats {
 				throw new EndOfStreamException();
 			}
 
-			using MemoryStream mem = new((int)size);
-			//using ScopedStream stream = new(this.stream, size);
-			await this.stream.CopyToWithLimitAsync(mem, (int)size);
-			mem.Position = 0;
-			IFile ret = (IFile)Activator.CreateInstance(type);
-			await ret.LoadAsync(mem);
-			this.pos += (uint)mem.Length;
-			return ret;
+			MemoryStream mem = new((int)size);
+			try {
+				await this.stream.CopyToWithLimitAsync(mem, (int)size);
+				this.pos += (uint)size;
+				mem.Position = 0;
+			} catch (Exception) {
+				mem.Dispose();
+				throw;
+			}
+			return mem;
+		}
+
+		/// <summary>
+		/// Read an embedded file.
+		/// </summary>
+		/// <param name="name">The name of the embedded file, without type or extension.</param>
+		/// <param name="type">The type of the embedded file.</param>
+		/// <param name="typeName">The type field value, or null to autodetect based on type.</param>
+		/// <returns>The read embedded file object.</returns>
+		public async Task<IFile> GetFileAsync(string name, Type type, string typeName = null) {
+			if (typeName == null) {
+				if (!FileTypeNames.TryGetValue(type, out typeName)) {
+					throw new ArgumentException($"Invalid Landru file type.", nameof(type));
+				}
+			}
+			typeName = typeName.ToUpper();
+
+			Stream stream = await this.GetFileStreamAsync(name, typeName);
+			if (stream == null) {
+				return null;
+			}
+
+			using (stream) {
+				IFile ret = (IFile)Activator.CreateInstance(type);
+				await ret.LoadAsync(stream);
+				return ret;
+			}
+		}
+
+		/// <summary>
+		/// Read an embedded file.
+		/// </summary>
+		/// <param name="name">The name of the embedded file, without type or extension.</param>
+		/// <param name="typeName">The type field value.</param>
+		/// <returns>The read embedded file object.</returns>
+		public async Task<IFile> GetFileAsync(string name, string typeName) {
+			typeName = typeName.ToUpper();
+			if (!FileTypes.TryGetValue(typeName, out Type type)) {
+				throw new ArgumentException($"Invalid Landru file type.", nameof(typeName));
+			}
+
+			Stream stream =await this.GetFileStreamAsync(name, typeName);
+			if (stream == null) {
+				return null;
+			}
+
+			using (stream) {
+				IFile ret = (IFile)Activator.CreateInstance(type);
+				await ret.LoadAsync(stream);
+				return ret;
+			}
 		}
 
 		/// <summary>
@@ -278,7 +337,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <param name="type">The type field value, or null to autodetect based on type.</param>
 		/// <returns>The read embedded file object.</returns>
 		public async Task<T> GetFileAsync<T>(string name, string type = null) where T : File<T>, new() {
-			return (T)await this.GetFileAsync(typeof(T), name, type);
+			return (T)await this.GetFileAsync(name, typeof(T), type);
 		}
 
 		public override bool CanSave => true;
@@ -335,6 +394,18 @@ namespace MZZT.DarkForces.FileFormats {
 
 			this.files.Add(header);
 			this.fileData.Add(file);
+		}
+
+		/// <summary>
+		/// Adds a file to the LFD.
+		/// </summary>
+		/// <typeparam name="T">Type of the embedded file.</typeparam>
+		/// <param name="name">The file name.</param>
+		/// <param name="type">The type/extension of the file.</param>
+		/// <param name="stream">The data stream.</param>
+		public async Task AddFileAsync<T>(string name, string type, Stream stream) where T : File<T>, new() {
+			Raw raw = await Raw.ReadAsync(stream);
+			this.AddFile(name, type, raw);
 		}
 
 		/// <summary>

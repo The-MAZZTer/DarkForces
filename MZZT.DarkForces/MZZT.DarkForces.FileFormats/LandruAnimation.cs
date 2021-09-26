@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Landru ANIM file.
 	/// </summary>
-	public class LandruAnimation : DfFile<LandruAnimation> {
+	public class LandruAnimation : DfFile<LandruAnimation>, ICloneable {
 		/// <summary>
 		/// The individual frames of animation as DELTs.
 		/// </summary>
@@ -67,6 +68,13 @@ namespace MZZT.DarkForces.FileFormats {
 				memory.Position = 0;
 				memory.CopyTo(stream);
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public LandruAnimation Clone() {
+			LandruAnimation clone = new();
+			clone.Pages.AddRange(this.Pages.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

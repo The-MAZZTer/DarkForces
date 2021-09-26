@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark forces JEDI.LVL file.
 	/// </summary>
-	public class DfLevelList : TextBasedFile<DfLevelList> {
+	public class DfLevelList : TextBasedFile<DfLevelList>, ICloneable {
 		/// <summary>
 		/// A level reference.
 		/// </summary>
-		public class Level {
+		public class Level : ICloneable {
 			/// <summary>
 			/// The name displayed in the menu.
 			/// </summary>
@@ -26,6 +27,16 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Paths used by the LucasArts developers to store level data during development, unused in release build.
 			/// </summary>
 			public List<string> SearchPaths { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public Level Clone() {
+				Level clone = new() {
+					DisplayName = this.DisplayName,
+					FileName = this.FileName
+				};
+				clone.SearchPaths.AddRange(this.SearchPaths);
+				return clone;
+			}
 		}
 
 		/// <summary>
@@ -122,8 +133,15 @@ namespace MZZT.DarkForces.FileFormats {
 			await this.WriteLineAsync(writer, $"LEVELS {this.Levels.Count}");
 
 			foreach (Level level in this.Levels) {
-				await this.WriteLineAsync(writer, $"{level.DisplayName}, {level.FileName}, {string.Join(";", level.SearchPaths)}");
+				await writer.WriteLineAsync($"{level.DisplayName}, {level.FileName}, {string.Join(";", level.SearchPaths)}");
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfLevelList Clone() {
+			DfLevelList clone = new();
+			clone.Levels.AddRange(this.Levels.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

@@ -432,8 +432,8 @@ namespace MZZT.DarkForces {
 					maxY += this.padding.w;
 				}
 
-				float width = Math.Max(maxX - viewport.x, viewport.x - minY) * 2;
-				float height = Math.Max(maxY - viewport.y, viewport.y - minY) * 2;
+				float width = Mathf.Max(maxX - viewport.x, viewport.x - minY) * 2;
+				float height = Mathf.Max(maxY - viewport.y, viewport.y - minY) * 2;
 
 				float viewportWidth = viewport.width;
 				float viewportHeight = viewport.height;

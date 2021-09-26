@@ -11,11 +11,11 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// The Dark Forces CUTSCENE.LST file.
 	/// </summary>
-	public class DfCutsceneList : TextBasedFile<DfCutsceneList> {
+	public class DfCutsceneList : TextBasedFile<DfCutsceneList>, ICloneable {
 		/// <summary>
 		/// Definition of a cutscene.
 		/// </summary>
-		public class Cutscene {
+		public class Cutscene : ICloneable {
 			/// <summary>
 			/// The LFD file that contains the cutscene resources.
 			/// </summary>
@@ -44,6 +44,17 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Audio volume.
 			/// </summary>
 			public int Volume { get; set; } = 100;
+
+			object ICloneable.Clone() => this.Clone();
+			public Cutscene Clone() => new() {
+				CutmuseSequence = this.CutmuseSequence,
+				EscapeToCutscene = this.EscapeToCutscene,
+				FilmFile = this.FilmFile,
+				Lfd = this.Lfd,
+				NextCutscene = this.NextCutscene,
+				Speed = this.Speed,
+				Volume = this.Volume
+			};
 		}
 
 		/// <summary>
@@ -59,7 +70,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.SequenceEqual(new[] { "CUT", "1.0" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "CUT", "1.0" }) ?? false)) {
 				this.AddWarning("CUT file header not found.");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);
@@ -113,6 +124,10 @@ namespace MZZT.DarkForces.FileFormats {
 					continue;
 				}
 
+				if (speed < 5 || speed > 20) {
+					this.AddWarning("Cutscene speeds must be between 5 and 20.");
+				}
+
 				this.Cutscenes[id] = new() {
 					Lfd = lfd,
 					FilmFile = film,
@@ -134,6 +149,10 @@ namespace MZZT.DarkForces.FileFormats {
 		public override async Task SaveAsync(Stream stream) {
 			this.ClearWarnings();
 
+			if (this.Cutscenes.Values.Any(x => x.Speed < 5 || x.Speed > 20)) {
+				this.AddWarning("Cutscene speeds must be between 5 and 20.");
+			}
+
 			using StreamWriter writer = new(stream, Encoding.ASCII, 1024, true);
 
 			await writer.WriteLineAsync("CUT 1.0");
@@ -144,6 +163,15 @@ namespace MZZT.DarkForces.FileFormats {
 				await this.WriteLineAsync(writer,
 					$"{id}: {cutscene.Lfd} {cutscene.FilmFile} {cutscene.Speed} {cutscene.NextCutscene} {cutscene.EscapeToCutscene} {cutscene.CutmuseSequence} {cutscene.Volume}");
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfCutsceneList Clone() {
+			DfCutsceneList clone = new();
+			foreach ((int key, Cutscene value) in this.Cutscenes) {
+				clone.Cutscenes[key] = value.Clone();
+			}
+			return clone;
 		}
 	}
 }

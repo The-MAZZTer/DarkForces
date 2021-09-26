@@ -11,7 +11,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// Dark Forces 3DO files.
 	/// </summary>
-	public class Df3dObject : TextBasedFile<Df3dObject> {
+	public class Df3dObject : TextBasedFile<Df3dObject>, ICloneable {
 		/// <summary>
 		/// The different shading modes specified in 3DOs.
 		/// </summary>
@@ -45,7 +45,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A triangle or quad polygon specified by a 3DO.
 		/// </summary>
-		public class Polygon {
+		public class Polygon : ICloneable {
 			/// <summary>
 			/// The vertices of the polygon.
 			/// </summary>
@@ -62,12 +62,23 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The UV map for the polygon.
 			/// </summary>
 			public List<Vector2> TextureVertices { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public Polygon Clone() {
+				Polygon clone = new() {
+					Color = this.Color,
+					ShadingMode = this.ShadingMode
+				};
+				clone.TextureVertices.AddRange(this.TextureVertices);
+				clone.Vertices.AddRange(this.Vertices);
+				return clone;
+			}
 		}
 
 		/// <summary>
 		/// Collections of polygons into named objects.
 		/// </summary>
-		public class Object {
+		public class Object : ICloneable {
 			/// <summary>
 			/// The object name.
 			/// </summary>
@@ -81,6 +92,16 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The polygons used to constrct the object.
 			/// </summary>
 			public List<Polygon> Polygons { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public Object Clone() {
+				Object clone = new() {
+					Name = this.Name,
+					TextureFile = this.TextureFile
+				};
+				clone.Polygons.AddRange(this.Polygons.Select(x => x.Clone()));
+				return clone;
+			}
 		}
 
 		/// <summary>
@@ -600,6 +621,16 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 				}
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public Df3dObject Clone() {
+			Df3dObject clone = new() {
+				Name = this.Name,
+				PalFile = this.PalFile
+			};
+			clone.Objects.AddRange(this.Objects.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

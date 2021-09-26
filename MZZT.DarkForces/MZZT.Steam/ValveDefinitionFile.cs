@@ -12,7 +12,7 @@ namespace MZZT.Steam {
 	public class ValveDefinitionFile : File<ValveDefinitionFile> {
 		public override bool CanLoad => true;
 
-		public async override Task LoadAsync(Stream stream) {
+		public override Task LoadAsync(Stream stream) {
 			this.Tokens.Clear();
 			this.Tokens.AddRange(this.Tokenize(stream).Where(x => !(x is CommentToken)));
 
@@ -24,6 +24,7 @@ namespace MZZT.Steam {
 			}
 
 			this.RootName = nameToken.Text;
+			return Task.CompletedTask;
 		}
 
 		public T Detokenize<T>() {

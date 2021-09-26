@@ -7161,8 +7161,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 658956221}
-  - component: {fileID: 658956220}
-  - component: {fileID: 658956219}
   - component: {fileID: 658956222}
   - component: {fileID: 658956224}
   - component: {fileID: 658956223}
@@ -7173,41 +7171,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &658956219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 658956218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e11d70c114204334694ef2f77f8c190e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  duplicateAction: 2
-  persistAcrossScenes: 0
-  fullBright: 0
-  bypassCmpDithering: 1
-  simpleShader: {fileID: 4800000, guid: f3f7d7cc68ab0f1428144ca71de16cb9, type: 3}
-  transparentShader: {fileID: 0}
-  colorShader: {fileID: 4800000, guid: 43716613a537e694180e59ec894830f4, type: 3}
-  planeShader: {fileID: 4800000, guid: 1a45cdc7378c0514493891ded350127d, type: 3}
---- !u!114 &658956220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 658956218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9895b0db1478fc44da3c59dfca56da9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  duplicateAction: 2
-  persistAcrossScenes: 0
-  darkForcesFolder: 
 --- !u!4 &658956221
 Transform:
   m_ObjectHideFlags: 0

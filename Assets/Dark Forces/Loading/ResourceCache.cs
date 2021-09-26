@@ -113,9 +113,9 @@ namespace MZZT.DarkForces {
 		public byte[] ImportPalette(DfPalette pal) {
 			if (!this.importedPalCache.TryGetValue(pal, out byte[] palette)) {
 				this.importedPalCache[pal] = palette = pal.Palette.SelectMany(x => new byte[] {
-					(byte)Math.Round(x.R * 255 / 63f),
-					(byte)Math.Round(x.G * 255 / 63f),
-					(byte)Math.Round(x.B * 255 / 63f),
+					(byte)Mathf.Clamp(Mathf.Round(x.R * 255 / 63f), 0, 255),
+					(byte)Mathf.Clamp(Mathf.Round(x.G * 255 / 63f), 0, 255),
+					(byte)Mathf.Clamp(Mathf.Round(x.B * 255 / 63f), 0, 255),
 					255
 				}).ToArray();
 			}

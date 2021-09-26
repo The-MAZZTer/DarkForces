@@ -10,7 +10,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Landru FILM file.
 	/// </summary>
-	public class LandruFilm : DfFile<LandruFilm> {
+	public class LandruFilm : DfFile<LandruFilm>, ICloneable {
 		/// <summary>
 		/// Magic number in header.
 		/// </summary>
@@ -263,7 +263,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A FILM object.
 		/// </summary>
-		public class FilmObject {
+		public class FilmObject : ICloneable {
 			internal ObjectHeader header;
 
 			/// <summary>
@@ -285,12 +285,22 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The commands run on the object.
 			/// </summary>
 			public List<Command> Commands { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public FilmObject Clone() {
+				FilmObject clone = new() {
+					Name = this.Name,
+					Type = this.Type
+				};
+				clone.Commands.AddRange(this.Commands.Select(x => x.Clone()));
+				return clone;
+			}
 		}
 
 		/// <summary>
 		/// A command to run on an object.
 		/// </summary>
-		public class Command {
+		public class Command : ICloneable {
 			internal CommandHeader header;
 
 			/// <summary>
@@ -305,6 +315,12 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The command parameters.
 			/// </summary>
 			public short[] Parameters { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Command Clone() => new() {
+				Parameters = this.Parameters.ToArray(),
+				Type = this.Type
+			};
 		}
 
 		public override bool CanLoad => true;
@@ -402,6 +418,15 @@ namespace MZZT.DarkForces.FileFormats {
 				TotalLength = 0x12,
 				BlockType = BlockTypes.End
 			}, Endianness.Keep, 0x12);
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public LandruFilm Clone() {
+			LandruFilm clone = new() {
+				FilmLength = this.FilmLength
+			};
+			clone.Objects.AddRange(this.Objects.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using MZZT.Extensions;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces CMP file.
 	/// </summary>
-	public class DfColormap : DfFile<DfColormap> {
+	public class DfColormap : DfFile<DfColormap>, ICloneable {
 		/// <summary>
 		/// The full file data.
 		/// </summary>
@@ -58,7 +59,7 @@ namespace MZZT.DarkForces.FileFormats {
 		public override async Task SaveAsync(Stream stream) {
 			this.ClearWarnings();
 
-			if (this.PaletteMaps.GetLength(0) != 32 || this.PaletteMaps.GetLength(1) != 256) {
+			if (this.PaletteMaps.Length != 32 || this.PaletteMaps.Any(x => x.Length != 256)) {
 				throw new FormatException("Expected 32 light levels and a 256 color map in PaletteMaps!");
 			}
 			if (this.HeadlightLightLevels.Length != 128) {
@@ -78,5 +79,11 @@ namespace MZZT.DarkForces.FileFormats {
 
 			await stream.WriteAsync(data);
 		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfColormap Clone() => new() {
+			HeadlightLightLevels = this.HeadlightLightLevels.ToArray(),
+			PaletteMaps = this.PaletteMaps.Select(x => x.ToArray()).ToArray()
+		};
 	}
 }

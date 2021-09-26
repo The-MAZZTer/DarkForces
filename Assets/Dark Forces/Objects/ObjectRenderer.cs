@@ -86,7 +86,7 @@ namespace MZZT.DarkForces {
 			if (radius > 0 && height != 0) {
 				CapsuleCollider collider = this.gameObject.AddComponent<CapsuleCollider>();
 				collider.center = new Vector3(0, -height / 2 * LevelGeometryGenerator.GEOMETRY_SCALE, 0);
-				collider.height = Math.Abs(height * LevelGeometryGenerator.GEOMETRY_SCALE);
+				collider.height = Mathf.Abs(height * LevelGeometryGenerator.GEOMETRY_SCALE);
 				collider.radius = radius * LevelGeometryGenerator.GEOMETRY_SCALE;
 			}
 

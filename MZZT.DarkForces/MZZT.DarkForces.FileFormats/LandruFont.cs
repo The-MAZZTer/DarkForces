@@ -11,7 +11,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Landru FONT file.
 	/// </summary>
-	public class LandruFont : DfFile<LandruFont> {
+	public class LandruFont : DfFile<LandruFont>, ICloneable {
 		/// <summary>
 		/// The FONT file header.
 		/// </summary>
@@ -64,7 +64,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A character.
 		/// </summary>
-		public struct Character {
+		public struct Character : ICloneable {
 			/// <summary>
 			/// Character width.
 			/// </summary>
@@ -73,6 +73,12 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The raw 1-bit pixel data.
 			/// </summary>
 			public BitArray Pixels;
+
+			object ICloneable.Clone() => this.Clone();
+			public Character Clone() => new() {
+				Pixels = new BitArray(this.Pixels),
+				Width = this.Width
+			};
 		}
 
 		/// <summary>
@@ -172,6 +178,16 @@ namespace MZZT.DarkForces.FileFormats {
 
 				await stream.WriteAsync(buffer, 0, widthBytes * this.header.Height);
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public LandruFont Clone() {
+			LandruFont clone = new() {
+				First = this.First,
+				Height = this.Height
+			};
+			clone.Characters.AddRange(this.Characters.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

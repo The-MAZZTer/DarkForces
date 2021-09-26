@@ -11,7 +11,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// Represents data for a VOC/VOIC file.
 	/// </summary>
-	public class CreativeVoice : DfFile<CreativeVoice> {
+	public class CreativeVoice : DfFile<CreativeVoice>, ICloneable {
 		/// <summary>
 		/// The file header of the VOC.
 		/// </summary>
@@ -232,7 +232,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A block of audio data.
 		/// </summary>
-		public class AudioData {
+		public class AudioData : ICloneable {
 			/// <summary>
 			/// The type of block. Not all fields are applicable for all blocks/
 			/// </summary>
@@ -280,6 +280,19 @@ namespace MZZT.DarkForces.FileFormats {
 				get => this.RepeatCount >= ushort.MaxValue;
 				set => this.RepeatCount = value ? ushort.MaxValue : 0;
 			}
+
+			object ICloneable.Clone() => this.Clone();
+			public AudioData Clone() => new() {
+				BitsPerSample = this.BitsPerSample,
+				Channels = this.Channels,
+				Codec = this.Codec,
+				Data = this.Data.ToArray(),
+				Frequency = this.Frequency,
+				RepeatCount = this.RepeatCount,
+				RepeatStart = this.RepeatStart,
+				SilenceLength = this.SilenceLength,
+				Type = this.Type
+			};
 		}
 
 		/// <summary>
@@ -712,6 +725,15 @@ namespace MZZT.DarkForces.FileFormats {
 				Type = BlockTypes.Terminator
 			};
 			await stream.WriteAsync(blockHeader);
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public CreativeVoice Clone() {
+			CreativeVoice clone = new();
+			clone.AudioBlocks.AddRange(this.AudioBlocks.Select(x => x.Clone()));
+			clone.Comments.AddRange(this.Comments);
+			clone.Markers.AddRange(this.Markers);
+			return clone;
 		}
 	}
 }

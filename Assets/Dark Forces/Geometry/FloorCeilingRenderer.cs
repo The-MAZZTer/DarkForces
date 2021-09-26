@@ -14,7 +14,7 @@ namespace MZZT.DarkForces {
 	/// </summary>
 	public class FloorCeilingRenderer : MonoBehaviour {
 		// Based off of sample code from https://www.habrador.com/tutorials/math/5-line-line-intersection/
-		private bool IsIntersecting(Vector2 l1_start, Vector2 l1_end, Vector2 l2_start, Vector2 l2_end) {
+		private static bool IsIntersecting(Vector2 l1_start, Vector2 l1_end, Vector2 l2_start, Vector2 l2_end) {
 			//Direction of the lines
 			Vector2 l1_dir = (l1_end - l1_start).normalized;
 			Vector2 l2_dir = (l2_end - l2_start).normalized;
@@ -42,13 +42,13 @@ namespace MZZT.DarkForces {
 			// this line as a polygon line.
 
 			//Step 2: are the lines parallel? -> no solutions
-			if (this.IsParallel(l1_normal, l2_normal)) {
+			if (IsParallel(l1_normal, l2_normal)) {
 				//Step 3: are the lines the same line? -> infinite amount of solutions
 				//Pick one point on each line and test if the vector between the points is orthogonal to one of the normals
-				if (this.IsOrthogonal(l1_start - l2_start, l1_normal)) {
+				if (IsOrthogonal(l1_start - l2_start, l1_normal)) {
 					//Debug.Log("Same line so infinite amount of solutions!");
-					if (this.IsBetween(l1_start, l1_end, l2_start) || this.IsBetween(l1_start, l1_end, l2_end) ||
-						this.IsBetween(l2_start, l2_end, l1_start) || this.IsBetween(l2_start, l2_end, l1_end)) {
+					if (IsBetween(l1_start, l1_end, l2_start) || IsBetween(l1_start, l1_end, l2_end) ||
+						IsBetween(l2_start, l2_end, l1_start) || IsBetween(l2_start, l2_end, l1_end)) {
 
 						return true;
 					}
@@ -67,11 +67,11 @@ namespace MZZT.DarkForces {
 
 
 			//Step 5: but we have line segments so we have to check if the intersection point is within the segment
-			return this.IsBetween(l1_start, l1_end, intersectPoint) && this.IsBetween(l2_start, l2_end, intersectPoint);
+			return IsBetween(l1_start, l1_end, intersectPoint) && IsBetween(l2_start, l2_end, intersectPoint);
 		}
 
 		//Are 2 vectors parallel?
-		private bool IsParallel(Vector2 v1, Vector2 v2) {
+		private static bool IsParallel(Vector2 v1, Vector2 v2) {
 			//2 vectors are parallel if the angle between the vectors are 0 or 180 degrees
 			if (Vector2.Angle(v1, v2) == 0f || Vector2.Angle(v1, v2) == 180f) {
 				return true;
@@ -81,14 +81,14 @@ namespace MZZT.DarkForces {
 		}
 
 		//Are 2 vectors orthogonal?
-		private bool IsOrthogonal(Vector2 v1, Vector2 v2) {
+		private static bool IsOrthogonal(Vector2 v1, Vector2 v2) {
 			//2 vectors are orthogonal is the dot product is 0
 			//We have to check if close to 0 because of floating numbers
 			return Mathf.Abs(Vector2.Dot(v1, v2)) < 0.000001f;
 		}
 
 		//Is a point c between 2 other points a and b?
-		private bool IsBetween(Vector2 a, Vector2 b, Vector2 c) {
+		private static bool IsBetween(Vector2 a, Vector2 b, Vector2 c) {
 			bool isBetween = false;
 
 			//Entire line segment
@@ -106,7 +106,7 @@ namespace MZZT.DarkForces {
 			return isBetween;
 		}
 
-		private (bool, float) TestCandidateVertices(IEnumerable<List<Vertex>> shapes, Vertex previous, Vertex[] candidate, Vertex next) {
+		private static (bool, float) TestCandidateVertices(IEnumerable<List<Vertex>> shapes, Vertex previous, Vertex[] candidate, Vertex next) {
 			// This function determines if a candidate polygon is entirely within the bounds of the sector.
 
 			Vector2[] vectors = candidate.Select(x => x.Position.ToUnity()).ToArray();
@@ -195,7 +195,7 @@ namespace MZZT.DarkForces {
 					}
 
 					// Check to see if the new line crosses.
-					if (this.IsIntersecting(start1, end1, start2.Position.ToUnity(), end2.Position.ToUnity())) {
+					if (IsIntersecting(start1, end1, start2.Position.ToUnity(), end2.Position.ToUnity())) {
 						return (false, 0);
 					}
 				}
@@ -204,7 +204,7 @@ namespace MZZT.DarkForces {
 			return (true, angle);
 		}
 
-		private (bool, float) TestCandidateVertices2(IEnumerable<List<Vertex>> shapes,
+		private static (bool, float) TestCandidateVertices2(IEnumerable<List<Vertex>> shapes,
 			Vertex previous, Vertex[] candidate, Vertex next, Vertex previous2, Vertex next2) {
 
 			// This is an alternate method specifically for dealing with subsectors.
@@ -317,14 +317,14 @@ namespace MZZT.DarkForces {
 						continue;
 					}
 
-					if (this.IsIntersecting(start1, end1a,
+					if (IsIntersecting(start1, end1a,
 						start2.Position.ToUnity(),
 						end2.Position.ToUnity())) {
 
 						return (false, 0);
 					}
 
-					if (this.IsIntersecting(start1, end1b,
+					if (IsIntersecting(start1, end1b,
 						start2.Position.ToUnity(),
 						end2.Position.ToUnity())) {
 
@@ -341,7 +341,7 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		/// <param name="sector">The sector.</param>
 		/// <returns>An array of vertex indices, in groups of three, defining triangles for the polygons.</returns>
-		public int[] SplitIntoFloorTris(Sector sector) {
+		public static int[] SplitIntoFloorTris(Sector sector) {
 			// Allow quick lookup of a wall based on its left vertex.
 			Dictionary<Vertex, int> map = sector.Walls
 				.GroupBy(x => x.LeftVertex)
@@ -403,8 +403,7 @@ namespace MZZT.DarkForces {
 
 			// Weird sector (no volume?), can't make floor for it!
 			if (shapes.Count < 1) {
-				// Maybe we should just return empty array?
-				return null;
+				return Array.Empty<int>();
 			}
 
 			// Old way, check the shape wall length, the idea is the outer wall has the longest length.
@@ -478,7 +477,7 @@ namespace MZZT.DarkForces {
 							// the border of the triangle.into a single shape.
 							Vertex vertex = shape[k % shape.Count];
 							Vertex[] candidate = new[] { innerShape[j], innerShape[(j + 1 + innerShape.Count) % innerShape.Count], vertex };
-							(bool pass, float angle) = this.TestCandidateVertices2(innerShapes.Prepend(outerShape),
+							(bool pass, float angle) = TestCandidateVertices2(innerShapes.Prepend(outerShape),
 								innerShape[(j + innerShape.Count - 1) % innerShape.Count],
 								candidate,
 								innerShape[(j + 2) % innerShape.Count],
@@ -545,7 +544,7 @@ namespace MZZT.DarkForces {
 
 				// Take three consecutive vertices and see if the polygon is entirely inside the sector or not.
 				candidate = outerShape.Concat(outerShape.Take(2)).Skip(pos).Take(3).ToArray();
-				(pass, angle) = this.TestCandidateVertices(innerShapes.Prepend(outerShape),
+				(pass, angle) = TestCandidateVertices(innerShapes.Prepend(outerShape),
 					outerShape[(pos + outerShape.Count - 1) % outerShape.Count],
 					candidate,
 					outerShape[(pos + 3) % outerShape.Count]);
@@ -862,7 +861,7 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		/// <param name="sector">The sector</param>
 		public async Task RenderAsync(Sector sector) {
-			int[] tris = this.SplitIntoFloorTris(sector);
+			int[] tris = SplitIntoFloorTris(sector);
 
 			// Figure out which vertices are used and renumber only using the used ones.
 			int[] used = tris.Distinct().OrderBy(x => x).ToArray();

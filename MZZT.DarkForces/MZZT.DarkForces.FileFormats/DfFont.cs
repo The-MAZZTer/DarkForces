@@ -10,7 +10,33 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces FNT file.
 	/// </summary>
-	public class DfFont : DfFile<DfFont> {
+	public class DfFont : DfFile<DfFont>, ICloneable {
+		/// <summary>
+		/// Data for a single character in the font.
+		/// </summary>
+		public class Character : ICloneable {
+			internal CharHeader header;
+
+			/// <summary>
+			/// The width of the character in pixels.
+			/// </summary>
+			public byte Width {
+				get => this.header.Width;
+				set => this.header.Width = value;
+			}
+
+			/// <summary>
+			/// The raw data for the image, in 8-bit pixels, from top to bottom, left to right.
+			/// </summary>
+			public byte[] Data { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Character Clone() => new() {
+				Data = this.Data.ToArray(),
+				Width = this.Width
+			};
+		}
+
 		/// <summary>
 		/// The magic number.
 		/// </summary>
@@ -94,6 +120,14 @@ namespace MZZT.DarkForces.FileFormats {
 		private Header header;
 
 		/// <summary>
+		/// The height of the font in pixels.
+		/// </summary>
+		public byte Height {
+			get => this.header.Height;
+			set => this.header.Height = value;
+		}
+
+		/// <summary>
 		/// The first character in the font.
 		/// </summary>
 		public byte First {
@@ -104,7 +138,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// The raw data for each font character.
 		/// </summary>
-		public List<byte[,]> Characters { get; set; }
+		public List<Character> Characters { get; } = new();
 
 		public override bool CanLoad => true;
 
@@ -121,17 +155,14 @@ namespace MZZT.DarkForces.FileFormats {
 
 			int height = this.header.Height;
 			for (int i = this.header.First; i <= this.header.Last; i++) {
-				int width = (await stream.ReadAsync<CharHeader>()).Width;
+				Character character = new() {
+					header = await stream.ReadAsync<CharHeader>()
+				};
+				int width = character.Width;
 
-				byte[] buffer = new byte[width * height];
-				await stream.ReadAsync(buffer, 0, width * height);
-				byte[,] pixels = new byte[height, width];
-				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < height; y++) {
-						pixels[y, x] = buffer[x * height + y];
-					}
-				}
-				this.Characters.Add(pixels);
+				character.Data = new byte[width * height];
+				await stream.ReadAsync(character.Data, 0, width * height);
+				this.Characters.Add(character);
 			}
 		}
 
@@ -140,33 +171,33 @@ namespace MZZT.DarkForces.FileFormats {
 		public override async Task SaveAsync(Stream stream) {
 			this.ClearWarnings();
 
-			int count = this.header.Last - this.header.First + 1;
-			if (this.Characters.Select(x => x.GetLength(0)).Distinct().Count() > 1) {
-				throw new FormatException("All characters must have the same height!");
+			if (this.Characters.Any(x => x.Data == null)) {
+				throw new FormatException("All characters must have their Data field defined.");
+			}
+			if (this.Characters.Any(x => x.Data.Length != this.Height * x.Width)) {
+				throw new FormatException("All characters must have the current Data field size for their width and height.");
 			}
 
 			this.header.Last = (byte)(this.First + this.Characters.Count - 1);
-
-			int height = this.Characters.First().GetLength(0);
-			this.header.Height = (byte)height;
 			this.header.Magic = MAGIC;
 
 			await stream.WriteAsync(this.header);
 
-			foreach (byte[,] pixels in this.Characters) {
-				int width = pixels.GetLength(1);
-				await stream.WriteAsync(new CharHeader() {
-					Width = (byte)width
-				});
+			foreach (Character character in this.Characters) {
+				await stream.WriteAsync(character.header);
 
-				byte[] buffer = new byte[width * height];
-				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < height; y++) {
-						buffer[x * height + y] = pixels[y, x];
-					}
-				}
-				await stream.WriteAsync(buffer, 0, width * height);
+				await stream.WriteAsync(character.Data, 0, character.Data.Length);
 			}
+		}
+
+		object ICloneable.Clone() => throw new NotImplementedException();
+		public DfFont Clone() {
+			DfFont clone = new() {
+				First = this.First,
+				Height = this.Height
+			};
+			clone.Characters.AddRange(this.Characters.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

@@ -74,13 +74,17 @@ namespace MZZT.DarkForces.FileFormats {
 			List<string> currentValue = new();
 			for (int i = 0; i < line.Length; i++) {
 				// Is the current token a key?
-				if (line[i].EndsWith(":")) {
+				int index = line[i].IndexOf(":");
+				if (index >= 0) {
 					if (currentKey != null) {
 						ret[currentKey] = currentValue.ToArray();
 					}
 
-					currentKey = line[i].Substring(0, line[i].Length - 1).ToUpper();
+					currentKey = line[i].Substring(0, index).ToUpper();
 					currentValue.Clear();
+					if (index < line[i].Length - 1) {
+						currentValue.Add(line[i].Substring(index + 1));
+					}
 					continue;
 				}
 
@@ -106,9 +110,12 @@ namespace MZZT.DarkForces.FileFormats {
 			base.AddWarning(warning, line > 0 ? line : this.CurrentLine);
 		}
 
-		protected int CurrentLine { get; set; }
+		protected int CurrentLine { get; private set; }
 		protected void ResetCurrentLine() {
 			this.CurrentLine = 0;
+		}
+		protected void IncrementCurrentLine() {
+			this.CurrentLine++;
 		}
 
 		private bool inComment = false;

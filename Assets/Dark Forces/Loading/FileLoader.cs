@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Extensions;
+using MZZT.FileFormats;
 using MZZT.Steam;
 using System;
 using System.Collections.Generic;
@@ -78,40 +79,25 @@ namespace MZZT.DarkForces {
 			// Normally we could deserialize into a type but the format of this file doesn't work well for that.
 			// But we can read the tokens by hand.
 
-			// Start after the root { and end before the closing }.
-			int pos = 2;
-			int len = libraryFoldersVdf.Tokens.Count - 1;
+			int pos = 0;
 			List<string> libraryFolders = new List<string>();
-			while (pos < len) {
+			while (pos < libraryFoldersVdf.Tokens.Count) {
 				ValveDefinitionFile.Token token = libraryFoldersVdf.Tokens[pos];
 				pos++;
-				// This should be an int for the index of the library folder.
+
 				string property = (token as ValveDefinitionFile.StringToken)?.Text;
-				if (property == null) {
-					break;
+				if (property != "path" || pos >= libraryFoldersVdf.Tokens.Count) {
+					continue;
 				}
 
-				if (pos >= len) {
-					break;
-				}
-
-				// Advance until we find another string token, which will be the actual library folder path.
-				do {
-					token = libraryFoldersVdf.Tokens[pos];
-					pos++;
-				} while (pos < len && (token is ValveDefinitionFile.AssignmentToken ||
-					token is ValveDefinitionFile.CommentToken ||
-					token is ValveDefinitionFile.ConditionToken));
-
+				token = libraryFoldersVdf.Tokens[pos];
+				pos++;
 				string value = (token as ValveDefinitionFile.StringToken)?.Text;
 				if (value == null) {
-					break;
+					continue;
 				}
 
-				// Check to see if the key is actually a number just to be sure.
-				if (int.TryParse(property, out int _)) {
-					libraryFolders.Add(value);
-				}
+				libraryFolders.Add(value);
 			}
 
 			foreach (string libraryFolder in libraryFolders) {
@@ -235,12 +221,11 @@ namespace MZZT.DarkForces {
 		}
 
 		/// <summary>
-		/// Load in a file expected to be found in a GOB or standalone.
+		/// Gets a Stream for a file expected to be found in a GOB or standalone.
 		/// </summary>
-		/// <typeparam name="T">The data type of the file.</typeparam>
 		/// <param name="name">The name and extension of the file.</param>
-		/// <returns>The loaded object.</returns>
-		public async Task<T> LoadGobFileAsync<T>(string name) where T : DfFile<T>, new() {
+		/// <returns>The Stream you can read file data from.</returns>
+		public async Task<Stream> GetGobFileStreamAsync(string name) {
 			if (!this.gobMap.TryGetValue(name, out List<ResourceLocation> results)) {
 				return null;
 			}
@@ -248,14 +233,74 @@ namespace MZZT.DarkForces {
 			ResourceLocation location = results.Last();
 
 			// Open the GOB/file and read in the data at the specified offset and size.
-			using FileStream stream = new FileStream(location.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-			stream.Seek(location.Offset, SeekOrigin.Begin);
-			//using ScopedStream scope = new ScopedStream(stream, location.Length);
-			using MemoryStream mem = new MemoryStream((int)location.Length);
-			await stream.CopyToWithLimitAsync(mem, (int)location.Length);
-			mem.Position = 0;
-			// Load the data.
-			return await DfFile<T>.ReadAsync(mem);
+			FileStream stream = new FileStream(location.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+			Stream scoped = null;
+			try {
+				stream.Seek(location.Offset, SeekOrigin.Begin);
+				if (location.Offset > 0 || location.Length < stream.Length) {
+					scoped = new MemoryStream((int)location.Length);
+					await stream.CopyToWithLimitAsync(scoped, (int)location.Length);
+					scoped.Position = 0;
+				} else {
+					scoped = stream;
+				}
+			} catch (Exception) {
+				if (scoped != stream) {
+					scoped?.Dispose();
+				}
+				throw;
+			} finally {
+				if (scoped != stream) {
+					stream.Dispose();
+				}
+			}
+
+			return scoped;
+		}
+
+		/// <summary>
+		/// Load in a file expected to be found in a GOB or standalone.
+		/// </summary>
+		/// <param name="name">The name and extension of the file.</param>
+		/// <returns>The loaded object.</returns>
+		public async Task<IFile> LoadGobFileAsync(string name) {
+			Stream stream = await this.GetGobFileStreamAsync(name);
+			if (stream == null) {
+				return null;
+			}
+
+			using (stream) {
+				// Load the data
+				name = name.ToUpper();
+				if (!DfGobContainer.FileTypes.TryGetValue(name, out Type type)) {
+					if (!DfGobContainer.FileTypes.TryGetValue(Path.GetExtension(name), out type)) {
+						type = typeof(Raw);
+					}
+				}
+				IFile file = (IFile)Activator.CreateInstance(type);
+				await file.LoadAsync(stream);
+				return file;
+			}
+		}
+
+		/// <summary>
+		/// Load in a file expected to be found in a GOB or standalone.
+		/// </summary>
+		/// <typeparam name="T">The data type of the file.</typeparam>
+		/// <param name="name">The name and extension of the file.</param>
+		/// <returns>The loaded object.</returns>
+		public async Task<T> LoadGobFileAsync<T>(string name) where T : IFile, new() {
+			Stream stream = await this.GetGobFileStreamAsync(name);
+			if (stream == null) {
+				return default;
+			}
+
+			using (stream) {
+				// Load the data
+				IFile file = (IFile)Activator.CreateInstance(typeof(T));
+				await file.LoadAsync(stream);
+				return (T)file;
+			}
 		}
 
 		/// <summary>
@@ -286,11 +331,11 @@ namespace MZZT.DarkForces {
 		/// <summary>
 		/// Read a file from an LFD.
 		/// </summary>
-		/// <typeparam name="T">The type of the file.</typeparam>
 		/// <param name="lfdName">The name of the LFD, without path. Will use mod overrides.</param>
 		/// <param name="name">The name of the file without extension.</param>
-		/// <returns>The loaded object.</returns>
-		public async Task<T> LoadLfdFileAsync<T>(string lfdName, string name) where T : DfFile<T>, new() {
+		/// <param name="typeName">The type of the file.</param>
+		/// <returns>The Stream for the file.</returns>
+		public async Task<Stream> GetLfdFileStreamAsync(string lfdName, string name, string typeName) {
 			if (this.lfdOverrides.TryGetValue(lfdName.ToUpper(), out LfdInfo map)) {
 				lfdName = map.LfdPath;
 			} else {
@@ -298,37 +343,83 @@ namespace MZZT.DarkForces {
 			}
 			string lfdPath = Path.Combine(this.DarkForcesFolder, "LFD", lfdName);
 
-			T file = null;
-			// If we didn't read this LFD before, load in a map of its files so we don't have to read in
-			// the entire LFD file directory next time.
-			if (map.Files == null) {
-				LandruFileDirectory lfd = await LandruFileDirectory.ReadAsync(lfdPath, async lfd => {
-					// While we're here, read the file we need.
-					file = await lfd.GetFileAsync<T>(name);
-				});
-				map.Files = lfd.Files.ToDictionary(x => $"{x.name.ToUpper()}.{x.type.ToUpper()}", x => new ResourceLocation() {
-					FilePath = lfdName,
-					Offset = x.offset,
-					Length = x.size
-				});
-				this.lfdOverrides[lfdName.ToUpper()] = map;
-			} else {
-				if (!LandruFileDirectory.FileTypeNames.TryGetValue(typeof(T), out string type)) {
-					throw new FileNotFoundException();
+			Stream stream = null;
+			try {
+				// If we didn't read this LFD before, load in a map of its files so we don't have to read in
+				// the entire LFD file directory next time.
+				if (map.Files == null) {
+					LandruFileDirectory lfd = await LandruFileDirectory.ReadAsync(lfdPath, async lfd => {
+						// While we're here, read the file we need.
+						stream = await lfd.GetFileStreamAsync(name, typeName);
+					});
+					map.Files = lfd.Files.ToDictionary(x => $"{x.name.ToUpper()}.{x.type.ToUpper()}", x => new ResourceLocation() {
+						FilePath = lfdName,
+						Offset = x.offset,
+						Length = x.size
+					});
+					this.lfdOverrides[lfdName.ToUpper()] = map;
+				} else {
+					if (!map.Files.TryGetValue($"{name.ToUpper()}.{typeName.ToUpper()}", out ResourceLocation location)) {
+						return null;
+					}
+					// Otherwise seek right to the location in the LFD where the file is and read it.
+					using FileStream fileStream = new FileStream(lfdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+					fileStream.Seek(location.Offset, SeekOrigin.Begin);
+					stream = new MemoryStream((int)location.Length);
+					await fileStream.CopyToWithLimitAsync(stream, (int)location.Length);
+					stream.Position = 0;
 				}
-				if (!map.Files.TryGetValue($"{name.ToUpper()}.{type.ToUpper()}", out ResourceLocation location)) {
-					throw new FileNotFoundException();
-				}
-				// Otherwise seek right to the location in the LFD where the file is and read it.
-				using FileStream stream = new FileStream(lfdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-				stream.Seek(location.Offset, SeekOrigin.Begin);
-				//using ScopedStream scope = new ScopedStream(stream, location.Length);
-				using MemoryStream mem = new MemoryStream((int)location.Length);
-				await stream.CopyToWithLimitAsync(mem, (int)location.Length);
-				mem.Position = 0;
-				return await DfFile<T>.ReadAsync(mem);
+			} catch (Exception) {
+				stream?.Dispose();
+				throw;
 			}
-			return file;
+			return stream;
+		}
+
+		/// <summary>
+		/// Read a file from an LFD.
+		/// </summary>
+		/// <param name="lfdName">The name of the LFD, without path. Will use mod overrides.</param>
+		/// <param name="name">The name of the file without extension.</param>
+		/// <param name="typeName">The type of the file.</param>
+		/// <returns>The loaded object.</returns>
+		public async Task<IFile> LoadLfdFileAsync(string lfdName, string name, string typeName) {
+			Stream stream = await this.GetLfdFileStreamAsync(lfdName, name, typeName);
+			if (stream == null) {
+				return null;
+			}
+
+			using (stream) {
+				if (!LandruFileDirectory.FileTypes.TryGetValue(typeName, out Type type)) {
+					throw new ArgumentException("Invalid type.", nameof(typeName));
+				}
+
+				IFile file = (IFile)Activator.CreateInstance(type);
+				await file.LoadAsync(stream);
+				return file;
+			}
+		}
+
+		/// <summary>
+		/// Read a file from an LFD.
+		/// </summary>
+		/// <typeparam name="T">The type of the file.</typeparam>
+		/// <param name="lfdName">The name of the LFD, without path. Will use mod overrides.</param>
+		/// <param name="name">The name of the file without extension.</param>
+		/// <returns>The loaded object.</returns>
+		public async Task<T> LoadLfdFileAsync<T>(string lfdName, string name) where T : DfFile<T>, new() {
+			if (!LandruFileDirectory.FileTypeNames.TryGetValue(typeof(T), out string typeName)) {
+				throw new ArgumentException("Invalid type.", nameof(T));
+			}
+
+			Stream stream = await this.GetLfdFileStreamAsync(lfdName, name, typeName);
+			if (stream == null) {
+				return null;
+			}
+
+			using (stream) {
+				return await DfFile<T>.ReadAsync(stream);
+			}
 		}
 
 		/// <summary>

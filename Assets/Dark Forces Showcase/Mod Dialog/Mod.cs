@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace MZZT.DarkForces.Showcase {
 	public class Mod : Singleton<Mod> {
+		// TODO Folder adding, help
+
 		[SerializeField, Header("References")]
 		private GameObject background = null;
 		[SerializeField]
@@ -34,7 +36,7 @@ namespace MZZT.DarkForces.Showcase {
 				SelectButtonText = "Add",
 				SelectedFileMustExist = true,
 				SelectedPathMustExist = true,
-				StartPath = lastFolder != null ? lastFolder : FileLoader.Instance.DarkForcesFolder,
+				StartPath = lastFolder ?? FileLoader.Instance.DarkForcesFolder,
 				Title = "Select Mod File",
 				ValidateFileName = true
 			});

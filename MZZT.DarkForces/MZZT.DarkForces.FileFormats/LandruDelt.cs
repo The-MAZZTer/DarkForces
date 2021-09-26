@@ -11,7 +11,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Landru DELT file.
 	/// </summary>
-	public class LandruDelt : DfFile<LandruDelt> {
+	public class LandruDelt : DfFile<LandruDelt>, ICloneable {
 		/// <summary>
 		/// The header of the file.
 		/// </summary>
@@ -381,5 +381,15 @@ namespace MZZT.DarkForces.FileFormats {
 
 			return stream.ToArray();
 		}
+
+		object ICloneable.Clone() => this.Clone();
+		public LandruDelt Clone() => new() {
+			Height = this.Height,
+			Mask = new BitArray(this.Mask),
+			OffsetX = this.OffsetX,
+			OffsetY = this.OffsetY,
+			Pixels = this.Pixels.ToArray(),
+			Width = this.Width
+		};
 	}
 }

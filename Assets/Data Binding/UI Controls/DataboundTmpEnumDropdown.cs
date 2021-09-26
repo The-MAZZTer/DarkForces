@@ -8,11 +8,10 @@ using System.Xml.Serialization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UI;
 
 namespace MZZT.DataBinding {
 	[RequireComponent(typeof(TMP_Dropdown))]
-	public class DatabounTmpdEnumDropdown : DataboundUi<int> {
+	public class DataboundTmpEnumDropdown : DataboundUi<int> {
 		protected TMP_Dropdown Dropdown => this.Selectable as TMP_Dropdown;
 
 		private int[] indexToEnumValue;

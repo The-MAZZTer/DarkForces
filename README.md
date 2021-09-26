@@ -29,7 +29,8 @@ From the main menu you're welcome to explore. You can add mods/level files to al
 * Allows reading of GOB/LFD container files.
 * Helper classes to generate materials from textures, geometry from levels, sprites from objects, models from 3DOs, animations from VUEs, audio from VOCs and GMDs.
 * Tolerant to issues when loading/saving data files, will log warnings but keep going if possible.
-* Tool to generate automap-like view (or level editor view) of a level.
+* Tool to generate automap-like view (or level editor view) of a level.]
+* Tool to generate randomized object placements in a level.
 
 I dropped some helper classes unrelated to Dark Forces into the Unity project which I used in the showcase. These are useful in a general sense as well.
 
@@ -75,6 +76,8 @@ A quick breakdown of where everything is.
 
 **Assets\\Dark Forces Showcase\\Mod Dialog\\** - Code and assets relating to the Mod configuration dialog.
 
+**Assets\\Dark Forces Showcase\\Randomizer\\** - Code and assets relating to the Randomizer tool.
+
 **Assets\\Data Binding\\** - General purpose code and editor support for data binding C# objects to the Unity GameObject hierarchy. Supports databinding entire objects with overrideded subclass logic to render the objects visually, or binding individual members to form controls without needing to write custom code.
 
 **Assets\\Data Binding\\List\\** - Databinds a list of objects to a Unity GameObject, automaticallty creating and destroying child GameObjects using a prefab template as items are added and removed from the list. I've found this code endlessly useful.
@@ -86,6 +89,8 @@ A quick breakdown of where everything is.
 **Assets\\File Browser\\** - A Unity-based file browser. I experimented with some libraries but ultimately I want to allow for navigation inside of GOBs/LFDs for a tool I want to do so I had to roll my own. Makes heavy use of databinding classes.
 
 **Assets\\Libraries\\** - Third-party libraries and assets.
+
+**Assets\\UI\\** - Misc. UI classes.
 
 **MZZT.DarkForces\\** - The .NET Standard library.
 
@@ -113,7 +118,6 @@ You're welcome to fork this project and issue pull requests.
 
 ## Stuff I'm Working On
 
-* Super secret showcase idea (!!!)
 * Add more Unity helper classes and showcases such as data import/export tool and resource viewer/playback, and cutscene browser/playback.
 
 ## Stuff I See Could Use Improvement

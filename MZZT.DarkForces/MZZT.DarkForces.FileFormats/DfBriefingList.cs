@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// The Dark Forces BRIEFINGS.LST.
 	/// </summary>
-	public class DfBriefingList : TextBasedFile<DfBriefingList> {
+	public class DfBriefingList : TextBasedFile<DfBriefingList>, ICloneable {
 		/// <summary>
 		/// Defines the files to use for a level briefing.
 		/// </summary>
-		public class Briefing {
+		public class Briefing : ICloneable {
 			/// <summary>
 			/// The level base name.
 			/// </summary>
@@ -30,6 +31,14 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The PLTT file from the LFD to use for the briefing.
 			/// </summary>
 			public string PalFile { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Briefing Clone() => new() {
+				AniFile = this.AniFile,
+				Level = this.Level,
+				LfdFile = this.LfdFile,
+				PalFile = this.PalFile
+			};
 		}
 
 		/// <summary>
@@ -45,7 +54,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.SequenceEqual(new[] { "BRF", "1.0" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "BRF", "1.0" }) ?? false)) {
 				this.AddWarning("BRF file header not found.");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);
@@ -102,6 +111,13 @@ namespace MZZT.DarkForces.FileFormats {
 				await this.WriteLineAsync(writer,
 					$"LEV: {brief.Level} LFD: {brief.LfdFile} ANI: {brief.AniFile} PAL: {brief.PalFile}");
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfBriefingList Clone() {
+			DfBriefingList clone = new();
+			clone.Briefings.AddRange(this.Briefings.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

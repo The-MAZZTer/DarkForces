@@ -1,5 +1,6 @@
 ﻿using MZZT.Extensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -9,7 +10,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces FME file.
 	/// </summary>
-	public class DfFrame : DfFile<DfFrame> {
+	public class DfFrame : DfFile<DfFrame>, ICloneable {
 		/// <summary>
 		/// Frame file header.
 		/// </summary>
@@ -283,6 +284,27 @@ namespace MZZT.DarkForces.FileFormats {
 
 			await this.SaveHeaderAsync(stream);
 			await this.SaveCellAsync(stream);
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfFrame Clone(Dictionary<byte[], byte[]> cellClones = null) {
+			DfFrame clone = new() {
+				Flip = this.Flip,
+				Height = this.Height,
+				InsertionPointX = this.InsertionPointX,
+				InsertionPointY = this.InsertionPointY,
+				Width = this.Width
+			};
+			byte[] cellClone = null;
+			if (cellClones?.TryGetValue(this.Pixels, out cellClone) ?? false) {
+				clone.Pixels = cellClone;
+			} else {
+				clone.Pixels = this.Pixels.ToArray();
+				if (cellClones != null) {
+					cellClones[this.Pixels] = clone.Pixels;
+				}
+			}
+			return clone;
 		}
 	}
 }

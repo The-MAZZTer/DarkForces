@@ -12,11 +12,11 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces LEV file.
 	/// </summary>
-	public class DfLevel : TextBasedFile<DfLevel> {
+	public class DfLevel : TextBasedFile<DfLevel>, ICloneable {
 		/// <summary>
 		/// Texture data for a surface.
 		/// </summary>
-		public class WallSurface {
+		public class WallSurface : ICloneable {
 			/// <summary>
 			/// The filename of the texture.
 			/// </summary>
@@ -29,6 +29,13 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Unknown.
 			/// </summary>
 			public int TextureUnknown { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public virtual WallSurface Clone() => new() {
+				TextureFile = this.TextureFile,
+				TextureOffset = this.TextureOffset,
+				TextureUnknown = this.TextureUnknown
+			};
 		}
 
 		/// <summary>
@@ -39,6 +46,13 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The y-level of the surface.
 			/// </summary>
 			public float Y { get; set; }
+
+			public override WallSurface Clone() => new HorizontalSurface() {
+				TextureFile = this.TextureFile,
+				TextureOffset = this.TextureOffset,
+				TextureUnknown = this.TextureUnknown,
+				Y = this.Y
+			};
 		}
 
 		/// <summary>
@@ -229,11 +243,16 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Represents a vertex. As a class it's used to track references to the same vertex.
 		/// </summary>
-		public class Vertex {
+		public class Vertex : ICloneable {
 			/// <summary>
 			/// X and Z position of the vertex.
 			/// </summary>
 			public Vector2 Position { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Vertex Clone() => new() {
+				Position = this.Position
+			};
 		}
 
 		/// <summary>
@@ -264,19 +283,19 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// The main surface of this wall. When unadjoined it is the whole wall, when adjoined is the part of the wall over the adjoin (if visible).
 			/// </summary>
-			public WallSurface MainTexture { get; } = new();
+			public WallSurface MainTexture { get; private set; } = new();
 			/// <summary>
 			/// When adjoined, this represents the part of the wall above the adjoin if any.
 			/// </summary>
-			public WallSurface TopEdgeTexture { get; } = new();
+			public WallSurface TopEdgeTexture { get; private set; } = new();
 			/// <summary>
 			/// When adjoined, this represents the part of the wall below the adjoin if any.
 			/// </summary>
-			public WallSurface BottomEdgeTexture { get; } = new();
+			public WallSurface BottomEdgeTexture { get; private set; } = new();
 			/// <summary>
 			/// Represents a sign texture on the wall.
 			/// </summary>
-			public WallSurface SignTexture { get; } = new();
+			public WallSurface SignTexture { get; private set; } = new();
 
 			/// <summary>
 			/// The wall this wall is adjoined to.
@@ -297,9 +316,40 @@ namespace MZZT.DarkForces.FileFormats {
 			public WallAdjoinFlags AdjoinFlags { get; set; }
 
 			/// <summary>
-			/// The light level of the wall.
+			/// The change in light level of the wall relative to the sector.
 			/// </summary>
-			public int LightLevel { get; set; }
+			public short LightLevel { get; set; }
+
+			public Wall Clone(Sector parent, Dictionary<Wall, Wall> wallClones,
+				Dictionary<Vertex, Vertex> vertexClones) {
+
+				Wall clone = new(parent) {
+					AdjoinFlags = this.AdjoinFlags,
+					BottomEdgeTexture = this.BottomEdgeTexture.Clone(),
+					LightLevel = this.LightLevel,
+					MainTexture = this.MainTexture.Clone(),
+					SignTexture = this.SignTexture.Clone(),
+					TextureAndMapFlags = this.TextureAndMapFlags,
+					TopEdgeTexture = this.TopEdgeTexture.Clone(),
+					UnusuedFlags2 = this.UnusuedFlags2
+				};
+				wallClones[this] = clone;
+
+				if (!vertexClones.TryGetValue(this.LeftVertex, out Vertex left)) {
+					vertexClones[this.LeftVertex] = left = this.LeftVertex.Clone();
+				}
+				clone.LeftVertex = left;
+				if (!vertexClones.TryGetValue(this.RightVertex, out Vertex right)) {
+					vertexClones[this.RightVertex] = right = this.RightVertex.Clone();
+				}
+				clone.RightVertex = right;
+
+				if (this.Adjoined != null && wallClones.TryGetValue(this.Adjoined, out Wall adjoined)) { 
+					adjoined.Adjoined = clone;
+					clone.Adjoined = adjoined;
+				}
+				return clone;
+			}
 		}
 
 		/// <summary>
@@ -317,11 +367,11 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// The floor of the sector.
 			/// </summary>
-			public HorizontalSurface Floor { get; } = new();
+			public HorizontalSurface Floor { get; private set; } = new();
 			/// <summary>
 			/// The ceiling of the sector.
 			/// </summary>
-			public HorizontalSurface Ceiling { get; } = new();
+			public HorizontalSurface Ceiling { get; private set; } = new();
 			/// <summary>
 			/// Allows specifying a Y value relative to floor height to simulate water on the floor or an upper walkway.
 			/// </summary>
@@ -349,6 +399,23 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The walls this sector has.
 			/// </summary>
 			public List<Wall> Walls { get; } = new();
+
+			public Sector Clone(Dictionary<Wall, Wall> wallClones) {
+				Dictionary<Vertex, Vertex> vertexClones = new();
+				Sector clone = new() {
+					AltLightLevel = this.AltLightLevel,
+					AltY = this.AltY,
+					Ceiling = (HorizontalSurface)this.Ceiling.Clone(),
+					Flags = this.Flags,
+					Floor = (HorizontalSurface)this.Floor.Clone(),
+					Layer = this.Layer,
+					LightLevel = this.LightLevel,
+					Name = this.Name,
+					UnusuedFlags2 = this.UnusuedFlags2
+				};
+				clone.Walls.AddRange(this.Walls.Select(x => x.Clone(clone, wallClones, vertexClones)));
+				return clone;
+			}
 		}
 
 		/// <summary>
@@ -381,7 +448,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.SequenceEqual(new[] { "LEV", "2.1" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "LEV", "2.1" }) ?? false)) {
 				this.AddWarning("LEV file header not found.");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);
@@ -671,7 +738,7 @@ namespace MZZT.DarkForces.FileFormats {
 											TextureAndMapFlags = (WallTextureAndMapFlags)flags1,
 											UnusuedFlags2 = flags2,
 											AdjoinFlags = (WallAdjoinFlags)flags3,
-											LightLevel = light
+											LightLevel = unchecked((short)light)
 										};
 										wall.MainTexture.TextureFile = midTexture < 0 ? null : textures[midTexture];
 										wall.MainTexture.TextureOffset = new() {
@@ -732,6 +799,10 @@ namespace MZZT.DarkForces.FileFormats {
 
 			// Hook up all the adjoin references.
 			foreach ((Wall wall, (int adjoinSector, int adjoinWall)) in adjoins) {
+				if (this.Sectors.Count <= adjoinSector || this.Sectors[adjoinSector].Walls.Count <= adjoinWall) {
+					this.AddWarning($"Sector {wall.Sector.Name ?? this.Sectors.IndexOf(wall.Sector).ToString()} Wall {wall.Sector.Walls.IndexOf(wall)} is adjoined to non-existant sector {adjoinSector} wall {adjoinWall}.");
+					continue;
+				}
 				wall.Adjoined = this.Sectors[adjoinSector].Walls[adjoinWall];
 			}
 		}
@@ -789,9 +860,22 @@ namespace MZZT.DarkForces.FileFormats {
 				await this.WriteLineAsync(writer, $"WALLS {sector.Walls.Count}");
 				foreach (Wall wall in sector.Walls) {
 					int adjoinedSector = wall.Adjoined != null ? this.Sectors.IndexOf(wallSectors[wall.Adjoined]) : -1;
-					await this.WriteLineAsync(writer, $"WALL LEFT: {Array.IndexOf(vertices, wall.LeftVertex)} RIGHT: {Array.IndexOf(vertices, wall.LeftVertex)} MID: {(wall.MainTexture.TextureFile != null ? Array.IndexOf(textures, wall.MainTexture.TextureFile) : -1)} {wall.MainTexture.TextureOffset.X:0.00} {wall.MainTexture.TextureOffset.Y:0.00} {wall.MainTexture.TextureUnknown} TOP: {(wall.TopEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.TopEdgeTexture.TextureFile) : -1)} {wall.TopEdgeTexture.TextureOffset.X:0.00} {wall.TopEdgeTexture.TextureOffset.Y:0.00} {wall.TopEdgeTexture.TextureUnknown} BOT: {(wall.BottomEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.BottomEdgeTexture.TextureFile) : -1)} {wall.BottomEdgeTexture.TextureOffset.X:0.00} {wall.BottomEdgeTexture.TextureOffset.Y:0.00} {wall.BottomEdgeTexture.TextureUnknown} SIGN: {(wall.SignTexture.TextureFile != null ? Array.IndexOf(textures, wall.SignTexture.TextureFile) : -1)} {wall.SignTexture.TextureOffset.X:0.00} {wall.SignTexture.TextureOffset.Y:0.00} ADJOIN: {adjoinedSector} MIRROR: {(wall.Adjoined != null ? wallSectors[wall.Adjoined].Walls.IndexOf(wall.Adjoined) : -1)} WALK: {adjoinedSector} FLAGS: {(int)wall.TextureAndMapFlags} {wall.UnusuedFlags2} {(int)wall.AdjoinFlags} LIGHT: {wall.LightLevel}");
+					await this.WriteLineAsync(writer, $"WALL LEFT: {Array.IndexOf(vertices, wall.LeftVertex)} RIGHT: {Array.IndexOf(vertices, wall.RightVertex)} MID: {(wall.MainTexture.TextureFile != null ? Array.IndexOf(textures, wall.MainTexture.TextureFile) : -1)} {wall.MainTexture.TextureOffset.X:0.00} {wall.MainTexture.TextureOffset.Y:0.00} {wall.MainTexture.TextureUnknown} TOP: {(wall.TopEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.TopEdgeTexture.TextureFile) : -1)} {wall.TopEdgeTexture.TextureOffset.X:0.00} {wall.TopEdgeTexture.TextureOffset.Y:0.00} {wall.TopEdgeTexture.TextureUnknown} BOT: {(wall.BottomEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.BottomEdgeTexture.TextureFile) : -1)} {wall.BottomEdgeTexture.TextureOffset.X:0.00} {wall.BottomEdgeTexture.TextureOffset.Y:0.00} {wall.BottomEdgeTexture.TextureUnknown} SIGN: {(wall.SignTexture.TextureFile != null ? Array.IndexOf(textures, wall.SignTexture.TextureFile) : -1)} {wall.SignTexture.TextureOffset.X:0.00} {wall.SignTexture.TextureOffset.Y:0.00} ADJOIN: {adjoinedSector} MIRROR: {(wall.Adjoined != null ? wallSectors[wall.Adjoined].Walls.IndexOf(wall.Adjoined) : -1)} WALK: {adjoinedSector} FLAGS: {(int)wall.TextureAndMapFlags} {wall.UnusuedFlags2} {(int)wall.AdjoinFlags} LIGHT: {unchecked((ushort)wall.LightLevel)}");
 				}
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfLevel Clone() {
+			DfLevel clone = new() {
+				LevelFile = this.LevelFile,
+				MusicFile = this.MusicFile,
+				PaletteFile = this.PaletteFile,
+				Parallax = this.Parallax
+			};
+			Dictionary<Wall, Wall> wallClones = new();
+			clone.Sectors.AddRange(this.Sectors.Select(x => x.Clone(wallClones)));
+			return clone;
 		}
 	}
 }

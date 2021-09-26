@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MZZT.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,12 +12,19 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// The data from a VUE file.
 	/// </summary>
-	public class AutodeskVue : TextBasedFile<AutodeskVue> {
+	public class AutodeskVue : TextBasedFile<AutodeskVue>, ICloneable {
 		/// <summary>
 		/// An individual object moved by a VUE.
 		/// </summary>
-		public class VueObject {
+		public class VueObject : ICloneable {
 			public List<Matrix4x4> Frames { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public VueObject Clone() {
+				VueObject clone = new();
+				clone.Frames.AddRange(this.Frames);
+				return clone;
+			}
 		}
 
 		/// <summary>
@@ -40,7 +48,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A point light source specified by the VUE, unused in Dark Forces.
 		/// </summary>
-		public class Light {
+		public class Light : ICloneable {
 			/// <summary>
 			/// The frame to show the light on.
 			/// </summary>
@@ -61,6 +69,15 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Whether shadows can be cast by this light (Expensive in '95!)
 			/// </summary>
 			public bool CastsShadows { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public virtual Light Clone() => new() {
+				CastsShadows = this.CastsShadows,
+				Color = this.Color,
+				Frame = this.Frame,
+				Name = this.Name,
+				Position = this.Position
+			};
 		}
 
 		/// <summary>
@@ -79,6 +96,17 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The outer angle, outside where the light does not shine.
 			/// </summary>
 			public float FalloffAngle { get; set; }
+
+			public override Light Clone() => new Spotlight() {
+				CastsShadows = this.CastsShadows,
+				Color = this.Color,
+				FalloffAngle = this.FalloffAngle,
+				Frame = this.Frame,
+				HotAngle = this.HotAngle,
+				Name = this.Name,
+				Position = this.Position,
+				Target = this.Target
+			};
 		}
 
 		/// <summary>
@@ -98,7 +126,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Represents a camera or other point in 3D space. Unused by Dark Forces. Not all fields are used by all types.
 		/// </summary>
-		public class Viewport {
+		public class Viewport : ICloneable {
 			/// <summary>
 			/// The type of viewport.
 			/// </summary>
@@ -131,12 +159,24 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Focal length of the camera.
 			/// </summary>
 			public float FocalLength { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Viewport Clone() => new() {
+				FocalLength = this.FocalLength,
+				HorizontalAngle = this.HorizontalAngle,
+				Position = this.Position,
+				RollAngle = this.RollAngle,
+				Target = this.Target,
+				Type = this.Type,
+				VerticalAngle = this.VerticalAngle,
+				Width = this.Width
+			};
 		}
 
 		/// <summary>
 		/// Some types of VUES have multiple VUE headers; each one can be separated. It looks like Dark Forces assumes they are all one VUE though so this type is deprecated; there's always only one of these.
 		/// </summary>
-		public class SubVue {
+		public class SubVue : ICloneable {
 			/// <summary>
 			/// Id specified in the VUE.
 			/// </summary>
@@ -154,6 +194,21 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Viewports specified by this VUE.
 			/// </summary>
 			public Dictionary<int, Viewport> Viewports { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public SubVue Clone() {
+				SubVue clone = new() {
+					Id = this.Id
+				};
+				clone.Lights.AddRange(this.Lights.Select(x => x.Clone()));
+				foreach ((string key, VueObject value) in this.Objects) {
+					clone.Objects[key] = value.Clone();
+				}
+				foreach ((int key, Viewport value) in this.Viewports) {
+					clone.Viewports[key] = value.Clone();
+				}
+				return clone;
+			}
 		}
 
 		/// <summary>
@@ -182,7 +237,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (line?[0] == "VERSION") {
+			if (line?[0].ToUpper() == "VERSION") {
 				if (line.Length != 2 || line[1] != "201") {
 					this.AddWarning("VERSION tag found but version absent or unexepected value.");
 				}
@@ -528,7 +583,8 @@ namespace MZZT.DarkForces.FileFormats {
 							await this.WriteLineAsync(writer,
 								$"transform {this.Escape(id)} {transform.M11:0.0000} {transform.M21:0.0000} {transform.M31:0.0000} {transform.M12:0.0000} {transform.M22:0.0000} {transform.M32:0.0000} {transform.M13:0.0000} {transform.M23:0.0000} {transform.M33:0.0000} {transform.M14:0.0000} {transform.M24:0.0000} {transform.M34:0.0000}");
 						}
-					} break;
+					}
+					break;
 				case Formats.SingleVue:
 					await writer.WriteLineAsync("VERSION 201");
 
@@ -566,8 +622,18 @@ namespace MZZT.DarkForces.FileFormats {
 									break;
 							}
 						}
-					} break;
+					}
+					break;
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public AutodeskVue Clone() {
+			AutodeskVue clone = new() {
+				Format = this.Format
+			};
+			clone.Vues.AddRange(this.Vues.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

@@ -79,7 +79,7 @@ namespace MZZT.DarkForces.Showcase {
 			HelpOrder = 100,
 			ValueName = "TOOLNAME",
 			PrependedGroupName = "Tools:",
-			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer, MapGenerator"
+			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer, MapGenerator, Randomizer"
 		)]
 		public string CommandLineTool { get; set; }
 
@@ -195,6 +195,11 @@ namespace MZZT.DarkForces.Showcase {
 					Name = "Map Generator",
 					SceneName = "MapGenerator",
 					Description = "Attempts to emulate the DF automap and various level editors to draw a top-down map view.\n\nClick and drag with the mouse to pan around the map. Use right click and move the mouse left and right to rotate. Use the scroll wheel to zoom. A menu bar on top can be used to adjust options or export a PNG of the map.\n\nThis tool could be used as the basis for an automap or level editor map component."
+				},
+				new Showcase() {
+					Name = "Randomizer",
+					SceneName = "Randomizer",
+					Description = "Randomizers items and enemies within Dark Forces levels or mod levels. Also allows adjustment of other aspects such as colors, light levels, automap functionality, keys/code drops, and more."
 				},
 				new Showcase(),
 				new Showcase() {

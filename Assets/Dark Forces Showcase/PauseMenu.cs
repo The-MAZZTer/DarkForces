@@ -26,7 +26,9 @@ namespace MZZT.DarkForces.Showcase {
 		protected int loadingCount;
 		public async Task BeginLoadingAsync() {
 			if (this.loadingCount == 0) {
-				this.MenuOpen = false;
+				if (this.background != null) {
+					this.MenuOpen = false;
+				}
 				this.IsInUI = true;
 
 				if (this.loading.sprite == null) {

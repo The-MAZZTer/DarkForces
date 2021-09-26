@@ -1,4 +1,5 @@
 ﻿using MZZT.Extensions;
+using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -27,14 +28,20 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces PAL file.
 	/// </summary>
-	public class DfPalette : DfFile<DfPalette> {
+	public class DfPalette : DfFile<DfPalette>, ICloneable {
 		/// <summary>
 		/// Palette data.
 		/// </summary>
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		public struct Data {
 			/// <summary>
-			/// Palette entries.
+			/// Palette entries. Color vaues are from 0 - 63 for each channe0.
+			/// The two high bits per channel seem to shift over the color index used for that color on the menu screen.
+			/// Generally this makes the grayscale higher or even fall out of the grayscale palette area entirely.
+			/// Interestingly during menu fade or screen flash, these bits don't get masked out it looks like,
+			/// So accidentlal use of value 64 can appear "correct" during flashes.
+			/// These bits do look like they control the fade out color of the menu, but this could just be
+			/// a side effect of the above bug.
 			/// </summary>
 			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
 			public RgbColor[] Palette;
@@ -61,13 +68,18 @@ namespace MZZT.DarkForces.FileFormats {
 			if (this.Palette.Length != 256) {
 				this.AddWarning("Palette should have 256 entries!");
 			}
-			if (this.Palette.Any(x => x.R > 0x3F || x.G > 0x3F || x.B > 0x3F)) {
+			/*if (this.Palette.Any(x => x.R > 0x3F || x.G > 0x3F || x.B > 0x3F)) {
 				this.AddWarning("All color values in palette must be <= 0x3F!");
-			}
+			}*/
 
 			await stream.WriteAsync(new Data() {
 				Palette = this.Palette
 			});
 		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfPalette Clone() => new() {
+			Palette = this.Palette.ToArray()
+		};
 	}
 }

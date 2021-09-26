@@ -230,43 +230,55 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Retrieves a file frem the GOB.
 		/// </summary>
-		/// <param name="type">The type of the file, inherited from File&lt;T&gt;</param>
 		/// <param name="name">The name of the file.</param>
+		/// <param name="type">The type of the file, inherited from File&lt;T&gt;</param>
 		/// <param name="stream">An optional Stream, required if the file data was not read in with the GOB.
 		/// The Stream should be the same one passed to LoadAsync and should be seekable.</param>
-		/// <returns>The requested file data.</returns>
-		public async Task<IFile> GetFileAsync(Type type, string name, Stream stream = null) {
+		/// <returns>A stream containing the requested data.</returns>
+		public async Task<Stream> GetFileStreamAsync(string name, Stream stream = null) {
 			FileTrailer info = this.files.FirstOrDefault(x => x.FileName.ToUpper() == name.ToUpper());
-			if (info.FilePointer == 0) {
+			uint pos = info.FilePointer;
+			if (pos == 0) {
 				return null;
 			}
 
 			// If the original Stream is provided we can go back and get the file contents.
 			// Of course if we cached the file data we don't need to use that Stream.
-			Stream mem = null;
+			if (this.data != null) {
+				stream = this.data;
+				pos -= (uint)Marshal.SizeOf<Header>();
+			}
+			stream.Seek(pos, SeekOrigin.Begin);
+			MemoryStream mem = new((int)info.FileSize);
 			try {
-				if (this.data != null) {
-					this.data.Seek(info.FilePointer - Marshal.SizeOf<Header>(), SeekOrigin.Begin);
-					//ScopedStream scoped = new(this.data, info.FileSize);
-					//mem = scoped;
-					mem = new MemoryStream((int)info.FileSize);
-					await this.data.CopyToWithLimitAsync(mem, (int)info.FileSize);
-					mem.Position = 0;
-				} else {
-					stream.Seek(info.FilePointer, SeekOrigin.Begin);
-					//using ScopedStream scoped = new(stream, info.FileSize);
-					mem = new MemoryStream((int)info.FileSize);
-					await stream.CopyToWithLimitAsync(mem, (int)info.FileSize);
-					mem.Position = 0;
-				}
+				await stream.CopyToWithLimitAsync(mem, (int)info.FileSize);
+				mem.Position = 0;
+			} catch (Exception) {
+				mem.Dispose();
+				throw;
+			}
 
+			return mem;
+		}
+
+		/// <summary>
+		/// Retrieves a file frem the GOB.
+		/// </summary>
+		/// <param name="name">The name of the file.</param>
+		/// <param name="type">The type of the file, inherited from File&lt;T&gt;</param>
+		/// <param name="stream">An optional Stream, required if the file data was not read in with the GOB.
+		/// The Stream should be the same one passed to LoadAsync and should be seekable.</param>
+		/// <returns>The requested file data.</returns>
+		public async Task<IFile> GetFileAsync(string name, Type type, Stream stream = null) {
+			stream = await this.GetFileStreamAsync(name, stream);
+			if (stream == null) {
+				return null;
+			}
+
+			using (stream) {
 				IFile ret = (IFile)Activator.CreateInstance(type);
-				await ret.LoadAsync(mem);
+				await ret.LoadAsync(stream);
 				return ret;
-			} finally {
-				if (mem != null && mem != this.data) {
-					mem.Dispose();
-				}
 			}
 		}
 
@@ -279,7 +291,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// The Stream should be the same one passed to LoadAsync and should be seekable.</param>
 		/// <returns>The requested file data.</returns>
 		public async Task<T> GetFileAsync<T>(string name, Stream stream = null) where T : File<T>, new() {
-			return (T)await this.GetFileAsync(typeof(T), name, stream);
+			return (T)await this.GetFileAsync(name, typeof(T), stream);
 		}
 
 		public override bool CanSave => true;
@@ -299,6 +311,9 @@ namespace MZZT.DarkForces.FileFormats {
 			this.data.Seek(0, SeekOrigin.Begin);
 			await this.data.CopyToAsync(stream);
 
+			byte[] buffer = BitConverter.GetBytes(this.files.Count);
+			await stream.WriteAsync(buffer, 0, buffer.Length);
+
 			uint pos = (uint)Marshal.SizeOf<Header>();
 			foreach (FileTrailer file in this.files) {
 				await stream.WriteAsync(new FileTrailer() {
@@ -308,6 +323,28 @@ namespace MZZT.DarkForces.FileFormats {
 				});
 				pos += file.FileSize;
 			}
+		}
+
+		/// <summary>
+		/// Adds a new file to the GOB. The GOB file data must have been read (or a new GOB created).
+		/// </summary>
+		/// <param name="name">The name of the file.</param>
+		/// <param name="stream">The file to write.</param>
+		public async Task AddFileAsync(string name, Stream stream) {
+			if (this.data == null) {
+				this.data = new();
+			}
+
+			this.data.Seek(0, SeekOrigin.End);
+			uint pos = (uint)this.data.Length;
+
+			await stream.CopyToAsync(this.data);
+
+			this.files.Add(new() {
+				FilePointer = pos,
+				FileSize = (uint)this.data.Length - pos,
+				FileName = name.Length > 12 ? name.Substring(0, 12) : name
+			});
 		}
 
 		/// <summary>

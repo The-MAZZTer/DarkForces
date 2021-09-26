@@ -12,7 +12,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces GMD/GMID file.
 	/// </summary>
-	public class DfGeneralMidi : DfFile<DfGeneralMidi> {
+	public class DfGeneralMidi : DfFile<DfGeneralMidi>, ICloneable {
 		/// <summary>
 		/// GMID header.
 		/// </summary>
@@ -100,7 +100,7 @@ namespace MZZT.DarkForces.FileFormats {
 
 			//Midi midi = await Midi.ReadAsync(new ScopedStream(stream, header.Size));
 			Midi midi;
-			using (MemoryStream mem = new MemoryStream(header.Size)) {
+			using (MemoryStream mem = new(header.Size)) {
 				await stream.CopyToWithLimitAsync(mem, header.Size);
 				mem.Position = 0;
 				midi = await Midi.ReadAsync(mem);
@@ -149,6 +149,18 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 			midi.TrackData.AddRange(this.TrackData);
 			return midi;
+		}
+
+		object ICloneable.Clone() => throw new NotImplementedException();
+		public DfGeneralMidi Clone() {
+			DfGeneralMidi clone = new() {
+				Format = this.Format,
+				Mdpg = this.Mdpg.ToArray(),
+				Tempo = this.Tempo,
+				TempoIsFramesPerSecond = this.TempoIsFramesPerSecond
+			};
+			clone.TrackData.AddRange(this.TrackData.Select(x => x.ToArray()));
+			return clone;
 		}
 	}
 }

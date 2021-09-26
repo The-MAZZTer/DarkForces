@@ -10,7 +10,7 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// Dark Forces BM files.
 	/// </summary>
-	public class DfBitmap : DfFile<DfBitmap> {
+	public class DfBitmap : DfFile<DfBitmap>, ICloneable {
 		/// <summary>
 		/// The magic number in a BM header.
 		/// </summary>
@@ -150,7 +150,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Represents an image in the BM.
 		/// </summary>
-		public class Page {
+		public class Page : ICloneable {
 			internal MultiPageHeader Header;
 
 			/// <summary>
@@ -179,6 +179,14 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Raw pixel data, top to bottom. left to right, as palette indices.
 			/// </summary>
 			public byte[] Pixels;
+
+			object ICloneable.Clone() => this.Clone();
+			public Page Clone() => new() {
+				Flags = this.Flags,
+				Height = this.Height,
+				Pixels = this.Pixels.ToArray(),
+				Width = this.Width
+			};
 		}
 
 		/// <summary>
@@ -574,6 +582,15 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 				return (false, end);
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfBitmap Clone() {
+			DfBitmap clone = new() {
+				Framerate = this.Framerate
+			};
+			clone.Pages.AddRange(this.Pages.Select(x => x.Clone()));
+			return clone;
 		}
 	}
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,21 +11,28 @@ namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
 	/// A Dark Forces CUTMUSE.TXT file.
 	/// </summary>
-	public class DfCutsceneMusicList : TextBasedFile<DfCutsceneMusicList> {
+	public class DfCutsceneMusicList : TextBasedFile<DfCutsceneMusicList>, ICloneable {
 		/// <summary>
 		/// A cutscene sequence.
 		/// </summary>
-		public class Sequence {
+		public class Sequence : ICloneable {
 			/// <summary>
 			/// A list of music cues.
 			/// </summary>
 			public List<Cue> Cues { get; } = new();
+
+			object ICloneable.Clone() => this.Clone();
+			public Sequence Clone() {
+				Sequence clone = new();
+				clone.Cues.AddRange(this.Cues.Select(x => x.Clone()));
+				return clone;
+			}
 		}
 
 		/// <summary>
 		/// A music cue.
 		/// </summary>
-		public class Cue {
+		public class Cue : ICloneable {
 			/// <summary>
 			/// The GMID file to play.
 			/// </summary>
@@ -45,6 +53,15 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The position within the chunk.
 			/// </summary>
 			public int EndPosition { get; set; }
+
+			object ICloneable.Clone() => this.Clone();
+			public Cue Clone() => new() {
+				EndChunk = this.EndChunk,
+				EndPosition = this.EndPosition,
+				GmdFile = this.GmdFile,
+				StartChunk = this.StartChunk,
+				StartPosition = this.StartPosition
+			};
 		}
 
 		/// <summary>
@@ -127,6 +144,15 @@ namespace MZZT.DarkForces.FileFormats {
 					await this.WriteLineAsync(writer, $"{cue.StartChunk} {cue.StartPosition} {cue.EndChunk} {cue.EndPosition}");
 				}
 			}
+		}
+
+		object ICloneable.Clone() => this.Clone();
+		public DfCutsceneMusicList Clone() {
+			DfCutsceneMusicList clone = new();
+			foreach ((int key, Sequence value) in this.Sequences) {
+				clone.Sequences[key] = value.Clone();
+			}
+			return clone;
 		}
 	}
 }
