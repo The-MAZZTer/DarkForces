@@ -244,7 +244,7 @@ namespace MZZT {
 
 		private string ret;
 
-		private readonly List<FileSystemItem> history = new List<FileSystemItem>();
+		private readonly List<FileSystemItem> history = new();
 		private int historyPos = 0;
 
 		private async Task SelectTreeNodeAsync(string path) {
@@ -334,8 +334,9 @@ namespace MZZT {
 
 			// If the selection is a folder to navigate into, change the button text.
 			if (this.fileList.SelectedDatabound != null &&
-				this.fileList.SelectedValue.Type == FileSystemItemTypes.Folder ||
-				this.fileList.SelectedValue.Type == FileSystemItemTypes.FileContainer) {
+				(this.fileList.SelectedValue.Type == FileSystemItemTypes.Folder ||
+				this.fileList.SelectedValue.Type == FileSystemItemTypes.FileContainer) &&
+				!this.options.SelectFolder) {
 				
 				this.selectButton.GetComponentInChildren<TMP_Text>(true).text = "Open";
 			} else {
@@ -711,7 +712,12 @@ namespace MZZT {
 		/// Called by the select button.
 		/// </summary>
 		public async void OnSelectButtonClickedAsync() {
-			await this.SelectOrOpenAsync();
+			this.initializing++;
+			try {
+				await this.SelectOrOpenAsync();
+			} finally {
+				this.initializing--;
+			}
 		}
 
 		/// <summary>

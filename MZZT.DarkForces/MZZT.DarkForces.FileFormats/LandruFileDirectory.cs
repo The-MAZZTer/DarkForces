@@ -234,8 +234,9 @@ namespace MZZT.DarkForces.FileFormats {
 		/// </summary>
 		/// <param name="name">The name of the embedded file, without type or extension.</param>
 		/// <param name="typeName">The type field value.</param>
+		/// <param name="stream">The Stream holding the LFD file contents.</param>
 		/// <returns>A stream for the embedded file.</returns>
-		public async Task<Stream> GetFileStreamAsync(string name, string typeName) {
+		public async Task<Stream> GetFileStreamAsync(string name, string typeName, Stream stream) {
 			typeName = typeName.ToUpper();
 			uint offset = (uint)Marshal.SizeOf<FileHeader>() * (uint)(this.files.Count + 2);
 			long size = -1;
@@ -251,25 +252,38 @@ namespace MZZT.DarkForces.FileFormats {
 				return null;
 			}
 
-			if (offset < this.pos) {
-				this.pos = (uint)this.stream.Seek((int)offset - (int)this.pos, SeekOrigin.Current);
-			} else if (offset > this.pos) {
-				if (this.stream.CanSeek) {
-					this.pos = (uint)this.stream.Seek(offset - this.pos, SeekOrigin.Current);
+			uint pos;
+			if (stream == this.stream) {
+				pos = this.pos;
+			} else {
+				pos = (uint)stream.Position;
+			}
+
+			if (offset < pos) {
+				pos = (uint)stream.Seek((int)offset - (int)pos, SeekOrigin.Current);
+			} else if (offset > pos) {
+				if (stream.CanSeek) {
+					pos = (uint)stream.Seek(offset - pos, SeekOrigin.Current);
 				} else {
-					byte[] data = new byte[offset - this.pos];
-					this.pos += (uint)await this.stream.ReadAsync(data, 0, (int)(offset - this.pos));
+					byte[] data = new byte[offset - pos];
+					pos += (uint)await stream.ReadAsync(data, 0, (int)(offset - pos));
 				}
 			}
 
-			if (this.pos < offset) {
+			if (stream == this.stream) {
+				this.pos = pos;
+			}
+			if (pos < offset) {
 				throw new EndOfStreamException();
 			}
 
 			MemoryStream mem = new((int)size);
 			try {
-				await this.stream.CopyToWithLimitAsync(mem, (int)size);
-				this.pos += (uint)size;
+				await stream.CopyToWithLimitAsync(mem, (int)size);
+				pos += (uint)size;
+				if (stream == this.stream) {
+					this.pos = pos;
+				}
 				mem.Position = 0;
 			} catch (Exception) {
 				mem.Dispose();
@@ -277,6 +291,14 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 			return mem;
 		}
+
+		/// <summary>
+		/// Read an embedded file.
+		/// </summary>
+		/// <param name="name">The name of the embedded file, without type or extension.</param>
+		/// <param name="typeName">The type field value.</param>
+		/// <returns>A stream for the embedded file.</returns>
+		public Task<Stream> GetFileStreamAsync(string name, string typeName) => this.GetFileStreamAsync(name, typeName, this.stream);
 
 		/// <summary>
 		/// Read an embedded file.
@@ -317,7 +339,7 @@ namespace MZZT.DarkForces.FileFormats {
 				throw new ArgumentException($"Invalid Landru file type.", nameof(typeName));
 			}
 
-			Stream stream =await this.GetFileStreamAsync(name, typeName);
+			Stream stream = await this.GetFileStreamAsync(name, typeName);
 			if (stream == null) {
 				return null;
 			}

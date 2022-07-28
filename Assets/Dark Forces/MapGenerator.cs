@@ -507,10 +507,10 @@ namespace MZZT.DarkForces {
 			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
 
 			// Create the SkiaSharp image.
-			SKImageInfo info = new SKImageInfo(viewport.x, viewport.y);
+			SKImageInfo info = new(viewport.x, viewport.y);
 			using SKSurface surface = SKSurface.Create(info);
 			SKCanvas canvas = surface.Canvas;
-			using SKPaint paint = new SKPaint() {
+			using SKPaint paint = new() {
 				BlendMode = SKBlendMode.SrcOver,
 				IsAntialias = true,
 				IsStroke = true,
@@ -535,7 +535,7 @@ namespace MZZT.DarkForces {
 			using SKPixmap pixmap = surface.PeekPixels();
 
 			TextureFormat format = (info.ColorType == SKColorType.Rgba8888) ? TextureFormat.RGBA32 : TextureFormat.BGRA32;
-			Texture2D texture = new Texture2D(viewport.x, viewport.y, format, false, true) {
+			Texture2D texture = new(viewport.x, viewport.y, format, false, true) {
 #if UNITY_EDITOR
 				alphaIsTransparency = true
 #endif

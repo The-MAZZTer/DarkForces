@@ -80,7 +80,7 @@ namespace MZZT.DarkForces {
 			// But we can read the tokens by hand.
 
 			int pos = 0;
-			List<string> libraryFolders = new List<string>();
+			List<string> libraryFolders = new();
 			while (pos < libraryFoldersVdf.Tokens.Count) {
 				ValveDefinitionFile.Token token = libraryFoldersVdf.Tokens[pos];
 				pos++;
@@ -109,9 +109,9 @@ namespace MZZT.DarkForces {
 			return null;
 		}
 
-		private readonly Dictionary<string, List<ResourceLocation>> gobMap = new Dictionary<string, List<ResourceLocation>>();
-		private readonly Dictionary<string, LfdInfo> lfdOverrides = new Dictionary<string, LfdInfo>();
-		private readonly Dictionary<string, string[]> gobFiles = new Dictionary<string, string[]>();
+		private readonly Dictionary<string, List<ResourceLocation>> gobMap = new();
+		private readonly Dictionary<string, LfdInfo> lfdOverrides = new();
+		private readonly Dictionary<string, string[]> gobFiles = new();
 
 		/// <summary>
 		/// Clear all cached data.
@@ -144,7 +144,7 @@ namespace MZZT.DarkForces {
 			switch (Path.GetExtension(key)) {
 				case ".GOB": {
 					DfGobContainer gob = await DfGobContainer.ReadAsync(path, false);
-					List<string> files = new List<string>();
+					List<string> files = new();
 					foreach ((string name, uint offset, uint size) in gob.Files) {
 						files.Add(name.ToUpper());
 						// Track the GOB, offset, and size of every file.
@@ -233,7 +233,7 @@ namespace MZZT.DarkForces {
 			ResourceLocation location = results.Last();
 
 			// Open the GOB/file and read in the data at the specified offset and size.
-			FileStream stream = new FileStream(location.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+			FileStream stream = new(location.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 			Stream scoped = null;
 			try {
 				stream.Seek(location.Offset, SeekOrigin.Begin);
@@ -363,7 +363,7 @@ namespace MZZT.DarkForces {
 						return null;
 					}
 					// Otherwise seek right to the location in the LFD where the file is and read it.
-					using FileStream fileStream = new FileStream(lfdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+					using FileStream fileStream = new(lfdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 					fileStream.Seek(location.Offset, SeekOrigin.Begin);
 					stream = new MemoryStream((int)location.Length);
 					await fileStream.CopyToWithLimitAsync(stream, (int)location.Length);
@@ -448,7 +448,7 @@ namespace MZZT.DarkForces {
 				files = this.gobFiles.Select(x => x.Value).ToArray();
 			}
 
-			Regex patterns = new Regex("^" + string.Join("", pattern.Select(x => x switch {
+			Regex patterns = new("^" + string.Join("", pattern.Select(x => x switch {
 				'*' => ".*",
 				'?' => ".",
 				_ => Regex.Escape(x.ToString())

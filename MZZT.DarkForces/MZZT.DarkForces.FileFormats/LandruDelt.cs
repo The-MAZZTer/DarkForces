@@ -123,14 +123,14 @@ namespace MZZT.DarkForces.FileFormats {
 		/// The width of the image.
 		/// </summary>
 		public int Width {
-			get => this.header.Width;
+			get => Math.Max(0, this.header.Width);
 			set => this.header.Width = value;
 		}
 		/// <summary>
 		/// The height of the image.
 		/// </summary>
 		public int Height {
-			get => this.header.Height;
+			get => Math.Max(0, this.header.Height);
 			set => this.header.Height = value;
 		}
 
@@ -151,8 +151,8 @@ namespace MZZT.DarkForces.FileFormats {
 
 			this.header = await stream.ReadAsync<Header>();
 
-			int width = this.header.Width;
-			int height = this.header.Height;
+			int width = this.Width);
+			int height = this.Height;
 
 			this.Pixels = new byte[height * width];
 			this.Mask = new BitArray(height * width);

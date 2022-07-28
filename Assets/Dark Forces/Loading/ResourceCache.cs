@@ -1,15 +1,14 @@
-﻿using MZZT.DarkForces.FileFormats;
-using MZZT.Extensions;
+﻿using MZZT.DarkForces.Converters;
+using MZZT.DarkForces.FileFormats;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static MZZT.DarkForces.FileFormats.AutodeskVue;
 using Matrix4x4 = UnityEngine.Matrix4x4;
-using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
 namespace MZZT.DarkForces {
@@ -18,8 +17,6 @@ namespace MZZT.DarkForces {
 	/// It also handles importing data into formats Unity can use.
 	/// </summary>
 	public class ResourceCache : Singleton<ResourceCache> {
-		public const float SPRITE_PIXELS_PER_UNIT = 400;
-
 		/// <summary>
 		/// Whether or not file load warnings will be tracked. Fatal erorrs always are.
 		/// </summary>
@@ -74,7 +71,7 @@ namespace MZZT.DarkForces {
 			this.ShowWarnings = PlayerPrefs.GetInt("ShowWarnings", 1) > 0;
 		}
 
-		private readonly Dictionary<string, DfPalette> palCache = new Dictionary<string, DfPalette>();
+		private readonly Dictionary<string, DfPalette> palCache = new();
 		/// <summary>
 		/// Retrieves a palette.
 		/// </summary>
@@ -88,7 +85,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, pal);
 
 				if (pal == null) {
 					try {
@@ -96,33 +92,38 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, pal);
 				}
 
-				this.palCache[filename] = pal;
+				this.AddPalette(filename, pal);
 			}
 			return pal;
 		}
 
-		private readonly Dictionary<DfPalette, byte[]> importedPalCache = new Dictionary<DfPalette, byte[]>();
+		/// <summary>
+		/// Forces a PAL into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the PAL.</param>
+		/// <param name="pal">The PAL.</param>
+		public void AddPalette(string filename, DfPalette pal) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, pal);
+			this.palCache[filename] = pal;
+		}
+
+		private readonly Dictionary<(DfPalette, bool), byte[]> importedPalCache = new();
 		/// <summary>
 		/// Import a palette into 32-bit RGBA format.
 		/// </summary>
 		/// <param name="pal">The palette.</param>
 		/// <returns>A 256 color 32-bit RGBA palette in a byte array.</returns>
-		public byte[] ImportPalette(DfPalette pal) {
-			if (!this.importedPalCache.TryGetValue(pal, out byte[] palette)) {
-				this.importedPalCache[pal] = palette = pal.Palette.SelectMany(x => new byte[] {
-					(byte)Mathf.Clamp(Mathf.Round(x.R * 255 / 63f), 0, 255),
-					(byte)Mathf.Clamp(Mathf.Round(x.G * 255 / 63f), 0, 255),
-					(byte)Mathf.Clamp(Mathf.Round(x.B * 255 / 63f), 0, 255),
-					255
-				}).ToArray();
+		public byte[] ImportPalette(DfPalette pal, bool transparent = false) {
+			if (!this.importedPalCache.TryGetValue((pal, transparent), out byte[] palette)) {
+				this.importedPalCache[(pal, transparent)] = palette = PalConverter.ToByteArray(pal, transparent);
 			}
 			return palette;
 		}
 
-		private readonly Dictionary<(string, string), LandruPalette> plttCache = new Dictionary<(string, string), LandruPalette>();
+		private readonly Dictionary<(string, string), LandruPalette> plttCache = new();
 		/// <summary>
 		/// Retrieves a palette.
 		/// </summary>
@@ -136,24 +137,36 @@ namespace MZZT.DarkForces {
 				try {
 					pltt = await FileLoader.Instance.LoadLfdFileAsync<LandruPalette>(lfd, filename);
 				} catch (Exception e) {
-					this.AddError(filename, e);
+					this.AddError(Path.Combine(lfd, filename), e);
 				}
-				this.AddWarnings(filename, pltt);
 
 				if (pltt == null) {
 					try {
 						pltt = await FileLoader.Instance.LoadLfdFileAsync<LandruPalette>(lfd, "DEFAULT");
 					} catch (Exception e) {
-						this.AddError(filename, e);
+						this.AddError(Path.Combine(lfd, filename), e);
 					}
 				}
 
-				this.plttCache[(lfd, filename)] = pltt;
+				this.AddPalette(lfd, filename, pltt);
 			}
 			return pltt;
 		}
 
-		private readonly Dictionary<LandruPalette, byte[]> importedPlttCache = new Dictionary<LandruPalette, byte[]>();
+		/// <summary>
+		/// Forces a PLTT into the cache.
+		/// </summary>
+		/// <param name="lfd">The LFD to associate with the PLTT.</param>
+		/// <param name="filename">The filename to associate with the PLTT.</param>
+		/// <param name="pltt">The PLTT.</param>
+		public void AddPalette(string lfd, string filename, LandruPalette pltt) {
+			lfd = lfd.ToUpper();
+			filename = filename.ToUpper();
+			this.AddWarnings(Path.Combine(lfd, filename), pltt);
+			this.plttCache[(lfd, filename)] = pltt;
+		}
+
+		private readonly Dictionary<LandruPalette, byte[]> importedPlttCache = new();
 		/// <summary>
 		/// Import a palette into 32-bit RGBA format.
 		/// </summary>
@@ -161,14 +174,7 @@ namespace MZZT.DarkForces {
 		/// <returns>A 256 color 32-bit RGBA palette in a byte array.</returns>
 		public byte[] ImportPalette(LandruPalette pltt) {
 			if (!this.importedPlttCache.TryGetValue(pltt, out byte[] palette)) {
-				this.importedPlttCache[pltt] = palette =Enumerable.Repeat<byte>(0, pltt.First * 4).Concat(
-					pltt.Palette.SelectMany(x => new byte[] {
-						x.R,
-						x.G,
-						x.B,
-						255
-					})
-				).ToArray();
+				this.importedPlttCache[pltt] = palette = PlttConverter.ToByteArray(pltt);
 			}
 			return palette;
 		}
@@ -183,7 +189,7 @@ namespace MZZT.DarkForces {
 			this.importedPlttCache.Clear();
 		}
 
-		private readonly Dictionary<string, DfColormap> cmpCache = new Dictionary<string, DfColormap>();
+		private readonly Dictionary<string, DfColormap> cmpCache = new();
 		/// <summary>
 		/// Retrieves a colormap.
 		/// </summary>
@@ -197,7 +203,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, cmp);
 
 				if (cmp == null) {
 					try {
@@ -205,16 +210,25 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, cmp);
 				}
 
-				this.cmpCache[filename] = cmp;
+				this.AddColormap(filename, cmp);
 			}
 			return cmp;
 		}
 
-		private readonly Dictionary<(DfPalette, DfColormap, int, bool), byte[]> importedCmpCache =
-			new Dictionary<(DfPalette, DfColormap, int, bool), byte[]>();
+		/// <summary>
+		/// Forces a CMP into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the CMP.</param>
+		/// <param name="cmp">The CMP.</param>
+		public void AddColormap(string filename, DfColormap cmp) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, cmp);
+			this.cmpCache[filename] = cmp;
+		}
+
+		private readonly Dictionary<(DfPalette, DfColormap, int, bool), byte[]> importedCmpCache = new();
 		/// <summary>
 		/// Map a palette through a colormap light level to a 32-bit RGBA palette.
 		/// </summary>
@@ -229,113 +243,17 @@ namespace MZZT.DarkForces {
 			} else if (lightLevel < 0) {
 				lightLevel = 0;
 			}
+			if (this.fullBright) {
+				lightLevel = 31;
+			}
 
 			if (!this.importedCmpCache.TryGetValue((pal, cmp, lightLevel, transparent), out byte[] litPalette)) {
 				byte[] palette = this.ImportPalette(pal);
 
-				byte[][] cmpData = cmp.PaletteMaps;
-
-				litPalette = new byte[256 * 4];
-				byte[] map = cmpData[this.fullBright ? 31 : lightLevel];
-				// If we want to generate a 24-bit colormap (no difference at light level 0 or 31).
-				if (this.bypassCmpDithering && !this.fullBright && lightLevel > 0 && lightLevel < 31) {
-					// Check each color in the CMP light level and see where it lies on a scale of the color at
-					// light level 0 and the color at light level 31, to get an idea of how lit the current
-					// light level is.
-					float totalWeight = 0;
-					float count = 0;
-					for (int i = 0; i < 256; i++) {
-						byte targetIndex = cmpData[0][i];
-						byte targetR = palette[targetIndex * 4];
-						byte targetG = palette[targetIndex * 4 + 1];
-						byte targetB = palette[targetIndex * 4 + 2];
-
-						byte fullIndex = cmpData[31][i];
-						byte fullR = palette[fullIndex * 4];
-						byte fullG = palette[fullIndex * 4 + 1];
-						byte fullB = palette[fullIndex * 4 + 2];
-
-						// No difference between fully lit and fully dark so skip this color.
-						if (fullR == targetR && fullG == targetG && fullB == targetB) {
-							continue;
-						}
-
-						// Find the currnet light level from 0 to 1, where 0 is fully dark and 1 is fully lit.
-						// Add this to the totalWeight.
-						byte index = map[i];
-						byte r = palette[index * 4];
-						byte g = palette[index * 4 + 1];
-						byte b = palette[index * 4 + 2];
-						if (fullR != targetR) {
-							float clamp = Mathf.Clamp01((float)(r - targetR) / (fullR - targetR));
-							totalWeight += clamp;
-							count++;
-						}
-						if (fullG != targetG) {
-							float clamp = Mathf.Clamp01((float)(g - targetG) / (fullG - targetG));
-							totalWeight += clamp;
-							count++;
-						}
-						if (fullB != targetB) {
-							float clamp = Mathf.Clamp01((float)(b - targetB) / (fullB - targetB));
-							totalWeight += clamp;
-							count++;
-						}
-					}
-
-					// The final weight will be the average % close to fully light (as opposed to fully dark)
-					// this light level is.
-					float weight = 1;
-					if (count > 0) {
-						weight = totalWeight / count;
-					}
-
-					for (int i = 0; i < 256; i++) {
-						if (transparent && i == 0) {
-							litPalette[0] = 0;
-							litPalette[1] = 0;
-							litPalette[2] = 0;
-							litPalette[3] = 0;
-						} else {
-							byte targetIndex = cmpData[0][i];
-							byte targetR = palette[targetIndex * 4];
-							byte targetG = palette[targetIndex * 4 + 1];
-							byte targetB = palette[targetIndex * 4 + 2];
-
-							byte fullIndex = cmpData[31][i];
-							byte fullR = palette[fullIndex * 4];
-							byte fullG = palette[fullIndex * 4 + 1];
-							byte fullB = palette[fullIndex * 4 + 2];
-
-							// Weighted average between light and dark.
-							litPalette[i * 4] = (byte)(fullR * weight
-								+ targetR * (1 - weight));
-							litPalette[i * 4 + 1] = (byte)(fullG * weight
-								+ targetG * (1 - weight));
-							litPalette[i * 4 + 2] = (byte)(fullB * weight
-								+ targetB * (1 - weight));
-							// Copy alpha
-							litPalette[i * 4 + 3] = palette[i * 4 + 3];
-						}
-					}
-				} else {
-					for (int i = 0; i < 256; i++) {
-						if (transparent && i == 0) {
-							litPalette[0] = 0;
-							litPalette[1] = 0;
-							litPalette[2] = 0;
-							litPalette[3] = 0;
-						} else {
-							Buffer.BlockCopy(palette, map[i] * 4, litPalette, i * 4, 4);
-						}
-					}
-				}
-
-				this.importedCmpCache[(pal, cmp, lightLevel, transparent)] = litPalette;
+				this.importedCmpCache[(pal, cmp, lightLevel, transparent)] = litPalette = CmpConverter.ToByteArray(cmp, palette, lightLevel, transparent, this.bypassCmpDithering);
 			}
 			return litPalette;
 		}
-
 
 		/// <summary>
 		/// Clear all cached colormap data.
@@ -345,7 +263,7 @@ namespace MZZT.DarkForces {
 			this.importedCmpCache.Clear();
 		}
 
-		private readonly Dictionary<string, DfBitmap> bmCache = new Dictionary<string, DfBitmap>();
+		private readonly Dictionary<string, DfBitmap> bmCache = new();
 		/// <summary>
 		/// Retrieves a bitmap.
 		/// </summary>
@@ -359,7 +277,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, bm);
 
 				if (bm == null) {
 					try {
@@ -367,7 +284,6 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, bm);
 				}
 
 				this.bmCache[filename] = bm;
@@ -375,8 +291,18 @@ namespace MZZT.DarkForces {
 			return bm;
 		}
 
-		private readonly Dictionary<(DfPalette, DfColormap, DfBitmap, int, bool), Texture2D> importedBmCache =
-			new Dictionary<(DfPalette, DfColormap, DfBitmap, int, bool), Texture2D>();
+		/// <summary>
+		/// Forces a BM into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the BM.</param>
+		/// <param name="bm">The BM.</param>
+		public void AddBitmap(string filename, DfBitmap bm) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, bm);
+			this.bmCache[filename] = bm;
+		}
+
+		private readonly Dictionary<(DfPalette, DfColormap, DfBitmap, int, bool), Texture2D> importedBmCache = new();
 		/// <summary>
 		/// Generate a texture from a bitmap.
 		/// </summary>
@@ -384,7 +310,7 @@ namespace MZZT.DarkForces {
 		/// <param name="pal">The palette.</param>
 		/// <param name="cmp">The optional colormap.</param>
 		/// <param name="lightLevel">The light level to use.</param>
-		/// <param name="forceTransparent">Whether or not to force transparency/</param>
+		/// <param name="forceTransparent">Whether or not to force transparency.</param>
 		/// <param name="keepTextureReadable">Whether or not to keep the Texture2D readable after creating it.</param>
 		/// <returns>The generated texture.</returns>
 		public Texture2D ImportBitmap(DfBitmap bm, DfPalette pal, DfColormap cmp = null, int lightLevel = 31, bool forceTransparent = false, bool keepTextureReadable = false) {
@@ -396,46 +322,25 @@ namespace MZZT.DarkForces {
 
 			if (cmp == null) {
 				lightLevel = 0;
-				forceTransparent = false;
 			}
+
+			forceTransparent = forceTransparent || bm.Pages[0].Flags.HasFlag(DfBitmap.Flags.Transparent);
 
 			if (!this.importedBmCache.TryGetValue((pal, cmp, bm, lightLevel, forceTransparent), out Texture2D texture)) {
 				byte[] palette;
 				if (cmp != null) {
-					palette = this.ImportColormap(pal, cmp, lightLevel, forceTransparent || (bm.Pages[0].Flags & DfBitmap.Flags.Transparent) > 0);
+					palette = this.ImportColormap(pal, cmp, lightLevel, forceTransparent);
 				} else {
-					palette = this.ImportPalette(pal);
+					palette = this.ImportPalette(pal, forceTransparent);
 				}
-
-				byte[] pixels = bm.Pages[0].Pixels;
-
-				int width = bm.Pages[0].Width;
-				int height = bm.Pages[0].Height;
-
-				byte[] buffer = new byte[width * height * 4];
-				for (int y = 0; y < height; y++) {
-					for (int x = 0; x < width; x++) {
-						Buffer.BlockCopy(palette, pixels[y * width + x] * 4, buffer, (y * width + x) * 4, 4);
-					}
-				}
-
-				texture = new Texture2D(width, height, TextureFormat.RGBA32, false, true) {
-#if UNITY_EDITOR
-					alphaIsTransparency = true,
-#endif
-					filterMode = FilterMode.Point
-				};
-				texture.LoadRawTextureData(buffer);
-				texture.Apply(true, !keepTextureReadable);
-
-				this.importedBmCache[(pal, cmp, bm, lightLevel, forceTransparent)] = texture;
+				
+				this.importedBmCache[(pal, cmp, bm, lightLevel, forceTransparent)] = texture = BmConverter.ToTexture(bm, palette, keepTextureReadable);
 			}
 
 			return texture;
 		}
 
-		private readonly Dictionary<(Texture2D, Shader), Material> materials =
-			new Dictionary<(Texture2D, Shader), Material>();
+		private readonly Dictionary<(Texture2D, Shader), Material> materials = new();
 		/// <summary>
 		/// Generate material.
 		/// </summary>
@@ -452,7 +357,7 @@ namespace MZZT.DarkForces {
 			return material;
 		}
 
-		private readonly Dictionary<(string, string), LandruDelt> deltCache = new Dictionary<(string, string), LandruDelt>();
+		private readonly Dictionary<(string, string), LandruDelt> deltCache = new();
 		/// <summary>
 		/// Retrieves a delt.
 		/// </summary>
@@ -466,26 +371,36 @@ namespace MZZT.DarkForces {
 				try {
 					delt = await FileLoader.Instance.LoadLfdFileAsync<LandruDelt>(lfd, filename);
 				} catch (Exception e) {
-					this.AddError(@$"{lfd}\{filename}", e);
+					this.AddError(Path.Combine(lfd, filename), e);
 				}
-				this.AddWarnings(@$"{lfd}\{filename}", delt);
 
 				if (delt == null) {
 					try {
 						delt = await FileLoader.Instance.LoadLfdFileAsync<LandruDelt>(lfd, "DEFAULT");
 					} catch (Exception e) {
-						this.AddError(@$"{lfd}\{filename}", e);
+						this.AddError(Path.Combine(lfd, filename), e);
 					}
-					this.AddWarnings(@$"{lfd}\{filename}", delt);
 				}
 
-				this.deltCache[(lfd, filename)] = delt;
+				this.AddDelt(lfd, filename, delt);
 			}
 			return delt;
 		}
 
-		private readonly Dictionary<(LandruPalette, LandruDelt), Texture2D> importedDeltCache =
-			new Dictionary<(LandruPalette, LandruDelt), Texture2D>();
+		/// <summary>
+		/// Forces a DELT into the cache.
+		/// </summary>
+		/// <param name="lfd">The LFD to associate with the DELT.</param>
+		/// <param name="filename">The filename to associate with the DELT.</param>
+		/// <param name="delt">The DELT.</param>
+		public void AddDelt(string lfd, string filename, LandruDelt delt) {
+			lfd = lfd.ToUpper();
+			filename = filename.ToUpper();
+			this.AddWarnings(Path.Combine(lfd, filename), delt);
+			this.deltCache[(lfd, filename)] = delt;
+		}
+
+		private readonly Dictionary<(LandruPalette, LandruDelt), Texture2D> importedDeltCache = new();
 		/// <summary>
 		/// Generate a texture from a delt.
 		/// </summary>
@@ -497,38 +412,13 @@ namespace MZZT.DarkForces {
 			if (!this.importedDeltCache.TryGetValue((pltt, delt), out Texture2D texture)) {
 				byte[] palette = this.ImportPalette(pltt);
 
-				byte[] pixels = delt.Pixels;
-				BitArray mask = delt.Mask;
-				int width = delt.Width;
-				int height = delt.Height;
-				if (width >= 1 && height >= 1) {
-					byte[] buffer = new byte[width * height * 4];
-					for (int y = 0; y < height; y++) {
-						for (int x = 0; x < width; x++) {
-							int offset = (height - y - 1) * width + x;
-							if (mask[offset]) {
-								Buffer.BlockCopy(palette, pixels[offset] * 4, buffer, offset * 4, 4);
-							}
-						}
-					}
-
-					texture = new Texture2D(width, height, TextureFormat.RGBA32, false, true) {
-#if UNITY_EDITOR
-						alphaIsTransparency = true,
-#endif
-						filterMode = FilterMode.Point
-					};
-					texture.LoadRawTextureData(buffer);
-					texture.Apply(true, !keepTextureReadable);
-				}
-
-				this.importedDeltCache[(pltt, delt)] = texture;
+				this.importedDeltCache[(pltt, delt)] = texture = DeltConverter.ToTexture(delt, palette, keepTextureReadable);
 			}
 
 			return texture;
 		}
 
-		private readonly Dictionary<string, DfFrame> fmeCache = new Dictionary<string, DfFrame>();
+		private readonly Dictionary<string, DfFrame> fmeCache = new();
 		/// <summary>
 		/// Retrieves a frame.
 		/// </summary>
@@ -542,7 +432,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, fme);
 
 				if (fme == null) {
 					try {
@@ -550,16 +439,25 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, fme);
 				}
 
-				this.fmeCache[filename] = fme;
+				this.AddFrame(filename, fme);
 			}
 			return fme;
 		}
 
-		private readonly Dictionary<(DfPalette, DfColormap, DfFrame, int), Sprite> importedFmeCache =
-			new Dictionary<(DfPalette, DfColormap, DfFrame, int), Sprite>();
+		/// <summary>
+		/// Forces a FME into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the FME.</param>
+		/// <param name="fme">The FME.</param>
+		public void AddFrame(string filename, DfFrame fme) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, fme);
+			this.fmeCache[filename] = fme;
+		}
+
+		private readonly Dictionary<(DfPalette, DfColormap, DfFrame, int), Sprite> importedFmeCache = new();
 		/// <summary>
 		/// Generate a sprite from a frame.
 		/// </summary>
@@ -576,40 +474,25 @@ namespace MZZT.DarkForces {
 				lightLevel = 0;
 			}
 
+			if (cmp == null) {
+				lightLevel = 0;
+			}
+
 			if (!this.importedFmeCache.TryGetValue((pal, cmp, fme, lightLevel), out Sprite sprite)) {
-				byte[] palette = this.ImportColormap(pal, cmp, lightLevel, true);
-
-				byte[] pixels = fme.Pixels;
-
-				int width = fme.Width;
-				int height = fme.Height;
-
-				byte[] buffer = new byte[width * height * 4];
-				for (int y = 0; y < height; y++) {
-					for (int x = 0; x < width; x++) {
-						Buffer.BlockCopy(palette, pixels[y * width + x] * 4, buffer, (y * width + x) * 4, 4);
-					}
+				byte[] palette;
+				if (cmp != null) {
+					palette = this.ImportColormap(pal, cmp, lightLevel, true);
+				} else {
+					palette = this.ImportPalette(pal, true);
 				}
 
-				Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false, true) {
-#if UNITY_EDITOR
-					alphaIsTransparency = true,
-#endif
-					filterMode = FilterMode.Point
-				};
-				texture.LoadRawTextureData(buffer);
-				texture.Apply(true, !keepTextureReadable);
-
-				this.importedFmeCache[(pal, cmp, fme, lightLevel)] = sprite = Sprite.Create(texture,
-					new Rect(0, 0, width, height),
-					new Vector2(-fme.InsertionPointX / (float)width, (height + fme.InsertionPointY) / (float)height),
-					SPRITE_PIXELS_PER_UNIT);
+				this.importedFmeCache[(pal, cmp, fme, lightLevel)] = sprite = FmeConverter.ToSprite(fme, palette, keepTextureReadable);
 			}
 
 			return sprite;
 		}
 
-		private readonly Dictionary<string, DfWax> waxCache = new Dictionary<string, DfWax>();
+		private readonly Dictionary<string, DfWax> waxCache = new();
 		/// <summary>
 		/// Retrieves a wax.
 		/// </summary>
@@ -623,7 +506,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, wax);
 
 				if (wax == null) {
 					try {
@@ -631,15 +513,25 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, wax);
 				}
 
-				this.waxCache[filename] = wax;
+				this.AddWax(filename, wax);
 			}
 			return wax;
 		}
 
-		private readonly Dictionary<(string, string), LandruAnimation> animCache = new Dictionary<(string, string), LandruAnimation>();
+		/// <summary>
+		/// Forces a WAX into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the WAX.</param>
+		/// <param name="wax">The WAX.</param>
+		public void AddWax(string filename, DfWax wax) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, wax);
+			this.waxCache[filename] = wax;
+		}
+
+		private readonly Dictionary<(string, string), LandruAnimation> animCache = new();
 		/// <summary>
 		/// Retrieves an animation.
 		/// </summary>
@@ -653,22 +545,115 @@ namespace MZZT.DarkForces {
 				try {
 					anim = await FileLoader.Instance.LoadLfdFileAsync<LandruAnimation>(lfd, filename);
 				} catch (Exception e) {
-					this.AddError(@$"{lfd}\{filename}", e);
+					this.AddError(Path.Combine(lfd, filename), e);
 				}
-				this.AddWarnings(@$"{lfd}\{filename}", anim);
 
 				if (anim == null) {
 					try {
 						anim = await FileLoader.Instance.LoadLfdFileAsync<LandruAnimation>(lfd, "DEFAULT");
 					} catch (Exception e) {
-						this.AddError(@$"{lfd}\{filename}", e);
+						this.AddError(Path.Combine(lfd, filename), e);
 					}
-					this.AddWarnings(@$"{lfd}\{filename}", anim);
 				}
 
-				this.animCache[(lfd, filename)] = anim;
+				this.AddAnimation(lfd, filename, anim);
 			}
 			return anim;
+		}
+
+		/// <summary>
+		/// Forces a ANIM into the cache.
+		/// </summary>
+		/// <param name="lfd">The LFD to associate with the ANIM.</param>
+		/// <param name="filename">The filename to associate with the ANIM.</param>
+		/// <param name="anim">The ANIM.</param>
+		public void AddAnimation(string lfd, string filename, LandruAnimation anim) {
+			lfd = lfd.ToUpper();
+			filename = filename.ToUpper();
+			this.AddWarnings(Path.Combine(lfd, filename), anim);
+			this.animCache[(lfd, filename)] = anim;
+		}
+
+		private readonly Dictionary<string, DfFont> fntCache = new();
+		/// <summary>
+		/// Retrieves a font.
+		/// </summary>
+		/// <param name="filename">The filename of the FNT.</param>
+		/// <returns>The font data.</returns>
+		public async Task<DfFont> GetFontAsync(string filename) {
+			filename = filename.ToUpper();
+			if (!this.fntCache.TryGetValue(filename, out DfFont fnt)) {
+				try {
+					fnt = await FileLoader.Instance.LoadGobFileAsync<DfFont>(filename);
+				} catch (Exception e) {
+					this.AddError(filename, e);
+				}
+
+				if (fnt == null) {
+					try {
+						fnt = await FileLoader.Instance.LoadGobFileAsync<DfFont>("DEFAULT.FNT");
+					} catch (Exception e) {
+						this.AddError(filename, e);
+					}
+				}
+
+				this.AddFont(filename, fnt);
+			}
+			return fnt;
+		}
+
+		/// <summary>
+		/// Forces a FNT into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the FNT.</param>
+		/// <param name="fnt">The FNT.</param>
+		public void AddFont(string filename, DfFont fnt) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, fnt);
+			this.fntCache[filename] = fnt;
+		}
+
+		private readonly Dictionary<(string, string), LandruFont> fontCache = new();
+		/// <summary>
+		/// Retrieves a font.
+		/// </summary>
+		/// <param name="lfd">The LFD holding the FONT.</param>
+		/// <param name="filename">The filename of the FONT.</param>
+		/// <returns>The font data.</returns>
+		public async Task<LandruFont> GetFontAsync(string lfd, string filename) {
+			lfd = lfd.ToUpper();
+			filename = filename.ToUpper();
+			if (!this.fontCache.TryGetValue((lfd, filename), out LandruFont font)) {
+				try {
+					font = await FileLoader.Instance.LoadLfdFileAsync<LandruFont>(lfd, filename);
+				} catch (Exception e) {
+					this.AddError(Path.Combine(lfd, filename), e);
+				}
+
+				if (font == null) {
+					try {
+						font = await FileLoader.Instance.LoadLfdFileAsync<LandruFont>(lfd, "DEFAULT");
+					} catch (Exception e) {
+						this.AddError(Path.Combine(lfd, filename), e);
+					}
+				}
+
+				this.AddFont(lfd, filename, font);
+			}
+			return font;
+		}
+
+		/// <summary>
+		/// Forces a FONT into the cache.
+		/// </summary>
+		/// <param name="lfd">The LFD to associate with the FONT.</param>
+		/// <param name="filename">The filename to associate with the FONT.</param>
+		/// <param name="font">The FONT.</param>
+		public void AddFont(string lfd, string filename, LandruFont font) {
+			lfd = lfd.ToUpper();
+			filename = filename.ToUpper();
+			this.AddWarnings(Path.Combine(lfd, filename), font);
+			this.fontCache[(lfd, filename)] = font;
 		}
 
 		/// <summary>
@@ -684,9 +669,11 @@ namespace MZZT.DarkForces {
 			this.importedBmCache.Clear();
 			this.waxCache.Clear();
 			this.animCache.Clear();
+			this.fntCache.Clear();
+			this.fontCache.Clear();
 		}
 
-		private readonly Dictionary<string, Df3dObject> threeDoCache = new Dictionary<string, Df3dObject>();
+		private readonly Dictionary<string, Df3dObject> threeDoCache = new();
 		/// <summary>
 		/// Retrieves a 3D object.
 		/// </summary>
@@ -700,7 +687,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, threeDo);
 
 				if (threeDo == null) {
 					try {
@@ -708,16 +694,25 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, threeDo);
 				}
 
-				this.threeDoCache[filename] = threeDo;
+				this.Add3dObject(filename, threeDo);
 			}
 			return threeDo;
 		}
 
-		private readonly Dictionary<Df3dObject, GameObject> imported3doCache =
-			new Dictionary<Df3dObject, GameObject>();
+		/// <summary>
+		/// Forces a 3DO into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the 3DO.</param>
+		/// <param name="threeDo">The 3DO.</param>
+		public void Add3dObject(string filename, Df3dObject threeDo) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, threeDo);
+			this.threeDoCache[filename] = threeDo;
+		}
+
+		private readonly Dictionary<Df3dObject, GameObject> imported3doCache = new();
 		/// <summary>
 		/// Generate a GameObject prefab with meshes for the 3D object.
 		/// </summary>
@@ -747,14 +742,14 @@ namespace MZZT.DarkForces {
 		public void Clear3dObjects() {
 			this.threeDoCache.Clear();
 
-			foreach (GameObject obj in this.imported3doCache.Values.ToArray()) {
+			foreach (GameObject obj in this.imported3doCache.Values) {
 				DestroyImmediate(obj);
 			}
 
 			this.imported3doCache.Clear();
 		}
 
-		private readonly Dictionary<string, AutodeskVue> vueCache = new Dictionary<string, AutodeskVue>();
+		private readonly Dictionary<string, AutodeskVue> vueCache = new();
 		/// <summary>
 		/// Retrieves a 3D object animation.
 		/// </summary>
@@ -768,7 +763,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, vue);
 
 				if (vue == null) {
 					try {
@@ -776,16 +770,25 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, vue);
 				}
 
-				this.vueCache[filename] = vue;
+				this.AddVue(filename, vue);
 			}
 			return vue;
 		}
 
-		private readonly Dictionary<VueObject, AnimationClip> importedVueCache =
-			new Dictionary<VueObject, AnimationClip>();
+		/// <summary>
+		/// Forces a VUE into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the VUE.</param>
+		/// <param name="vue">The VUE.</param>
+		public void AddVue(string filename, AutodeskVue vue) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, vue);
+			this.vueCache[filename] = vue;
+		}
+
+		private readonly Dictionary<VueObject, AnimationClip> importedVueCache = new();
 		/// <summary>
 		/// Generate an AnimationClip for the 3D object animation.
 		/// </summary>
@@ -847,7 +850,7 @@ namespace MZZT.DarkForces {
 			this.importedVueCache.Clear();
 		}
 
-		private readonly Dictionary<string, CreativeVoice> vocCache = new Dictionary<string, CreativeVoice>();
+		private readonly Dictionary<string, CreativeVoice> vocCache = new();
 		/// <summary>
 		/// Retrieves a voice audio file.
 		/// </summary>
@@ -861,7 +864,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, voc);
 
 				if (voc == null) {
 					try {
@@ -869,15 +871,25 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, voc);
 				}
 
-				this.vocCache[filename] = voc;
+				this.AddCreativeVoice(filename, voc);
 			}
 			return voc;
 		}
 
-		private readonly Dictionary<(string, string), CreativeVoice> voicCache = new Dictionary<(string, string), CreativeVoice>();
+		/// <summary>
+		/// Forces a VOC into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the VOC.</param>
+		/// <param name="voc">The VOC.</param>
+		public void AddCreativeVoice(string filename, CreativeVoice voc) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, voc);
+			this.vocCache[filename] = voc;
+		}
+
+		private readonly Dictionary<(string, string), CreativeVoice> voicCache = new();
 		/// <summary>
 		/// Retrieves a voice audio file.
 		/// </summary>
@@ -891,25 +903,36 @@ namespace MZZT.DarkForces {
 				try {
 					voic = await FileLoader.Instance.LoadLfdFileAsync<CreativeVoice>(lfd, filename);
 				} catch (Exception e) {
-					this.AddError(@$"{lfd}\{filename}", e);
+					this.AddError(Path.Combine(lfd, filename), e);
 				}
-				this.AddWarnings(@$"{lfd}\{filename}", voic);
 
 				if (voic == null) {
 					try {
 						voic = await FileLoader.Instance.LoadLfdFileAsync<CreativeVoice>(lfd, "DEFAULT");
 					} catch (Exception e) {
-						this.AddError(@$"{lfd}\{filename}", e);
+						this.AddError(Path.Combine(lfd, filename), e);
 					}
-					this.AddWarnings(@$"{lfd}\{filename}", voic);
 				}
 
-				this.voicCache[(lfd, filename)] = voic;
+				this.AddCreativeVoice(lfd, filename, voic);
 			}
 			return voic;
 		}
 
-		private readonly Dictionary<CreativeVoice, VocPlayer> importedVocCache = new Dictionary<CreativeVoice, VocPlayer>();
+		/// <summary>
+		/// Forces a VOIC into the cache.
+		/// </summary>
+		/// <param name="lfd">The LFD to associate with the VOIC.</param>
+		/// <param name="filename">The filename to associate with the VOIC.</param>
+		/// <param name="voic">The VOIC.</param>
+		public void AddCreativeVoice(string lfd, string filename, CreativeVoice voic) {
+			lfd = lfd.ToUpper();
+			filename = filename.ToUpper();
+			this.AddWarnings(Path.Combine(lfd, filename), voic);
+			this.voicCache[(lfd, filename)] = voic;
+		}
+
+		private readonly Dictionary<CreativeVoice, VocPlayer> importedVocCache = new();
 		/// <summary>
 		/// Generate a GameObject and VocPlayer script with AudioSources to play back the sound.
 		/// </summary>
@@ -918,7 +941,7 @@ namespace MZZT.DarkForces {
 		// TODO probably can just get rid of this function and handle this elsewhere
 		public VocPlayer ImportCreativeVoice(CreativeVoice voc) {
 			if (!this.importedVocCache.TryGetValue(voc, out VocPlayer player)) {
-				GameObject go = new GameObject() {
+				GameObject go = new() {
 					name = "Voc"
 				};
 				go.transform.SetParent(this.transform, false);
@@ -946,7 +969,7 @@ namespace MZZT.DarkForces {
 			this.importedVocCache.Clear();
 		}
 
-		private readonly Dictionary<string, DfGeneralMidi> gmdCache = new Dictionary<string, DfGeneralMidi>();
+		private readonly Dictionary<string, DfGeneralMidi> gmdCache = new();
 		/// <summary>
 		/// Retrieves a general MIDI file.
 		/// </summary>
@@ -960,7 +983,6 @@ namespace MZZT.DarkForces {
 				} catch (Exception e) {
 					this.AddError(filename, e);
 				}
-				this.AddWarnings(filename, gmd);
 
 				if (gmd == null) {
 					try {
@@ -968,15 +990,25 @@ namespace MZZT.DarkForces {
 					} catch (Exception e) {
 						this.AddError(filename, e);
 					}
-					this.AddWarnings(filename, gmd);
 				}
 
-				this.gmdCache[filename] = gmd;
+				this.AddGeneralMidi(filename, gmd);
 			}
 			return gmd;
 		}
 
-		private readonly Dictionary<(string, string), DfGeneralMidi> gmidCache = new Dictionary<(string, string), DfGeneralMidi>();
+		/// <summary>
+		/// Forces a GMD into the cache.
+		/// </summary>
+		/// <param name="filename">The filename to associate with the GMD.</param>
+		/// <param name="gmd">The GMD.</param>
+		public void AddGeneralMidi(string filename, DfGeneralMidi gmd) {
+			filename = filename.ToUpper();
+			this.AddWarnings(filename, gmd);
+			this.gmdCache[filename] = gmd;
+		}
+
+		private readonly Dictionary<(string, string), DfGeneralMidi> gmidCache = new();
 		/// <summary>
 		/// Retrieves a general MIDI file.
 		/// </summary>
@@ -1008,6 +1040,18 @@ namespace MZZT.DarkForces {
 			return gmid;
 		}
 
+		/// <summary>
+		/// Forces a GMID into the cache.
+		/// </summary>
+		/// <param name="lfd">The LFD to associate with the GMID.</param>
+		/// <param name="filename">The filename to associate with the GMID.</param>
+		/// <param name="gmid">The GMID.</param>
+		public void AddGeneralMidi(string lfd, string filename, DfGeneralMidi gmid) {
+			lfd = lfd.ToUpper();
+			filename = filename.ToUpper();
+			this.AddWarnings(Path.Combine(lfd, filename), gmid);
+			this.gmidCache[(lfd, filename)] = gmid;
+		}
 
 		/// <summary>
 		/// Clear all cached general MIDI data.
@@ -1047,7 +1091,7 @@ namespace MZZT.DarkForces {
 					return (key, value);
 				}).ToArray();
 			this.importedBmCache.Clear();
-			Dictionary<Texture2D, Texture2D> textureMap = new Dictionary<Texture2D, Texture2D>();
+			Dictionary<Texture2D, Texture2D> textureMap = new();
 			foreach (((DfPalette pal, DfColormap cmp, DfBitmap bm, int lightLevel, bool forceTransparent), Texture2D texture) in bms) {
 				Texture2D newTexture = this.ImportBitmap(bm, pal, cmp, lightLevel, forceTransparent);
 				textureMap[texture] = newTexture;
@@ -1071,7 +1115,7 @@ namespace MZZT.DarkForces {
 					return (key, value);
 				}).ToArray();
 			this.importedFmeCache.Clear();
-			Dictionary<Sprite, Sprite> spriteMap = new Dictionary<Sprite, Sprite>();
+			Dictionary<Sprite, Sprite> spriteMap = new();
 			foreach (((DfPalette pal, DfColormap cmp, DfFrame fme, int lightLevel), Sprite sprite) in fmes) {
 				Sprite newSprite = this.ImportFrame(pal, cmp, fme, lightLevel);
 				spriteMap[sprite] = newSprite;
@@ -1104,7 +1148,7 @@ namespace MZZT.DarkForces {
 			public bool Fatal;
 		}
 
-		private readonly List<LoadWarning> warnings = new List<LoadWarning>();
+		private readonly List<LoadWarning> warnings = new();
 		/// <summary>
 		/// Get the current list of warnings.
 		/// </summary>

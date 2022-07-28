@@ -1,5 +1,4 @@
 using MZZT.DarkForces.FileFormats;
-using MZZT.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,7 +16,7 @@ namespace MZZT.DarkForces.Showcase {
 		private Random rng;
 
 		private async void Start() {
-			// This is here in case you run directly from this sccene instead of the menu.
+			// This is here in case you run directly from this scene instead of the menu.
 			if (!FileLoader.Instance.Gobs.Any()) {
 				await FileLoader.Instance.LoadStandardGobFilesAsync();
 			}
@@ -47,7 +46,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			using (stream) {
-				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
+				DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 					UseSimpleDictionaryFormat = true
 				});
 

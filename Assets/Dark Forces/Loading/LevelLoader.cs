@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using static MZZT.DarkForces.FileFormats.DfLevel;
 
 namespace MZZT.DarkForces {
 	/// <summary>

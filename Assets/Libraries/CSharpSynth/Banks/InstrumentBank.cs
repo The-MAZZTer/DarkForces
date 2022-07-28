@@ -5,6 +5,7 @@ using CSharpSynth.Synthesis;
 using CSharpSynth.Wave;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -213,8 +214,8 @@ namespace CSharpSynth.Banks {
     //--Private Methods
     private void LoadAnalog(string[] args, byte[] Programs, byte[] DrumPrograms) {
       bool ISdrum = args[4] == "d";
-      int start = int.Parse(args[2]);
-      int end = int.Parse(args[3]);
+      int start = int.Parse(args[2], CultureInfo.InvariantCulture);
+      int end = int.Parse(args[3], CultureInfo.InvariantCulture);
       List<int> Indices = new List<int>();
 
       if (ISdrum == false) {
@@ -263,8 +264,8 @@ namespace CSharpSynth.Banks {
     }
     private void LoadFm(string[] args, string bankpath, byte[] Programs, byte[] DrumPrograms) {
       bool ISdrum = args[4] == "d";
-      int start = int.Parse(args[2]);
-      int end = int.Parse(args[3]);
+      int start = int.Parse(args[2], CultureInfo.InvariantCulture);
+      int end = int.Parse(args[3], CultureInfo.InvariantCulture);
       List<int> Indices = new List<int>();
 
       if (ISdrum == false) {
@@ -313,8 +314,8 @@ namespace CSharpSynth.Banks {
     }
     private void LoadSfz(string[] args, string bankpath, byte[] Programs, byte[] DrumPrograms) {
       bool ISdrum = args[4] == "d";
-      int start = int.Parse(args[2]);
-      int end = int.Parse(args[3]);
+      int start = int.Parse(args[2], CultureInfo.InvariantCulture);
+      int end = int.Parse(args[3], CultureInfo.InvariantCulture);
       List<int> Indices = new List<int>();
 
       if (ISdrum == false) {

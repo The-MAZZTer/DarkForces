@@ -198,7 +198,6 @@ namespace MZZT.DarkForces.FileFormats {
 			/// </summary>
 			public List<DfFrame> Frames { get; } = new();
 
-			// TODO handle shared frames/sequences/waxes by only cloning once.
 			object ICloneable.Clone() => this.Clone();
 			public Sequence Clone(Dictionary<DfFrame, DfFrame> frameClones = null,
 				Dictionary<byte[], byte[]> cellClones = null) {

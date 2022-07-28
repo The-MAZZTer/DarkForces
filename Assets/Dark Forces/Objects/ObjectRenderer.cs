@@ -29,7 +29,7 @@ namespace MZZT.DarkForces {
 
 			this.gameObject.name = string.IsNullOrEmpty(obj.FileName) ? obj.Type.ToString() : $"{obj.Type} - {obj.FileName}";
 
-			Vector3 position = new Vector3(
+			Vector3 position = new(
 				obj.Position.X * LevelGeometryGenerator.GEOMETRY_SCALE,
 				-obj.Position.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
 				obj.Position.Z * LevelGeometryGenerator.GEOMETRY_SCALE

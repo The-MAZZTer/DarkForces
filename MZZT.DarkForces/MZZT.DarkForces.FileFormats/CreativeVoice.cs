@@ -1,4 +1,5 @@
 ﻿using MZZT.Extensions;
+using MZZT.FileFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -734,6 +735,60 @@ namespace MZZT.DarkForces.FileFormats {
 			clone.Comments.AddRange(this.Comments);
 			clone.Markers.AddRange(this.Markers);
 			return clone;
+		}
+
+		public IEnumerable<Wave> ToWaves() {
+			List<AudioData> datas = this.AudioBlocks;
+			for (int i = 0; i < datas.Count; i++) {
+				AudioData data = datas[i];
+				if (data.Type == BlockTypes.Silence) {
+					AudioData source;
+					if (i > 0) {
+						source = datas[i - 1];
+					} else {
+						source = datas.Skip(i).FirstOrDefault(x => x.Type != BlockTypes.Silence);
+					}
+					if (source == null) {
+						datas.Clear();
+						break;
+					}
+
+					data.BitsPerSample = source.BitsPerSample;
+					data.Channels = source.Channels;
+					data.Codec = source.Codec;
+					data.Frequency = source.Frequency;
+					// Only works for 8-bit
+					data.Data = Enumerable.Repeat<byte>(0x80, data.SilenceLength * data.Channels * data.BitsPerSample / 8).ToArray();
+				}
+
+				if (data.RepeatCount > 1) {
+					int count = Math.Min(5, data.RepeatCount);
+					for (int j = 1; j < count; j++) {
+						datas.InsertRange(i + 1, datas.Skip(data.RepeatStart).Take(i - data.RepeatStart + 1));
+					}
+					i += (count - 1) * (i - data.RepeatStart + 1);
+				}
+			}
+
+			int index = 0;
+			while (datas.Count > 0) {
+				index++;
+
+				AudioData[] wavData = datas.TakeWhile(x =>
+					x.BitsPerSample == datas[0].BitsPerSample &&
+					x.Channels == datas[0].Channels &&
+					x.Codec == datas[0].Codec &&
+					x.Frequency == datas[0].Frequency
+				).ToArray();
+				datas.RemoveRange(0, wavData.Length);
+
+				yield return new Wave() {
+					BitsPerSample = wavData[0].BitsPerSample,
+					Channels = wavData[0].Channels,
+					SampleRate = wavData[0].Frequency,
+					Data = wavData.SelectMany(x => x.Data).ToArray()
+				};
+			}
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using CSharpSynth.Synthesis;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 
@@ -120,12 +121,12 @@ namespace CSharpSynth.Banks.Fm {
         reader.Dispose();
         throw new Exception("Invalid Program file: Parameters are missing");
       }
-      if (int.Parse(args[0]) == 0) {
+      if (int.Parse(args[0], CultureInfo.InvariantCulture) == 0) {
         this.looping = true;
       }
 
-      this.start_time = double.Parse(args[1]);
-      this.end_time = double.Parse(args[2]);
+      this.start_time = double.Parse(args[1], CultureInfo.InvariantCulture);
+      this.end_time = double.Parse(args[2], CultureInfo.InvariantCulture);
       args = reader.ReadLine().Split(new string[] { "|" }, StringSplitOptions.None);
       if (args.Length < 3) {
         reader.Dispose();
@@ -133,20 +134,20 @@ namespace CSharpSynth.Banks.Fm {
       }
       switch (args[0].ToLower().Trim()) {
         case "fadein":
-          this.env = Envelope.CreateBasicFadeIn(double.Parse(args[2]));
+          this.env = Envelope.CreateBasicFadeIn(double.Parse(args[2], CultureInfo.InvariantCulture));
           break;
         case "fadeout":
-          this.env = Envelope.CreateBasicFadeOut(double.Parse(args[2]));
+          this.env = Envelope.CreateBasicFadeOut(double.Parse(args[2], CultureInfo.InvariantCulture));
           break;
         case "fadein&out":
-          double p = double.Parse(args[2]) / 2.0;
+          double p = double.Parse(args[2], CultureInfo.InvariantCulture) / 2.0;
           this.env = Envelope.CreateBasicFadeInAndOut(p, p);
           break;
         default:
           this.env = Envelope.CreateBasicConstant();
           break;
       }
-      this.env.Peak = double.Parse(args[1]);
+      this.env.Peak = double.Parse(args[1], CultureInfo.InvariantCulture);
       reader.Dispose();
     }
     private IFMComponent GetOpsAndValues(string arg, bool isFrequencyFunction) {
@@ -213,7 +214,7 @@ namespace CSharpSynth.Banks.Fm {
               }
 
               neg = false;
-              valueList.Add(double.Parse(number));
+              valueList.Add(double.Parse(number, CultureInfo.InvariantCulture));
             }
             break;
         }

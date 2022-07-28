@@ -42,11 +42,10 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private void AddFromPlayerPrefs() {
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
+			DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 				UseSimpleDictionaryFormat = true
 			});
-
-			
+						
 			for (int i = 0; true; i++) {
 				string name = PlayerPrefs.GetString($"Randomizer.Prefab.{i}.Name", null);
 				if (string.IsNullOrEmpty(name)) {
@@ -75,7 +74,7 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public void SyncToPlayerPrefs() {
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
+			DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 				UseSimpleDictionaryFormat = true
 			});
 
@@ -83,7 +82,7 @@ namespace MZZT.DarkForces.Showcase {
 			foreach ((Preset preset, int i) in this.Values.Where(x => !x.ReadOnly).Select((x, i) => (x, i))) {
 				PlayerPrefs.SetString($"Randomizer.Prefab.{i}.Name", preset.Name);
 				
-				StringWriter stringWriter = new StringWriter();
+				StringWriter stringWriter = new();
 				using (XmlWriter writer = XmlWriter.Create(stringWriter)) {
 					try {
 						serializer.WriteObject(writer, preset.Settings);

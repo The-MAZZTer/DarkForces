@@ -199,7 +199,12 @@ namespace MZZT.DarkForces.Showcase {
 				new Showcase() {
 					Name = "Randomizer",
 					SceneName = "Randomizer",
-					Description = "Randomizers items and enemies within Dark Forces levels or mod levels. Also allows adjustment of other aspects such as colors, light levels, automap functionality, keys/code drops, and more."
+					Description = "Randomizes items and enemies within Dark Forces levels or mod levels. Also allows adjustment of other aspects such as colors, light levels, automap functionality, keys/code drops, and more."
+				},
+				new Showcase() {
+					Name = "Resource Dumper",
+					SceneName = "ResourceDumper",
+					Description = "Bulk processing of Dark Forces file types. Can dump files from GOBs/LFDs, can convert all image file formats to PNGs, all audio to MIDI/WAV, and all PAL/PLTT/CMP to various palette formats."
 				},
 				new Showcase(),
 				new Showcase() {

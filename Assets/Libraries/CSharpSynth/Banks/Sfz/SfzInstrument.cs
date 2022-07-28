@@ -2,6 +2,7 @@
 using CSharpSynth.Wave;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 
@@ -140,31 +141,31 @@ namespace CSharpSynth.Banks.Sfz {
                         }
                         break;
                       case "hikey":
-                        Group.HiNote = (byte)int.Parse(Rvalue[1]);
+                        Group.HiNote = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         groupValues[1] = true;
                         break;
                       case "lokey":
-                        Group.LoNote = (byte)int.Parse(Rvalue[1]);
+                        Group.LoNote = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         groupValues[2] = true;
                         break;
                       case "loop_start":
-                        Group.LoopStart = int.Parse(Rvalue[1]);
+                        Group.LoopStart = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         groupValues[3] = true;
                         break;
                       case "loop_end":
-                        Group.LoopEnd = int.Parse(Rvalue[1]);
+                        Group.LoopEnd = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         groupValues[4] = true;
                         break;
                       case "tune":
-                        Group.Tune = int.Parse(Rvalue[1]) / 100.0f;
+                        Group.Tune = int.Parse(Rvalue[1], CultureInfo.InvariantCulture) / 100.0f;
                         groupValues[5] = true;
                         break;
                       case "pitch_keycenter":
-                        Group.Root = int.Parse(Rvalue[1]);
+                        Group.Root = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         groupValues[6] = true;
                         break;
                       case "volume":
-                        Group.Volume = float.Parse(Rvalue[1]);
+                        Group.Volume = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         groupValues[7] = true;
                         break;
                       case "loop_mode":
@@ -183,38 +184,38 @@ namespace CSharpSynth.Banks.Sfz {
                         break;
                       case "ampeg_release":
                         groupValues[9] = true;
-                        Group.Release = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        Group.Release = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "ampeg_attack":
                         groupValues[10] = true;
-                        Group.Attack = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        Group.Attack = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "ampeg_decay":
                         groupValues[11] = true;
-                        Group.Decay = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        Group.Decay = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "ampeg_hold":
                         groupValues[12] = true;
-                        Group.Hold = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        Group.Hold = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "lovel":
                         groupValues[13] = true;
-                        Group.LoVelocity = (byte)int.Parse(Rvalue[1]);
+                        Group.LoVelocity = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "hivel":
                         groupValues[14] = true;
-                        Group.HiVelocity = (byte)int.Parse(Rvalue[1]);
+                        Group.HiVelocity = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "lochan":
                         groupValues[15] = true;
-                        Group.LoChannel = (byte)(int.Parse(Rvalue[1]) - 1);
+                        Group.LoChannel = (byte)(int.Parse(Rvalue[1], CultureInfo.InvariantCulture) - 1);
                         break;
                       case "hichan":
                         groupValues[16] = true;
-                        Group.HiChannel = (byte)(int.Parse(Rvalue[1]) - 1);
+                        Group.HiChannel = (byte)(int.Parse(Rvalue[1], CultureInfo.InvariantCulture) - 1);
                         break;
                       case "key":
-                        Group.Root = int.Parse(Rvalue[1]);
+                        Group.Root = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         groupValues[6] = true;
                         Group.HiNote = (byte)Group.Root;
                         groupValues[1] = true;
@@ -223,19 +224,19 @@ namespace CSharpSynth.Banks.Sfz {
                         break;
                       case "offset":
                         groupValues[17] = true;
-                        Group.Offset = int.Parse(Rvalue[1]);
+                        Group.Offset = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "pan":
                         groupValues[18] = true;
-                        Group.Pan = float.Parse(Rvalue[1]);
+                        Group.Pan = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "effect1":
                         groupValues[19] = true;
-                        Group.Effect1 = float.Parse(Rvalue[1]);
+                        Group.Effect1 = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "effect2":
                         groupValues[20] = true;
-                        Group.Effect2 = float.Parse(Rvalue[1]);
+                        Group.Effect2 = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       default:
                         break;
@@ -281,25 +282,25 @@ namespace CSharpSynth.Banks.Sfz {
                         }
                         break;
                       case "hikey":
-                        r.HiNote = (byte)int.Parse(Rvalue[1]);
+                        r.HiNote = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "lokey":
-                        r.LoNote = (byte)int.Parse(Rvalue[1]);
+                        r.LoNote = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "loop_start":
-                        r.LoopStart = int.Parse(Rvalue[1]);
+                        r.LoopStart = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "loop_end":
-                        r.LoopEnd = int.Parse(Rvalue[1]);
+                        r.LoopEnd = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "tune":
-                        r.Tune = int.Parse(Rvalue[1]) / 100.0f;
+                        r.Tune = int.Parse(Rvalue[1], CultureInfo.InvariantCulture) / 100.0f;
                         break;
                       case "pitch_keycenter":
-                        r.Root = int.Parse(Rvalue[1]);
+                        r.Root = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "volume":
-                        r.Volume = float.Parse(Rvalue[1]);
+                        r.Volume = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "loop_mode":
                         switch (Rvalue[1]) {
@@ -315,45 +316,45 @@ namespace CSharpSynth.Banks.Sfz {
                         }
                         break;
                       case "ampeg_release":
-                        r.Release = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        r.Release = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "ampeg_attack":
-                        r.Attack = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        r.Attack = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "ampeg_decay":
-                        r.Decay = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        r.Decay = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "ampeg_hold":
-                        r.Hold = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1]));
+                        r.Hold = SynthHelper.GetSampleFromTime(this.SampleRate, float.Parse(Rvalue[1], CultureInfo.InvariantCulture));
                         break;
                       case "lovel":
-                        r.LoVelocity = (byte)int.Parse(Rvalue[1]);
+                        r.LoVelocity = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "hivel":
-                        r.HiVelocity = (byte)int.Parse(Rvalue[1]);
+                        r.HiVelocity = (byte)int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "lochan":
-                        r.LoChannel = (byte)(int.Parse(Rvalue[1]) - 1);
+                        r.LoChannel = (byte)(int.Parse(Rvalue[1], CultureInfo.InvariantCulture) - 1);
                         break;
                       case "hichan":
-                        r.HiChannel = (byte)(int.Parse(Rvalue[1]) - 1);
+                        r.HiChannel = (byte)(int.Parse(Rvalue[1], CultureInfo.InvariantCulture) - 1);
                         break;
                       case "key":
-                        r.Root = int.Parse(Rvalue[1]);
+                        r.Root = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         r.HiNote = (byte)r.Root;
                         r.LoNote = (byte)r.Root;
                         break;
                       case "offset":
-                        r.Offset = int.Parse(Rvalue[1]);
+                        r.Offset = int.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "pan":
-                        r.Pan = float.Parse(Rvalue[1]);
+                        r.Pan = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "effect1":
-                        r.Effect1 = float.Parse(Rvalue[1]);
+                        r.Effect1 = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       case "effect2":
-                        r.Effect2 = float.Parse(Rvalue[1]);
+                        r.Effect2 = float.Parse(Rvalue[1], CultureInfo.InvariantCulture);
                         break;
                       default:
                         break;

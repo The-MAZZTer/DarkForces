@@ -239,7 +239,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 		}
 
-		public static readonly Preset DEFAULT_PRESET = new Preset() {
+		public static readonly Preset DEFAULT_PRESET = new() {
 			Name = "Default",
 			ReadOnly = true,
 			Settings = new RandomizerSettings() {

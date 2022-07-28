@@ -19,3 +19,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--- End of MIT License
+
+The above license applies to the source code in this repository only.
+
+This software utilizes the following libraries in compliance with their licenses. The links lead to the appropriate source code repository (for compliance with the licenses that require it).
+
+Material Design Icons - https://github.com/google/material-design-icons/tree/master/font
+License - https://github.com/google/material-design-icons/blob/master/LICENSE (Apache 2.0)
+
+CSharpSynthForUnity - https://github.com/kewlniss/CSharpSynthForUnity
+License - https://github.com/kewlniss/CSharpSynthForUnity/blob/master/LICENSE (MIT)
+
+SkiaSharp - https://github.com/mono/SkiaSharp 
+License - https://github.com/mono/SkiaSharp/blob/main/LICENSE.md (MIT)
+
+Sample code for line intersections - https://github.com/Habrador/Computational-geometry (MIT License)
