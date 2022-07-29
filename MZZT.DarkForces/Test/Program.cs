@@ -213,7 +213,7 @@ namespace Test {
 
 			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\Downloads\ats2lp_modern\ATS2LP.GOB", true);
 
-			DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\HOTELRND.GOB");
+			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB");
 			//DfLevelList lvl = await dark.GetFileAsync<DfLevelList>("JEDI.LVL");
 			//DfLevelGoals gol = await dark.GetFileAsync<DfLevelGoals>("SECBASE.GOL");
 			//DfLevel lev = await dark.GetFileAsync<DfLevel>($"{lvl.Levels[0].FileName}.LEV");
@@ -228,8 +228,8 @@ namespace Test {
 			//Gob sprites = await Gob.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\SPRITES.GOB");
 			//Wax wax = await sprites.GetFileAsync<Wax>("STORMFIN.WAX");
 			//Wax wax2 = await sprites.GetFileAsync<Wax>("REDLIT.WAX");
-			//DfGobContainer textures = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB");
-
+			DfGobContainer textures = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB");
+			
 			//DfGobContainer sounds = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\SOUNDS.GOB");
 
 			/*using (Bitmap bitmap = new(256, levels.Levels.Count, PixelFormat.Format32bppArgb)) {
@@ -332,16 +332,16 @@ namespace Test {
 				Buffer.BlockCopy(paletteBuffer, map[i] * 4, cmpBuffer31, i * 4, 4);
 			}*/
 
-			string dir = Path.Combine(AppContext.BaseDirectory, "HOTELRND.GOB");
+			/*string dir = Path.Combine(AppContext.BaseDirectory, "HOTELRND.GOB");
 			if (!Directory.Exists(dir)) {
 				Directory.CreateDirectory(dir);
-			}
+			}*/
 
-			foreach (string name in dark.Files
+			foreach (string name in textures.Files
 				.Select(x => x.name)) {
 
-				Raw raw = await dark.GetFileAsync<Raw>(name);
-				await raw.SaveAsync(Path.Combine(dir, name));
+				//Raw raw = await dark.GetFileAsync<Raw>(name);
+				//await raw.SaveAsync(Path.Combine(dir, name));
 
 				/*if (sounds.Files.First(x => x.name == name).size == 0) {
 					continue;
@@ -414,9 +414,12 @@ namespace Test {
 					}
 				}*/
 
-				/*if (name.ToUpper().EndsWith(".BM")) {
+				if (name.ToUpper().EndsWith(".BM")) {
 					DfBitmap bm = await textures.GetFileAsync<DfBitmap>(name);
-					DfBitmap.Page page = bm.Pages[0];
+					if (bm.Pages.Count > 1) {
+						Console.WriteLine($"{name}: {bm.Pages.Count}");
+					}
+					/*DfBitmap.Page page = bm.Pages[0];
 					int width = page.Width;
 					int height = page.Height;
 
@@ -450,7 +453,7 @@ namespace Test {
 
 						bitmap.UnlockBits(bitmapData);
 						bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}-31.PNG"), ImageFormat.Png);
-					}
+					}*/
 				}
 
 				/*Wax wax = await sprites.GetFileAsync<Wax>(name);
@@ -478,10 +481,10 @@ namespace Test {
 				bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}.PNG"), ImageFormat.Png);*/
 			}
 
-			Process.Start(new ProcessStartInfo() {
+			/*Process.Start(new ProcessStartInfo() {
 				FileName = dir,
 				UseShellExecute = true
-			});
+			});*/
 		}
 	}
 }

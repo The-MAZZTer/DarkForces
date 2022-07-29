@@ -903,7 +903,7 @@ namespace MZZT.DarkForces {
 				}
 
 				Material material = bm != null ? ResourceCache.Instance.GetMaterial(
-					ResourceCache.Instance.ImportBitmap(bm, LevelLoader.Instance.Palette,
+					ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
 						LevelLoader.Instance.ColorMap, lightLevel),
 					shader) : null;
 				if (isPlane && material != null) {

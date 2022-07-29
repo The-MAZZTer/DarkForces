@@ -59,7 +59,7 @@ namespace MZZT.DarkForces {
 			}
 
 			Material material = bm != null ? ResourceCache.Instance.GetMaterial(
-				ResourceCache.Instance.ImportBitmap(bm, LevelLoader.Instance.Palette, LevelLoader.Instance.ColorMap,
+				ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette, LevelLoader.Instance.ColorMap,
 					usePlaneShader ? 31 : wall.Sector.LightLevel, transparent),
 				shader) : null;
 			if (usePlaneShader && material != null) {
@@ -163,7 +163,7 @@ namespace MZZT.DarkForces {
 				}
 				if (bm != null) {
 					material = ResourceCache.Instance.GetMaterial(
-						ResourceCache.Instance.ImportBitmap(bm, LevelLoader.Instance.Palette,
+						ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
 							LevelLoader.Instance.ColorMap, wall.Sector.LightLevel),
 						ResourceCache.Instance.TransparentShader);
 

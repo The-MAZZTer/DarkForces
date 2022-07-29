@@ -489,10 +489,15 @@ namespace MZZT.DarkForces.Showcase {
 
 							foreach (int i in lightLevels) {
 								parameters["lightlevel"] = i < 0 ? "" : i.ToString();
-								await this.SaveTextureAsPngAsync(
-									ResourceCache.Instance.ImportBitmap(bm, pal, i < 0 ? null : cmp, i, false, true),
-									this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
-								);
+
+								foreach ((DfBitmap.Page page, int index) in bm.Pages.Select((x, i) => (x, i))) {
+									parameters["index"] = index.ToString();
+
+									await this.SaveTextureAsPngAsync(
+										ResourceCache.Instance.ImportBitmap(page, pal, i < 0 ? null : cmp, i, false, true),
+										this.FillOutputTemplate(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters)
+									);
+								}
 							}
 						}
 					}
@@ -940,6 +945,19 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void DumpAsync() {
+			if (string.IsNullOrWhiteSpace(this.Settings.BaseOutputFolder) || File.Exists(this.Settings.BaseOutputFolder)) {
+				await DfMessageBox.Instance.ShowAsync("Base Output Folder is set to an invalid location. Please specify a folder.");
+				return;
+			}
+			if (!Directory.Exists(this.Settings.BaseOutputFolder)) {
+				try {
+					Directory.CreateDirectory(this.Settings.BaseOutputFolder);
+				} catch (Exception) {
+					await DfMessageBox.Instance.ShowAsync("Could not create base output folder. Please verify the location you specified is accurate.");
+					return;
+				}
+			}
+
 			await PauseMenu.Instance.BeginLoadingAsync();
 
 			DataContractJsonSerializer serializer = new(typeof(ResourceDumperSettings), new DataContractJsonSerializerSettings() {
@@ -1255,6 +1273,7 @@ namespace MZZT.DarkForces.Showcase {
 		public string BaseOutputFormat { get; set; } = @"{output}\{inputpath}\{file}";
 		public bool PreferThreeCharacterExtensions { get; set; } = false;
 		public string ConvertedImageFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}{lightlevel}.{outputext}";
+		public string ConvertedBmFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}{lightlevel}-{index}.{outputext}";
 		public string ConvertedAnimFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}\{index}.{outputext}";
 		public string ConvertedWaxFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}{lightlevel}\{wax}.{sequence}.{frame}.{outputext}";
 		public string ConvertedPalPlttFilenameFormat { get; set; } = @"{inputname}.{inputext}.{format}{lightlevel}.{outputext}";

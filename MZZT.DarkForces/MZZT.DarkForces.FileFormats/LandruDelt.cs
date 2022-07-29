@@ -151,7 +151,7 @@ namespace MZZT.DarkForces.FileFormats {
 
 			this.header = await stream.ReadAsync<Header>();
 
-			int width = this.Width);
+			int width = this.Width;
 			int height = this.Height;
 
 			this.Pixels = new byte[height * width];

@@ -1,18 +1,14 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace MZZT.DarkForces.Converters {
 	public static class BmConverter {
-		public static Texture2D ToTexture(DfBitmap bm, byte[] palette, bool keepTextureReadable = false) {
-			byte[] pixels = bm.Pages[0].Pixels;
+		public static Texture2D ToTexture(DfBitmap.Page page, byte[] palette, bool keepTextureReadable = false) {
+			byte[] pixels = page.Pixels;
 
-			int width = bm.Pages[0].Width;
-			int height = bm.Pages[0].Height;
+			int width = page.Width;
+			int height = page.Height;
 
 			byte[] buffer = new byte[width * height * 4];
 			for (int y = 0; y < height; y++) {
@@ -32,17 +28,17 @@ namespace MZZT.DarkForces.Converters {
 			return texture;
 		}
 
-		public static Texture2D ToTexture(DfBitmap bm, DfPalette pal, bool forceTransparent, bool keepTextureReadable = false) =>
-			ToTexture(bm, PalConverter.ToByteArray(pal, forceTransparent), keepTextureReadable);
+		public static Texture2D ToTexture(DfBitmap.Page page, DfPalette pal, bool forceTransparent, bool keepTextureReadable = false) =>
+			ToTexture(page, PalConverter.ToByteArray(pal, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0), keepTextureReadable);
 
-		public static Texture2D ToTexture(DfBitmap bm, DfPalette pal, DfColormap cmp, int lightLevel, bool forceTransparent, bool bypassCmpDithering, bool keepTextureReadable = false) {
+		public static Texture2D ToTexture(DfBitmap.Page page, DfPalette pal, DfColormap cmp, int lightLevel, bool forceTransparent, bool bypassCmpDithering, bool keepTextureReadable = false) {
 			if (lightLevel > 31) {
 				lightLevel = 31;
 			} else if (lightLevel < 0) {
 				lightLevel = 0;
 			}
 
-			return ToTexture(bm, CmpConverter.ToByteArray(cmp, pal, lightLevel, forceTransparent || (bm.Pages[0].Flags & DfBitmap.Flags.Transparent) > 0,
+			return ToTexture(page, CmpConverter.ToByteArray(cmp, pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
 				bypassCmpDithering), keepTextureReadable);
 		}
 	}

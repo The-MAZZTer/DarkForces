@@ -93,7 +93,7 @@ namespace MZZT.DarkForces {
 							DfBitmap bm = await ResourceCache.Instance.GetBitmapAsync(obj.TextureFile);
 							if (bm != null) {
 								material = ResourceCache.Instance.GetMaterial(
-									ResourceCache.Instance.ImportBitmap(bm, LevelLoader.Instance.Palette,
+									ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
 										LevelLoader.Instance.ColorMap, lightLevel),
 									ResourceCache.Instance.SimpleShader);
 							}
@@ -105,7 +105,7 @@ namespace MZZT.DarkForces {
 							DfBitmap bm = await ResourceCache.Instance.GetBitmapAsync(obj.TextureFile);
 							if (bm != null) {
 								material = ResourceCache.Instance.GetMaterial(
-									ResourceCache.Instance.ImportBitmap(bm, LevelLoader.Instance.Palette,
+									ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
 										LevelLoader.Instance.ColorMap, lightLevel),
 									ResourceCache.Instance.SimpleShader);
 							}

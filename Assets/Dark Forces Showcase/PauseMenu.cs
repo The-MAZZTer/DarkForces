@@ -36,7 +36,7 @@ namespace MZZT.DarkForces.Showcase {
 					if (waitPal != null) {
 						DfBitmap waitBm = await ResourceCache.Instance.GetBitmapAsync("WAIT.BM");
 						if (waitBm != null) {
-							Texture2D wait = ResourceCache.Instance.ImportBitmap(waitBm, waitPal);
+							Texture2D wait = ResourceCache.Instance.ImportBitmap(waitBm.Pages[0], waitPal);
 							Rect rect = new Rect(0, 0, wait.width, wait.height);
 							this.loading.sprite = Sprite.Create(wait, rect, new Vector2(0.5f, 0.5f));
 							this.loading.color = Color.white;

@@ -302,7 +302,7 @@ namespace MZZT.DarkForces {
 			this.bmCache[filename] = bm;
 		}
 
-		private readonly Dictionary<(DfPalette, DfColormap, DfBitmap, int, bool), Texture2D> importedBmCache = new();
+		private readonly Dictionary<(DfPalette, DfColormap, DfBitmap.Page, int, bool), Texture2D> importedBmCache = new();
 		/// <summary>
 		/// Generate a texture from a bitmap.
 		/// </summary>
@@ -313,7 +313,7 @@ namespace MZZT.DarkForces {
 		/// <param name="forceTransparent">Whether or not to force transparency.</param>
 		/// <param name="keepTextureReadable">Whether or not to keep the Texture2D readable after creating it.</param>
 		/// <returns>The generated texture.</returns>
-		public Texture2D ImportBitmap(DfBitmap bm, DfPalette pal, DfColormap cmp = null, int lightLevel = 31, bool forceTransparent = false, bool keepTextureReadable = false) {
+		public Texture2D ImportBitmap(DfBitmap.Page page, DfPalette pal, DfColormap cmp = null, int lightLevel = 31, bool forceTransparent = false, bool keepTextureReadable = false) {
 			if (lightLevel > 31) {
 				lightLevel = 31;
 			} else if (lightLevel < 0) {
@@ -324,9 +324,9 @@ namespace MZZT.DarkForces {
 				lightLevel = 0;
 			}
 
-			forceTransparent = forceTransparent || bm.Pages[0].Flags.HasFlag(DfBitmap.Flags.Transparent);
+			forceTransparent = forceTransparent || page.Flags.HasFlag(DfBitmap.Flags.Transparent);
 
-			if (!this.importedBmCache.TryGetValue((pal, cmp, bm, lightLevel, forceTransparent), out Texture2D texture)) {
+			if (!this.importedBmCache.TryGetValue((pal, cmp, page, lightLevel, forceTransparent), out Texture2D texture)) {
 				byte[] palette;
 				if (cmp != null) {
 					palette = this.ImportColormap(pal, cmp, lightLevel, forceTransparent);
@@ -334,7 +334,7 @@ namespace MZZT.DarkForces {
 					palette = this.ImportPalette(pal, forceTransparent);
 				}
 				
-				this.importedBmCache[(pal, cmp, bm, lightLevel, forceTransparent)] = texture = BmConverter.ToTexture(bm, palette, keepTextureReadable);
+				this.importedBmCache[(pal, cmp, page, lightLevel, forceTransparent)] = texture = BmConverter.ToTexture(page, palette, keepTextureReadable);
 			}
 
 			return texture;
@@ -1085,15 +1085,15 @@ namespace MZZT.DarkForces {
 				this.ImportColormap(pal, cmp, lightLevel, transparent);
 			}
 
-			((DfPalette pal, DfColormap cmp, DfBitmap bm, int lightLevel, bool forceTransparent), Texture2D texture)[] bms =
+			((DfPalette pal, DfColormap cmp, DfBitmap.Page page, int lightLevel, bool forceTransparent), Texture2D texture)[] bms =
 				this.importedBmCache.Select(x => {
-					x.Deconstruct(out (DfPalette, DfColormap, DfBitmap, int, bool) key, out Texture2D value);
+					x.Deconstruct(out (DfPalette, DfColormap, DfBitmap.Page, int, bool) key, out Texture2D value);
 					return (key, value);
 				}).ToArray();
 			this.importedBmCache.Clear();
 			Dictionary<Texture2D, Texture2D> textureMap = new();
-			foreach (((DfPalette pal, DfColormap cmp, DfBitmap bm, int lightLevel, bool forceTransparent), Texture2D texture) in bms) {
-				Texture2D newTexture = this.ImportBitmap(bm, pal, cmp, lightLevel, forceTransparent);
+			foreach (((DfPalette pal, DfColormap cmp, DfBitmap.Page page, int lightLevel, bool forceTransparent), Texture2D texture) in bms) {
+				Texture2D newTexture = this.ImportBitmap(page, pal, cmp, lightLevel, forceTransparent);
 				textureMap[texture] = newTexture;
 			}
 
