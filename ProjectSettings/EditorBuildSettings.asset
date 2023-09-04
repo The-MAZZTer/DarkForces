@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Dark Forces Showcase/Resource Dumper/ResourceDumper.unity
     guid: 05738ae49795e444488d3abada781dfc
+  - enabled: 1
+    path: Assets/Dark Forces Showcase/Resource Editor/ResourceEditor.unity
+    guid: 8228075ee6e81da41a14b0e8928e3477
   m_configObjects: {}

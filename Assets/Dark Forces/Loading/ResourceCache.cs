@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static MZZT.DarkForces.FileFormats.AutodeskVue;
-using Matrix4x4 = UnityEngine.Matrix4x4;
-using Vector3 = UnityEngine.Vector3;
 
 namespace MZZT.DarkForces {
 	/// <summary>

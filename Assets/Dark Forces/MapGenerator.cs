@@ -270,7 +270,7 @@ namespace MZZT.DarkForces {
 						if (wallsScripts.ContainsKey((x.x.Name, x.x.Walls.IndexOf(x.y)))) {
 							candidates.Add(this.wallTrigger);
 						}
-						if (sectorsScripts.TryGetValue(x.x.Name, out DfLevelInformation.Item[] sectorScripts)) {
+						if (x.x.Name != null && sectorsScripts.TryGetValue(x.x.Name, out DfLevelInformation.Item[] sectorScripts)) {
 							if (sectorScripts.Any(x => {
 								string[] lines = x.Script.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 								Dictionary<string, string[]> logic = lines.SelectMany(x => TextBasedFile.SplitKeyValuePairs(TextBasedFile.TokenizeLine(x)))

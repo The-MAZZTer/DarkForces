@@ -1,5 +1,4 @@
 using MZZT.DarkForces.FileFormats;
-using MZZT.Data.Binding;
 using System;
 using System.Collections.Generic;
 using System.IO;

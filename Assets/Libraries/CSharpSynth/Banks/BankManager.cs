@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace CSharpSynth.Banks {
-  public static class BankManager {
+	public static class BankManager {
     public const int DEFAULT_BANK_SIZE = 256; //midi standard only needs 0-127. The rest is extra space.
     public const int DEFAULT_DRUMBANK_SIZE = 128;
     //--Static Properties

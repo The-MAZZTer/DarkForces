@@ -2,12 +2,10 @@ using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace MZZT.DarkForces.Showcase {
 	class GobViewer : Databind<DfGobContainer>, IResourceViewer {

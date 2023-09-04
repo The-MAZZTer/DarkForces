@@ -206,6 +206,11 @@ namespace MZZT.DarkForces.Showcase {
 					SceneName = "ResourceDumper",
 					Description = "Bulk processing of Dark Forces file types. Can dump files from GOBs/LFDs, can convert all image file formats to PNGs, all audio to MIDI/WAV, and all PAL/PLTT/CMP to various palette formats."
 				},
+				new Showcase() {
+					Name = "Resource Editor",
+					SceneName = "ResourceEditor",
+					Description = "View and edit almost every type of resource in Dark Forces. Export and import to/from modern file formats."
+				},
 				new Showcase(),
 				new Showcase() {
 					Name = "Command Line Help",

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Debug = UnityEngine.Debug;
 
 namespace MZZT.Data.Binding {
 	public class DataboundList<T> : Databind<ICollection<T>>, IList<T>, IList {
@@ -288,23 +286,26 @@ namespace MZZT.Data.Binding {
 				return ((Component)bind).transform.GetSiblingIndex();
 			}
 			set {
+				if (this.ToggleGroup == null) {
+					throw new InvalidOperationException();
+				}
+
 				int old = this.SelectedIndex;
 				if (old == value) {
 					return;
 				}
 
+				IDatabind bind = this.Children.ElementAtOrDefault(value);
+				if (bind == null) {
+					throw new IndexOutOfRangeException();
+				}
+				Toggle toggle = this.toggles.GetValueOrDefault(bind);
+
 				bool allowSwitchOff = this.ToggleGroup.allowSwitchOff;
 				try {
 					this.ToggleGroup.allowSwitchOff = true;
-					Toggle toggle = null;
-					foreach ((IDatabind x, int i) in this.Children.Select((x, i) => (x, i))) {
-						if (!this.toggles.TryGetValue(x, out Toggle current)) {
-							continue;
-						}
+					foreach (Toggle current in this.ToggleGroup.GetToggles()) {
 						current.isOn = false;
-						if (i == value) {
-							toggle = current;
-						}
 					}
 					if (toggle != null) {
 						toggle.isOn = true;
@@ -321,17 +322,40 @@ namespace MZZT.Data.Binding {
 					throw new InvalidOperationException();
 				}
 
-				KeyValuePair<IDatabind, Toggle>[] toggles = this.toggles.Where(x => x.Value.isOn).ToArray();
+				Toggle[] toggles = this.ToggleGroup.GetToggles().Where(x => x.isOn).ToArray();
+				
 				if (toggles.Length == 0) {
 					return null;
 				}
 				if (toggles.Length > 1) {
-					toggles = toggles.Where(x => x.Value.isActiveAndEnabled).ToArray();
+					toggles = toggles.Where(x => x.isActiveAndEnabled).ToArray();
 				}
 				if (toggles.Length != 1) {
 					return null;
 				}
-				return toggles[0].Key;
+
+				Toggle toggle = toggles[0];
+				IDatabind bind = this.toggles.FirstOrDefault(x => x.Value == toggle).Key;
+				if (bind != null) {
+					return bind;
+				}
+
+				DataboundListChildToggle helper = toggle.GetComponentInParent<DataboundListChildToggle>(true);
+				if (helper != null && helper.Toggle == toggle) {
+					bind = helper.GetComponent<IDatabind>();
+				}
+				if (bind != null) {
+					return bind;
+				}
+
+				Debug.LogWarning("Inefficient SelectedDatabound access!");
+
+				helper = FindObjectsOfType<DataboundListChildToggle>(true).FirstOrDefault(x => x.Toggle == toggle);
+				if (helper != null) {
+					bind = helper.GetComponent<IDatabind>();
+				}
+
+				return bind;
 			}
 			set {
 				IDatabind old = this.SelectedDatabound;
@@ -339,26 +363,19 @@ namespace MZZT.Data.Binding {
 					return;
 				}
 
-				Toggle toggle = value != null ?  this.toggles.GetValueOrDefault(value) : null;
-				Assert.AreEqual(value == null, toggle == null);
+				Toggle toggle = null;
+				if (value != null) {
+					//toggle = this.toggles.GetValueOrDefault(value);
+					toggle = DataboundListChildToggle.FindToggleFor(value);
+				}
 				bool allowSwitchOff = this.ToggleGroup.allowSwitchOff;
 				try {
 					this.ToggleGroup.allowSwitchOff = true;
-					foreach (Toggle t in this.toggles.Values) {
+					foreach (Toggle t in this.ToggleGroup.GetToggles()) {
 						t.isOn = false;
 					}
 					if (toggle != null) {
-#if DEBUG
-						Assert.AreEqual(this.ToggleGroup, toggle.group);
-#endif
-
 						toggle.isOn = true;
-
-#if DEBUG
-						Assert.IsTrue(this.toggles.Values.Single(x => x.isOn) == toggle);
-					} else {
-						Assert.IsFalse(this.toggles.Values.Any(x => x.isOn));
-#endif
 					}
 				} finally {
 					this.ToggleGroup.allowSwitchOff = allowSwitchOff;
