@@ -547,7 +547,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15fa21ddf966a7a429bfb7b2810a8d5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: JediLvl
+  changeDetectionMode: 16
+  valueChangedEventName: 
   includeAllSelectedLevels: {fileID: 453593215}
   levelList: {fileID: 1506055076}
 --- !u!1 &11921409
@@ -700,6 +711,7 @@ GameObject:
   - component: {fileID: 12186865}
   - component: {fileID: 12186864}
   - component: {fileID: 12186863}
+  - component: {fileID: 12186869}
   - component: {fileID: 12186868}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -920,13 +932,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 12186861}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &12186869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 12186861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &18442776
 GameObject:
   m_ObjectHideFlags: 0
@@ -1865,7 +1899,6 @@ GameObject:
   - component: {fileID: 36988363}
   - component: {fileID: 36988366}
   - component: {fileID: 36988365}
-  - component: {fileID: 36988364}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -1901,14 +1934,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 585.94995}
   m_Pivot: {x: 0, y: 1}
---- !u!222 &36988364
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 36988362}
-  m_CullTransparentMesh: 1
 --- !u!114 &36988365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2678,6 +2703,7 @@ GameObject:
   - component: {fileID: 54849211}
   - component: {fileID: 54849213}
   - component: {fileID: 54849212}
+  - component: {fileID: 54849215}
   - component: {fileID: 54849214}
   m_Layer: 5
   m_Name: Always randomize
@@ -2791,13 +2817,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 54849210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &54849215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54849210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &55504429
 GameObject:
   m_ObjectHideFlags: 0
@@ -3429,6 +3477,7 @@ GameObject:
   - component: {fileID: 66776652}
   - component: {fileID: 66776654}
   - component: {fileID: 66776653}
+  - component: {fileID: 66776656}
   - component: {fileID: 66776655}
   m_Layer: 5
   m_Name: Remove cutscenes
@@ -3542,13 +3591,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 66776651}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RemoveCutscenes
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &66776656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66776651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RemoveCutscenes
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &71181009
 GameObject:
   m_ObjectHideFlags: 0
@@ -4191,10 +4262,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 75675444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e17f78baa4a24846afe0b8a0334afd3, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Cutscenes
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &79372464
 GameObject:
   m_ObjectHideFlags: 0
@@ -4894,6 +4976,7 @@ GameObject:
   - component: {fileID: 90194389}
   - component: {fileID: 90194388}
   - component: {fileID: 90194387}
+  - component: {fileID: 90194393}
   - component: {fileID: 90194392}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -5114,13 +5197,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 90194385}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &90194393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90194385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &94134765
 GameObject:
   m_ObjectHideFlags: 0
@@ -6134,6 +6239,149 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 105692244}
   m_CullTransparentMesh: 1
+--- !u!1 &107622786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 107622787}
+  - component: {fileID: 107622789}
+  - component: {fileID: 107622788}
+  m_Layer: 5
+  m_Name: Help
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &107622787
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107622786}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1103295743}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 769.87, y: -1550.91}
+  m_SizeDelta: {x: 1539.74, y: 123.02}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &107622788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107622786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 'Determines how random spawn locations are selected.
+
+    Point within
+    level: Spreads spawn locations evenly over the level''s surface area.
+
+    Sector,
+    then point: Spreads spawn locations evenly between sectors. Smaller sectors will
+    get as many spawn points as larger ones and this will tend to group enemies in
+    areas with many small sectors.'
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4278190291
+  m_fontColor: {r: 0.827451, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &107622789
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107622786}
+  m_CullTransparentMesh: 1
 --- !u!1 &108949426
 GameObject:
   m_ObjectHideFlags: 0
@@ -6280,6 +6528,7 @@ GameObject:
   - component: {fileID: 113609705}
   - component: {fileID: 113609707}
   - component: {fileID: 113609706}
+  - component: {fileID: 113609709}
   - component: {fileID: 113609708}
   m_Layer: 5
   m_Name: Always randomize
@@ -6393,13 +6642,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 113609704}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &113609709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113609704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &113650523
 GameObject:
   m_ObjectHideFlags: 0
@@ -6411,6 +6682,7 @@ GameObject:
   - component: {fileID: 113650524}
   - component: {fileID: 113650526}
   - component: {fileID: 113650525}
+  - component: {fileID: 113650528}
   - component: {fileID: 113650527}
   m_Layer: 5
   m_Name: Enable
@@ -6524,13 +6796,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 113650523}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &113650528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113650523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &114242241
 GameObject:
   m_ObjectHideFlags: 0
@@ -6600,7 +6894,7 @@ MonoBehaviour:
     in sectors that are too small, or elevators, will be skipped.
 
     Existing and
-    random: Uses roughly 1:1 eatio of existing to random spawns.'
+    random: Uses roughly 1:1 ratio of existing to random spawns.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6688,6 +6982,7 @@ GameObject:
   - component: {fileID: 118030083}
   - component: {fileID: 118030085}
   - component: {fileID: 118030084}
+  - component: {fileID: 118030087}
   - component: {fileID: 118030086}
   m_Layer: 5
   m_Name: Limit diagonas to spawning in water.
@@ -6801,13 +7096,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 118030082}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: SpawnDiagonasOnlyInWater
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &118030087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118030082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: SpawnDiagonasOnlyInWater
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &118234859
 GameObject:
   m_ObjectHideFlags: 0
@@ -8222,10 +8539,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 137558473}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff8b928702ca47f489f476df6db70bd0, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Level
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &138267298
 GameObject:
   m_ObjectHideFlags: 0
@@ -9368,10 +9696,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Values below 100% adjust colors closer to gray.
+  m_text: 'Values below 1x adjust colors closer to gray.
 
-    Values aobve 100%
-    adjust colors closer to the most vibrant shade of the hue.'
+    Values aobve 1x adjust
+    colors closer to the most vibrant shade of the hue.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9837,6 +10165,7 @@ GameObject:
   - component: {fileID: 162417226}
   - component: {fileID: 162417225}
   - component: {fileID: 162417224}
+  - component: {fileID: 162417230}
   - component: {fileID: 162417229}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -10057,13 +10386,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 162417222}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &162417230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162417222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &162467785
 GameObject:
   m_ObjectHideFlags: 0
@@ -10203,6 +10554,7 @@ GameObject:
   - component: {fileID: 162851830}
   - component: {fileID: 162851829}
   - component: {fileID: 162851828}
+  - component: {fileID: 162851834}
   - component: {fileID: 162851833}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -10423,13 +10775,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 162851826}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &162851834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162851826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &164828227
 GameObject:
   m_ObjectHideFlags: 0
@@ -11304,6 +11678,7 @@ GameObject:
   - component: {fileID: 199760017}
   - component: {fileID: 199760019}
   - component: {fileID: 199760018}
+  - component: {fileID: 199760021}
   - component: {fileID: 199760020}
   m_Layer: 5
   m_Name: Allow adjusting light colors.
@@ -11417,13 +11792,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 199760016}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeLightColors
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &199760021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199760016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeLightColors
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &199964538
 GameObject:
   m_ObjectHideFlags: 0
@@ -12096,7 +12493,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Removes existing spawn locations and replaces ethem with randomizes item
+  m_text: Removes existing spawn locations and replaces them with randomized item
     spawns. The following options control how this is done.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -12385,11 +12782,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 218533304}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: ForceLightLevel
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &220478418
 GameObject:
   m_ObjectHideFlags: 0
@@ -12542,11 +12949,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 222451184}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: LightLevelMultiplier
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &226470957
 GameObject:
   m_ObjectHideFlags: 0
@@ -12747,7 +13164,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b04ad505060934d8512b67d5b96003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 2094790796099484241, guid: 2a565d97edd67174e8da41d1a2039986, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 2094790796099484241, guid: 2a565d97edd67174e8da41d1a2039986, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -12933,6 +13362,7 @@ GameObject:
   - component: {fileID: 231217890}
   - component: {fileID: 231217892}
   - component: {fileID: 231217891}
+  - component: {fileID: 231217894}
   - component: {fileID: 231217893}
   m_Layer: 5
   m_Name: Enable
@@ -13046,13 +13476,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 231217889}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &231217894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231217889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &233237663
 GameObject:
   m_ObjectHideFlags: 0
@@ -14371,10 +14823,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 251022782}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0c3c8a4b2e92ba4cb6ffbbd4a5f429f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Object
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &251974621
 GameObject:
   m_ObjectHideFlags: 0
@@ -14386,6 +14849,7 @@ GameObject:
   - component: {fileID: 251974622}
   - component: {fileID: 251974624}
   - component: {fileID: 251974623}
+  - component: {fileID: 251974626}
   - component: {fileID: 251974625}
   m_Layer: 5
   m_Name: Enable
@@ -14499,13 +14963,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 251974621}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &251974626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251974621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &253690949
 GameObject:
   m_ObjectHideFlags: 0
@@ -15017,6 +15503,7 @@ GameObject:
   - component: {fileID: 262766129}
   - component: {fileID: 262766128}
   - component: {fileID: 262766127}
+  - component: {fileID: 262766133}
   - component: {fileID: 262766132}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -15237,13 +15724,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 262766125}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &262766133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262766125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &264097412
 GameObject:
   m_ObjectHideFlags: 0
@@ -16656,6 +17165,7 @@ GameObject:
   - component: {fileID: 277834351}
   - component: {fileID: 277834353}
   - component: {fileID: 277834352}
+  - component: {fileID: 277834355}
   - component: {fileID: 277834354}
   m_Layer: 5
   m_Name: Unlock all doors and shuffle key officers/keys into the random spawn pool.
@@ -16769,13 +17279,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 277834350}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: UnlockAllDoorsAndIncludeKeysInSpawnLocationPool
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &277834355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277834350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: UnlockAllDoorsAndIncludeKeysInSpawnLocationPool
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &278349428
 GameObject:
   m_ObjectHideFlags: 0
@@ -16787,6 +17319,7 @@ GameObject:
   - component: {fileID: 278349429}
   - component: {fileID: 278349431}
   - component: {fileID: 278349430}
+  - component: {fileID: 278349433}
   - component: {fileID: 278349432}
   m_Layer: 5
   m_Name: Randomize level order
@@ -16900,13 +17433,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 278349428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeOrder
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &278349433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278349428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeOrder
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &279283351
 GameObject:
   m_ObjectHideFlags: 0
@@ -17205,7 +17760,6 @@ GameObject:
   - component: {fileID: 296218487}
   - component: {fileID: 296218490}
   - component: {fileID: 296218489}
-  - component: {fileID: 296218488}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -17237,14 +17791,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 242.28}
   m_Pivot: {x: 0, y: 1}
---- !u!222 &296218488
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 296218486}
-  m_CullTransparentMesh: 1
 --- !u!114 &296218489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17525,6 +18071,7 @@ GameObject:
   - component: {fileID: 299221337}
   - component: {fileID: 299221339}
   - component: {fileID: 299221338}
+  - component: {fileID: 299221341}
   - component: {fileID: 299221340}
   m_Layer: 5
   m_Name: Enable
@@ -17638,13 +18185,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 299221336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &299221341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 299221336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &301705609
 GameObject:
   m_ObjectHideFlags: 0
@@ -17925,6 +18494,7 @@ GameObject:
   - component: {fileID: 305848690}
   - component: {fileID: 305848692}
   - component: {fileID: 305848691}
+  - component: {fileID: 305848694}
   - component: {fileID: 305848693}
   m_Layer: 5
   m_Name: Always randomize
@@ -18038,13 +18608,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 305848689}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &305848694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305848689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &309675712
 GameObject:
   m_ObjectHideFlags: 0
@@ -19619,6 +20211,7 @@ GameObject:
   - component: {fileID: 345612972}
   - component: {fileID: 345612971}
   - component: {fileID: 345612970}
+  - component: {fileID: 345612976}
   - component: {fileID: 345612975}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -19839,13 +20432,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 345612968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &345612976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345612968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &346284342
 GameObject:
   m_ObjectHideFlags: 0
@@ -20323,7 +20938,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770354e0dbb93e14eb6d68ee670356d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 6650572057100593700, guid: e1fa23c54311e0448a72fb6a6d405ba3, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 6650572057100593700, guid: e1fa23c54311e0448a72fb6a6d405ba3, type: 3}
   toggleGroup: {fileID: 362500267}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -21251,10 +21878,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Values below 100% adjust colors closer to black.
+  m_text: 'Values below 1x adjust colors closer to black.
 
-    Values aobve 100%
-    adjust colors closer to white.'
+    Values aobve 1x adjust
+    colors closer to white.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22152,7 +22779,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbc28010d69b92a408343ed4966c3524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 8462727678015127451, guid: 6afecb996375b3547ba7e79fad7c17c5, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 8462727678015127451, guid: 6afecb996375b3547ba7e79fad7c17c5, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -22707,11 +23346,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 422754084}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: LightHue
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &435564880
 GameObject:
   m_ObjectHideFlags: 0
@@ -22770,8 +23419,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'This will adjust light levels for each sector and wall. Use 0% for a full
-    dark level. 3100% will force full bright in all but the darkest areas.
+  m_text: 'This will adjust light levels for each sector and wall. Use 0x for a full
+    dark level. 31x will force full bright in all but the darkest areas.
 
     Change
     light elevators will be unaffected.
@@ -23683,6 +24332,7 @@ GameObject:
   - component: {fileID: 441339388}
   - component: {fileID: 441339390}
   - component: {fileID: 441339389}
+  - component: {fileID: 441339392}
   - component: {fileID: 441339391}
   m_Layer: 5
   m_Name: Remove secrets.
@@ -23796,13 +24446,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 441339387}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RemoveSecrets
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &441339392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441339387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RemoveSecrets
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &451071053
 GameObject:
   m_ObjectHideFlags: 0
@@ -24085,6 +24757,7 @@ GameObject:
   - component: {fileID: 455638167}
   - component: {fileID: 455638166}
   - component: {fileID: 455638165}
+  - component: {fileID: 455638168}
   m_Layer: 5
   m_Name: Panes
   m_TagString: Untagged
@@ -24183,6 +24856,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 455638163}
   m_CullTransparentMesh: 1
+--- !u!114 &455638168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455638163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 2
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
 --- !u!1 &456729541
 GameObject:
   m_ObjectHideFlags: 0
@@ -24395,11 +25092,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 457699072}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: RandomizeGeneratorsMaximumDistance
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &460792380
 GameObject:
   m_ObjectHideFlags: 0
@@ -24961,6 +25668,7 @@ GameObject:
   - component: {fileID: 475218427}
   - component: {fileID: 475218426}
   - component: {fileID: 475218425}
+  - component: {fileID: 475218431}
   - component: {fileID: 475218430}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -25181,13 +25889,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 475218423}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &475218431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475218423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &476329577
 GameObject:
   m_ObjectHideFlags: 0
@@ -25199,7 +25929,8 @@ GameObject:
   - component: {fileID: 476329578}
   - component: {fileID: 476329581}
   - component: {fileID: 476329580}
-  - component: {fileID: 476329579}
+  - component: {fileID: 476329583}
+  - component: {fileID: 476329582}
   m_Layer: 5
   m_Name: 'Use fixed seed:'
   m_TagString: Untagged
@@ -25229,22 +25960,6 @@ RectTransform:
   m_AnchoredPosition: {x: 145.04001, y: -25.11}
   m_SizeDelta: {x: 290.08002, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &476329579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 476329577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  memberName: FixedSeed
-  changeListenMode: 16
-  valueChangedEventName: 
-  autoApplyOnChange: 1
 --- !u!114 &476329580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25319,6 +26034,44 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
+--- !u!114 &476329582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 476329577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  databinder: {fileID: 0}
+  autoApplyOnChange: 1
+--- !u!114 &476329583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 476329577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: FixedSeed
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &477506613
 GameObject:
   m_ObjectHideFlags: 0
@@ -25539,10 +26292,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 483766044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0c3c8a4b2e92ba4cb6ffbbd4a5f429f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Object
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &486015312
 GameObject:
   m_ObjectHideFlags: 0
@@ -26212,6 +26976,7 @@ GameObject:
   - component: {fileID: 523283440}
   - component: {fileID: 523283438}
   - component: {fileID: 523283437}
+  - component: {fileID: 523283444}
   - component: {fileID: 523283443}
   m_Layer: 5
   m_Name: Dropdown
@@ -26396,13 +27161,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 523283434}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: MultiLogicEnemyAction
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &523283444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523283434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: MultiLogicEnemyAction
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &525136709
 GameObject:
   m_ObjectHideFlags: 0
@@ -26596,7 +27383,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '%'
+  m_text: x
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -27212,6 +27999,7 @@ GameObject:
   - component: {fileID: 544844006}
   - component: {fileID: 544844005}
   - component: {fileID: 544844004}
+  - component: {fileID: 544844010}
   - component: {fileID: 544844009}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -27432,13 +28220,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 544844002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &544844010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544844002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &544849195
 GameObject:
   m_ObjectHideFlags: 0
@@ -28623,6 +29433,7 @@ GameObject:
   - component: {fileID: 582839833}
   - component: {fileID: 582839835}
   - component: {fileID: 582839834}
+  - component: {fileID: 582839837}
   - component: {fileID: 582839836}
   m_Layer: 5
   m_Name: Enable
@@ -28736,13 +29547,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 582839832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &582839837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582839832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &583332156
 GameObject:
   m_ObjectHideFlags: 0
@@ -29039,10 +29872,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 584040039}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff8b928702ca47f489f476df6db70bd0, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Level
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &585195466
 GameObject:
   m_ObjectHideFlags: 0
@@ -29219,6 +30063,7 @@ GameObject:
   - component: {fileID: 586383657}
   - component: {fileID: 586383656}
   - component: {fileID: 586383655}
+  - component: {fileID: 586383661}
   - component: {fileID: 586383660}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -29439,13 +30284,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 586383653}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &586383661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586383653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &588753463
 GameObject:
   m_ObjectHideFlags: 0
@@ -30334,6 +31201,7 @@ GameObject:
   - component: {fileID: 616499574}
   - component: {fileID: 616499573}
   - component: {fileID: 616499572}
+  - component: {fileID: 616499578}
   - component: {fileID: 616499577}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -30554,13 +31422,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 616499570}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &616499578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616499570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &626521579
 GameObject:
   m_ObjectHideFlags: 0
@@ -31510,6 +32400,7 @@ GameObject:
   - component: {fileID: 658679259}
   - component: {fileID: 658679261}
   - component: {fileID: 658679260}
+  - component: {fileID: 658679263}
   - component: {fileID: 658679262}
   m_Layer: 5
   m_Name: Randomize item spawns.
@@ -31623,13 +32514,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 658679258}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeItems
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &658679263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658679258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeItems
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &658956218
 GameObject:
   m_ObjectHideFlags: 0
@@ -31663,6 +32576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duplicateAction: 2
   persistAcrossScenes: 0
+  settingsObject: {fileID: 455638168}
 --- !u!114 &658956220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31908,11 +32822,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 660517033}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: LightSat
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &667668129
 GameObject:
   m_ObjectHideFlags: 0
@@ -31971,7 +32895,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '%'
+  m_text: x
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -32444,6 +33368,7 @@ GameObject:
   - component: {fileID: 675912808}
   - component: {fileID: 675912810}
   - component: {fileID: 675912809}
+  - component: {fileID: 675912812}
   - component: {fileID: 675912811}
   m_Layer: 5
   m_Name: Replace officers carrying keys/codes with the key/code item.
@@ -32557,13 +33482,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 675912807}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: ReplaceKeyAndCodeOfficersWithTheirItems
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &675912812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 675912807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: ReplaceKeyAndCodeOfficersWithTheirItems
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &687201223
 GameObject:
   m_ObjectHideFlags: 0
@@ -32578,6 +33525,7 @@ GameObject:
   - component: {fileID: 687201227}
   - component: {fileID: 687201226}
   - component: {fileID: 687201225}
+  - component: {fileID: 687201230}
   m_Layer: 0
   m_Name: InputField (TMP)
   m_TagString: Untagged
@@ -32732,7 +33680,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 948993739}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MZZT.DarkForces.Showcase.SeedUi, Assembly-CSharp
         m_MethodName: OnSeedInputChanged
         m_Mode: 0
@@ -32800,6 +33748,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 687201223}
   m_CullTransparentMesh: 1
+--- !u!114 &687201230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687201223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaa814b18bf707a489fc2590e00959ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  value: 0
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Seed
+  changeDetectionMode: 16
+  valueChangedEventName: 
+  input: {fileID: 687201227}
 --- !u!1 &687720180
 GameObject:
   m_ObjectHideFlags: 0
@@ -32916,7 +33890,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fef7047dad5e00a478886ceb649c3faa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 6650572057100593700, guid: ccdeb137fda022242bf1c70e8ea5fe48, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 6650572057100593700, guid: ccdeb137fda022242bf1c70e8ea5fe48, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -33294,10 +34280,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 693041726}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0c3c8a4b2e92ba4cb6ffbbd4a5f429f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Object
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &693892369
 GameObject:
   m_ObjectHideFlags: 0
@@ -34799,6 +35796,7 @@ GameObject:
   - component: {fileID: 711120252}
   - component: {fileID: 711120254}
   - component: {fileID: 711120253}
+  - component: {fileID: 711120256}
   - component: {fileID: 711120255}
   m_Layer: 5
   m_Name: Remove checkpoints.
@@ -34912,13 +35910,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 711120251}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RemoveCheckpoints
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &711120256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 711120251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RemoveCheckpoints
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &711146699
 GameObject:
   m_ObjectHideFlags: 0
@@ -35386,6 +36406,7 @@ GameObject:
   - component: {fileID: 719379363}
   - component: {fileID: 719379362}
   - component: {fileID: 719379361}
+  - component: {fileID: 719379367}
   - component: {fileID: 719379366}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -35606,13 +36627,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 719379359}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &719379367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719379359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &721053773
 GameObject:
   m_ObjectHideFlags: 0
@@ -35850,6 +36893,7 @@ GameObject:
   - component: {fileID: 730453785}
   - component: {fileID: 730453787}
   - component: {fileID: 730453786}
+  - component: {fileID: 730453789}
   - component: {fileID: 730453788}
   m_Layer: 5
   m_Name: Always randomize enemy direction.
@@ -35963,13 +37007,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 730453784}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeEnemyYaw
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &730453789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730453784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeEnemyYaw
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &732791986
 GameObject:
   m_ObjectHideFlags: 0
@@ -36623,11 +37689,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 740828807}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: LightLum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &747904321
 GameObject:
   m_ObjectHideFlags: 0
@@ -36639,6 +37715,7 @@ GameObject:
   - component: {fileID: 747904322}
   - component: {fileID: 747904324}
   - component: {fileID: 747904323}
+  - component: {fileID: 747904326}
   - component: {fileID: 747904325}
   m_Layer: 5
   m_Name: Enable
@@ -36752,13 +37829,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 747904321}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &747904326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747904321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &756776075
 GameObject:
   m_ObjectHideFlags: 0
@@ -36770,6 +37869,7 @@ GameObject:
   - component: {fileID: 756776076}
   - component: {fileID: 756776078}
   - component: {fileID: 756776077}
+  - component: {fileID: 756776080}
   - component: {fileID: 756776079}
   m_Layer: 5
   m_Name: Allow items to spawn in water.
@@ -36883,13 +37983,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 756776075}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: SpawnItemsInWater
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &756776080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 756776075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: SpawnItemsInWater
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &758230485
 GameObject:
   m_ObjectHideFlags: 0
@@ -37832,6 +38954,7 @@ GameObject:
   - component: {fileID: 787588208}
   - component: {fileID: 787588207}
   - component: {fileID: 787588206}
+  - component: {fileID: 787588212}
   - component: {fileID: 787588211}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -38052,13 +39175,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 787588204}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &787588212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787588204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &788702987
 GameObject:
   m_ObjectHideFlags: 0
@@ -38723,6 +39868,7 @@ GameObject:
   - component: {fileID: 805051453}
   - component: {fileID: 805051452}
   - component: {fileID: 805051451}
+  - component: {fileID: 805051457}
   - component: {fileID: 805051456}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -38943,13 +40089,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 805051449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &805051457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805051449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &807283410
 GameObject:
   m_ObjectHideFlags: 0
@@ -39099,6 +40267,7 @@ GameObject:
   - component: {fileID: 811571628}
   - component: {fileID: 811571627}
   - component: {fileID: 811571626}
+  - component: {fileID: 811571632}
   - component: {fileID: 811571631}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -39319,13 +40488,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 811571624}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &811571632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 811571624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &811756265
 GameObject:
   m_ObjectHideFlags: 0
@@ -40568,6 +41759,7 @@ GameObject:
   - component: {fileID: 846860123}
   - component: {fileID: 846860125}
   - component: {fileID: 846860124}
+  - component: {fileID: 846860127}
   - component: {fileID: 846860126}
   m_Layer: 5
   m_Name: Enable
@@ -40681,13 +41873,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 846860122}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &846860127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846860122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &847008994
 GameObject:
   m_ObjectHideFlags: 0
@@ -41571,6 +42785,7 @@ GameObject:
   - component: {fileID: 888291433}
   - component: {fileID: 888291435}
   - component: {fileID: 888291434}
+  - component: {fileID: 888291437}
   - component: {fileID: 888291436}
   m_Layer: 5
   m_Name: Spawn precise item counts.
@@ -41684,13 +42899,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 888291432}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: LessenItemProbabilityWhenSpawned
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &888291437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888291432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: LessenItemProbabilityWhenSpawned
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &889952472
 GameObject:
   m_ObjectHideFlags: 0
@@ -41796,6 +43033,7 @@ GameObject:
   - component: {fileID: 891112037}
   - component: {fileID: 891112036}
   - component: {fileID: 891112035}
+  - component: {fileID: 891112041}
   - component: {fileID: 891112040}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -42016,13 +43254,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 891112033}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &891112041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891112033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &891389503
 GameObject:
   m_ObjectHideFlags: 0
@@ -43223,7 +44483,7 @@ MonoBehaviour:
     unset, any enemy can spawn in a pit, as long as the logic is in the spawn template
     pool.
 
-    Generators are also included.'
+    This also applies to generators.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -43477,6 +44737,7 @@ GameObject:
   - component: {fileID: 934224308}
   - component: {fileID: 934224306}
   - component: {fileID: 934224305}
+  - component: {fileID: 934224312}
   - component: {fileID: 934224311}
   m_Layer: 5
   m_Name: Dropdown
@@ -43663,13 +44924,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 934224302}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: EnemyGenerationPoolSource
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &934224312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 934224302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: EnemyGenerationPoolSource
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &936623108
 GameObject:
   m_ObjectHideFlags: 0
@@ -43825,6 +45108,7 @@ GameObject:
   - component: {fileID: 939125660}
   - component: {fileID: 939125659}
   - component: {fileID: 939125658}
+  - component: {fileID: 939125664}
   - component: {fileID: 939125663}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -44045,13 +45329,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 939125656}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &939125664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939125656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &940021374
 GameObject:
   m_ObjectHideFlags: 0
@@ -44193,7 +45499,8 @@ GameObject:
   - component: {fileID: 945374680}
   - component: {fileID: 945374678}
   - component: {fileID: 945374677}
-  - component: {fileID: 945374676}
+  - component: {fileID: 945374684}
+  - component: {fileID: 945374683}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -44224,22 +45531,6 @@ RectTransform:
   m_AnchoredPosition: {x: 827.21, y: -25.11}
   m_SizeDelta: {x: 500, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &945374676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 945374674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  memberName: EnemySpawnSources
-  changeListenMode: 16
-  valueChangedEventName: 
-  autoApplyOnChange: 1
 --- !u!114 &945374677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44384,6 +45675,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 945374674}
   m_CullTransparentMesh: 1
+--- !u!114 &945374683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945374674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  databinder: {fileID: 0}
+  autoApplyOnChange: 1
+--- !u!114 &945374684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945374674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: EnemySpawnSources
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &948993736
 GameObject:
   m_ObjectHideFlags: 0
@@ -44394,7 +45723,6 @@ GameObject:
   m_Component:
   - component: {fileID: 948993737}
   - component: {fileID: 948993738}
-  - component: {fileID: 948993739}
   m_Layer: 5
   m_Name: 'Seed:'
   m_TagString: Untagged
@@ -44450,20 +45778,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
---- !u!114 &948993739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 948993736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaa814b18bf707a489fc2590e00959ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
-  input: {fileID: 687201227}
 --- !u!1 &949274891
 GameObject:
   m_ObjectHideFlags: 0
@@ -45253,7 +46567,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Keep the levels in their original order, or randomly scramble them.f
+  m_text: Keep the levels in their original order, or randomly scramble them.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -46618,7 +47932,8 @@ GameObject:
   - component: {fileID: 988043199}
   - component: {fileID: 988043197}
   - component: {fileID: 988043196}
-  - component: {fileID: 988043195}
+  - component: {fileID: 988043203}
+  - component: {fileID: 988043202}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -46649,22 +47964,6 @@ RectTransform:
   m_AnchoredPosition: {x: 786.19, y: -25.11}
   m_SizeDelta: {x: 500, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &988043195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 988043193}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  memberName: ItemSpawnSources
-  changeListenMode: 16
-  valueChangedEventName: 
-  autoApplyOnChange: 1
 --- !u!114 &988043196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46809,6 +48108,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 988043193}
   m_CullTransparentMesh: 1
+--- !u!114 &988043202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988043193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  databinder: {fileID: 0}
+  autoApplyOnChange: 1
+--- !u!114 &988043203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988043193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: ItemSpawnSources
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &989382834
 GameObject:
   m_ObjectHideFlags: 0
@@ -46859,7 +48196,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7fbed4537ee0c445a69cc52a576ee2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 8462727678015127451, guid: 65c9dd5d0c00c2e419ad8b9f30ae2954, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 8462727678015127451, guid: 65c9dd5d0c00c2e419ad8b9f30ae2954, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -46993,6 +48342,7 @@ GameObject:
   - component: {fileID: 993558487}
   - component: {fileID: 993558489}
   - component: {fileID: 993558488}
+  - component: {fileID: 993558491}
   - component: {fileID: 993558490}
   m_Layer: 5
   m_Name: Limit pit sectors to flying enemies.
@@ -47016,7 +48366,7 @@ RectTransform:
   - {fileID: 133076603}
   - {fileID: 1105344328}
   m_Father: {fileID: 1103295743}
-  m_RootOrder: 19
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -47106,13 +48456,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 993558486}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: SpawnOnlyFlyingOverPits
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &993558491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993558486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: SpawnOnlyFlyingOverPits
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &997383927
 GameObject:
   m_ObjectHideFlags: 0
@@ -47921,6 +49293,7 @@ GameObject:
   - component: {fileID: 1020862452}
   - component: {fileID: 1020862454}
   - component: {fileID: 1020862453}
+  - component: {fileID: 1020862456}
   - component: {fileID: 1020862455}
   m_Layer: 5
   m_Name: Allow adjusting non-light colors.
@@ -48034,13 +49407,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1020862451}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeOtherColors
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1020862456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020862451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeOtherColors
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1021364320
 GameObject:
   m_ObjectHideFlags: 0
@@ -48387,15 +49782,15 @@ RectTransform:
   m_GameObject: {fileID: 1024082463}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6388889, y: 0.6388889, z: 0.6388889}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1103295743}
-  m_RootOrder: 12
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1369.2561, y: -1346.975}
+  m_AnchoredPosition: {x: 934.5088, y: 414.1388}
   m_SizeDelta: {x: 2738.5122, y: 164.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1024082465
@@ -50304,6 +51699,7 @@ GameObject:
   - component: {fileID: 1049638681}
   - component: {fileID: 1049638679}
   - component: {fileID: 1049638678}
+  - component: {fileID: 1049638685}
   - component: {fileID: 1049638684}
   m_Layer: 5
   m_Name: Dropdown
@@ -50488,13 +51884,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1049638675}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: MapOverrideMode
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1049638685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1049638675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: MapOverrideMode
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1051285721
 GameObject:
   m_ObjectHideFlags: 0
@@ -50506,6 +51924,7 @@ GameObject:
   - component: {fileID: 1051285722}
   - component: {fileID: 1051285724}
   - component: {fileID: 1051285723}
+  - component: {fileID: 1051285726}
   - component: {fileID: 1051285725}
   m_Layer: 5
   m_Name: Always randomize
@@ -50619,13 +52038,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1051285721}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1051285726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051285721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1051618842
 GameObject:
   m_ObjectHideFlags: 0
@@ -50920,10 +52361,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1052573135}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0c3c8a4b2e92ba4cb6ffbbd4a5f429f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Object
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1055617356
 GameObject:
   m_ObjectHideFlags: 0
@@ -51622,6 +53074,7 @@ GameObject:
   - component: {fileID: 1075852855}
   - component: {fileID: 1075852854}
   - component: {fileID: 1075852853}
+  - component: {fileID: 1075852859}
   - component: {fileID: 1075852858}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -51842,13 +53295,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1075852851}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1075852859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1075852851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1077862524
 GameObject:
   m_ObjectHideFlags: 0
@@ -52152,6 +53627,7 @@ GameObject:
   - component: {fileID: 1086570930}
   - component: {fileID: 1086570932}
   - component: {fileID: 1086570931}
+  - component: {fileID: 1086570934}
   - component: {fileID: 1086570933}
   m_Layer: 5
   m_Name: Spawn precise enemy counts.
@@ -52265,13 +53741,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1086570929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: LessenEnemyProbabilityWhenSpawned
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1086570934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086570929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: LessenEnemyProbabilityWhenSpawned
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1086880915
 GameObject:
   m_ObjectHideFlags: 0
@@ -52908,7 +54406,6 @@ GameObject:
   - component: {fileID: 1103295743}
   - component: {fileID: 1103295746}
   - component: {fileID: 1103295745}
-  - component: {fileID: 1103295744}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -52940,14 +54437,14 @@ RectTransform:
   - {fileID: 1923947022}
   - {fileID: 1382586684}
   - {fileID: 698165365}
-  - {fileID: 1024082464}
+  - {fileID: 107622787}
   - {fileID: 730453785}
   - {fileID: 1427079762}
   - {fileID: 118030083}
   - {fileID: 1238779897}
   - {fileID: 1669162535}
-  - {fileID: 1541784971}
   - {fileID: 993558487}
+  - {fileID: 1541784971}
   - {fileID: 924487065}
   - {fileID: 1086570930}
   - {fileID: 1101664370}
@@ -52967,14 +54464,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 3098.3198}
   m_Pivot: {x: 0, y: 1}
---- !u!222 &1103295744
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1103295742}
-  m_CullTransparentMesh: 1
 --- !u!114 &1103295745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53299,6 +54788,7 @@ GameObject:
   - component: {fileID: 1114675061}
   - component: {fileID: 1114675060}
   - component: {fileID: 1114675059}
+  - component: {fileID: 1114675065}
   - component: {fileID: 1114675064}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -53519,13 +55009,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1114675057}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1114675065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114675057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1118075677
 GameObject:
   m_ObjectHideFlags: 0
@@ -53537,6 +55049,7 @@ GameObject:
   - component: {fileID: 1118075678}
   - component: {fileID: 1118075680}
   - component: {fileID: 1118075679}
+  - component: {fileID: 1118075682}
   - component: {fileID: 1118075681}
   m_Layer: 5
   m_Name: Allow items to spawn in pits.
@@ -53650,13 +55163,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1118075677}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: SpawnItemsInPits
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1118075682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118075677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: SpawnItemsInPits
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1122610269
 GameObject:
   m_ObjectHideFlags: 0
@@ -56257,6 +57792,7 @@ GameObject:
   - component: {fileID: 1177150414}
   - component: {fileID: 1177150413}
   - component: {fileID: 1177150412}
+  - component: {fileID: 1177150418}
   - component: {fileID: 1177150417}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -56477,13 +58013,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1177150410}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1177150418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1177150410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1178013193
 GameObject:
   m_ObjectHideFlags: 0
@@ -56498,6 +58056,7 @@ GameObject:
   - component: {fileID: 1178013197}
   - component: {fileID: 1178013196}
   - component: {fileID: 1178013195}
+  - component: {fileID: 1178013201}
   - component: {fileID: 1178013200}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -56718,13 +58277,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1178013193}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1178013201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178013193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1179884425
 GameObject:
   m_ObjectHideFlags: 0
@@ -57304,10 +58885,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1184314683}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0a6d3fd7d6a26246a83ac1242c99dba, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Colormap
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1189271819
 GameObject:
   m_ObjectHideFlags: 0
@@ -57484,6 +59076,7 @@ GameObject:
   - component: {fileID: 1189894668}
   - component: {fileID: 1189894667}
   - component: {fileID: 1189894666}
+  - component: {fileID: 1189894672}
   - component: {fileID: 1189894671}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -57704,13 +59297,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1189894664}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1189894672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189894664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1189991658
 GameObject:
   m_ObjectHideFlags: 0
@@ -60096,11 +61711,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1235620821}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: RandomizeGeneratorsDelay
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1238779896
 GameObject:
   m_ObjectHideFlags: 0
@@ -60160,13 +61785,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: 'If set, and a point in a non-water sector is selected for spawning, diagonas
-    won''t be in the lists of logics considered.
+    won''t be in the list of logics considered.
 
     If unset, diagonas can spawn
-    anywhere if the SeWER1 logic is in the spawn template pool.
+    anywhere if the SEWER1 logic is in the spawn template pool.
 
-    Generators are
-    also included.'
+    This also applies
+    to diagona generators.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -60694,7 +62319,8 @@ GameObject:
   - component: {fileID: 1251488884}
   - component: {fileID: 1251488882}
   - component: {fileID: 1251488881}
-  - component: {fileID: 1251488880}
+  - component: {fileID: 1251488888}
+  - component: {fileID: 1251488887}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -60725,22 +62351,6 @@ RectTransform:
   m_AnchoredPosition: {x: 801.26, y: -25.11}
   m_SizeDelta: {x: 500, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1251488880
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1251488878}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  memberName: ItemGenerationPoolSource
-  changeListenMode: 16
-  valueChangedEventName: 
-  autoApplyOnChange: 1
 --- !u!114 &1251488881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60887,6 +62497,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1251488878}
   m_CullTransparentMesh: 1
+--- !u!114 &1251488887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251488878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  databinder: {fileID: 0}
+  autoApplyOnChange: 1
+--- !u!114 &1251488888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251488878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: ItemGenerationPoolSource
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1252686475
 GameObject:
   m_ObjectHideFlags: 0
@@ -61981,6 +63629,7 @@ GameObject:
   - component: {fileID: 1272116419}
   - component: {fileID: 1272116418}
   - component: {fileID: 1272116417}
+  - component: {fileID: 1272116423}
   - component: {fileID: 1272116422}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -62201,13 +63850,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1272116415}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1272116423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272116415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1273476191
 GameObject:
   m_ObjectHideFlags: 0
@@ -63749,11 +65420,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1310613703}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: LevelCount
+  changeDetectionMode: 0
+  valueChangedEventName: 
 --- !u!1 &1312329989
 GameObject:
   m_ObjectHideFlags: 0
@@ -64523,7 +66204,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fef7047dad5e00a478886ceb649c3faa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 6650572057100593700, guid: ccdeb137fda022242bf1c70e8ea5fe48, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 6650572057100593700, guid: ccdeb137fda022242bf1c70e8ea5fe48, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -65303,10 +66996,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1342149921}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0c3c8a4b2e92ba4cb6ffbbd4a5f429f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Object
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1348720834
 GameObject:
   m_ObjectHideFlags: 0
@@ -65995,7 +67699,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbc28010d69b92a408343ed4966c3524, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 8462727678015127451, guid: 6afecb996375b3547ba7e79fad7c17c5, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 8462727678015127451, guid: 6afecb996375b3547ba7e79fad7c17c5, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -66473,6 +68189,7 @@ GameObject:
   - component: {fileID: 1362575703}
   - component: {fileID: 1362575702}
   - component: {fileID: 1362575701}
+  - component: {fileID: 1362575707}
   - component: {fileID: 1362575706}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -66693,13 +68410,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1362575699}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1362575707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362575699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1370090072
 GameObject:
   m_ObjectHideFlags: 0
@@ -66876,6 +68615,7 @@ GameObject:
   - component: {fileID: 1377178297}
   - component: {fileID: 1377178296}
   - component: {fileID: 1377178295}
+  - component: {fileID: 1377178301}
   - component: {fileID: 1377178300}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -67096,13 +68836,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1377178293}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1377178301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377178293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1380837767
 GameObject:
   m_ObjectHideFlags: 0
@@ -67263,7 +69025,7 @@ MonoBehaviour:
     in sectors that are too small, or elevators, will be skipped.
 
     Existing and
-    random: Uses roughly 1:1 eatio of existing to random spawns.'
+    random: Uses roughly 1:1 ratio of existing to random spawns.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -67825,7 +69587,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b04ad505060934d8512b67d5b96003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 2094790796099484241, guid: 2a565d97edd67174e8da41d1a2039986, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 2094790796099484241, guid: 2a565d97edd67174e8da41d1a2039986, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -68297,7 +70071,6 @@ GameObject:
   - component: {fileID: 1402589915}
   - component: {fileID: 1402589918}
   - component: {fileID: 1402589917}
-  - component: {fileID: 1402589916}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -68331,14 +70104,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 451.76}
   m_Pivot: {x: 0, y: 1}
---- !u!222 &1402589916
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1402589914}
-  m_CullTransparentMesh: 1
 --- !u!114 &1402589917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69436,11 +71201,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1423909257}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: RandomizeGeneratorsMaximumAlive
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1425568606
 GameObject:
   m_ObjectHideFlags: 0
@@ -71807,7 +73582,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '%'
+  m_text: x
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -72876,7 +74651,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c17630e2c89281f41aa1ad03c7640549, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 6650572057100593700, guid: 1207acc483d2ec148be673527d70f191, type: 3}
+  valueStorageMethod: 2
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 6650572057100593700, guid: 1207acc483d2ec148be673527d70f191, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -72959,6 +74746,7 @@ GameObject:
   - component: {fileID: 1508009089}
   - component: {fileID: 1508009088}
   - component: {fileID: 1508009087}
+  - component: {fileID: 1508009093}
   - component: {fileID: 1508009092}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -73179,13 +74967,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1508009085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1508009093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508009085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1513465105
 GameObject:
   m_ObjectHideFlags: 0
@@ -73277,6 +75087,7 @@ GameObject:
   - component: {fileID: 1513875738}
   - component: {fileID: 1513875740}
   - component: {fileID: 1513875739}
+  - component: {fileID: 1513875742}
   - component: {fileID: 1513875741}
   m_Layer: 5
   m_Name: Enable
@@ -73390,13 +75201,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1513875737}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1513875742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513875737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1514710808
 GameObject:
   m_ObjectHideFlags: 0
@@ -74643,7 +76476,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1103295743}
-  m_RootOrder: 18
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -74677,7 +76510,7 @@ MonoBehaviour:
     unset, any enemy can spawn in water, as long as the logic is in the spawn template
     pool.
 
-    Generators are also included.'
+    This also applies to generators.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -75065,11 +76898,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1548223090}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: AdjustCutsceneSpeed
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1550160714
 GameObject:
   m_ObjectHideFlags: 0
@@ -76487,10 +78330,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1571330535}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e65c77d4bdedbf41a3c525ca7ce7878, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Music
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1572439649
 GameObject:
   m_ObjectHideFlags: 0
@@ -77702,7 +79556,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '%'
+  m_text: x
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -78063,6 +79917,7 @@ GameObject:
   - component: {fileID: 1590758574}
   - component: {fileID: 1590758573}
   - component: {fileID: 1590758572}
+  - component: {fileID: 1590758578}
   - component: {fileID: 1590758577}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -78283,13 +80138,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1590758570}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1590758578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590758570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1592970031
 GameObject:
   m_ObjectHideFlags: 0
@@ -78392,6 +80269,7 @@ GameObject:
   - component: {fileID: 1593279205}
   - component: {fileID: 1593279207}
   - component: {fileID: 1593279206}
+  - component: {fileID: 1593279209}
   - component: {fileID: 1593279208}
   m_Layer: 5
   m_Name: Always randomize
@@ -78505,13 +80383,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1593279204}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1593279209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593279204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1594483983
 GameObject:
   m_ObjectHideFlags: 0
@@ -79645,6 +81545,7 @@ GameObject:
   - component: {fileID: 1617925411}
   - component: {fileID: 1617925410}
   - component: {fileID: 1617925409}
+  - component: {fileID: 1617925415}
   - component: {fileID: 1617925414}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -79865,13 +81766,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1617925407}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1617925415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1617925407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1618140248
 GameObject:
   m_ObjectHideFlags: 0
@@ -80089,6 +82012,7 @@ GameObject:
   - component: {fileID: 1627773917}
   - component: {fileID: 1627773919}
   - component: {fileID: 1627773918}
+  - component: {fileID: 1627773921}
   - component: {fileID: 1627773920}
   m_Layer: 5
   m_Name: Randomize music track order
@@ -80202,13 +82126,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1627773916}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeTrackOrder
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1627773921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627773916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeTrackOrder
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1632573930
 GameObject:
   m_ObjectHideFlags: 0
@@ -80949,7 +82895,6 @@ GameObject:
   - component: {fileID: 1653713846}
   - component: {fileID: 1653713849}
   - component: {fileID: 1653713848}
-  - component: {fileID: 1653713847}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -80982,14 +82927,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 251.1}
   m_Pivot: {x: 0, y: 1}
---- !u!222 &1653713847
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1653713845}
-  m_CullTransparentMesh: 1
 --- !u!114 &1653713848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81443,6 +83380,7 @@ GameObject:
   - component: {fileID: 1669162535}
   - component: {fileID: 1669162537}
   - component: {fileID: 1669162536}
+  - component: {fileID: 1669162539}
   - component: {fileID: 1669162538}
   m_Layer: 5
   m_Name: Limit water sectors to diagonas and flying enemies.
@@ -81556,13 +83494,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1669162534}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: SpawnOnlyFlyingAndDiagonasInWater
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1669162539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1669162534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: SpawnOnlyFlyingAndDiagonasInWater
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1670068161
 GameObject:
   m_ObjectHideFlags: 0
@@ -81880,7 +83840,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Removes existing spawn locations and replaces ethem with randomizes enemy
+  m_text: Removes existing spawn locations and replaces them with randomized enemy
     spawns. The following options control how this is done.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -83740,11 +85700,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1704497118}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: RandomizeGeneratorsInterval
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1711051200
 GameObject:
   m_ObjectHideFlags: 0
@@ -83759,7 +85729,8 @@ GameObject:
   - component: {fileID: 1711051206}
   - component: {fileID: 1711051204}
   - component: {fileID: 1711051203}
-  - component: {fileID: 1711051202}
+  - component: {fileID: 1711051210}
+  - component: {fileID: 1711051209}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -83790,22 +85761,6 @@ RectTransform:
   m_AnchoredPosition: {x: 795.4, y: -25.11}
   m_SizeDelta: {x: 500, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1711051202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1711051200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  memberName: RandomItemLocationSelectionMode
-  changeListenMode: 16
-  valueChangedEventName: 
-  autoApplyOnChange: 1
 --- !u!114 &1711051203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83948,6 +85903,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1711051200}
   m_CullTransparentMesh: 1
+--- !u!114 &1711051209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711051200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  databinder: {fileID: 0}
+  autoApplyOnChange: 1
+--- !u!114 &1711051210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711051200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomItemLocationSelectionMode
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1713900659
 GameObject:
   m_ObjectHideFlags: 0
@@ -84791,10 +86784,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0.12156863, b: 0, a: 1}
-    m_HighlightedColor: {r: 0, g: 0.56078434, b: 0, a: 1}
-    m_PressedColor: {r: 0, g: 0.56078434, b: 0, a: 1}
-    m_SelectedColor: {r: 0, g: 0.12156863, b: 0, a: 1}
+    m_NormalColor: {r: 0.12156863, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: 0.56078434, g: 0, b: 0, a: 1}
+    m_PressedColor: {r: 0.56078434, g: 0, b: 0, a: 1}
+    m_SelectedColor: {r: 0.12156863, g: 0, b: 0, a: 1}
     m_DisabledColor: {r: 0.21568628, g: 0.23137255, b: 0.2784314, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -85917,6 +87910,7 @@ GameObject:
   - component: {fileID: 1757795005}
   - component: {fileID: 1757795004}
   - component: {fileID: 1757795003}
+  - component: {fileID: 1757795009}
   - component: {fileID: 1757795008}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -86137,13 +88131,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1757795001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1757795009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757795001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1759221249
 GameObject:
   m_ObjectHideFlags: 0
@@ -87396,7 +89412,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7fbed4537ee0c445a69cc52a576ee2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 8462727678015127451, guid: 65c9dd5d0c00c2e419ad8b9f30ae2954, type: 3}
+  valueStorageMethod: 3
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
+  childTemplate: {fileID: 8462727678015127451, guid: 65c9dd5d0c00c2e419ad8b9f30ae2954, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -88332,6 +90360,7 @@ GameObject:
   - component: {fileID: 1790463020}
   - component: {fileID: 1790463022}
   - component: {fileID: 1790463021}
+  - component: {fileID: 1790463024}
   - component: {fileID: 1790463023}
   m_Layer: 5
   m_Name: Enable
@@ -88445,13 +90474,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1790463019}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1790463024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1790463019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1791095309
 GameObject:
   m_ObjectHideFlags: 0
@@ -88786,11 +90837,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1794156347}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: HeadlightDistance
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1794695429
 GameObject:
   m_ObjectHideFlags: 0
@@ -89602,6 +91663,7 @@ GameObject:
   - component: {fileID: 1812018416}
   - component: {fileID: 1812018418}
   - component: {fileID: 1812018417}
+  - component: {fileID: 1812018420}
   - component: {fileID: 1812018419}
   m_Layer: 5
   m_Name: Always randomize
@@ -89715,13 +91777,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1812018415}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1812018420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812018415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1814689456
 GameObject:
   m_ObjectHideFlags: 0
@@ -90096,11 +92180,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1817175793}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: HeadlightBrightness
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1819183310
 GameObject:
   m_ObjectHideFlags: 0
@@ -90112,6 +92206,7 @@ GameObject:
   - component: {fileID: 1819183311}
   - component: {fileID: 1819183313}
   - component: {fileID: 1819183312}
+  - component: {fileID: 1819183315}
   - component: {fileID: 1819183314}
   m_Layer: 5
   m_Name: Randomize enemy spawns.
@@ -90225,13 +92320,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1819183310}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeEnemies
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1819183315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819183310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeEnemies
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1821524186
 GameObject:
   m_ObjectHideFlags: 0
@@ -91023,11 +93140,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1831924740}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: RandomizeGeneratorsWanderTime
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1832899585
 GameObject:
   m_ObjectHideFlags: 0
@@ -91104,6 +93231,7 @@ GameObject:
   - component: {fileID: 1838233188}
   - component: {fileID: 1838233190}
   - component: {fileID: 1838233189}
+  - component: {fileID: 1838233192}
   - component: {fileID: 1838233191}
   m_Layer: 5
   m_Name: Always randomize
@@ -91217,13 +93345,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1838233187}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Enabled
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1838233192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838233187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Enabled
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1838376300
 GameObject:
   m_ObjectHideFlags: 0
@@ -91640,6 +93790,7 @@ GameObject:
   - component: {fileID: 1844759424}
   - component: {fileID: 1844759423}
   - component: {fileID: 1844759422}
+  - component: {fileID: 1844759428}
   - component: {fileID: 1844759427}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -91860,13 +94011,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1844759420}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1844759428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844759420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1848478329
 GameObject:
   m_ObjectHideFlags: 0
@@ -93696,6 +95869,7 @@ GameObject:
   - component: {fileID: 1881267594}
   - component: {fileID: 1881267593}
   - component: {fileID: 1881267592}
+  - component: {fileID: 1881267598}
   - component: {fileID: 1881267597}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -93916,13 +96090,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1881267590}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1881267598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881267590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1881402698
 GameObject:
   m_ObjectHideFlags: 0
@@ -94093,6 +96289,7 @@ GameObject:
   - component: {fileID: 1885740192}
   - component: {fileID: 1885740191}
   - component: {fileID: 1885740190}
+  - component: {fileID: 1885740196}
   - component: {fileID: 1885740195}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -94313,13 +96510,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1885740188}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Maximum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1885740196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885740188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Maximum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1886362128
 GameObject:
   m_ObjectHideFlags: 0
@@ -94956,8 +97175,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: The speed of cutscene visual playback will be adjusted, with caps at 5-20
-    fps.
+  m_text: The speed of cutscene visual playback will be adjusted with a random multiplier
+    in this range, with caps at 5-20 fps. Multipliers are generated for each individual
+    cutscene.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -95157,7 +97377,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a45372b0159124e4f95620edb9556358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  databinderTemplate: {fileID: 5494161583985051052, guid: ced86964c8f00524986491a514aa9a39, type: 3}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: DefaultLogicFiles
+  changeDetectionMode: 16
+  valueChangedEventName: 
+  childTemplate: {fileID: 5494161583985051052, guid: ced86964c8f00524986491a514aa9a39, type: 3}
   toggleGroup: {fileID: 0}
   SelectedValueChanged:
     m_PersistentCalls:
@@ -95244,6 +97476,7 @@ GameObject:
   - component: {fileID: 1911806440}
   - component: {fileID: 1911806439}
   - component: {fileID: 1911806438}
+  - component: {fileID: 1911806444}
   - component: {fileID: 1911806443}
   m_Layer: 0
   m_Name: InputField (TMP)
@@ -95464,13 +97697,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 1911806436}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f95eb5d634154a4cae8fcccd0fee04f, type: 3}
+  m_Script: {fileID: 11500000, guid: 13df4c795b483ef43ac56253f6fffadf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: Minimum
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &1911806444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911806436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Minimum
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1914593574
 GameObject:
   m_ObjectHideFlags: 0
@@ -96109,10 +98364,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1926070843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cd83a5a91e2ccc49a3765c1227e0eaa, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Palette
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1926333183
 GameObject:
   m_ObjectHideFlags: 0
@@ -96190,11 +98456,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1926333183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: RandomizeGeneratorsMinimumDistance
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1928066638
 GameObject:
   m_ObjectHideFlags: 0
@@ -96827,11 +99103,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1948414108}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4066adb8dc78f044fb2b70d958564353, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
   memberName: RandomizeGeneratorsNumberTerminate
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &1949100216
 GameObject:
   m_ObjectHideFlags: 0
@@ -99197,7 +101483,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: 'If generators are included in the enemy spawn templates pool, these settings
-    will influence how generator [arameters are configured.
+    will influence how generator parameters are configured.
 
     "Always randomize"
     will always rerandomize a particular property''s value to between the listed
@@ -99885,7 +102171,8 @@ GameObject:
   - component: {fileID: 2019148121}
   - component: {fileID: 2019148119}
   - component: {fileID: 2019148118}
-  - component: {fileID: 2019148117}
+  - component: {fileID: 2019148125}
+  - component: {fileID: 2019148124}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -99916,22 +102203,6 @@ RectTransform:
   m_AnchoredPosition: {x: 795.4, y: -25.11}
   m_SizeDelta: {x: 500, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2019148117
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2019148115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c50888cf3873e734fb7edae958850929, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  memberName: RandomEnemyLocationSelectionMode
-  changeListenMode: 16
-  valueChangedEventName: 
-  autoApplyOnChange: 1
 --- !u!114 &2019148118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100074,6 +102345,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2019148115}
   m_CullTransparentMesh: 1
+--- !u!114 &2019148124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019148115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e3c7892d355d145b7270d897d7c3a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  databinder: {fileID: 0}
+  autoApplyOnChange: 1
+--- !u!114 &2019148125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019148115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomEnemyLocationSelectionMode
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &2022616158
 GameObject:
   m_ObjectHideFlags: 0
@@ -102600,10 +104909,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 2079549552}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0c3c8a4b2e92ba4cb6ffbbd4a5f429f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggle: {fileID: 0}
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: Object
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1001 &2081873835
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -103683,6 +106003,7 @@ GameObject:
   - component: {fileID: 2101425385}
   - component: {fileID: 2101425387}
   - component: {fileID: 2101425386}
+  - component: {fileID: 2101425389}
   - component: {fileID: 2101425388}
   m_Layer: 5
   m_Name: Randomize bosses.
@@ -103796,13 +106117,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 2101425384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21baa098788940b4881fa3796d634709, type: 3}
+  m_Script: {fileID: 11500000, guid: b592cb35f06ad4f468deaa31c265260f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: RandomizeBosses
-  changeListenMode: 16
-  valueChangedEventName: 
+  databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &2101425389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101425384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueStorageMethod: 0
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: RandomizeBosses
+  changeDetectionMode: 16
+  valueChangedEventName: 
 --- !u!1 &2123298675
 GameObject:
   m_ObjectHideFlags: 0

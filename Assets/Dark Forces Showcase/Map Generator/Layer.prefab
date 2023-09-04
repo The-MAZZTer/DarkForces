@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8342809093591443690}
   - component: {fileID: 8342809093591443688}
   - component: {fileID: 8342809093591443689}
-  - component: {fileID: 131496643555399907}
+  - component: {fileID: 1993672862160821654}
   m_Layer: 5
   m_Name: Layer
   m_TagString: Untagged
@@ -29,6 +29,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8342809094998345023}
   - {fileID: 8342809094449857545}
@@ -114,20 +115,30 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
---- !u!114 &131496643555399907
+--- !u!114 &1993672862160821654
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8342809093591443691}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0a138fd6c864e3459433b5a0a96d744, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 0
-  toggle: {fileID: 0}
+  valueStorageMethod: 1
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 0
+  valueChangedEventName: 
 --- !u!1 &8342809093766959090
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,6 +168,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8342809094998345023}
   m_RootOrder: 0
@@ -300,7 +312,7 @@ GameObject:
   - component: {fileID: 8342809094449857545}
   - component: {fileID: 8342809094449857551}
   - component: {fileID: 8342809094449857544}
-  - component: {fileID: 3535184105249160161}
+  - component: {fileID: 3378307215195091509}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -318,6 +330,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8342809093591443690}
   m_RootOrder: 1
@@ -424,7 +437,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &3535184105249160161
+--- !u!114 &3378307215195091509
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -433,12 +446,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8342809094449857546}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 173bf6ea139e1204599a80dafd697465, type: 3}
+  m_Script: {fileID: 11500000, guid: e787cd91d4f65004b82fde1c804ea71f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memberName: 
-  changeListenMode: 0
-  valueChangedEventName: 
+  databinder: {fileID: 1993672862160821654}
   autoApplyOnChange: 0
 --- !u!1 &8342809094998345016
 GameObject:
@@ -469,6 +480,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8342809093766959089}
   m_Father: {fileID: 8342809093591443690}

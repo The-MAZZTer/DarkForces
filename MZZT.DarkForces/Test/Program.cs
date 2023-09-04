@@ -1,17 +1,7 @@
 ﻿using MZZT.DarkForces.FileFormats;
-using MZZT.FileFormats;
-using MZZT.FileFormats.Audio;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Test {
@@ -211,9 +201,8 @@ namespace Test {
 				});
 			}*/
 
-			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\Downloads\ats2lp_modern\ATS2LP.GOB", true);
-
-			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB");
+			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
+			DfGobContainer sprites = await DfGobContainer.ReadAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\SPRITES.GOB");
 			//DfLevelList lvl = await dark.GetFileAsync<DfLevelList>("JEDI.LVL");
 			//DfLevelGoals gol = await dark.GetFileAsync<DfLevelGoals>("SECBASE.GOL");
 			//DfLevel lev = await dark.GetFileAsync<DfLevel>($"{lvl.Levels[0].FileName}.LEV");
@@ -225,11 +214,10 @@ namespace Test {
 			//_3do = await dark.GetFileAsync<Df3dObject>("MOUSEBOT.3DO");
 			//_3do = await dark.GetFileAsync<Df3dObject>("TIELO-3.3DO");
 
-			//Gob sprites = await Gob.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\SPRITES.GOB");
 			//Wax wax = await sprites.GetFileAsync<Wax>("STORMFIN.WAX");
 			//Wax wax2 = await sprites.GetFileAsync<Wax>("REDLIT.WAX");
-			DfGobContainer textures = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB");
-			
+			DfGobContainer textures = await DfGobContainer.ReadAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\TEXTURES.GOB", true);
+
 			//DfGobContainer sounds = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\SOUNDS.GOB");
 
 			/*using (Bitmap bitmap = new(256, levels.Levels.Count, PixelFormat.Format32bppArgb)) {
@@ -284,11 +272,10 @@ namespace Test {
 			)).ToArray();
 
 			DfColormap cmp = await dark.GetFileAsync<DfColormap>("SECBASE.CMP");
-			/*Color target = palette[cmp.PaletteMaps[0][255]];
-			Color[] lit = cmp.PaletteMaps[31].Select(x => palette[x]).ToArray();
-			int full = lit.Skip(16).Sum(x => x.R + x.G + x.B);
+			Color target = palette[cmp.PaletteMaps[0][255]];
+			Color[] lit = cmp.PaletteMaps[31].Select(x => palette[x]).ToArray();*/
+			/*int full = lit.Skip(16).Sum(x => x.R + x.G + x.B);
 
-			Console.WriteLine(target);
 			for (int i = 0; i < 1; i++) {
 				Color[] x = cmp.PaletteMaps[i].Select(x => palette[x]).ToArray();
 
@@ -298,9 +285,9 @@ namespace Test {
 				}
 			}*/
 
-			//Color[] transparentPalette = new Color[256];
-			//Array.Copy(palette, transparentPalette, 256);
-			//transparentPalette[0] = Color.FromArgb(0);
+			/*Color[] transparentPalette = new Color[256];
+			Array.Copy(palette, transparentPalette, 256);
+			transparentPalette[0] = Color.FromArgb(0);*/
 
 			/*for (int i = 0; i < 32; i++) {
 				using FileStream stream = new(Path.Combine(AppContext.BaseDirectory, $"secbase-{i}.pal"), FileMode.Create, FileAccess.Write, FileShare.None);
@@ -337,8 +324,160 @@ namespace Test {
 				Directory.CreateDirectory(dir);
 			}*/
 
-			foreach (string name in textures.Files
-				.Select(x => x.name)) {
+			int bmOld = 0;
+			int bmNew = 0;
+
+			foreach ((string name, uint size) in textures.Files
+				.Where(x => Path.GetExtension(x.name).ToLower() == ".bm")
+				.Select(x => (x.name, x.size))) {
+
+				bmOld += (int)size;
+
+				DfBitmap bm = await textures.GetFileAsync<DfBitmap>(name);
+				DfBitmap.CompressionModes compression = bm.Compression;
+				bm.AutoCompress = true;
+
+				int newSize;
+				DfBitmap newBm;
+				using (MemoryStream stream = new()) {
+					await bm.SaveAsync(stream);
+
+					newSize = (int)stream.Length;
+
+					stream.Position = 0;
+					newBm = await DfBitmap.ReadAsync(stream);
+				}
+
+				bmNew += newSize;
+
+				bool validate = bm.Framerate == newBm.Framerate && bm.Pages.Count == newBm.Pages.Count &&
+					bm.Pages.Zip(newBm.Pages).All(x =>
+					x.First.Height == x.Second.Height && x.First.Width == x.Second.Width && x.First.Flags == x.Second.Flags &&
+					x.First.Pixels.SequenceEqual(x.Second.Pixels));
+
+				if (size < newSize || !validate) {
+					Console.WriteLine(name);
+
+					Console.WriteLine($"Compress: {compression} -> {bm.Compression}");
+					Console.WriteLine($"Size: {size} -> {newSize}");
+					if (!validate) {
+						Console.WriteLine($"Validation failed.");
+					}
+
+					Console.WriteLine();
+				}
+			}
+
+			int fmeOld = 0;
+			int fmeNew = 0;
+			int waxOld = 0;
+			int waxNew = 0;
+
+			foreach ((string name, uint size) in sprites.Files
+				.Where(x => Path.GetExtension(x.name).ToLower() == ".wax" || Path.GetExtension(x.name).ToLower() == ".fme")
+				.Select(x => (x.name, x.size))) {
+
+				if (Path.GetExtension(name).ToLower() == ".fme") {
+					fmeOld += (int)size;
+
+					DfFrame fme = await sprites.GetFileAsync<DfFrame>(name);
+					bool compressed = fme.Compressed;
+					fme.AutoCompress = true;
+
+					int newSize;
+					DfFrame newFme;
+					using (MemoryStream stream = new()) {
+						await fme.SaveAsync(stream);
+
+						newSize = (int)stream.Length;
+
+						stream.Position = 0;
+						newFme = await DfFrame.ReadAsync(stream);
+					}
+
+					fmeNew += newSize;
+
+					bool validate = fme.Flip == newFme.Flip && fme.Height == newFme.Height && fme.InsertionPointX == newFme.InsertionPointX &&
+						fme.InsertionPointY == newFme.InsertionPointY && fme.Width == newFme.Width && fme.Pixels.SequenceEqual(newFme.Pixels);
+
+					if (size < newSize || !validate) {
+						Console.WriteLine(name);
+
+						Console.WriteLine($"Compression: {compressed} -> {fme.Compressed}");
+						Console.WriteLine($"Size: {size} -> {newSize}");
+						if (!validate) {
+							Console.WriteLine($"Validation failed.");
+						}
+
+						Console.WriteLine();
+					}
+				}
+
+				if (Path.GetExtension(name).ToLower() == ".wax") {
+					waxOld += (int)size;
+
+					DfWax wax = await sprites.GetFileAsync<DfWax>(name);
+
+					(int waxes, int sequences, int frames, int cells) oldCount = (
+						wax.Waxes.Distinct().Count(),
+						wax.Waxes.SelectMany(x => x.Sequences).Distinct().Count(),
+						wax.Waxes.SelectMany(x => x.Sequences).SelectMany(x => x.Frames).Distinct().Count(),
+						wax.Waxes.SelectMany(x => x.Sequences).SelectMany(x => x.Frames).Select(x => x.Pixels).Distinct().Count()
+					);
+
+					wax = wax.Reduplicate();
+					wax = wax.Deduplicate();
+
+					(int waxes, int sequences, int frames, int cells) newCount = (
+						wax.Waxes.Distinct().Count(),
+						wax.Waxes.SelectMany(x => x.Sequences).Distinct().Count(),
+						wax.Waxes.SelectMany(x => x.Sequences).SelectMany(x => x.Frames).Distinct().Count(),
+						wax.Waxes.SelectMany(x => x.Sequences).SelectMany(x => x.Frames).Select(x => x.Pixels).Distinct().Count()
+					);
+
+					foreach (DfFrame frame in wax.Waxes.SelectMany(x => x.Sequences).SelectMany(x => x.Frames)) {
+						frame.AutoCompress = true;
+					}
+
+					int newSize;
+					DfWax newWax;
+					using (MemoryStream stream = new()) {
+						await wax.SaveAsync(stream);
+
+						newSize = (int)stream.Length;
+
+						waxNew += newSize;
+
+						stream.Position = 0;
+						newWax = await DfWax.ReadAsync(stream);
+					}
+
+					bool validate = wax.Waxes.Count == newWax.Waxes.Count && wax.Waxes.Zip(newWax.Waxes).All(x =>
+						x.First.Framerate == x.Second.Framerate && x.First.WorldHeight == x.Second.WorldHeight &&
+						x.First.WorldWidth == x.Second.WorldWidth &&
+						x.First.Sequences.Count == x.Second.Sequences.Count && x.First.Sequences.Zip(x.Second.Sequences).All(x =>
+							x.First.Frames.Count == x.Second.Frames.Count && x.First.Frames.Zip(x.Second.Frames).All(x =>
+								x.First.Flip == x.Second.Flip && x.First.Height == x.Second.Height &&
+								x.First.InsertionPointX == x.Second.InsertionPointX && x.First.InsertionPointY == x.Second.InsertionPointY &&
+								x.First.Width == x.Second.Width && x.First.Pixels.SequenceEqual(x.Second.Pixels)
+							)
+						));
+
+					if (size < newSize || !validate || oldCount.waxes < newCount.waxes || oldCount.sequences < newCount.sequences || oldCount.frames < newCount.frames || oldCount.cells < newCount.cells) {
+						Console.WriteLine(name);
+
+						Console.WriteLine($"Size: {size} -> {newSize}");
+						Console.WriteLine($"WAXes: {oldCount.waxes} -> {newCount.waxes}");
+						Console.WriteLine($"Sequences: {oldCount.sequences} -> {newCount.sequences}");
+						Console.WriteLine($"Frames: {oldCount.frames} -> {newCount.frames}");
+						Console.WriteLine($"Cells: {oldCount.cells} -> {newCount.cells}");
+						if (!validate) {
+							Console.WriteLine($"Validation failed.");
+						}
+
+						Console.WriteLine();
+					}
+				}
 
 				//Raw raw = await dark.GetFileAsync<Raw>(name);
 				//await raw.SaveAsync(Path.Combine(dir, name));
@@ -414,11 +553,98 @@ namespace Test {
 					}
 				}*/
 
-				if (name.ToUpper().EndsWith(".BM")) {
+				/*if (Path.GetExtension(name).ToUpper() == ".BM" && name == "CESUNSET.BM") {
 					DfBitmap bm = await textures.GetFileAsync<DfBitmap>(name);
-					if (bm.Pages.Count > 1) {
-						Console.WriteLine($"{name}: {bm.Pages.Count}");
+
+					bm.AutoCompress = false;
+					bool canCompress = bm.Pages.Count == 1;
+
+					Console.WriteLine($"- {name}: {bm.Compression} {bm.Pages.Count} {size}");
+
+					DfBitmap.CompressionModes[] modes;
+					if (canCompress) {
+						modes = Enum.GetValues<DfBitmap.CompressionModes>();
+					} else {
+						modes = new[] { DfBitmap.CompressionModes.None };
 					}
+
+					using MemoryStream stream = new();
+					foreach (DfBitmap.CompressionModes compression in modes) {
+						stream.Position = 0;
+						stream.SetLength(0);
+
+						bm.Compression = compression;
+
+						await bm.SaveAsync(stream);
+
+						stream.Position = 0;
+
+						DfBitmap bm2 = await DfBitmap.ReadAsync(stream);
+						bool match = bm.Framerate == bm2.Framerate && bm.Compression == bm2.Compression && bm.Pages.Count == bm2.Pages.Count &&
+							bm.Pages.Zip(bm2.Pages).All(x => x.First.Width == x.Second.Width && x.First.Height == x.Second.Height && x.First.Flags == x.Second.Flags);
+						if (!match) {
+							Console.WriteLine($"X {name}: {compression} {stream.Length}");
+						} else {
+							bool pixelsMatch = bm.Pages.Zip(bm2.Pages).All(x => x.First.Pixels.SequenceEqual(x.Second.Pixels));
+							if (!pixelsMatch) {
+								Console.WriteLine($"X {name}: {compression} {stream.Length} BITMAP MISMATCH");
+
+								stream.Position = 0;
+
+								using (FileStream fileStream = new($@"C:\temp\{Path.GetFileNameWithoutExtension(name)}.{compression}.BM", FileMode.Create, FileAccess.Write, FileShare.None)) {
+									await stream.CopyToAsync(fileStream);
+								}
+
+								using (Bitmap bitmap = new(bm.Pages[0].Width, bm.Pages[0].Height, PixelFormat.Format8bppIndexed)) {
+									Color[] colors = palette;
+									if (bm.Pages[0].Flags.HasFlag(DfBitmap.Flags.Transparent)) {
+										colors = transparentPalette;
+									}
+
+									ColorPalette colorPalette = bitmap.Palette;
+									for (int i = 0; i < 256; i++) {
+										Array.Copy(colors, colorPalette.Entries, 256);
+									}
+									bitmap.Palette = colorPalette;
+
+									BitmapData bitmapData = bitmap.LockBits(new(Point.Empty, bitmap.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+									for (int y = 0; y < bitmap.Height; y++) {
+										Marshal.Copy(bm.Pages[0].Pixels, y * bitmap.Width, bitmapData.Scan0 + (bitmapData.Stride * (bitmap.Height - y - 1)), bitmap.Width);
+									}
+
+									bitmap.UnlockBits(bitmapData);
+									bitmap.Save(@$"C:\temp\{Path.GetFileNameWithoutExtension(name)}.SRC.PNG", ImageFormat.Png);
+								}
+
+								using (Bitmap bitmap = new(bm.Pages[0].Width, bm.Pages[0].Height, PixelFormat.Format8bppIndexed)) {
+									Color[] colors = palette;
+									if (bm.Pages[0].Flags.HasFlag(DfBitmap.Flags.Transparent)) {
+										colors = transparentPalette;
+									}
+
+									ColorPalette colorPalette = bitmap.Palette;
+									for (int i = 0; i < 256; i++) {
+										Array.Copy(colors, colorPalette.Entries, 256);
+									}
+									bitmap.Palette = colorPalette;
+
+									BitmapData bitmapData = bitmap.LockBits(new(Point.Empty, bitmap.Size), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+									for (int y = 0; y < bitmap.Height; y++) {
+										Marshal.Copy(bm2.Pages[0].Pixels, y * bitmap.Width, bitmapData.Scan0 + (bitmapData.Stride * (bitmap.Height - y - 1)), bitmap.Width);
+									}
+
+									bitmap.UnlockBits(bitmapData);
+									bitmap.Save(@$"C:\temp\{Path.GetFileNameWithoutExtension(name)}.{compression}.PNG", ImageFormat.Png);
+								}
+
+							} else {
+								Console.WriteLine($"  {name}: {compression} {stream.Length}");
+							}
+						}
+					} 
+
 					/*DfBitmap.Page page = bm.Pages[0];
 					int width = page.Width;
 					int height = page.Height;
@@ -452,34 +678,39 @@ namespace Test {
 						}
 
 						bitmap.UnlockBits(bitmapData);
-						bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}-31.PNG"), ImageFormat.Png);
-					}*/
-				}
+						bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}-31.PNG"), ImageFormat.Png);*/
+			}
 
-				/*Wax wax = await sprites.GetFileAsync<Wax>(name);
+			Console.WriteLine($"BMs: {bmOld} -> {bmNew} ({1 - (bmNew / (float)bmOld):p})");
+			Console.WriteLine($"FMEs: {fmeOld} -> {fmeNew} ({1 - (fmeNew / (float)fmeOld):p})");
+			Console.WriteLine($"WAXs: {waxOld} -> {waxNew} ({1 - (waxNew / (float)waxOld):p})");
 
-				Fme fme = wax.Waxes[0].Sequences[0].Frames[0];
+			//}
 
-				byte[] pixels = fme.Pixels;
-				int width = fme.Width;
-				int height = fme.Height;
+			/*Wax wax = await sprites.GetFileAsync<Wax>(name);
 
-				using Bitmap bitmap = new(width, height, PixelFormat.Format32bppArgb);
-				BitmapData bitmapData = bitmap.LockBits(new(Point.Empty, bitmap.Size), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+			Fme fme = wax.Waxes[0].Sequences[0].Frames[0];
 
-				for (int y = 0; y < height; y++) {
-					for (int x = 0; x < width; x++) {
-						byte color = pixels[(height - y - 1) * width + x];
-						if (color > 0) {
-							Marshal.Copy(paletteBuffer, color * 4, bitmapData.Scan0 + (y * bitmapData.Stride) + (x * 4), 4);
-						}
+			byte[] pixels = fme.Pixels;
+			int width = fme.Width;
+			int height = fme.Height;
+
+			using Bitmap bitmap = new(width, height, PixelFormat.Format32bppArgb);
+			BitmapData bitmapData = bitmap.LockBits(new(Point.Empty, bitmap.Size), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					byte color = pixels[(height - y - 1) * width + x];
+					if (color > 0) {
+						Marshal.Copy(paletteBuffer, color * 4, bitmapData.Scan0 + (y * bitmapData.Stride) + (x * 4), 4);
 					}
 				}
-
-				bitmap.UnlockBits(bitmapData);
-
-				bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}.PNG"), ImageFormat.Png);*/
 			}
+
+			bitmap.UnlockBits(bitmapData);
+
+			bitmap.Save(Path.Combine(dir, $"{Path.GetFileNameWithoutExtension(name)}.PNG"), ImageFormat.Png);*/
+			//}
 
 			/*Process.Start(new ProcessStartInfo() {
 				FileName = dir,

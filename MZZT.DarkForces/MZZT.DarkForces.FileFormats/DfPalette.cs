@@ -50,7 +50,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// The palette data.
 		/// </summary>
-		public RgbColor[] Palette { get; set; }
+		public RgbColor[] Palette { get; set; } = new RgbColor[256];
 
 		public override bool CanLoad => true;
 

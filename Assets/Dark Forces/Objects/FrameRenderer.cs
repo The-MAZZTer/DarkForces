@@ -32,12 +32,12 @@ namespace MZZT.DarkForces {
 			}
 
 			Sprite sprite = ResourceCache.Instance.ImportFrame(LevelLoader.Instance.Palette,
-				LevelLoader.Instance.ColorMap, fme, lightLevel);
+				lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, fme, lightLevel);
 
 			SpriteRenderer renderer = this.gameObject.AddComponent<SpriteRenderer>();
 			renderer.color = Color.white;
 			renderer.drawMode = SpriteDrawMode.Simple;
-			renderer.flipX = fme.Flip;
+			//renderer.flipX = fme.Flip;
 			renderer.sprite = sprite;
 		}
 

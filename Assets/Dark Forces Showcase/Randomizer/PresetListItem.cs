@@ -1,14 +1,10 @@
-using MZZT.DataBinding;
-using System;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Xml;
+using MZZT.Data.Binding;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MZZT.DarkForces.Showcase {
-  public class PresetListItem : Databound<Preset> {
+  public class PresetListItem : Databind<Preset> {
     [SerializeField]
     private TMP_InputField nameField;
 		public TMP_InputField NameField => this.nameField;
@@ -18,8 +14,10 @@ namespace MZZT.DarkForces.Showcase {
 		private Image clickRegion;
 		public Image ClickRegion => this.clickRegion;
 
-		private void Start() {
-			this.Toggle.onValueChanged.AddListener(value => {
+		protected override void Start() {
+			base.Start();
+
+			DataboundListChildToggle.FindToggleFor(this).onValueChanged.AddListener(value => {
 				this.NameField.interactable = value && this.Value != null && this.Value.Settings != null && !this.Value.ReadOnly;
 				this.ClickRegion.gameObject.SetActive(!value);
 			});
@@ -35,12 +33,12 @@ namespace MZZT.DarkForces.Showcase {
 			});
 		}
 
-		public override void Invalidate() {
-			base.Invalidate();
+		protected override void OnInvalidate() {
+			this.deleteButton.gameObject.SetActive(!(this.Value?.ReadOnly ?? true));
+
+			base.OnInvalidate();
 
 			this.name = this.Value?.Name ?? "<None>";
-
-			this.deleteButton.gameObject.SetActive(!(this.Value?.ReadOnly ?? true));
 		}
 
 		public void ExportAsync() {

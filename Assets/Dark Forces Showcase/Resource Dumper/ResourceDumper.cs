@@ -6,44 +6,66 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
+using TMPro;
 using UnityEngine;
+using static MZZT.DarkForces.FileFormats.DfBitmap;
+using Color = UnityEngine.Color;
+using Debug = UnityEngine.Debug;
+using File = System.IO.File;
 
 namespace MZZT.DarkForces.Showcase {
 	public class ResourceDumper : Singleton<ResourceDumper> {
 		[SerializeField]
+		private TMP_Text nameLabel;
+
+		[SerializeField]
 		private GameObject background;
 
-		public ResourceDumperSettings Settings { get; private set; }
+		[SerializeField]
+		private DataboundResourceDumperSettings settings;
 
-		private async void Start() {
-			if (!FileLoader.Instance.Gobs.Any()) {
-				await FileLoader.Instance.LoadStandardGobFilesAsync();
-			}
+		public ResourceDumperSettings Settings => this.settings.Value;
 
-			if (PlayerPrefs.HasKey(nameof(ResourceDumperSettings))) {
-				DataContractJsonSerializer serializer = new(typeof(ResourceDumperSettings), new DataContractJsonSerializerSettings() {
-					UseSimpleDictionaryFormat = true
-				});
-
-				string json = PlayerPrefs.GetString(nameof(ResourceDumperSettings));
-
-				using (XmlReader reader = XmlReader.Create(new StringReader(json))) {
+		private async Task UpdateModTextAsync() {
+			string text;
+			if (!Mod.Instance.List.Any()) {
+				text = "Dark Forces";
+			} else {
+				string path = Mod.Instance.Gob;
+				text = Path.GetFileName(path);
+				if (path != null) {
 					try {
-						this.Settings = (ResourceDumperSettings)serializer.ReadObject(reader);
-					} catch (Exception) {
+						DfLevelList levels = await FileLoader.Instance.LoadGobFileAsync<DfLevelList>("JEDI.LVL");
+						text = levels?.Levels.FirstOrDefault()?.DisplayName;
+					} catch (Exception e) {
+						Debug.LogError(e);
 					}
+					if (text == null) {
+						text = Path.GetFileName(path);
+					}
+				} else {
+					path = Mod.Instance.List.First().FilePath;
+					text = Path.GetFileName(path);
 				}
 			}
 
-			this.Settings ??= new ResourceDumperSettings();
+			this.nameLabel.text = $"{text} Resource Dumper";
+		}
+
+		private async void Start() {
+			if (!FileLoader.Instance.Gobs.Any()) {
+				await FileLoader.Instance.LoadStandardFilesAsync();
+			}
+
+			await this.UpdateModTextAsync();
 
 			this.background.SetActive(true);
 		}
@@ -67,7 +89,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.Settings.BaseOutputFolder = path;
 		}
 
-		private ResourceTypes GetFileType(string path) {
+		public static ResourceTypes GetFileType(string path) {
 			string filename = Path.GetFileName(path).ToLower();
 			string ext = Path.GetExtension(filename).ToLower();
 			switch (ext) {
@@ -136,6 +158,8 @@ namespace MZZT.DarkForces.Showcase {
 				case ".voc":
 				case ".voic":
 					return ResourceTypes.Voc;
+				case ".vue":
+					return ResourceTypes.Vue;
 				case ".wax":
 					return ResourceTypes.Wax;
 			}
@@ -182,7 +206,7 @@ namespace MZZT.DarkForces.Showcase {
 			string filename = Path.GetFileName(pathPart);
 			pathPart = pathPart[..^filename.Length].TrimEnd(Path.DirectorySeparatorChar);
 
-			ResourceTypes type = this.GetFileType(filename);
+			ResourceTypes type = GetFileType(filename);
 			if (!this.Settings.ProcessTypes.HasFlag(type)) {
 				if (type != ResourceTypes.Pltt && type != ResourceTypes.Pal && type != ResourceTypes.Cmp) {
 					return null;
@@ -232,7 +256,7 @@ namespace MZZT.DarkForces.Showcase {
 					}
 					break;
 				case ResourceTypes.Cmp:
-					if (this.Settings.ConvertCmpToJascPal || this.Settings.ConvertCmpTo24BitPal || this.Settings.ConvertCmpTo32BitPal ||
+					if (this.Settings.ConvertToPng.HasFlag(type) || this.Settings.ConvertCmpToJascPal || this.Settings.ConvertCmpTo24BitPal || this.Settings.ConvertCmpTo32BitPal ||
 						string.Compare(Path.GetFileNameWithoutExtension(fullPath), this.Settings.ImageConversionPal, true) == 0) {
 
 						DfColormap cmp = null;
@@ -300,7 +324,7 @@ namespace MZZT.DarkForces.Showcase {
 					}
 					break;
 				case ResourceTypes.Pal:
-					if (this.Settings.ConvertPalPlttToJascPal || this.Settings.ConvertPalPlttTo24BitPal || this.Settings.ConvertPalPlttTo32BitPal ||
+					if (this.Settings.ConvertToPng.HasFlag(type) || this.Settings.ConvertPalPlttToJascPal || this.Settings.ConvertPalPlttTo24BitPal || this.Settings.ConvertPalPlttTo32BitPal ||
 						string.Compare(Path.GetFileNameWithoutExtension(fullPath), this.Settings.ImageConversionPal, true) == 0) {
 
 						DfPalette pal = null;
@@ -357,7 +381,7 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private async Task<DfPalette> FindRelatedPalAsync(List<Resource> inputs, string preferred) {
-			Resource paletteResource = inputs.FirstOrDefault(x => this.GetFileType(x.FullPath) == ResourceTypes.Pal && string.Compare(Path.GetFileNameWithoutExtension(x.FullPath), preferred, true) == 0);
+			Resource paletteResource = inputs.FirstOrDefault(x => GetFileType(x.FullPath) == ResourceTypes.Pal && string.Compare(Path.GetFileNameWithoutExtension(x.FullPath), preferred, true) == 0);
 			if (paletteResource != null) {
 				return (DfPalette)paletteResource.ResourceObject;
 			}
@@ -366,7 +390,7 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private async Task<DfColormap> FindRelatedCmpAsync(List<Resource> inputs, string preferred) {
-			Resource paletteResource = inputs.FirstOrDefault(x => this.GetFileType(x.FullPath) == ResourceTypes.Cmp && string.Compare(Path.GetFileNameWithoutExtension(x.FullPath), preferred, true) == 0);
+			Resource paletteResource = inputs.FirstOrDefault(x => GetFileType(x.FullPath) == ResourceTypes.Cmp && string.Compare(Path.GetFileNameWithoutExtension(x.FullPath), preferred, true) == 0);
 			if (paletteResource != null) {
 				return (DfColormap)paletteResource.ResourceObject;
 			}
@@ -375,7 +399,7 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private Resource FindRelatedPltt(Resource resource, List<Resource> inputs, string[] preferred) {
-			Resource[] matches = inputs.Where(x => x.FileParent == resource.FileParent && this.GetFileType(x.FullPath) == ResourceTypes.Pltt).ToArray();
+			Resource[] matches = inputs.Where(x => x.FileParent == resource.FileParent && GetFileType(x.FullPath) == ResourceTypes.Pltt).ToArray();
 
 			string filename = Path.GetFileNameWithoutExtension(resource.FullPath);
 			Resource match = matches.FirstOrDefault(x => string.Compare(Path.GetFileNameWithoutExtension(x.FullPath), filename, true) == 0);
@@ -406,6 +430,8 @@ namespace MZZT.DarkForces.Showcase {
 			return outputPath;
 		}
 
+#if SKIA
+#else
 		private async Task SaveTextureAsPngAsync(Texture2D texture, string outputPath) {
 			if (texture == null) {
 				return;
@@ -415,6 +441,7 @@ namespace MZZT.DarkForces.Showcase {
 			using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 			await output.WriteAsync(buffer, 0, buffer.Length);
 		}
+#endif
 
 		private async Task DumpFileAsync(List<Resource> inputs, Resource resource) {
 			if (resource.ResourceObject == null) {
@@ -433,7 +460,7 @@ namespace MZZT.DarkForces.Showcase {
 				["file"] = null
 			};
 
-			ResourceTypes type = this.GetFileType(filename);
+			ResourceTypes type = GetFileType(filename);
 			switch (type) {
 				case ResourceTypes.Anim:
 					if (this.Settings.ConvertToPng.HasFlag(type)) {
@@ -492,30 +519,69 @@ namespace MZZT.DarkForces.Showcase {
 
 								foreach ((DfBitmap.Page page, int index) in bm.Pages.Select((x, i) => (x, i))) {
 									parameters["index"] = index.ToString();
-
+#if SKIA
 									await this.SaveTextureAsPngAsync(
 										ResourceCache.Instance.ImportBitmap(page, pal, i < 0 ? null : cmp, i, false, true),
 										this.FillOutputTemplate(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters)
 									);
+#else
+									using Bitmap bitmap = page.ToBitmap(pal, i < 0 ? null : cmp, i, false, true);
+									bitmap.Save(
+										this.FillOutputTemplate(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters),
+										ImageFormat.Png
+									);
+#endif
 								}
 							}
 						}
 					}
 					break;
 				case ResourceTypes.Cmp:
-					if (this.Settings.ConvertCmpToJascPal || this.Settings.ConvertCmpTo24BitPal || this.Settings.ConvertCmpTo32BitPal) {
+					if (this.Settings.ConvertCmpToJascPal || this.Settings.ConvertCmpTo24BitPal || this.Settings.ConvertCmpTo32BitPal ||
+						this.Settings.ConvertToPng.HasFlag(ResourceTypes.Cmp)) {
+
 						DfColormap cmp = (DfColormap)resource.ResourceObject;
 						string name = Path.GetFileNameWithoutExtension(resource.FullPath);
 						DfPalette pal = await this.FindRelatedPalAsync(inputs, name);
 						if (pal != null) {
 							Dictionary<string, string> parameters = new() {
 								["inputname"] = Path.GetFileNameWithoutExtension(filename),
-								["inputext"] = Path.GetExtension(filename)[1..],
-								["outputext"] = "pal"
+								["inputext"] = Path.GetExtension(filename)[1..]
 							};
 
+							if (this.Settings.ConvertToPng.HasFlag(ResourceTypes.Cmp)) {
+								parameters["format"] = "PNG";
+								parameters["outputext"] = "png";
+
+								for (int i = this.Settings.ImageConversionLightLevelMinimum; i <= this.Settings.ImageConversionLightLevelMaximum; i++) {
+									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
+
+									parameters["lightlevel"] = i.ToString();
+									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+
+									using Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
+
+									ColorPalette colorPalette = bitmap.Palette;
+									for (int j = 0; j < pal.Palette.Length; j++) {
+										colorPalette.Entries[j] = System.Drawing.Color.FromArgb(colors[j * 4 + 3], colors[j * 4], colors[j * 4 + 1], colors[j * 4 + 2]);
+									}
+									bitmap.Palette = colorPalette;
+
+									BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+									for (int y = 0; y < bitmap.Height; y++) {
+										byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
+										Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
+									}
+
+									bitmap.UnlockBits(data);
+
+									bitmap.Save(outputPath);
+								}
+							}
 							if (this.Settings.ConvertCmpToJascPal) {
 								parameters["format"] = "JASC";
+								parameters["outputext"] = "pal";
 								for (int i = this.Settings.ImageConversionLightLevelMinimum; i <= this.Settings.ImageConversionLightLevelMaximum; i++) {
 									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
 
@@ -535,6 +601,7 @@ namespace MZZT.DarkForces.Showcase {
 							}
 							if (this.Settings.ConvertCmpTo24BitPal) {
 								parameters["format"] = "RGB";
+								parameters["outputext"] = "pal";
 								for (int i = this.Settings.ImageConversionLightLevelMinimum; i <= this.Settings.ImageConversionLightLevelMaximum; i++) {
 									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
 
@@ -549,6 +616,7 @@ namespace MZZT.DarkForces.Showcase {
 							}
 							if (this.Settings.ConvertCmpTo32BitPal) {
 								parameters["format"] = "RGBA";
+								parameters["outputext"] = "pal";
 								for (int i = this.Settings.ImageConversionLightLevelMinimum; i <= this.Settings.ImageConversionLightLevelMaximum; i++) {
 									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
 
@@ -613,10 +681,19 @@ namespace MZZT.DarkForces.Showcase {
 
 							foreach (int i in lightLevels) {
 								parameters["lightlevel"] =  i < 0 ? "" : i.ToString();
+
+#if SKIA
 								await this.SaveTextureAsPngAsync(
 									ResourceCache.Instance.ImportFrame(pal, i < 0 ? null : cmp, fme, i, true).texture,
 									this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
 								);
+#else
+								using Bitmap bitmap = fme.ToBitmap(pal, i < 0 ? null : cmp, i, false);
+								bitmap.Save(
+									this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters),
+									ImageFormat.Png
+								);
+#endif
 							}
 						}
 					}
@@ -656,20 +733,35 @@ namespace MZZT.DarkForces.Showcase {
 
 								if (this.Settings.ConvertFntFontToSingleImage) {
 									parameters["character"] = "";
-
+#if SKIA
 									await this.SaveTextureAsPngAsync(
-										FntConverter.ToTexture(fnt, colors, true),
+										fnt.ToTexture(colors, true),
 										this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
 									);
+#else
+									using Bitmap bitmap = fnt.ToBitmap(colors);
+									bitmap.Save(
+										this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters),
+										ImageFormat.Png
+									);
+#endif
 								}
 								if (this.Settings.ConvertFntFontToCharacterImages) {
 									foreach ((DfFont.Character c, int i) in fnt.Characters.Select((x, i) => (x, i + fnt.First))) {
 										parameters["character"] = i.ToString();
 
+#if SKIA
 										await this.SaveTextureAsPngAsync(
-											FntConverter.CharacterToTexture(fnt, c, colors, true),
+											c.ToTexture(fnt, colors, true),
 											this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters)
 										);
+#else
+										using Bitmap bitmap = c.ToBitmap(fnt.Height, colors);
+										bitmap.Save(
+											this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters),
+											ImageFormat.Png
+										);
+#endif
 									}
 								}
 							}
@@ -692,7 +784,7 @@ namespace MZZT.DarkForces.Showcase {
 							parameters["character"] = "";
 
 							await this.SaveTextureAsPngAsync(
-								FontConverter.ToTexture(font, this.Settings.FontColor, true),
+								font.ToTexture(this.Settings.FontColor, true),
 								this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
 							);
 						}
@@ -701,7 +793,7 @@ namespace MZZT.DarkForces.Showcase {
 								parameters["character"] = i.ToString();
 
 								await this.SaveTextureAsPngAsync(
-									FontConverter.CharacterToTexture(font, c, this.Settings.FontColor, true),
+									c.CharacterToTexture(font, this.Settings.FontColor, true),
 									this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters)
 								);
 							}
@@ -727,17 +819,46 @@ namespace MZZT.DarkForces.Showcase {
 					}
 					break;
 				case ResourceTypes.Pal:
-					if (this.Settings.ConvertPalPlttToJascPal || this.Settings.ConvertPalPlttTo24BitPal || this.Settings.ConvertPalPlttTo32BitPal) {
+					if (this.Settings.ConvertPalPlttToJascPal || this.Settings.ConvertPalPlttTo24BitPal || this.Settings.ConvertPalPlttTo32BitPal ||
+						this.Settings.ConvertToPng.HasFlag(ResourceTypes.Pal)) {
+
 						DfPalette pal = (DfPalette)resource.ResourceObject;
 						byte[] palette = ResourceCache.Instance.ImportPalette(pal);
 						Dictionary<string, string> parameters = new() {
 							["inputname"] = Path.GetFileNameWithoutExtension(filename),
 							["inputext"] = Path.GetExtension(filename)[1..],
-							["lightlevel"] = "",
-							["outputext"] = "pal"
+							["lightlevel"] = ""
 						};
+						if (this.Settings.ConvertToPng.HasFlag(ResourceTypes.Pal)) {
+							parameters["format"] = "PNG";
+							parameters["outputext"] = "png";
+
+							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+
+							using Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
+
+							System.Drawing.Color[] colors = pal.ToDrawingColorArray();
+
+							ColorPalette colorPalette = bitmap.Palette;
+							for (int i = 0; i < pal.Palette.Length; i++) {
+								colorPalette.Entries[i] = colors[i];
+							}
+							bitmap.Palette = colorPalette;
+
+							BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+							for (int y = 0; y < bitmap.Height; y++) {
+								byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
+								Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
+							}
+
+							bitmap.UnlockBits(data);
+
+							bitmap.Save(outputPath);
+						}
 						if (this.Settings.ConvertPalPlttToJascPal) {
 							parameters["format"] = "JASC";
+							parameters["outputext"] = "pal";
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
@@ -753,6 +874,7 @@ namespace MZZT.DarkForces.Showcase {
 						}
 						if (this.Settings.ConvertPalPlttTo24BitPal) {
 							parameters["format"] = "RGB";
+							parameters["outputext"] = "pal";
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
@@ -763,6 +885,7 @@ namespace MZZT.DarkForces.Showcase {
 						}
 						if (this.Settings.ConvertCmpTo32BitPal) {
 							parameters["format"] = "RGBA";
+							parameters["outputext"] = "pal";
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
@@ -772,17 +895,46 @@ namespace MZZT.DarkForces.Showcase {
 					}
 					break;
 				case ResourceTypes.Pltt:
-					if (this.Settings.ConvertPalPlttToJascPal || this.Settings.ConvertPalPlttTo24BitPal || this.Settings.ConvertPalPlttTo32BitPal) {
+					if (this.Settings.ConvertPalPlttToJascPal || this.Settings.ConvertPalPlttTo24BitPal || this.Settings.ConvertPalPlttTo32BitPal ||
+						this.Settings.ConvertToPng.HasFlag(ResourceTypes.Pltt)) {
+
 						LandruPalette pltt = (LandruPalette)resource.ResourceObject;
 						byte[] palette = ResourceCache.Instance.ImportPalette(pltt);
 						Dictionary<string, string> parameters = new() {
 							["inputname"] = Path.GetFileNameWithoutExtension(filename),
 							["inputext"] = Path.GetExtension(filename)[1..],
-							["lightlevel"] = "",
-							["outputext"] = "pal"
+							["lightlevel"] = ""
+						};
+						if (this.Settings.ConvertToPng.HasFlag(ResourceTypes.Pltt)) {
+							parameters["format"] = "PNG";
+							parameters["outputext"] = "png";
+
+							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+
+							using Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
+
+							System.Drawing.Color[] colors = pltt.ToDrawingColorArray();
+
+							ColorPalette colorPalette = bitmap.Palette;
+							for (int i = 0; i < pltt.Palette.Length; i++) {
+								colorPalette.Entries[i] = colors[i];
+							}
+							bitmap.Palette = colorPalette;
+
+							BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+							for (int y = 0; y < bitmap.Height; y++) {
+								byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
+								Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
+							}
+
+							bitmap.UnlockBits(data);
+
+							bitmap.Save(outputPath);
 						};
 						if (this.Settings.ConvertPalPlttToJascPal) {
 							parameters["format"] = "JASC";
+							parameters["outputext"] = "pal";
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
@@ -798,6 +950,7 @@ namespace MZZT.DarkForces.Showcase {
 						}
 						if (this.Settings.ConvertPalPlttTo24BitPal) {
 							parameters["format"] = "RGB";
+							parameters["outputext"] = "pal";
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
@@ -808,6 +961,7 @@ namespace MZZT.DarkForces.Showcase {
 						}
 						if (this.Settings.ConvertCmpTo32BitPal) {
 							parameters["format"] = "RGBA";
+							parameters["outputext"] = "pal";
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
@@ -885,43 +1039,62 @@ namespace MZZT.DarkForces.Showcase {
 												switch (this.Settings.WaxOutputMode) {
 													case WaxOutputModes.NoDuplicates:
 														continue;
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 													case WaxOutputModes.Shortcut:
-														parameters["outputext"] = "lnk";
-
 														outputPath = this.FillOutputTemplate(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
+
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+														parameters["outputext"] = "lnk";
 
 														IShellLink link = (IShellLink)new ShellLink();
 														link.SetPath(existing);
 
 														IPersistFile file = (IPersistFile)link;
 														file.Save(outputPath, false);
+#else
+														parameters["outputext"] = "desktop";
+
+														using (FileStream stream = new(outputPath, FileMode.Open, FileAccess.Write, FileShare.None)) {
+															using StreamWriter writer = new(stream, Encoding.UTF8);
+															await writer.WriteLineAsync("[Desktop Entry]");
+															await writer.WriteLineAsync("Encoding=UTF-8");
+															await writer.WriteLineAsync("Version=1.0");
+															await writer.WriteLineAsync("Type=Link");
+															await writer.WriteLineAsync("Terminal=false");
+															await writer.WriteLineAsync($"Exec={existing}");
+															await writer.WriteLineAsync($"Name={Path.GetFileNameWithoutExtension(outputPath)}");
+															await writer.WriteLineAsync($"Icon={existing}");
+														}
+#endif
 														continue;
 													case WaxOutputModes.SymLink:
 														parameters["outputext"] = "png";
 
 														outputPath = this.FillOutputTemplate(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
 
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 														if (!CreateSymbolicLink(outputPath, existing, SYMBOLIC_LINK_FLAG.FILE | SYMBOLIC_LINK_FLAG.ALLOW_UNPRIVILEGED_CREATE)) {
 															int error = Marshal.GetLastWin32Error();
 															ResourceCache.Instance.AddError(outputPath, new Win32Exception(error));
-														} else {
-															continue;
 														}
-														break;
+#else
+														Process.Start("ln", $"-s \"{existing}\" \"{outputPath}\"");
+#endif
+														continue;
 													case WaxOutputModes.HardLink:
 														parameters["outputext"] = "png";
 
 														outputPath = this.FillOutputTemplate(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
 
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 														if (!CreateHardLink(outputPath, existing)) {
 															int error = Marshal.GetLastWin32Error();
 															ResourceCache.Instance.AddError(outputPath, new Win32Exception(error));
-														} else {
-															continue;
 														}
-														break;
+#else
+														Process.Start("ln", $"\"{existing}\" \"{outputPath}\"");
 #endif
+
+														continue;
 												}
 											}
 
@@ -960,19 +1133,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			await PauseMenu.Instance.BeginLoadingAsync();
 
-			DataContractJsonSerializer serializer = new(typeof(ResourceDumperSettings), new DataContractJsonSerializerSettings() {
-				UseSimpleDictionaryFormat = true
-			});
-
-			StringWriter stringWriter = new();
-			using (XmlWriter writer = XmlWriter.Create(stringWriter)) {
-				try {
-					serializer.WriteObject(writer, this.Settings);
-				} catch (Exception) {
-				}
-			}
-			string json = stringWriter.ToString();
-			PlayerPrefs.SetString(nameof(ResourceDumperSettings), json);
+			this.settings.SaveToPlayerPrefs();
 
 			ResourceCache.Instance.ClearWarnings();
 			ResourceCache.Instance.Clear();
@@ -983,13 +1144,13 @@ namespace MZZT.DarkForces.Showcase {
 			foreach (string path in this.Settings.Inputs) {
 				if (File.Exists(path)) {
 					Resource resource;
-					switch (this.GetFileType(path)) {
+					switch (GetFileType(path)) {
 						case ResourceTypes.OtherInGob:
 							using (FileStream gobStream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 								DfGobContainer gob = await DfGobContainer.TryReadAsync(gobStream, false);
 
 								foreach (string file in gob.Files.Select(x => x.name)) {
-									ResourceTypes type = this.GetFileType(file);
+									ResourceTypes type = GetFileType(file);
 									if (type == 0) {
 										type = ResourceTypes.OtherInGob;
 									}
@@ -1009,7 +1170,7 @@ namespace MZZT.DarkForces.Showcase {
 							using (FileStream lfdStream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 								await LandruFileDirectory.TryReadAsync(lfdStream, async lfd => {
 									foreach ((string fileName, string fileType, uint offset, uint size) in lfd.Files) {
-										ResourceTypes type = this.GetFileType($".{fileType}");
+										ResourceTypes type = GetFileType($".{fileType}");
 										if (type == 0) {
 											type = ResourceTypes.OtherInLfd;
 										}
@@ -1042,14 +1203,14 @@ namespace MZZT.DarkForces.Showcase {
 				} else {
 					if (Directory.Exists(path)) {
 						foreach (string child in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)) {
-							string childPart = child.Substring(path.Length).Trim(Path.DirectorySeparatorChar);
-							ResourceTypes type = this.GetFileType(child);
+							string childPart = child[path.Length..].Trim(Path.DirectorySeparatorChar);
+							ResourceTypes type = GetFileType(child);
 							if (this.Settings.AlwaysScanInsideGobs && type == ResourceTypes.OtherInGob) {
 								FileStream gobStream = new(child, FileMode.Open, FileAccess.Read, FileShare.Read);
 								DfGobContainer gob = await DfGobContainer.TryReadAsync(gobStream, false);
 
 								foreach (string file in gob.Files.Select(x => x.name)) {
-									type = this.GetFileType(file);
+									type = GetFileType(file);
 									if (type == 0) {
 										type = ResourceTypes.OtherInGob;
 									}
@@ -1067,7 +1228,7 @@ namespace MZZT.DarkForces.Showcase {
 								FileStream lfdStream = new(child, FileMode.Open, FileAccess.Read, FileShare.Read);
 								await LandruFileDirectory.TryReadAsync(lfdStream, async lfd => {
 									foreach ((string fileName, string fileType, uint offset, uint size) in lfd.Files) {
-										type = this.GetFileType($".{fileType}");
+										type = GetFileType($".{fileType}");
 										if (type == 0) {
 											type = ResourceTypes.OtherInLfd;
 										}
@@ -1096,7 +1257,7 @@ namespace MZZT.DarkForces.Showcase {
 						string parent = Path.GetDirectoryName(path);
 						if (File.Exists(parent)) {
 							string child = Path.GetFileName(path).ToLower();
-							switch (this.GetFileType(parent)) {
+							switch (GetFileType(parent)) {
 								case ResourceTypes.OtherInGob:
 									FileStream gobStream = new(parent, FileMode.Open, FileAccess.Read, FileShare.Read);
 									DfGobContainer gob = await DfGobContainer.TryReadAsync(gobStream, false);
@@ -1283,7 +1444,7 @@ namespace MZZT.DarkForces.Showcase {
 	}
 
 	[Flags]
-	public enum ResourceTypes : long {
+	public enum ResourceTypes : uint {
 		ThreeDo = 0x1,
 		Anim = 0x2,
 		Bm = 0x4,

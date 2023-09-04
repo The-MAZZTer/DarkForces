@@ -16,7 +16,7 @@ namespace MZZT.FileFormats.Audio {
 
 		public enum TempoFormats {
 			TicksPerBeat,
-			FamesPerSecond
+			FramesPerSecond
 		}
 
 		public enum Formats : short {
@@ -29,16 +29,16 @@ namespace MZZT.FileFormats.Audio {
 		public struct TracksHeader {
 			public Formats Format;
 			public short Tracks;
-			public ushort Divison;
+			public ushort Division;
 
 			public short Tempo {
-				get => (short)(this.Divison & 0x7FFF);
-				set => this.Divison = (ushort)((this.Divison & 0x8000) | (value & 0x7FFF));
+				get => (short)(this.Division & 0x7FFF);
+				set => this.Division = (ushort)((this.Division & 0x8000) | (value & 0x7FFF));
 			}
 
 			public bool TempoIsFramesPerSecond {
-				get => (this.Divison & 0x8000) > 0;
-				set => this.Divison = (ushort)((this.Divison & 0x7FFF) | (value ? 0x8000 : 0));
+				get => (this.Division & 0x8000) > 0;
+				set => this.Division = (ushort)((this.Division & 0x7FFF) | (value ? 0x8000 : 0));
 			}
 		}
 

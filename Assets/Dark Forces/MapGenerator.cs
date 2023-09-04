@@ -43,43 +43,43 @@ namespace MZZT.DarkForces {
 		}
 
 		[SerializeField]
-		private LineProperties inactiveLayer = new LineProperties(Color.gray, 0);
+		private LineProperties inactiveLayer = new(Color.gray, 0);
 		/// <summary>
 		/// Walls for sectors on inactive layers.
 		/// </summary>
 		public LineProperties InactiveLayer { get => this.inactiveLayer; set => this.inactiveLayer = value; }
 		[SerializeField]
-		private LineProperties adjoined = new LineProperties(new Color(0, 0.5f, 0), 1);
+		private LineProperties adjoined = new(new Color(0, 0.5f, 0), 1);
 		/// <summary>
 		/// Adjoined walls where the sectors are the same floor height.
 		/// </summary>
 		public LineProperties Adjoined { get => this.adjoined; set => this.adjoined = value; }
 		[SerializeField]
-		private LineProperties ledge = new LineProperties(new Color(0, 0.5f, 0), 2);
+		private LineProperties ledge = new(new Color(0, 0.5f, 0), 2);
 		/// <summary>
 		/// Adjoined walls with a step up or down.
 		/// </summary>
 		public LineProperties Ledge { get => this.ledge; set => this.ledge = value; }
 		[SerializeField]
-		private LineProperties unadjoined = new LineProperties(Color.green, 3);
+		private LineProperties unadjoined = new(Color.green, 3);
 		/// <summary>
 		/// Simple unadjoined walls.
 		/// </summary>
 		public LineProperties Unadjoined { get => this.unadjoined; set => this.unadjoined = value; }
 		[SerializeField]
-		private LineProperties elevator = new LineProperties(new Color(1, 1, 0), 4);
+		private LineProperties elevator = new(new Color(1, 1, 0), 4);
 		/// <summary>
 		/// Walls in a elevator sector.
 		/// </summary>
 		public LineProperties Elevator { get => this.elevator; set => this.elevator = value; }
 		[SerializeField]
-		private LineProperties sectorTrigger = new LineProperties(Color.cyan, 5);
+		private LineProperties sectorTrigger = new(Color.cyan, 5);
 		/// <summary>
 		/// Walls in a trigger sector.
 		/// </summary>
 		public LineProperties SectorTrigger { get => this.sectorTrigger; set => this.sectorTrigger = value; }
 		[SerializeField]
-		private LineProperties wallTrigger = new LineProperties(Color.cyan, 6);
+		private LineProperties wallTrigger = new(Color.cyan, 6);
 		/// <summary>
 		/// Trigger walls.
 		/// </summary>
@@ -225,19 +225,19 @@ namespace MZZT.DarkForces {
 		private (Line[], Vector2Int) GenerateLinesAndViewport(DfLevel level, DfLevelInformation inf) {
 			// Filter sectors to visible ones.
 			IEnumerable<Sector> visibleSectors;
-			if (this.unselectedLayersRenderMode == UnselectedLayersRenderModes.Hide) {
+ 			if (this.unselectedLayersRenderMode == UnselectedLayersRenderModes.Hide) {
 				visibleSectors = level.Sectors.Where(x => Array.IndexOf(this.layers, x.Layer) >= 0).ToArray();
 			} else {
 				visibleSectors = level.Sectors;
 			}
 
-			Dictionary<Wall, DfLevelInformation.Item[]> wallsScripts = inf.Items
+			Dictionary<(string, int), DfLevelInformation.Item[]> wallsScripts = inf.Items
 				.Where(x => x.Type == DfLevelInformation.ScriptTypes.Line)
-				.GroupBy(x => x.Wall)
+				.GroupBy(x => (x.SectorName, x.WallNum))
 				.ToDictionary(x => x.Key, x => x.ToArray());
-			Dictionary<Sector, DfLevelInformation.Item[]> sectorsScripts = inf.Items
+			Dictionary<string, DfLevelInformation.Item[]> sectorsScripts = inf.Items
 				.Where(x => x.Type == DfLevelInformation.ScriptTypes.Sector)
-				.GroupBy(x => x.Sector)
+				.GroupBy(x => x.SectorName)
 				.ToDictionary(x => x.Key, x => x.ToArray());
 
 			// Plan ALL the lines!
@@ -254,7 +254,7 @@ namespace MZZT.DarkForces {
 					if (this.allowLevelToOverrideWallTypes && x.y.TextureAndMapFlags.HasFlag(WallTextureAndMapFlags.HiddenOnMap)) {
 						properties = default;
 					} else {
-						HashSet<LineProperties> candidates = new HashSet<LineProperties>();
+						HashSet<LineProperties> candidates = new();
 						if (this.unselectedLayersRenderMode == UnselectedLayersRenderModes.ShowInactive && !isLayer) {
 							candidates.Add(this.inactiveLayer);
 						}
@@ -267,10 +267,10 @@ namespace MZZT.DarkForces {
 						if (this.allowLevelToOverrideWallTypes && x.y.TextureAndMapFlags.HasFlag(WallTextureAndMapFlags.NormalOnMap)) {
 							candidates.Add(this.unadjoined);
 						}
-						if (wallsScripts.ContainsKey(x.y)) {
+						if (wallsScripts.ContainsKey((x.x.Name, x.x.Walls.IndexOf(x.y)))) {
 							candidates.Add(this.wallTrigger);
 						}
-						if (sectorsScripts.TryGetValue(x.x, out DfLevelInformation.Item[] sectorScripts)) {
+						if (sectorsScripts.TryGetValue(x.x.Name, out DfLevelInformation.Item[] sectorScripts)) {
 							if (sectorScripts.Any(x => {
 								string[] lines = x.Script.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 								Dictionary<string, string[]> logic = lines.SelectMany(x => TextBasedFile.SplitKeyValuePairs(TextBasedFile.TokenizeLine(x)))
@@ -292,11 +292,11 @@ namespace MZZT.DarkForces {
 						properties = candidates.Where(x => x.Draw).OrderByDescending(x => x.Priority).FirstOrDefault();
 					}
 
-					Vector2 left = new Vector2() {
+					Vector2 left = new() {
 						x = x.y.LeftVertex.Position.X * cos - x.y.LeftVertex.Position.Y * sin,
 						y = x.y.LeftVertex.Position.X * sin + x.y.LeftVertex.Position.Y * cos
 					};
-					Vector2 right = new Vector2() {
+					Vector2 right = new() {
 						x = x.y.RightVertex.Position.X * cos - x.y.RightVertex.Position.Y * sin,
 						y = x.y.RightVertex.Position.X * sin + x.y.RightVertex.Position.Y * cos
 					};
@@ -462,7 +462,7 @@ namespace MZZT.DarkForces {
 				viewport.x -= delta / 2;
 			}
 
-			Rect fixedViewport = new Rect(
+			Rect fixedViewport = new(
 				Vector2.zero,
 				viewport.size
 			);
@@ -479,11 +479,11 @@ namespace MZZT.DarkForces {
 						return false;
 					}
 
-					Vector2 pos = new Vector2(
+					Vector2 pos = new(
 						Mathf.Min(x.LeftVertex.x, x.RightVertex.x),
 						Mathf.Min(x.LeftVertex.y, x.RightVertex.y)
 					);
-					Rect bounds = new Rect(
+					Rect bounds = new(
 						pos,
 						new Vector2(
 							Mathf.Max(x.LeftVertex.x, x.RightVertex.x) - pos.x,
@@ -558,14 +558,22 @@ namespace MZZT.DarkForces {
 		/// <param name="level">The level data.</param>
 		/// <param name="inf">The level information.</param>
 		/// <returns>The PNG data.</returns>
+#if SKIASHARP
+		public void GeneratePng(DfLevel level, DfLevelInformation inf) {
+			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
+
+
+			
+		}
+#else
 		public SKData GeneratePng(DfLevel level, DfLevelInformation inf) {
 			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
 
 			// Create the SkiaSharp image.
-			SKImageInfo info = new SKImageInfo(viewport.x, viewport.y);
+			SKImageInfo info = new(viewport.x, viewport.y);
 			using SKSurface surface = SKSurface.Create(info);
 			SKCanvas canvas = surface.Canvas;
-			using SKPaint paint = new SKPaint() {
+			using SKPaint paint = new() {
 				BlendMode = SKBlendMode.SrcOver,
 				IsAntialias = true,
 				IsStroke = true,
@@ -591,5 +599,6 @@ namespace MZZT.DarkForces {
 
 			return pixmap.Encode(SKEncodedImageFormat.Png, 100);
 		}
+#endif
 	}
 }

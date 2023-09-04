@@ -28,7 +28,7 @@ namespace MZZT {
 			set => this.upDownSensitivity = value;
 		}
 		[SerializeField]
-		private Vector2 yAngleClamp = new Vector2(-60, 60);
+		private Vector2 yAngleClamp = new(-60, 60);
 		[SerializeField]
 		private bool invertY = true;
 		public bool InvertY {

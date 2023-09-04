@@ -57,17 +57,17 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Unknown contents of the MDPG chunk.
 		/// </summary>
-		public byte[] Mdpg { get; set; }
+		public byte[] Mdpg { get; set; } = Array.Empty<byte>();
 		/// <summary>
 		/// The MIDI format.
 		/// </summary>
-		public Formats Format { get; set; } = Formats.MultiTrack;
+		public Formats Format { get; set; } = Formats.MultiSong;
 		/// <summary>
 		/// The tempo of the music.
 		/// </summary>
 		public short Tempo { get; set; } = 0x1E0;
 		/// <summary>
-		/// Whether the tempo is frames per section or not.
+		/// Whether the tempo is frames per second or ticks per beat.
 		/// </summary>
 		public bool TempoIsFramesPerSecond { get; set; }
 		/// <summary>
@@ -121,7 +121,7 @@ namespace MZZT.DarkForces.FileFormats {
 			this.ClearWarnings();
 
 			int size = 0;
-			if (this.Mdpg != null) {
+			if (this.Mdpg != null && this.Mdpg.Length > 0) {
 				size += Marshal.SizeOf<ChunkHeader>() + this.Mdpg.Length;
 			}
 			size += Marshal.SizeOf<ChunkHeader>() + Marshal.SizeOf<TracksHeader>();
@@ -142,7 +142,7 @@ namespace MZZT.DarkForces.FileFormats {
 				Format = this.Format,
 				TempoIsFramesPerSecond = this.TempoIsFramesPerSecond
 			};
-			if (this.Mdpg != null) {
+			if (this.Mdpg != null && this.Mdpg.Length > 0) {
 				midi.Chunks.Add("Mdpg", new() {
 					this.Mdpg
 				});
@@ -151,7 +151,7 @@ namespace MZZT.DarkForces.FileFormats {
 			return midi;
 		}
 
-		object ICloneable.Clone() => throw new NotImplementedException();
+		object ICloneable.Clone() => this.Clone();
 		public DfGeneralMidi Clone() {
 			DfGeneralMidi clone = new() {
 				Format = this.Format,

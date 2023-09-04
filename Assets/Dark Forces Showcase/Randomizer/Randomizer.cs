@@ -1,4 +1,5 @@
 using MZZT.DarkForces.FileFormats;
+using MZZT.Data.Binding;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,10 +16,13 @@ namespace MZZT.DarkForces.Showcase {
 	public class Randomizer : Singleton<Randomizer> {
 		private Random rng;
 
+		[SerializeField]
+		private DatabindObject settingsObject;
+
 		private async void Start() {
 			// This is here in case you run directly from this scene instead of the menu.
 			if (!FileLoader.Instance.Gobs.Any()) {
-				await FileLoader.Instance.LoadStandardGobFilesAsync();
+				await FileLoader.Instance.LoadStandardFilesAsync();
 			}
 
 			await PauseMenu.Instance.BeginLoadingAsync();
@@ -508,11 +512,11 @@ namespace MZZT.DarkForces.Showcase {
 		// If the campaign pool is used, these objects will store the pool for the whole campaign.
 		// It's not necessary to compute them more than once.
 		Dictionary<string[], List<DfLevelObjects.Object>> enemySpawnPool =
-			new Dictionary<string[], List<DfLevelObjects.Object>>();
+			new();
 		Dictionary<string[], List<DfLevelObjects.Object>> bossSpawnPool =
-			new Dictionary<string[], List<DfLevelObjects.Object>>();
+			new();
 		Dictionary<string[], List<DfLevelObjects.Object>> itemSpawnPool =
-			new Dictionary<string[], List<DfLevelObjects.Object>>();
+			new();
 		/// <summary>
 		/// Indexes all the objects of a type (enemy, boss, item) in a level for use in the randomized pool of objects..
 		/// </summary>
@@ -528,7 +532,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			RandomizerObjectSettings settings = this.Settings.Object;
 
-			Regex officerGenerator = new Regex(@"^GENERATOR\s+I_OFFICER(\w)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			Regex officerGenerator = new(@"^GENERATOR\s+I_OFFICER(\w)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 			foreach (DfLevelObjects.Object obj in o.Objects) {
 				// Grab all the properties of the object's sequence block.
 				Dictionary<string, string[]> properties = this.GetLogicProperties(obj);
@@ -703,21 +707,21 @@ namespace MZZT.DarkForces.Showcase {
 			// This is important for determineing if we can randomize a boss or not.
 			// If there is no boss elevator, the boss will have no effect when killed, so we can randomize it.
 			DfLevelInformation.Item[] bossElev = LevelLoader.Instance.Information.Items
-				.Where(x => x.Sector?.Name?.ToUpper() == "BOSS" && x.Wall == null).ToArray();
+				.Where(x => x.Type == DfLevelInformation.ScriptTypes.Sector && x.SectorName?.ToUpper() == "BOSS").ToArray();
 			DfLevelInformation.Item[] mohcElev = LevelLoader.Instance.Information.Items
-				.Where(x => x.Sector?.Name?.ToUpper() == "MOHC" && x.Wall == null).ToArray();
+				.Where(x => x.Type == DfLevelInformation.ScriptTypes.Sector && x.SectorName?.ToUpper() == "MOHC").ToArray();
 
 			// Cache bounds of level and sectors to more efficiently locate a sector containing a specific point.
 			Rect levelBounds = default;
-			Dictionary<DfLevel.Sector, Rect> sectorBounds = new Dictionary<DfLevel.Sector, Rect>();
+			Dictionary<DfLevel.Sector, Rect> sectorBounds = new();
 			// Cache the generated floor/ceiling tris for each sector so we only have to generate them once.
-			Dictionary<DfLevel.Sector, int[]> tris = new Dictionary<DfLevel.Sector, int[]>();
+			Dictionary<DfLevel.Sector, int[]> tris = new();
 
 			// Use this regex to detect elevator sectors, but only types that change the sector geometry.
 			// We don't want to put enemies or items in these sectors since it's easy to break a sector
 			// With a first step giving it a small height
 			// (placing an enemy/item causes this stop to fail and it will be in the open position).
-			Regex elevator = new Regex(@"^\s*class:\s*elevator\s*(basic|inv|move_floor|move_ceiling|basic_auto|morph_move1|morph_move2|morph_spin1|morph_spin2|move_wall|rotate_wall|door|door_mid|door_inv)\b", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
+			Regex elevator = new(@"^\s*class:\s*elevator\s*(basic|inv|move_floor|move_ceiling|basic_auto|morph_move1|morph_move2|morph_spin1|morph_spin2|move_wall|rotate_wall|door|door_mid|door_inv)\b", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
 			Dictionary<string, string> templates = settings.DefaultLogicFiles.ToDictionary(x => x.Logic, x => x.Filename);
 
@@ -745,10 +749,10 @@ namespace MZZT.DarkForces.Showcase {
 
 				// The pool of objects we'll select from to spawn.
 				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool =
-					new Dictionary<string[], List<DfLevelObjects.Object>>();
+					new();
 				// Existing locations we removed existing spawned objects from, which we can spawn new objects in.
 				List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)> existingSpawns =
-					new List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>();
+					new();
 				// Find all objects we're interested in adding to the spawn pool.
 				foreach (DfLevelObjects.Object obj in o.Objects) {
 					// Grab all sequences from the object.
@@ -872,7 +876,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				// Find bases that belong to turrets/welding arms.
 				// Existing bases should be removed, and when spawning replacements we should also spawn bases for them.
-				List<DfLevelObjects.Object> pairedBases = new List<DfLevelObjects.Object>();
+				List<DfLevelObjects.Object> pairedBases = new();
 				DfLevelObjects.Object[] turrets = spawnPool.Where(x => x.Key.Contains("TURRET"))
 					.SelectMany(x => x.Value).ToArray();
 				List<DfLevelObjects.Object> bases = o.Objects
@@ -1066,7 +1070,7 @@ namespace MZZT.DarkForces.Showcase {
 										continue;
 									}
 
-									Rect bounds = new Rect() {
+									Rect bounds = new() {
 										xMin = tri.Min(x => x.X),
 										yMin = tri.Min(x => x.Y),
 										xMax = tri.Max(x => x.X),
@@ -1106,13 +1110,13 @@ namespace MZZT.DarkForces.Showcase {
 							}
 
 							// Pick a random X Z point.
-							Vector2 point = new Vector2() {
+							Vector2 point = new() {
 								x = (float)this.rng.NextDouble() * levelBounds.width + levelBounds.x,
 								y = (float)this.rng.NextDouble() * levelBounds.height + levelBounds.y
 							};
 
 							// Look for a sector the point falls within.
-							List<DfLevel.Sector> candidates = new List<DfLevel.Sector>();
+							List<DfLevel.Sector> candidates = new();
 							foreach (DfLevel.Sector candidate in LevelLoader.Instance.Level.Sectors) {
 								if (!sectorBounds.TryGetValue(candidate, out Rect bounds)) {
 									sectorBounds[candidate] = bounds = new Rect() {
@@ -1135,8 +1139,8 @@ namespace MZZT.DarkForces.Showcase {
 								// We also rule out elevators that move walls to prevent items/enemies from being inaccessible.
 								if (candidate.Floor.Y - candidate.Ceiling.Y < 8 ||
 									candidate.Flags.HasFlag(DfLevel.SectorFlags.SectorIsDoor) ||
-									LevelLoader.Instance.Information.Items.Any(x => x.Sector == candidate && x.Wall == null &&
-									elevator.IsMatch(x.Script))) {
+									LevelLoader.Instance.Information.Items.Any(x => x.Type == DfLevelInformation.ScriptTypes.Sector &&
+									x.SectorName == candidate.Name && elevator.IsMatch(x.Script))) {
 
 									continue;
 								}
@@ -1285,7 +1289,7 @@ namespace MZZT.DarkForces.Showcase {
 								}
 							} while (tri == null);
 
-							Rect bounds = new Rect() {
+							Rect bounds = new() {
 								xMin = tri.Min(x => x.X),
 								yMin = tri.Min(x => x.Y),
 								xMax = tri.Max(x => x.X),
@@ -1383,7 +1387,7 @@ namespace MZZT.DarkForces.Showcase {
 						Dictionary<string, string[]> properties = this.GetLogicProperties(obj);
 
 						// floating point values
-						Dictionary<string, RandomRange> randomizedSettings = new Dictionary<string, RandomRange>() {
+						Dictionary<string, RandomRange> randomizedSettings = new() {
 							["DELAY"] = settings.RandomizeGeneratorsDelay,
 							["INTERVAL"] = settings.RandomizeGeneratorsInterval,
 							["MIN_DIST"] = settings.RandomizeGeneratorsMinimumDistance,
@@ -1391,7 +1395,7 @@ namespace MZZT.DarkForces.Showcase {
 							["WANDER_TIME"] = settings.RandomizeGeneratorsWanderTime
 						};
 
-						Dictionary<string, float> floatProperties = new Dictionary<string, float>();
+						Dictionary<string, float> floatProperties = new();
 						foreach ((string key, RandomRange generatorSetting) in randomizedSettings) {
 							float prop = 0;
 							if (properties.ContainsKey(key)) {
@@ -1423,7 +1427,7 @@ namespace MZZT.DarkForces.Showcase {
 							["NUM_TERMINATE"] = settings.RandomizeGeneratorsNumberTerminate
 						};
 
-						Dictionary<string, int> intProperties = new Dictionary<string, int>();
+						Dictionary<string, int> intProperties = new();
 						foreach ((string key, RandomRange generatorSetting) in randomizedSettings) {
 							int prop = 0;
 							if (properties.ContainsKey(key)) {
@@ -1460,7 +1464,7 @@ namespace MZZT.DarkForces.Showcase {
 						spawnRotation.X = 0;
 
 						// Create a base object
-						DfLevelObjects.Object baseObj = new DfLevelObjects.Object() {
+						DfLevelObjects.Object baseObj = new() {
 							Difficulty = obj.Difficulty,
 							FileName = logic[0] == "WELDER" ? "WELDBASE.3DO" : "BASE.3DO",
 							Type = DfLevelObjects.ObjectTypes.ThreeD
@@ -1509,9 +1513,9 @@ namespace MZZT.DarkForces.Showcase {
 			// I decided not to bother with that; Mohc is never reandomized.
 			if (settings.RandomizeBosses) {
 				// We're doing the same thing we did for enemies but some of the options which aren't as useful are stripped out.
-				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool = new Dictionary<string[], List<DfLevelObjects.Object>>();
+				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool = new();
 				Dictionary<string[], List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>> existingBossSpawns =
-					new Dictionary<string[], List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>>();
+					new();
 				foreach (DfLevelObjects.Object obj in o.Objects) {
 					Dictionary<string, string[]> properties = this.GetLogicProperties(obj);
 					if (properties == null) {
@@ -1667,7 +1671,7 @@ namespace MZZT.DarkForces.Showcase {
 									continue;
 								}
 
-								Rect bounds = new Rect() {
+								Rect bounds = new() {
 									xMin = tri.Min(x => x.X),
 									yMin = tri.Min(x => x.Y),
 									xMax = tri.Max(x => x.X),
@@ -1790,9 +1794,9 @@ namespace MZZT.DarkForces.Showcase {
 				}
 
 				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool =
-					new Dictionary<string[], List<DfLevelObjects.Object>>();
+					new();
 				List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)> existingSpawns =
-					new List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>();
+					new();
 				foreach (DfLevelObjects.Object obj in o.Objects) {
 					Dictionary<string, string[]> properties = this.GetLogicProperties(obj);
 					if (properties == null) {
@@ -1967,7 +1971,7 @@ namespace MZZT.DarkForces.Showcase {
 										continue;
 									}
 
-									Rect bounds = new Rect() {
+									Rect bounds = new() {
 										xMin = tri.Min(x => x.X),
 										yMin = tri.Min(x => x.Y),
 										xMax = tri.Max(x => x.X),
@@ -2001,12 +2005,12 @@ namespace MZZT.DarkForces.Showcase {
 								};
 							}
 
-							Vector2 point = new Vector2() {
+							Vector2 point = new() {
 								x = (float)this.rng.NextDouble() * levelBounds.width + levelBounds.x,
 								y = (float)this.rng.NextDouble() * levelBounds.height + levelBounds.y
 							};
 
-							List<DfLevel.Sector> candidates = new List<DfLevel.Sector>();
+							List<DfLevel.Sector> candidates = new();
 							foreach (DfLevel.Sector candidate in LevelLoader.Instance.Level.Sectors) {
 								if (!sectorBounds.TryGetValue(candidate, out Rect bounds)) {
 									sectorBounds[candidate] = bounds = new Rect() {
@@ -2025,8 +2029,8 @@ namespace MZZT.DarkForces.Showcase {
 								// Place into the smallest gap a player can enter to maximize the chance they can reach it.
 								if (candidate.Floor.Y - candidate.Ceiling.Y < 3 ||
 									candidate.Flags.HasFlag(DfLevel.SectorFlags.SectorIsDoor) ||
-									LevelLoader.Instance.Information.Items.Any(x => x.Sector == candidate && x.Wall == null &&
-									elevator.IsMatch(x.Script))) {
+									LevelLoader.Instance.Information.Items.Any(x => x.Type == DfLevelInformation.ScriptTypes.Sector &&
+									x.SectorName == candidate.Name && elevator.IsMatch(x.Script))) {
 
 									continue;
 								}
@@ -2150,7 +2154,7 @@ namespace MZZT.DarkForces.Showcase {
 								}
 							} while (tri == null);
 
-							Rect bounds = new Rect() {
+							Rect bounds = new() {
 								xMin = tri.Min(x => x.X),
 								yMin = tri.Min(x => x.Y),
 								xMax = tri.Max(x => x.X),
@@ -2242,7 +2246,7 @@ namespace MZZT.DarkForces.Showcase {
 				//bool infModified = false;
 				// Remove key statements from door scripts.
 				if (settings.UnlockAllDoorsAndIncludeKeysInSpawnLocationPool) {
-					Regex keyRegex = new Regex(@"^\s*key:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+					Regex keyRegex = new(@"^\s*key:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 					foreach (DfLevelInformation.Item item in LevelLoader.Instance.Information.Items) {
 						item.Script = string.Join(Environment.NewLine, item.Script.Split('\r', '\n')
 							.Select(x => keyRegex.IsMatch(x) ? "" : x)
@@ -2329,11 +2333,11 @@ namespace MZZT.DarkForces.Showcase {
 		/// <param name="output">The output GOB.</param>
 		private async Task AddDependentModFilesAsync(DfGobContainer output) {
 			// Store these paths in case the user loads this GOB in the future, we can pull them.
-			this.Settings.ModSourcePaths = Mod.Instance.List.Values.ToDictionary(x => x.FilePath, x => x.Overrides);
+			this.Settings.ModSourcePaths = Mod.Instance.List.Value.ToDictionary(x => x.FilePath, x => x.Overrides);
 
 			// Get existing files so we don't replace them by accident.
-			HashSet<string> files = new HashSet<string>(output.Files.Select(x => x.name.ToUpper()));
-			foreach (ModFile modFileInfo in Mod.Instance.List.Values.Reverse()) {
+			HashSet<string> files = new(output.Files.Select(x => x.name.ToUpper()));
+			foreach (ModFile modFileInfo in Mod.Instance.List.Value.Reverse()) {
 				string name = Path.GetFileName(modFileInfo.FilePath).ToUpper();
 				string ext = Path.GetExtension(name);
 				// We don't care about LFDs, or files we already replaced.
@@ -2366,7 +2370,17 @@ namespace MZZT.DarkForces.Showcase {
 			}
 		}
 
-		public RandomizerSettings Settings { get; set; }
+		private RandomizerSettings settings;
+		public RandomizerSettings Settings {
+			get => this.settings;
+			set {
+				if (this.settings == value) {
+					return;
+				}
+				this.settings = value;
+				this.settingsObject.Value = value;
+			}
+		}
 
 		private string lastFolder = null;
 		
@@ -2410,7 +2424,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				this.rng = new Random(this.Settings.Seed);
 
-				DfGobContainer gob = new DfGobContainer();
+				DfGobContainer gob = new();
 
 				DfLevelList levels = this.RandomizeJediLvl();
 				await gob.AddFileAsync("JEDI.LVL", levels);
@@ -2451,17 +2465,17 @@ namespace MZZT.DarkForces.Showcase {
 
 				await this.AddDependentModFilesAsync(gob);
 
-				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
+				DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 					UseSimpleDictionaryFormat = true
 				});
-				using (MemoryStream jsonStream = new MemoryStream()) {
+				using (MemoryStream jsonStream = new()) {
 					serializer.WriteObject(jsonStream, this.Settings);
 					jsonStream.Position = 0;
 
 					await gob.AddFileAsync("RNDMIZER.JSO", jsonStream);
 				}
 
-				using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
+				using (FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
 					await gob.SaveAsync(stream);
 				}
 			} catch (Exception ex) {
@@ -2496,7 +2510,7 @@ namespace MZZT.DarkForces.Showcase {
 		public Dictionary<string, string> ModSourcePaths { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerSettings Clone() => new RandomizerSettings() {
+		public RandomizerSettings Clone() => new() {
 			Colormap = this.Colormap.Clone(),
 			Cutscenes = this.Cutscenes.Clone(),
 			JediLvl = this.JediLvl.Clone(),
@@ -2521,7 +2535,7 @@ namespace MZZT.DarkForces.Showcase {
 		public bool RandomizeOrder { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerJediLvlSettings Clone() => new RandomizerJediLvlSettings() {
+		public RandomizerJediLvlSettings Clone() => new() {
 			LevelCount = this.LevelCount.Clone(),
 			Levels = this.Levels.ToArray(),
 			RandomizeOrder = this.RandomizeOrder
@@ -2534,7 +2548,7 @@ namespace MZZT.DarkForces.Showcase {
 		public float Maximum { get; set; } = 1;
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomRange Clone() => new RandomRange() {
+		public RandomRange Clone() => new() {
 			Enabled = this.Enabled,
 			Minimum = this.Minimum,
 			Maximum = this.Maximum
@@ -2547,7 +2561,7 @@ namespace MZZT.DarkForces.Showcase {
 		public float AdjustCutsceneMusicVolume { get; set; } = 1;
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerCutscenesSettings Clone() => new RandomizerCutscenesSettings() {
+		public RandomizerCutscenesSettings Clone() => new() {
 			AdjustCutsceneMusicVolume = this.AdjustCutsceneMusicVolume,
 			AdjustCutsceneSpeed = this.AdjustCutsceneSpeed.Clone(),
 			RemoveCutscenes = this.RemoveCutscenes
@@ -2558,7 +2572,7 @@ namespace MZZT.DarkForces.Showcase {
 		public bool RandomizeTrackOrder { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerMusicSettings Clone() => new RandomizerMusicSettings() {
+		public RandomizerMusicSettings Clone() => new() {
 			RandomizeTrackOrder = this.RandomizeTrackOrder
 		};
 	}
@@ -2584,7 +2598,7 @@ namespace MZZT.DarkForces.Showcase {
 		public bool RandomizeOtherColors { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerPaletteSettings Clone() => new RandomizerPaletteSettings() {
+		public RandomizerPaletteSettings Clone() => new() {
 			LightHue = this.LightHue.Clone(),
 			LightLum = this.LightLum.Clone(),
 			LightSat = this.LightSat.Clone(),
@@ -2613,7 +2627,7 @@ namespace MZZT.DarkForces.Showcase {
 		};
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerColormapSettings Clone() => new RandomizerColormapSettings() {
+		public RandomizerColormapSettings Clone() => new() {
 			ForceLightLevel = this.ForceLightLevel.Clone(),
 			HeadlightBrightness = this.HeadlightBrightness.Clone(),
 			HeadlightDistance = this.HeadlightDistance.Clone(),
@@ -2641,7 +2655,7 @@ namespace MZZT.DarkForces.Showcase {
 		public bool RemoveSecrets { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerLevelSettings Clone() => new RandomizerLevelSettings() {
+		public RandomizerLevelSettings Clone() => new() {
 			LightLevelMultiplier = this.LightLevelMultiplier.Clone(),
 			LightLevelMultiplierPerLevel = this.LightLevelMultiplierPerLevel,
 			MapOverrideMode = this.MapOverrideMode,
@@ -2673,7 +2687,7 @@ namespace MZZT.DarkForces.Showcase {
 		public bool Absolute { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public DifficultySpawnWeight Clone() => new DifficultySpawnWeight() {
+		public DifficultySpawnWeight Clone() => new() {
 			Difficulty = this.Difficulty,
 			Weight = this.Weight,
 			Absolute = this.Absolute
@@ -2695,7 +2709,7 @@ namespace MZZT.DarkForces.Showcase {
 		public bool Absolute { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public LogicSpawnWeight Clone() => new LogicSpawnWeight() {
+		public LogicSpawnWeight Clone() => new() {
 			Logic = this.Logic,
 			Weight = this.Weight,
 			Absolute = this.Absolute
@@ -2712,7 +2726,7 @@ namespace MZZT.DarkForces.Showcase {
 		public int Count { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public ItemAward Clone() => new ItemAward() {
+		public ItemAward Clone() => new() {
 			Difficulty = this.Difficulty,
 			Logic = this.Logic,
 			Count = this.Count
@@ -2743,7 +2757,7 @@ namespace MZZT.DarkForces.Showcase {
 		public string Filename { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
-		public ObjectTemplate Clone() => new ObjectTemplate() {
+		public ObjectTemplate Clone() => new() {
 			Logic = this.Logic,
 			Filename = this.Filename
 		};
@@ -2809,7 +2823,7 @@ namespace MZZT.DarkForces.Showcase {
 		public List<ItemAward> ItemAwardOtherLevels { get; set; } = new List<ItemAward>();
 
 		object ICloneable.Clone() => this.Clone();
-		public RandomizerObjectSettings Clone() => new RandomizerObjectSettings() {
+		public RandomizerObjectSettings Clone() => new() {
 			DefaultLogicFiles = this.DefaultLogicFiles.Select(x => x.Clone()).ToArray(),
 			DifficultyEnemySpawnWeights = this.DifficultyEnemySpawnWeights.Select(x => x.Clone()).ToList(),
 			DifficultyItemSpawnWeights = this.DifficultyItemSpawnWeights.Select(x => x.Clone()).ToList(),

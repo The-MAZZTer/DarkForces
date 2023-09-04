@@ -1,11 +1,7 @@
-﻿using MZZT.DataBinding;
+﻿using MZZT.Data.Binding;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MZZT.DarkForces.Showcase {
 
@@ -13,17 +9,17 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private bool items;
 
-		private void Start() {
+		protected override void Start() {
 			this.AddRange(this.items ? RandomizerUi.ITEM_LOGICS : RandomizerUi.ENEMY_LOGICS);
 
-			foreach (LogicItem item in this.Databinders) {
-				item.GetComponent<Toggle>().onValueChanged.AddListener(value => this.SaveLogics());
+			foreach (IDatabind item in this.Children) {
+				DataboundListChildToggle.FindToggleFor(item).onValueChanged.AddListener(value => this.SaveLogics());
 			}
 		}
 
 		private void SaveLogics() {
-			string[] values = this.Databinders
-				.Where(x => x.GetComponent<Toggle>().isOn).Select(x => x.Value).ToArray();
+			string[] values = this.Children
+				.Where(x => DataboundListChildToggle.FindToggleFor(x).isOn).Select(x => (string)x.Value).ToArray();
 			if (this.items) {
 				Randomizer.Instance.Settings.Object.LogicsForItemSpawnLocationPool = values;
 			} else {
@@ -31,16 +27,18 @@ namespace MZZT.DarkForces.Showcase {
 			}
 		}
 
-		private void OnEnable() {
+		protected override void OnEnable() {
+			base.OnEnable();
+
 			string[] logics;
 			if (this.items) {
 				logics = Randomizer.Instance.Settings.Object.LogicsForItemSpawnLocationPool;
 			} else {
 				logics = Randomizer.Instance.Settings.Object.LogicsForEnemySpawnLocationPool;
 			}
-			foreach (LogicItem item in this.Databinders) {
-				string name = item.Value;
-				item.GetComponent<Toggle>().isOn = logics.Contains(name);
+			foreach (IDatabind item in this.Children) {
+				string name = (string)item.Value;
+				DataboundListChildToggle.FindToggleFor(item).isOn = logics.Contains(name);
 			}
 		}
 	}

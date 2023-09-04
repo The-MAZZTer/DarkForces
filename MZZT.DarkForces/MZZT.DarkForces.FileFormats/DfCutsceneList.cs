@@ -102,12 +102,12 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 				}
 				if (id < 0) {
-					this.AddWarning("Invalid cutscene id.");
+					this.AddWarning($"{idString}: Invalid cutscene id.");
 					continue;
 				}
 
 				if (values.Length < 7) {
-					this.AddWarning("Cutscene missing arguments.");
+					this.AddWarning($"{id}: Cutscene missing arguments.");
 					continue;
 				}
 
@@ -120,12 +120,12 @@ namespace MZZT.DarkForces.FileFormats {
 					!int.TryParse(sequenceString, NumberStyles.Integer, null, out int sequence) ||
 					!int.TryParse(volumeString, NumberStyles.Integer, null, out int volume)) {
 
-					this.AddWarning("Cutscene arguments aren't integers as expected.");
+					this.AddWarning($"{id}: Cutscene arguments aren't integers as expected.");
 					continue;
 				}
 
 				if (speed < 5 || speed > 20) {
-					this.AddWarning("Cutscene speeds must be between 5 and 20.");
+					this.AddWarning($"{id}: Cutscene speeds must be between 5 and 20.");
 				}
 
 				this.Cutscenes[id] = new() {

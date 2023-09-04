@@ -1,17 +1,20 @@
-﻿using MZZT.DataBinding;
+﻿using MZZT.Data.Binding;
+using MZZT.Data.Binding.UI;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 
 namespace MZZT.DarkForces.Showcase {
-	public class ItemAwardItem : Databound<ItemAward> {
+	public class ItemAwardItem : Databind<ItemAward> {
 		[SerializeField]
 		private TMP_Dropdown logics;
 
-		private void Start() {
+		protected override void Start() {
 			this.logics.ClearOptions();
 			this.logics.AddOptions(RandomizerUi.ITEM_LOGICS.ToList());
-			this.logics.GetComponent<DataboundTmpStringDropdown>().enabled = true;
+			this.logics.GetComponent<DataboundStringDropdown>().enabled = true;
+
+			base.Start();
 		}
 
 		public void Delete() {

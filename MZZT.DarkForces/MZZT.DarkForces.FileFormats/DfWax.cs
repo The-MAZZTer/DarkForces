@@ -239,6 +239,8 @@ namespace MZZT.DarkForces.FileFormats {
 
 			int pos = Marshal.SizeOf<Header>();
 
+			int nullSeq = 0;
+
 			Dictionary<int, Sequence> sequences = new();
 			foreach ((int waxpointer, SubWax wax) in waxes.OrderBy(x => x.Key)) {
 				int offset = waxpointer - pos;
@@ -257,7 +259,11 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 					wax.Sequences.Add(sequence);
 				}
+
+				nullSeq += wax.header.SequencePointers.Where(x => x == 0).Count();
 			}
+
+			int nullFme = 0;
 
 			Dictionary<int, DfFrame> frames = new();
 			foreach ((int sequencepointer, Sequence sequence) in sequences.OrderBy(x => x.Key)) {
@@ -277,6 +283,8 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 					sequence.Frames.Add(fme);
 				}
+
+				nullFme += sequence.header.FramePointers.Where(x => x == 0).Count();
 			}
 
 			foreach ((int fmepointer, DfFrame fme) in frames.OrderBy(x => x.Key)) {
@@ -326,8 +334,7 @@ namespace MZZT.DarkForces.FileFormats {
 
 			this.header.Version = 0x11000;
 			// Deduplicate references here.
-			SubWax[] waxes = this.Waxes.Distinct().ToArray();
-			Sequence[] sequences = waxes.SelectMany(x => x.Sequences).Distinct().ToArray();
+			Sequence[] sequences = this.Waxes.Distinct().SelectMany(x => x.Sequences).Distinct().ToArray();
 			DfFrame[] frames = sequences.SelectMany(x => x.Frames).Distinct().ToArray();
 			DfFrame[] cells = frames.GroupBy(x => x.Pixels).Select(x => x.First()).ToArray();
 
@@ -336,11 +343,18 @@ namespace MZZT.DarkForces.FileFormats {
 			this.header.CellCount = cells.Length;
 
 			int pos = Marshal.SizeOf<Header>();
-			this.header.WaxPointers = waxes.Select(x => {
-				int ret = pos;
+
+			Dictionary<SubWax, int> waxPointers = new();
+			foreach (SubWax wax in this.Waxes) {
+				if (waxPointers.ContainsKey(wax)) {
+					continue;
+				}
+
+				waxPointers[wax] = pos;
 				pos += Marshal.SizeOf<WaxHeader>();
-				return ret;
-			}).Concat(Enumerable.Repeat(0, 32 - waxes.Length)).ToArray();
+			}
+
+			this.header.WaxPointers = this.Waxes.Select(x => waxPointers[x]).Concat(Enumerable.Repeat(0, 32 - this.Waxes.Count)).ToArray();
 
 			await stream.WriteAsync(this.header);
 
@@ -350,7 +364,7 @@ namespace MZZT.DarkForces.FileFormats {
 				return (x, ret);
 			}).ToDictionary(x => x.x, x => x.ret);
 
-			foreach (SubWax wax in waxes) {
+			foreach (SubWax wax in waxPointers.Keys) {
 				wax.header.SequencePointers = wax.Sequences.Select(x => sequencePointers[x])
 					.Concat(Enumerable.Repeat(0, 32 - wax.Sequences.Count)).ToArray();
 
@@ -370,28 +384,28 @@ namespace MZZT.DarkForces.FileFormats {
 				await stream.WriteAsync(sequence.header);
 			}
 
-			Dictionary<DfFrame, MemoryStream> cellData = new();
-			Dictionary<DfFrame, int> cellPointers = new();
+			Dictionary<byte[], MemoryStream> cellData = new();
+			Dictionary<byte[], int> cellPointers = new();
 
 			foreach (DfFrame cell in cells) {
 				MemoryStream mem = new();
 				await cell.SaveCellAsync(mem);
 				mem.Position = 0;
 
-				cellData[cell] = mem;
-				cellPointers[cell] = pos;
+				cellData[cell.Pixels] = mem;
+				cellPointers[cell.Pixels] = pos;
 				pos += (int)mem.Length;
 			}
 
 			foreach (DfFrame frame in frames) {
-				frame.header.CellOffset = (uint)cellPointers[frame];
+				frame.header.CellOffset = (uint)cellPointers[frame.Pixels];
 
 				await frame.SaveHeaderAsync(stream);
 			}
 
 			foreach (DfFrame cell in cells) {
-				using (cellData[cell]) {
-					await cellData[cell].CopyToAsync(stream);
+				using (cellData[cell.Pixels]) {
+					await cellData[cell.Pixels].CopyToAsync(stream);
 				}
 			}
 		}
@@ -408,6 +422,102 @@ namespace MZZT.DarkForces.FileFormats {
 					waxClone = wax.Clone(sequenceClones, frameClones, cellClones);
 				}
 				clone.Waxes.Add(waxClone);
+			}
+			return clone;
+		}
+
+		/// <summary>
+		/// Finds duplicate data and deduplicates it (allows sharing of WAXes, Sequences, Frames, and Cells).
+		/// </summary>
+		/// <returns>dEduplicated DfWax clone.</returns>
+		public DfWax Deduplicate() {
+			HashSet<SubWax> waxes = new();
+			HashSet<Sequence> sequences = new();
+			HashSet<DfFrame> frames = new();
+			HashSet<byte[]> cells = new();
+
+			DfWax clone = this.Clone();
+			foreach ((SubWax wax, int i) in clone.Waxes.ToArray().Select((x, i) => (x, i))) {
+				foreach ((Sequence sequence, int j) in wax.Sequences.ToArray().Select((x, i) => (x, i))) {
+					foreach ((DfFrame frame, int k) in sequence.Frames.ToArray().Select((x, i) => (x, i))) {
+						foreach (byte[] existing in cells) {
+							if (frame.Pixels.SequenceEqual(existing)) {
+								frame.Pixels = existing;
+								break;
+							}
+						}
+						cells.Add(frame.Pixels);
+
+						foreach (DfFrame existing in frames) {
+							if (existing.AutoCompress == frame.AutoCompress &&
+								(existing.Compressed == frame.Compressed || existing.AutoCompress) &&
+								existing.Flip == frame.Flip &&
+								existing.Height == frame.Height &&
+								existing.InsertionPointX == frame.InsertionPointX &&
+								existing.InsertionPointY == frame.InsertionPointY &&
+								existing.Pixels == frame.Pixels &&
+								existing.Width == frame.Width) {
+
+								sequence.Frames[k] = existing;
+								break;
+							}
+						}
+						frames.Add(sequence.Frames[k]);
+					}
+
+					foreach (Sequence existing in sequences) {
+						if (existing.Frames.SequenceEqual(sequence.Frames)) {
+							wax.Sequences[j] = existing;
+							break;
+						}
+					}
+					sequences.Add(wax.Sequences[j]);
+				}
+
+				foreach (SubWax existing in waxes) {
+					if (existing.Framerate == wax.Framerate &&
+						existing.WorldHeight == wax.WorldHeight &&
+						existing.WorldWidth == wax.WorldWidth &&
+						existing.Sequences.SequenceEqual(wax.Sequences)) {
+
+						clone.Waxes[i] = existing;
+						break;
+					}
+				}
+				waxes.Add(clone.Waxes[i]);
+			}
+			return clone;
+		}
+
+		/// <summary>
+		/// Finds deduplicated data and reduplicates it for easy editing of specific items (you can call Deduplicate later).
+		/// </summary>
+		/// <returns>Reduplicated DfWax clone.</returns>
+		public DfWax Reduplicate() {
+			DfWax clone = new();
+			foreach (SubWax wax in this.Waxes) {
+				SubWax cloneWax = new() {
+					Framerate = wax.Framerate,
+					WorldHeight = wax.WorldHeight,
+					WorldWidth = wax.WorldWidth
+				};
+				foreach (Sequence sequence in wax.Sequences) {
+					Sequence cloneSequence = new();
+					foreach (DfFrame frame in sequence.Frames) {
+						cloneSequence.Frames.Add(new() {
+							AutoCompress = frame.AutoCompress,
+							Compressed = frame.Compressed,
+							Flip = frame.Flip,
+							Height = frame.Height,
+							InsertionPointX = frame.InsertionPointX,
+							InsertionPointY = frame.InsertionPointY,
+							Width = frame.Width,
+							Pixels = frame.Pixels.ToArray()
+						});
+					}
+					cloneWax.Sequences.Add(cloneSequence);
+				}
+				clone.Waxes.Add(cloneWax);
 			}
 			return clone;
 		}

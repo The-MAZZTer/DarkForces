@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MZZT.Data.Binding;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,55 +45,55 @@ namespace MZZT {
 		/// <summary>
 		/// Options to use in the current call to the file browser.
 		/// </summary>
-		public struct FileBrowserOptions {
+		public class FileBrowserOptions {
 			/// <summary>
 			/// The title to display at the top.
 			/// </summary>
-			public string Title;
+			public string Title { get; set; }
 			/// <summary>
 			/// The Select button text.
 			/// </summary>
-			public string SelectButtonText;
+			public string SelectButtonText { get; set; }
 			/// <summary>
 			/// The lowest path the user can navigate to in the tree view.
 			/// </summary>
-			public string RootPath;
+			public string RootPath { get; set; }
 			/// <summary>
 			/// The location to start the file browser.
 			/// </summary>
-			public string StartPath;
+			public string StartPath { get; set; }
 			/// <summary>
 			/// The file to start selected. Overrides StartPath.
 			/// </summary>
-			public string StartSelectedFile;
+			public string StartSelectedFile { get; set; }
 			/// <summary>
 			/// Whether the user should be selecting a folder instead of a file.
 			/// </summary>
-			public bool SelectFolder;
+			public bool SelectFolder { get; set; }
 			/// <summary>
 			/// Whether GOBs should be treated as folders and files inside them can be selected.
 			/// </summary>
-			public bool AllowNavigateGob;
+			public bool AllowNavigateGob { get; set; }
 			/// <summary>
 			/// Whether LFDs should be treated as folders and files inside them can be selected.
 			/// </summary>
-			public bool AllowNavigateLfd;
+			public bool AllowNavigateLfd { get; set; }
 			/// <summary>
 			/// The files to display (in addition to folders).
 			/// </summary>
-			public string[] FileSearchPatterns;
+			public string[] FileSearchPatterns { get; set; }
 			/// <summary>
 			/// Check the input file exists before allowing it to be selected.
 			/// </summary>
-			public bool SelectedFileMustExist;
+			public bool SelectedFileMustExist { get; set; }
 			/// <summary>
 			/// Check the folder of the input file exists before allowing it to be selected.
 			/// </summary>
-			public bool SelectedPathMustExist;
+			public bool SelectedPathMustExist { get; set; }
 			/// <summary>
 			/// Ensure the input path has only valid characters before allowing it.
 			/// </summary>
-			public bool ValidateFileName;
+			public bool ValidateFileName { get; set; }
 		}
 
 		private FileBrowserOptions options;
@@ -102,6 +103,20 @@ namespace MZZT {
 		private void Start() {
 			this.folderInput.onSubmit.AddListener(_ => {
 				this.OnFolderInputFieldChanged();
+			});
+			this.fileInput.onValueChanged.AddListener(_ => {
+				if (this.initializing > 0) {
+					return;
+				}
+
+				string path = Path.GetFullPath(Path.Combine(this.folderTree.SelectedValue?.FilePath ?? string.Empty, this.fileInput.text));
+				Databind<FileSystemItem> selectedItem = (Databind<FileSystemItem>)this.fileList.SelectedDatabound;
+				Databind<FileSystemItem> newSelectedItem = this.fileList.Children.Cast<Databind<FileSystemItem>>().FirstOrDefault(x => string.Compare(x.Value.FilePath, path, true) == 0);
+				if (selectedItem != newSelectedItem) {
+					this.fileList.SelectedDatabound = newSelectedItem;
+				} else {
+					this.UpdateButtons();
+				}
 			});
 			this.fileInput.onSubmit.AddListener(async _ => {
 				await this.SelectFileInputFileAsync();
@@ -123,7 +138,7 @@ namespace MZZT {
 
 			// TODO Root display name is hardcoded in the current prefab so if root is changed the display name won't.
 
-			FileSystemItem root = new FileSystemItem() {
+			FileSystemItem root = new() {
 				DisplayName = "My Computer",
 				FilePath = options.RootPath,
 				Type = FileSystemItemTypes.Root
@@ -156,7 +171,7 @@ namespace MZZT {
 
 			// Adjust starting folder.
 
-			FileSystemItem start = new FileSystemItem() {
+			FileSystemItem start = new() {
 				FilePath = AppDomain.CurrentDomain.BaseDirectory,
 				Type = FileSystemItemTypes.Folder
 			};
@@ -194,7 +209,7 @@ namespace MZZT {
 			this.folderTree.AllowNavigateGob = options.AllowNavigateGob;
 			this.folderTree.AllowNavigateLfd = options.AllowNavigateLfd;
 
-			List<string> containerPatterns = new List<string>();
+			List<string> containerPatterns = new();
 			if (options.AllowNavigateGob) {
 				containerPatterns.Add("*.GOB");
 			}
@@ -209,7 +224,7 @@ namespace MZZT {
 
 			this.fileList.AllowNavigateGob = options.AllowNavigateGob;
 			this.fileList.AllowNavigateLfd = options.AllowNavigateLfd;
-			this.fileList.FileSearchPatterns = options.FileSearchPatterns;
+			this.fileList.FileSearchPatterns = options.FileSearchPatterns.Concat(containerPatterns).ToArray();
 			this.fileList.Container = start;
 
 			this.fileList.Clear();
@@ -225,7 +240,7 @@ namespace MZZT {
 
 			if (options.StartSelectedFile != null) {
 				string startFile = options.StartSelectedFile.ToUpper();
-				this.fileList.SelectedDatabound = this.fileList.Databinders.FirstOrDefault(x => x.Value.FilePath.ToUpper() == startFile);
+				this.fileList.SelectedDatabound = this.fileList.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FilePath.ToUpper() == startFile);
 
 				this.fileInput.text = Path.GetFileName(options.StartSelectedFile);
 			}
@@ -253,7 +268,7 @@ namespace MZZT {
 			string current = path?.ToUpper();
 
 			// First we'll figure out which tree nodes are between the root and our destination.
-			Stack<string> pathStack = new Stack<string>();
+			Stack<string> pathStack = new();
 			while (!string.IsNullOrEmpty(current) && current != root.FilePath?.ToUpper()) {
 				pathStack.Push(current);
 				current = Path.GetDirectoryName(current);
@@ -271,13 +286,13 @@ namespace MZZT {
 			FileView currentView = this.folderTree;
 			while (pathStack.Count > 0) {
 				current = pathStack.Pop();
-				currentNode = (FileViewItem)currentView.Databinders.FirstOrDefault(x => x.Value.FilePath.ToUpper() == current);
+				currentNode = (FileViewItem)currentView.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FilePath.ToUpper() == current);
 				// If we don't find one of the nodes...
 				if (currentNode == null) {
 					// Refresh its children.
 					await currentView.RefreshAsync();
 					// Check again.
-					currentNode = (FileViewItem)currentView.Databinders.FirstOrDefault(x => x.Value.FilePath.ToUpper() == current);
+					currentNode = (FileViewItem)currentView.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FilePath.ToUpper() == current);
 					if (currentNode == null) {
 						// Path doesn't exist (probably), give up.
 						return;
@@ -333,11 +348,13 @@ namespace MZZT {
 				this.selectButton.interactable ? this.selectButtonTextColor : this.disabledButtonTextColor;
 
 			// If the selection is a folder to navigate into, change the button text.
-			if (this.fileList.SelectedDatabound != null &&
+			bool isFolder = this.fileList.SelectedDatabound != null &&
 				(this.fileList.SelectedValue.Type == FileSystemItemTypes.Folder ||
-				this.fileList.SelectedValue.Type == FileSystemItemTypes.FileContainer) &&
-				!this.options.SelectFolder) {
-				
+				this.fileList.SelectedValue.Type == FileSystemItemTypes.FileContainer);
+			bool isAlsoFile = this.fileList.SelectedValue?.Type == FileSystemItemTypes.FileContainer &&
+				this.options.FileSearchPatterns.Any(x => Regex.IsMatch(Path.GetFileName(this.fileList.SelectedValue.FilePath), Regex.Escape(x).Replace("\\*", ".*").Replace("\\?", ".")));
+
+			if (isFolder && !this.options.SelectFolder && !isAlsoFile) {
 				this.selectButton.GetComponentInChildren<TMP_Text>(true).text = "Open";
 			} else {
 				this.selectButton.GetComponentInChildren<TMP_Text>(true).text =
@@ -365,6 +382,8 @@ namespace MZZT {
 
 				await this.SelectTreeNodeAsync(folder.FilePath);
 
+				this.folderInput.text = folder.FilePath ?? "";
+
 				this.UpdateButtons();
 			} finally {
 				this.initializing--;
@@ -390,6 +409,8 @@ namespace MZZT {
 				await this.fileList.RefreshAsync();
 
 				await this.SelectTreeNodeAsync(folder.FilePath);
+
+				this.folderInput.text = folder.FilePath ?? "";
 
 				this.UpdateButtons();
 			} finally {
@@ -488,7 +509,7 @@ namespace MZZT {
 			get {
 				// File Containers and Folders can be navigated into so the select button should be enabled.
 				FileSystemItem selected = this.fileList.SelectedValue;
-				if (selected.FilePath != null && (selected.Type == FileSystemItemTypes.FileContainer || selected.Type == FileSystemItemTypes.Folder)) {
+				if (selected?.FilePath != null && (selected.Type == FileSystemItemTypes.FileContainer || selected.Type == FileSystemItemTypes.Folder)) {
 					return true;
 				}
 
@@ -497,7 +518,7 @@ namespace MZZT {
 						return false;
 					}
 
-					if (selected.Type == FileSystemItemTypes.FileContainee) {
+					if (selected?.Type == FileSystemItemTypes.FileContainee) {
 						return true;
 					}
 
@@ -507,13 +528,21 @@ namespace MZZT {
 				if (this.options.SelectedPathMustExist) {
 					FileSystemItem container = this.fileList.Container;
 					if (container.Type == FileSystemItemTypes.FileContainer) {
-						return File.Exists(this.fileList.Container.FilePath);
+						if (!File.Exists(this.fileList.Container.FilePath)) {
+							return false;
+						}
 					} else {
-						return Directory.Exists(this.fileList.Container.FilePath);
+						if (!Directory.Exists(this.fileList.Container.FilePath)) {
+							return false;
+						}
 					}
 				}
 
 				string path = this.fileInput.text;
+				if (string.IsNullOrWhiteSpace(path) && !this.options.SelectFolder) {
+					return false;
+				}
+
 				if (this.options.ValidateFileName) {
 					if (path.Intersect(Path.GetInvalidPathChars()).Any()) {
 						return false;
@@ -621,7 +650,7 @@ namespace MZZT {
 		/// Called by file list when the selection changes.
 		/// </summary>
 		public void OnSelectedFileChanged() {
-			string path = this.fileList.SelectedValue.FilePath;
+			string path = this.fileList.SelectedValue?.FilePath;
 			this.fileInput.text = path != null ? Path.GetFileName(path) : "";
 
 			this.UpdateButtons();
@@ -657,7 +686,7 @@ namespace MZZT {
 						await this.NavigateToFolderAsync(folder);
 					}
 
-					item = (FileViewItem)this.fileList.Databinders.FirstOrDefault(x => x.Value.FilePath.ToUpper() == fullPath.ToUpper());
+					item = (FileViewItem)this.fileList.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FilePath.ToUpper() == fullPath.ToUpper());
 				}
 
 				this.fileList.SelectedDatabound = item;
@@ -687,14 +716,16 @@ namespace MZZT {
 		/// <summary>
 		/// Open a folder or select a file.
 		/// </summary>
-		public async Task SelectOrOpenAsync() {
+		public async Task SelectOrOpenAsync(bool doubleClick) {
 			if (!this.SelectionValid) {
 				return;
 			}
 
 			FileSystemItem selected = this.fileList.SelectedValue;
-			if (selected.FilePath != null && (selected.Type == FileSystemItemTypes.FileContainer || selected.Type == FileSystemItemTypes.Folder)) {
-				if (!this.options.SelectFolder) {
+			if (selected != null && (selected.Type == FileSystemItemTypes.FileContainer || selected.Type == FileSystemItemTypes.Folder)) {
+				bool isAlsoFile = !doubleClick && selected.Type == FileSystemItemTypes.FileContainer &&
+					this.options.FileSearchPatterns.Any(x => Regex.IsMatch(Path.GetFileName(this.fileList.SelectedValue.FilePath), Regex.Escape(x).Replace("\\*", ".*").Replace("\\?", ".")));
+				if (!this.options.SelectFolder && !isAlsoFile) {
 					await this.NavigateToFolderAsync(selected.FilePath);
 					return;
 				}
@@ -714,7 +745,7 @@ namespace MZZT {
 		public async void OnSelectButtonClickedAsync() {
 			this.initializing++;
 			try {
-				await this.SelectOrOpenAsync();
+				await this.SelectOrOpenAsync(false);
 			} finally {
 				this.initializing--;
 			}
@@ -760,7 +791,7 @@ namespace MZZT {
 
 			this.initializing++;
 			try {
-				if (item.Toggle.group == this.fileList.ToggleGroup) {
+				if (((FileView)item.Parent)?.ToggleGroup == this.fileList.ToggleGroup) {
 					// Update the path displayed for the selected item, and the select button state.
 					this.fileInput.text = Path.GetFileName(item.Value.FilePath);
 
@@ -769,7 +800,7 @@ namespace MZZT {
 				}
 
 				// Otherwise navigate the file list to the selected tree node.
-				await this.NavigateToFolderAsync(this.folderTree.SelectedValue.FilePath);
+				await this.NavigateToFolderAsync(this.folderTree.SelectedValue?.FilePath);
 			} finally {
 				this.initializing--;
 			}
@@ -781,13 +812,13 @@ namespace MZZT {
 		/// <param name="item">The item double clicked.</param>
 		public async Task OnDoubleClickAsync(FileViewItem item) {
 			// Only respond to double clicks on file list entries.
-			if (item.Toggle.group != this.fileList.ToggleGroup) {
+			if (((FileView)item.Parent)?.ToggleGroup != this.fileList.ToggleGroup) {
 				return;
 			}
 
 			this.initializing++;
 			try {
-				await this.SelectOrOpenAsync();
+				await this.SelectOrOpenAsync(true);
 			} finally {
 				this.initializing--;
 			}
@@ -812,7 +843,7 @@ namespace MZZT {
 			}
 
 			// If there are no child folders, add them.
-			if (!item.ChildView.Values.Any()) {
+			if (!item.ChildView.Any()) {
 				await item.ChildView.RefreshAsync();
 			}
 		}

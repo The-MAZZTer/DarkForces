@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MZZT.DarkForces.Converters {
 	public static class FontConverter {
-		public static Texture2D ToTexture(LandruFont font, Color color, bool keepTextureReadable = false) {
+		public static Texture2D ToTexture(this LandruFont font, Color color, bool keepTextureReadable = false) {
 			int width = font.Characters.Sum(x => x.Width);
 			int height = font.Height;
 
@@ -44,7 +44,7 @@ namespace MZZT.DarkForces.Converters {
 			return texture;
 		}
 
-		public static Texture2D CharacterToTexture(LandruFont font, LandruFont.Character c, Color color, bool keepTextureReadable = false) {
+		public static Texture2D CharacterToTexture(this LandruFont.Character c, LandruFont font, Color color, bool keepTextureReadable = false) {
 			int width = c.Width;
 			int height = font.Height;
 

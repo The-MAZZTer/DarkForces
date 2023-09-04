@@ -58,9 +58,16 @@ namespace MZZT.DarkForces {
 				shader = ResourceCache.Instance.SimpleShader;
 			}
 
+			int light = wall.Sector.LightLevel + wall.LightLevel;
+			if (light < 0) {
+				light = 0;
+			} else if (light > 31) {
+				light = 31;
+			}
+
 			Material material = bm != null ? ResourceCache.Instance.GetMaterial(
-				ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette, LevelLoader.Instance.ColorMap,
-					usePlaneShader ? 31 : wall.Sector.LightLevel, transparent),
+				ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette, light >= 31 ? null : LevelLoader.Instance.ColorMap,
+					usePlaneShader ? 31 : light, transparent),
 				shader) : null;
 			if (usePlaneShader && material != null) {
 				Parallaxer.Instance.AddMaterial(material);
@@ -69,7 +76,7 @@ namespace MZZT.DarkForces {
 			Vector2 left = wall.LeftVertex.Position.ToUnity();
 			Vector2 right = wall.RightVertex.Position.ToUnity();
 
-			GameObject obj = new GameObject {
+			GameObject obj = new() {
 				name = surface == wall.TopEdgeTexture ? "Top" :
 					(surface == wall.BottomEdgeTexture ? "Bot" :
 					(surface == wall.MainTexture ? "Mid" :
@@ -108,13 +115,13 @@ namespace MZZT.DarkForces {
 			float width = Vector2.Distance(left, right);
 			float height = minY - maxY;
 
-			Mesh mesh = new Mesh {
+			Mesh mesh = new() {
 				vertices = vertices,
 				triangles = new int[] { 0, 1, 3, 1, 2, 3 }
 			};
 
 			if (material != null) {
-				Vector2 offset = new Vector2(
+				Vector2 offset = new(
 					surface.TextureOffset.X / material.mainTexture.width / LevelGeometryGenerator.TEXTURE_SCALE,
 					surface.TextureOffset.Y / material.mainTexture.height / LevelGeometryGenerator.TEXTURE_SCALE
 				);
@@ -164,16 +171,16 @@ namespace MZZT.DarkForces {
 				if (bm != null) {
 					material = ResourceCache.Instance.GetMaterial(
 						ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-							LevelLoader.Instance.ColorMap, wall.Sector.LightLevel),
+							light >= 31 ? null : LevelLoader.Instance.ColorMap, light),
 						ResourceCache.Instance.TransparentShader);
 
-					GameObject sign = new GameObject() {
+					GameObject sign = new() {
 						name = "SIGN",
 						layer = LayerMask.NameToLayer("Geometry")
 					};
 					sign.transform.SetParent(obj.transform);
 
-					Vector3 pos = new Vector3(
+					Vector3 pos = new(
 						0,
 						-wall.SignTexture.TextureOffset.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
 						0

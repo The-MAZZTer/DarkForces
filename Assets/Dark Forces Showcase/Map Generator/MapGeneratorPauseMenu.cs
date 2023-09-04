@@ -1,4 +1,4 @@
-﻿using MZZT.DataBinding;
+﻿using MZZT.Data.Binding;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -72,9 +72,9 @@ namespace MZZT.DarkForces.Showcase {
 				.OrderBy(x => x));
 
 			int[] activeLayers = this.mapGenerator.Layers;
-			foreach (Databound<int> bind in this.layers.Databinders) {
-				Toggle toggle = bind.GetComponent<Toggle>();
-				toggle.isOn = this.allLayers.isOn || Array.IndexOf(activeLayers, bind.Value) >= 0;
+			foreach (IDatabind bind in this.layers.Children) {
+				Toggle toggle = ((Component)bind).GetComponent<Toggle>();
+				toggle.isOn = this.allLayers.isOn || Array.IndexOf(activeLayers, (int)bind.Value) >= 0;
 				toggle.onValueChanged.AddListener(this.OnLayerChecked);
 			}
 		}
@@ -113,10 +113,10 @@ namespace MZZT.DarkForces.Showcase {
 			bool sizeToFit = this.sizeToFit.isOn;
 			float.TryParse(this.centerX.text, out float centerX);
 			float.TryParse(this.centerY.text, out float centerY);
-			Vector2 center = new Vector2(centerX, centerY);
+			Vector2 center = new(centerX, centerY);
 			int.TryParse(this.width.text, NumberStyles.Integer, null, out int width);
 			int.TryParse(this.height.text, NumberStyles.Integer, null, out int height);
-			Vector2 size = new Vector2(width, height);
+			Vector2 size = new(width, height);
 			size *= resolution;
 			bool zoomToFit = this.zoomToFit.isOn;
 			if (!float.TryParse(this.zoom.text, out float zoom)) {
@@ -140,7 +140,7 @@ namespace MZZT.DarkForces.Showcase {
 			float.TryParse(this.paddingTop.text, out float paddingTop);
 			float.TryParse(this.paddingRight.text, out float paddingRight);
 			float.TryParse(this.paddingBottom.text, out float paddingBottom);
-			Vector4 padding = new Vector4(paddingLeft, paddingBottom, paddingRight, paddingTop);
+			Vector4 padding = new(paddingLeft, paddingBottom, paddingRight, paddingTop);
 			if (paddingUnits == PaddingUnits.Pixels) {
 				padding *= resolution;
 			}
@@ -316,8 +316,9 @@ namespace MZZT.DarkForces.Showcase {
 
 			bool regenerateMap = false;
 
-			if (this.levelSelection.SelectedValue != LevelLoader.Instance.CurrentLevelIndex) {
-				await MapRenderer.Instance.LoadLevelAsync(this.levelSelection.SelectedValue);
+			int levelIndex = this.levelSelection.SelectedValue != null ? LevelLoader.Instance.LevelList.Levels.IndexOf(this.levelSelection.SelectedValue)  : 0;
+			if (levelIndex != LevelLoader.Instance.CurrentLevelIndex) {
+				await MapRenderer.Instance.LoadLevelAsync(levelIndex);
 
 				await LevelLoader.Instance.ShowWarningsAsync();
 
@@ -325,8 +326,8 @@ namespace MZZT.DarkForces.Showcase {
 				regenerateMap = true;
 			}
 
-			int[] layers = this.layers.Databinders.Where(x => x.GetComponent<Toggle>().isOn)
-				.Select(x => x.Value).OrderBy(x => x).ToArray();
+			int[] layers = this.layers.Children.Where(x => ((Component)x).GetComponent<Toggle>().isOn)
+				.Select(x => (int)x.Value).OrderBy(x => x).ToArray();
 			if (!this.mapGenerator.Layers.SequenceEqual(layers)) {
 				this.mapGenerator.Layers = layers;
 				regenerateMap = true;
@@ -339,7 +340,7 @@ namespace MZZT.DarkForces.Showcase {
 				this.mapGenerator.ViewportFitMode = sizeToFit ? fitType : BoundingModes.Manual;
 				regenerateMap = true;
 			}
-			Rect viewport = new Rect(center, size);
+			Rect viewport = new(center, size);
 			if (!sizeToFit && viewport != this.mapGenerator.Viewport) {
 				this.mapGenerator.Viewport = viewport;
 				regenerateMap = true;
@@ -444,8 +445,8 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.ignore = true;
 			try {
-				foreach (Databound<int> x in this.layers.Databinders) {
-					x.GetComponent<Toggle>().isOn = value;
+				foreach (IDatabind x in this.layers.Children) {
+					((Component)x).GetComponent<Toggle>().isOn = value;
 				}
 			} finally {
 				this.ignore = false;
@@ -459,7 +460,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.ignore = true;
 			try {
-				this.allLayers.isOn = this.layers.Databinders.All(x => x.GetComponent<Toggle>().isOn);
+				this.allLayers.isOn = this.layers.Children.All(x => ((Component)x).GetComponent<Toggle>().isOn);
 			} finally {
 				this.ignore = false;
 			}

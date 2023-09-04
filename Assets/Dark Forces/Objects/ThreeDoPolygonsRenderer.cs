@@ -12,7 +12,7 @@ namespace MZZT.DarkForces {
 	/// <summary>
 	/// Render a subset of a 3D object.
 	/// </summary>
-	public class ThreeDoPolygonsRenderer : MonoBehaviour {
+	public class ThreeDoPolygonRenderer : MonoBehaviour {
 		/// <summary>
 		/// How big a vertex particle should be. Interestingly this is not based on distance, and so lines up with how Dark Forces did it (sort of).
 		/// </summary>
@@ -47,14 +47,20 @@ namespace MZZT.DarkForces {
 				lightLevel = 0;
 			}
 
-			byte[] palette = ResourceCache.Instance.ImportColormap(LevelLoader.Instance.Palette, LevelLoader.Instance.ColorMap,
-				lightLevel, true);
+			byte[] palette;
+			if (lightLevel == 31) {
+				palette = ResourceCache.Instance.ImportPalette(LevelLoader.Instance.Palette, true);
+			} else {
+				palette = ResourceCache.Instance.ImportColormap(LevelLoader.Instance.Palette, LevelLoader.Instance.ColorMap,
+					lightLevel, true);
+			}
+
 			if (palette == null) {
 				return;
 			}
 
 			// Get the color to use.
-			Color color = new Color(palette[colorIndex * 4] / 255f, palette[colorIndex * 4 + 1] / 255f,
+			Color color = new(palette[colorIndex * 4] / 255f, palette[colorIndex * 4 + 1] / 255f,
 				palette[colorIndex * 4 + 2] / 255f, palette[colorIndex * 4 + 3] / 255f);
 
 			if (mode == ShadingModes.Vertex) {
@@ -94,7 +100,7 @@ namespace MZZT.DarkForces {
 							if (bm != null) {
 								material = ResourceCache.Instance.GetMaterial(
 									ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-										LevelLoader.Instance.ColorMap, lightLevel),
+										lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, lightLevel),
 									ResourceCache.Instance.SimpleShader);
 							}
 						}
@@ -106,7 +112,7 @@ namespace MZZT.DarkForces {
 							if (bm != null) {
 								material = ResourceCache.Instance.GetMaterial(
 									ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-										LevelLoader.Instance.ColorMap, lightLevel),
+										lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, lightLevel),
 									ResourceCache.Instance.SimpleShader);
 							}
 						}
@@ -225,7 +231,7 @@ namespace MZZT.DarkForces {
 #endif
 			} else {
 				int vertexCount = 0;
-				Mesh mesh = new Mesh {
+				Mesh mesh = new() {
 					vertices = vertices,
 					triangles = polygons.SelectMany(x => {
 						int[] ret;
@@ -258,8 +264,7 @@ namespace MZZT.DarkForces {
 		}
 
 		private void Update() {
-			ParticleSystem particles = this.GetComponent<ParticleSystem>();
-			if (particles != null) {
+			if (this.TryGetComponent<ParticleSystem>(out var particles)) {
 				// Local particle simulation space broken in latest Unity...
 				// Force redraw particles every frame otherwise rotation doesn't affect them.
 				particles.SetParticles(this.Polygons.SelectMany(x => x.Vertices.Select(x => new Particle() {

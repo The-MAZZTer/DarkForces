@@ -24,18 +24,6 @@ namespace MZZT.DarkForces.FileFormats {
 			[typeof(LandruPalette)] = "PLTT",
 			[typeof(CreativeVoice)] = "VOIC"
 		};
-		/// <summary>
-		/// Map of type names to the internal types used.
-		/// </summary>
-		public readonly static IReadOnlyDictionary<string, Type> FileTypes = new Dictionary<string, Type>() {
-			["ANIM"] = typeof(LandruAnimation),
-			["DELT"] = typeof(LandruDelt),
-			["FILM"] = typeof(LandruFilm),
-			["FONT"] = typeof(LandruFont),
-			["GMID"] = typeof(DfGeneralMidi),
-			["PLTT"] = typeof(LandruPalette),
-			["VOIC"] = typeof(CreativeVoice)
-		};
 
 		/// <summary>
 		/// A header defining a single file.
@@ -197,7 +185,7 @@ namespace MZZT.DarkForces.FileFormats {
 			this.pos = (uint)Marshal.SizeOf<FileHeader>() + header.Size;
 			uint length = this.pos + (uint)files.Sum(x => Marshal.SizeOf<FileHeader>() + x.Size);
 			try {
-				await fileHeaderRead?.Invoke(this);
+				await (fileHeaderRead?.Invoke(this) ?? Task.CompletedTask);
 			} finally {
 				this.stream = null;
 			}
@@ -334,8 +322,8 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <param name="typeName">The type field value.</param>
 		/// <returns>The read embedded file object.</returns>
 		public async Task<IFile> GetFileAsync(string name, string typeName) {
-			typeName = typeName.ToUpper();
-			if (!FileTypes.TryGetValue(typeName, out Type type)) {
+			Type type = DfFile.DetectFileTypeByName("." + typeName);
+			if (type == null) {
 				throw new ArgumentException($"Invalid Landru file type.", nameof(typeName));
 			}
 

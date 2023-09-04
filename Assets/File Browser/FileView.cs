@@ -1,5 +1,5 @@
 using MZZT.DarkForces.FileFormats;
-using MZZT.DataBinding;
+using MZZT.Data.Binding;
 using System;
 using System.IO;
 using System.Linq;
@@ -39,27 +39,27 @@ namespace MZZT {
 	/// The data about a file system item, sufficient to display an entry in the file browser.
 	/// </summary>
 	[Serializable]
-	public struct FileSystemItem {
+	public class FileSystemItem {
 		/// <summary>
 		/// Full path to the file or folder.
 		/// </summary>
-		public string FilePath;
+		public string FilePath { get; set; }
 		/// <summary>
 		/// The display name.
 		/// </summary>
-		public string DisplayName;
+		public string DisplayName { get; set; }
 		/// <summary>
 		/// The type of the item.
 		/// </summary>
-		public FileSystemItemTypes Type;
+		public FileSystemItemTypes Type { get; set; }
 		/// <summary>
 		/// If the file is inside a container, at what offset does it start.
 		/// </summary>
-		public long ContainerOffset;
+		public long ContainerOffset { get; set; }
 		/// <summary>
 		/// The size of the file.
 		/// </summary>
-		public long Size;
+		public long Size { get; set; }
 
 		/// <summary>
 		/// Convert the size to a user readable string.
@@ -100,7 +100,7 @@ namespace MZZT {
 							return "\ue2c7";
 						}
 					case FileSystemItemTypes.FileContainer:
-						return "\uf1c4";
+						return "\ueb2c";
 					case FileSystemItemTypes.FileContainee:
 					case FileSystemItemTypes.File:
 					default:
@@ -114,12 +114,12 @@ namespace MZZT {
 	/// A container representing a folder, which will display a list of files.
 	/// </summary>
 	public class FileView : DataboundList<FileSystemItem> {
-		[SerializeField]
+		[Header("File View"), SerializeField]
 		private FileSystemItem container;
 		/// <summary>
 		/// The item representing the container this FileView displays the items of.
 		/// </summary>
-		public FileSystemItem Container { get => this.container; set => this.container = value; }
+		public FileSystemItem Container { get => this.container ?? (FileSystemItem)this.ParentValue; set => this.container = value; }
 		[SerializeField]
 		private string[] fileSearchPatterns = Array.Empty<string>();
 		/// <summary>
@@ -234,7 +234,7 @@ namespace MZZT {
 				} break;
 				case FileSystemItemTypes.FileContainer: {
 					string ext = Path.GetExtension(this.container.FilePath).ToUpper();
-					Regex patterns = new Regex("^(" + string.Join("|", fileSearchPatterns
+					Regex patterns = new("^(" + string.Join("|", fileSearchPatterns
 						.Select(x => string.Join("", x.Select(x => x switch {
 							'*' => ".*",
 							'?' => ".",
@@ -315,7 +315,7 @@ namespace MZZT {
 			}
 		}
 
-		public override Databound<FileSystemItem> SelectedDatabound {
+		public override IDatabind SelectedDatabound {
 			get => base.SelectedDatabound;
 			set {
 				if (base.SelectedDatabound == value) {
@@ -327,11 +327,11 @@ namespace MZZT {
 			}
 		}
 
-		protected override Databound<FileSystemItem> Instantiate(FileSystemItem item) {
-			FileViewItem databound = (FileViewItem)base.Instantiate(item);
+		protected override IDatabind Instantiate(int index) {
+			FileViewItem databound = (FileViewItem)base.Instantiate(index);
 			if (databound.ChildView != null) {
 				// Workaround Unity bug where you can't give a prefab a reference to the prefab, only to its own root.
-				databound.ChildView.DatabinderTemplate = this.DatabinderTemplate;
+				databound.ChildView.childTemplate = this.childTemplate;
 			}
 			return databound;
 		}

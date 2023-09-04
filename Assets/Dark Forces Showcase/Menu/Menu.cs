@@ -79,7 +79,7 @@ namespace MZZT.DarkForces.Showcase {
 			HelpOrder = 100,
 			ValueName = "TOOLNAME",
 			PrependedGroupName = "Tools:",
-			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer, MapGenerator, Randomizer"
+			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer, MapGenerator, Randomizer, ResourceDumper"
 		)]
 		public string CommandLineTool { get; set; }
 
@@ -144,25 +144,25 @@ namespace MZZT.DarkForces.Showcase {
 
 			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
 				FileLoader.Instance.DarkForcesFolder = this.CommandLineDarkForcesFolder;
-			}
-			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-				FileLoader.Instance.DarkForcesFolder = PlayerPrefs.GetString("DarkForcesFolder");
-			}
-			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-				FileLoader.Instance.DarkForcesFolder = await FileLoader.Instance.LocateDarkForcesAsync();
-			}
-			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-				FileLoader.Instance.DarkForcesFolder = await this.ShowDarkForcesDialogAsync();
-			}
-			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-				this.menu.SetActive(false);
-				FileLoader.Instance.DarkForcesFolder = null;
+				if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+					FileLoader.Instance.DarkForcesFolder = PlayerPrefs.GetString("DarkForcesFolder");
+					if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+						FileLoader.Instance.DarkForcesFolder = await FileLoader.Instance.LocateDarkForcesAsync();
+						if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+							FileLoader.Instance.DarkForcesFolder = await this.ShowDarkForcesDialogAsync();
+							if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+								this.menu.SetActive(false);
+								FileLoader.Instance.DarkForcesFolder = null;
+							}
+						}
+					}
+				}
 			}
 
 			this.darkForcesFolderText.text = FileLoader.Instance.DarkForcesFolder ?? "Location not set";
 			PlayerPrefs.SetString("DarkForcesFolder", FileLoader.Instance.DarkForcesFolder);
 
-			await FileLoader.Instance.LoadStandardGobFilesAsync();
+			await FileLoader.Instance.LoadStandardFilesAsync();
 
 			if (this.CommandLineModFiles != null) {
 				foreach (string mod in this.CommandLineModFiles) {
@@ -189,7 +189,7 @@ namespace MZZT.DarkForces.Showcase {
 				new Showcase() {
 					Name = "Level Explorer",
 					SceneName = "LevelExplorer",
-					Description = "Renders level geometry, objects, and more, and allows you to fly around in free cam mode to explore.\n\nUse the mouse to look around, arrow or WASD keys to move, mouse 3 and 5 or E and Q to move up and down. Hold Shift for a speed boost. Use Escape to change options or return to this menu.\n\nThis tool could be used as the basis for a level editor 3d preview, or even the basis for a game engine clone."
+					Description = "Renders level geometry, objects, and more, and allows you to fly around in free cam mode to explore.\n\nUse the mouse to look around, arrow or WASD keys to move, mouse 3 and 5 or E and Q to move up and down. Hold Shift for a speed boost. Use Escape to change options or return to this menu.\n\nThis tool could be used as the basis for a level editor 3D preview, or even the basis for a game engine clone."
 				},
 				new Showcase() {
 					Name = "Map Generator",
@@ -233,7 +233,7 @@ namespace MZZT.DarkForces.Showcase {
 			FileLoader.Instance.Clear();
 			ResourceCache.Instance.Clear();
 
-			await FileLoader.Instance.LoadStandardGobFilesAsync();
+			await FileLoader.Instance.LoadStandardFilesAsync();
 
 			this.menu.SetActive(true);
 
@@ -293,7 +293,7 @@ namespace MZZT.DarkForces.Showcase {
 					LandruDelt stars = await ResourceCache.Instance.GetDeltAsync("STANDARD.LFD", "stars");
 					if (stars != null) {
 						Texture2D texture = ResourceCache.Instance.ImportDelt(stars, pltt);
-						Rect rect = new Rect(0, 0, texture.width, texture.height);
+						Rect rect = new(0, 0, texture.width, texture.height);
 						this.background.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
 						this.background.enabled = true;
 					}
@@ -330,9 +330,9 @@ namespace MZZT.DarkForces.Showcase {
 		public async void OnModClickedAsync() {
 			await Mod.Instance.OnModClickedAsync();
 
-			/*await FileLoader.Instance.AddGobFileAsync(@"C:\users\mzzt\dos\programs\games\dark\levels\dt1se\dt1se.gob");
+			/*await FileLoader.Instance.AddGobFileAsync(@"D:\dos\programs\games\dark\levels\dt1se\dt1se.gob");
 			Mod.Instance.List.Add(new ModFile() {
-				FilePath = @"C:\users\mzzt\dos\programs\games\dark\levels\dt1se\dt1se.gob"
+				FilePath = @"D:\dos\programs\games\dark\levels\dt1se\dt1se.gob"
 			});*/
 
 			await this.UpdateModTextAsync();

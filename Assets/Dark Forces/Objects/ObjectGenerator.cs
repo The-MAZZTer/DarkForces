@@ -15,7 +15,7 @@ namespace MZZT.DarkForces {
 		/// <summary>
 		/// Kyle's eye height from the ground (for the camera).
 		/// </summary>
-		public static readonly Vector3 KYLE_EYE_POSITION = new Vector3(0, -5.8f, 0);
+		public static readonly Vector3 KYLE_EYE_POSITION = new(0, -5.8f, 0);
 
 		/// <summary>
 		/// The difficulty to use to determine which objects to show.
@@ -111,7 +111,7 @@ namespace MZZT.DarkForces {
 
 			HashSet<DfLevelObjects.Difficulties> allowedDifficulties = this.TranslateDifficulty();
 
-			Stopwatch watch = new Stopwatch();
+			Stopwatch watch = new();
 			watch.Start();
 			foreach (DfLevelObjects.Object obj in LevelLoader.Instance.Objects.Objects) {
 				GameObject go;

@@ -1,6 +1,7 @@
 ﻿using MZZT.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -52,7 +53,7 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// The type of compression used on the BM data.
 			/// </summary>
-			public Compression Compression;
+			public CompressionModes Compression;
 			/// <summary>
 			/// The size of the BM data.
 			/// </summary>
@@ -207,7 +208,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Types of compression.
 		/// </summary>
-		public enum Compression : short {
+		public enum CompressionModes : short {
 			/// <summary>
 			/// No compression.
 			/// </summary>
@@ -287,7 +288,7 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 			};
 
-			if (this.header.Compression == Compression.None) {
+			if (this.header.Compression == CompressionModes.None) {
 				page.Pixels = await this.ReadRawPixelDataAsync(stream, this.header.Width, this.header.Height);
 			} else {
 				page.Pixels = await this.ReadCompressedPixelDataAsync(stream);
@@ -343,7 +344,7 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 
 					byte color = 0;
-					if (useRle && this.header.Compression != Compression.Rle0) {
+					if (useRle && this.header.Compression != CompressionModes.Rle0) {
 						color = data[pos];
 						pos++;
 					}
@@ -377,7 +378,86 @@ namespace MZZT.DarkForces.FileFormats {
 			set => this.multiHeader.Framerate = value;
 		}
 
+		/// <summary>
+		/// Whether or not to choose an optimal compression mode automatically.
+		/// </summary>
+		public bool AutoCompress { get; set; }
+
+		/// <summary>
+		/// The compression to use for single-page BMs.
+		/// </summary>
+		public CompressionModes Compression {
+			get {
+				if (this.Pages.Count != 1) {
+					return CompressionModes.None;
+				}
+				return this.header.Compression;
+			}
+			set => this.header.Compression = value;
+		}
+
 		public override bool CanSave => true;
+
+		private int GetNoCompressionSize() {
+			Page page = this.Pages[0];
+			int width = page.Width;
+			int height = page.Height;
+			return width * height;
+		}
+
+		private int[] GetRleCompressionSizes(byte[] buffer) {
+			Page page = this.Pages[0];
+			int width = page.Width;
+			int height = page.Height;
+
+			// We can precompute the size of an RLE compressed image and figure out which is the most
+			// optimal compression method.
+			int[] rleSegmentSizes = new int[width];
+			for (int x = 0; x < width; x++) {
+				int yRle = 0;
+				while (yRle < height) {
+					(bool isRle, int end) = GetNextRle(buffer, x, yRle, height);
+
+					int start = x * height + yRle;
+					int length = end - start;
+
+					if (isRle) {
+						rleSegmentSizes[x] += 2;
+					} else {
+						rleSegmentSizes[x] += length + 1;
+					}
+					yRle += length;
+				}
+			}
+			return rleSegmentSizes;
+		}
+
+		private int[] GetRle0CompressionSizes(byte[] buffer) {
+			Page page = this.Pages[0];
+			int width = page.Width;
+			int height = page.Height;
+
+			// We can precompute the size of an RLE compressed image and figure out which is the most
+			// optimal compression method.
+			int[] rle0SegmentSizes = new int[width];
+			for (int x = 0; x < width; x++) {
+				int yRle = 0;
+				while (yRle < height) {
+					(bool isRle, int end) = GetNextRle(buffer, x, yRle, height, (a, b) => (a == 0 && b == 0));
+
+					int start = x * height + yRle;
+					int length = end - start;
+
+					if (isRle) {
+						rle0SegmentSizes[x] += 1;
+					} else {
+						rle0SegmentSizes[x] += length + 1;
+					}
+					yRle += length;
+				}
+			}
+			return rle0SegmentSizes;
+		}
 
 		public override async Task SaveAsync(Stream stream) {
 			this.ClearWarnings();
@@ -387,7 +467,7 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 
 			this.header.Magic = MAGIC;
-			if (this.Pages.Count > 1) {
+			if (this.Pages.Count != 1) {
 				int size = Marshal.SizeOf<MultiHeader>() + this.Pages.Sum(x => 4 + Marshal.SizeOf<MultiPageHeader>() + x.Pixels.Length);
 				if (size > ushort.MaxValue) {
 					throw new FormatException("MultiBMs do not support that much data!");
@@ -399,7 +479,7 @@ namespace MZZT.DarkForces.FileFormats {
 				this.header.IdemY = (short)this.Pages.Count;
 				this.header.Flags = 0;
 				this.header.LogSizeY = 0;
-				this.header.Compression = Compression.None;
+				this.header.Compression = CompressionModes.None;
 				this.header.DataSize = 0;
 
 				await stream.WriteAsync(this.header);
@@ -434,8 +514,11 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 			} else {
 				Page page = this.Pages[0];
-				int width = page.Pixels.GetLength(1);
-				int height = page.Pixels.GetLength(0);
+				int width = page.Width;
+				int height = page.Height;
+				if (width == 1 && height != 1) {
+					throw new FormatException("BMs cannot have a width of 1 and a height of > 1 unless it is a multi-page BM.");
+				}
 
 				this.header.Width = (ushort)width;
 				this.header.Height = (ushort)height;
@@ -445,141 +528,158 @@ namespace MZZT.DarkForces.FileFormats {
 				if ((this.header.Flags & Flags.NotWeapon) == 0) {
 					this.header.LogSizeY = 0;
 				} else {
-					double log = Math.Log(height, 0);
-					if (log != Math.Floor(log)) {
+					double log = Math.Log(height, 2);
+					if (Math.Abs(log % 1) > 0.001) {
 						throw new FormatException("BMs must have a height that is a power of two, unless they are weapon BMs.");
 					}
 					this.header.LogSizeY = (byte)log;
 				}
 
-				// We can precompute the size of an RLE compressed image and figure out which is the most
-				// optimal compression method.
 				byte[] buffer = new byte[width * height];
-				int[] rleSegmentSizes = new int[width];
-				int[] rle0SegmentSizes = new int[width];
 				for (int x = 0; x < width; x++) {
 					for (int y = 0; y < height; y++) {
 						buffer[x * height + y] = page.Pixels[y * width + x];
 					}
+				}
 
-					int yRle = 0;
-					while (yRle < height) {
-						(bool isRle, int end) = GetNextRle(buffer, x * height + yRle);
-						if (isRle) {
-							rleSegmentSizes[x] += 2;
-						} else {
-							rleSegmentSizes[x] += end - yRle + 1;
+				int noCompressionSize = -1;
+				int rleCompressionSize = -1;
+				int[] rleSegmentSizes = null;
+				int rle0CompressionSize = -1;
+				int[] rle0SegmentSizes = null;
+				if (this.AutoCompress) {
+					noCompressionSize = this.GetNoCompressionSize();
+					rleSegmentSizes = this.GetRleCompressionSizes(buffer);
+					rleCompressionSize = rleSegmentSizes.Sum();
+					rle0SegmentSizes = this.GetRle0CompressionSizes(buffer);
+					rle0CompressionSize = rle0SegmentSizes.Sum();
+
+					if (noCompressionSize <= rleCompressionSize + (4 * width) && noCompressionSize <= rle0CompressionSize + (4 * width)) {
+						this.header.Compression = CompressionModes.None;
+					} else if (rleCompressionSize <= rle0CompressionSize) {
+						this.header.Compression = CompressionModes.Rle;
+					} else {
+						this.header.Compression = CompressionModes.Rle0;
+					}
+				}
+
+				switch (this.header.Compression) {
+					case CompressionModes.None:
+						if (noCompressionSize < 0) {
+							noCompressionSize = this.GetNoCompressionSize();
 						}
-						yRle = end;
-					}
+						this.header.DataSize = noCompressionSize;
+						await stream.WriteAsync(this.header);
 
-					yRle = 0;
-					while (yRle < height) {
-						(bool isRle, int end) = GetNextRle(buffer, x * height + yRle, (a, b) => (a == 0 && b == 0));
-						if (isRle) {
-							rle0SegmentSizes[x] += 1;
-						} else {
-							rle0SegmentSizes[x] += end - yRle + 1;
+						await stream.WriteAsync(buffer, 0, buffer.Length);
+						break;
+					case CompressionModes.Rle:
+						if (rleCompressionSize < 0) {
+							rleSegmentSizes = this.GetRleCompressionSizes(buffer);
+							rleCompressionSize = rleSegmentSizes.Sum();
 						}
-						yRle = end;
-					}
-				}
+						this.header.DataSize = rleCompressionSize;
+						await stream.WriteAsync(this.header);
 
-				int noCompressionSize = width * height;
-				int rleCompressionSize = rleSegmentSizes.Sum();
-				int rle0CompressionSize = rle0SegmentSizes.Sum();
+						for (int x = 0; x < width; x++) {
+							int y = 0;
+							while (y < height) {
+								(bool isRle, int end) = GetNextRle(buffer, x, y, height);
 
-				if (noCompressionSize <= rleCompressionSize && noCompressionSize <= rle0CompressionSize) {
-					this.header.Compression = Compression.None;
-				} else if (rleCompressionSize <= rle0CompressionSize) {
-					this.header.Compression = Compression.Rle;
-				} else {
-					this.header.Compression = Compression.Rle0;
-				}
+								int start = x * height + y;
+								int length = end - start;
 
-				this.header.DataSize = Math.Min(noCompressionSize, Math.Min(rleCompressionSize, rle0CompressionSize));
-				await stream.WriteAsync(this.header);
-
-				if (noCompressionSize <= rleCompressionSize && noCompressionSize <= rle0CompressionSize) {
-					await stream.WriteAsync(buffer, 0, buffer.Length);
-					return;
-				}
-
-				int pos = 0;
-				if (rleCompressionSize <= rle0CompressionSize) {
-					for (int x = 0; x < width; x++) {
-						await stream.WriteAsync(BitConverter.GetBytes(pos), 0, 4);
-						pos += rleSegmentSizes[x];
-					}
-
-					for (int x = 0; x < width; x++) {
-						int y = 0;
-						while (y < height) {
-							(bool isRle, int end) = GetNextRle(buffer, x * height + y);
-							if (isRle) {
-								stream.WriteByte((byte)((end - y) | 0x80));
-								stream.WriteByte(buffer[x * height + y]);
-							} else {
-								stream.WriteByte((byte)(end - y));
-								await stream.WriteAsync(buffer, x * height + y, end - y);
+								if (isRle) {
+									stream.WriteByte((byte)(length | 0x80));
+									stream.WriteByte(buffer[start]);
+								} else {
+									stream.WriteByte((byte)length);
+									await stream.WriteAsync(buffer, start, length);
+								}
+								y += length;
 							}
-							y = end;
 						}
-					}
-					return;
-				}
 
-				for (int x = 0; x < width; x++) {
-					await stream.WriteAsync(BitConverter.GetBytes(pos), 0, 4);
-					pos += rle0SegmentSizes[x];
-				}
-
-				for (int x = 0; x < width; x++) {
-					int y = 0;
-					while (y < height) {
-						(bool isRle, int end) = GetNextRle(buffer, x * height + y, (a, b) => a == 0 && b == 0);
-						if (isRle) {
-							stream.WriteByte((byte)((end - y) | 0x80));
-						} else {
-							stream.WriteByte((byte)(end - y));
-							await stream.WriteAsync(buffer, x * height + y, end - y);
+						int pos = 0;
+						for (int x = 0; x < width; x++) {
+							await stream.WriteAsync(BitConverter.GetBytes(pos), 0, 4);
+							pos += rleSegmentSizes[x];
 						}
-						y = end;
-					}
+						break;
+					case CompressionModes.Rle0:
+						if (rle0CompressionSize < 0) {
+							rle0SegmentSizes = this.GetRle0CompressionSizes(buffer);
+							rle0CompressionSize = rle0SegmentSizes.Sum();
+						}
+						this.header.DataSize = rle0CompressionSize;
+						await stream.WriteAsync(this.header);
+
+						for (int x = 0; x < width; x++) {
+							int y = 0;
+							while (y < height) {
+								(bool isRle, int end) = GetNextRle(buffer, x, y, height, (a, b) => a == 0 && b == 0);
+
+								int start = x * height + y;
+								int length = end - start;
+
+								if (x == 15) {
+									Debug.WriteLine(length);
+								}
+
+								if (isRle) {
+									stream.WriteByte((byte)(length | 0x80));
+								} else {
+									stream.WriteByte((byte)length);
+									await stream.WriteAsync(buffer, start, length);
+								}
+								y += length;
+							}
+						}
+
+						pos = 0;
+						for (int x = 0; x < width; x++) {
+							await stream.WriteAsync(BitConverter.GetBytes(pos), 0, 4);
+							pos += rle0SegmentSizes[x];
+						}
+						break;
 				}
 			}
 		}
 
-		internal static (bool isRle, int end) GetNextRle(byte[] buffer, int start, Func<byte, byte, bool> rleTest = null) {
-			if (rleTest == null) {
-				rleTest = (a, b) => a == b;
-			}
+		internal static (bool isRle, int end) GetNextRle(byte[] buffer, int x, int y, int height, Func<byte, byte, bool> rleTest = null) {
+			int start = x * height + y;
+			int max = (x + 1) * height;
 
-			int length = buffer.Length;
-			if (length - start <= 1) {
-				return (false, length);
+			rleTest ??= (a, b) => a == b;
+
+			if (max - start <= 1) {
+				return (false, max);
 			}
 
 			byte first = buffer[start];
 			byte second = buffer[start + 1];
 			if (rleTest(first, second)) {
 				int end = start + 2;
-				while (end < length && (end - start) < 127 && rleTest(first, second)) {
+				while (end < max && (end - start) < 127 && rleTest(first, second)) {
+					second = buffer[end];
+					end++;
+				}
+				if (!rleTest(first, second)) {
+					end--;
+				}
+
+				return (true, end);
+			} else {
+				int end = start + 2;
+				while (end < max && (end - start) < 127 && !rleTest(first, second)) {
 					first = second;
 					second = buffer[end];
 					end++;
 				}
-				return (true, end);
-			} else {
-				int end = start + 1;
-				while (end + 1 < length && (end - start) < 127 && !rleTest(first, second)) {
-					first = second;
-					second = buffer[end + 1];
-					end++;
+				if (rleTest(first, second)) {
+					end -= 2;
 				}
-				if (end + 1 == length) {
-					end = length;
-				}
+
 				return (false, end);
 			}
 		}
@@ -587,7 +687,9 @@ namespace MZZT.DarkForces.FileFormats {
 		object ICloneable.Clone() => this.Clone();
 		public DfBitmap Clone() {
 			DfBitmap clone = new() {
-				Framerate = this.Framerate
+				Framerate = this.Framerate,
+				Compression = this.Compression,
+				AutoCompress = this.AutoCompress
 			};
 			clone.Pages.AddRange(this.Pages.Select(x => x.Clone()));
 			return clone;

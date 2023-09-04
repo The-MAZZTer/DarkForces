@@ -20,8 +20,8 @@ namespace MZZT.DarkForces {
 			Vector2 l2_dir = (l2_end - l2_start).normalized;
 
 			//If we know the direction we can get the normal vector to each line
-			Vector2 l1_normal = new Vector2(-l1_dir.y, l1_dir.x);
-			Vector2 l2_normal = new Vector2(-l2_dir.y, l2_dir.x);
+			Vector2 l1_normal = new(-l1_dir.y, l1_dir.x);
+			Vector2 l2_normal = new(-l2_dir.y, l2_dir.x);
 
 
 			//Step 1: Rewrite the lines to a general form: Ax + By = k1 and Cx + Dy = k2
@@ -63,7 +63,7 @@ namespace MZZT.DarkForces {
 			float x_intersect = (D * k1 - B * k2) / (A * D - B * C);
 			float y_intersect = (-C * k1 + A * k2) / (A * D - B * C);
 
-			Vector2 intersectPoint = new Vector2(x_intersect, y_intersect);
+			Vector2 intersectPoint = new(x_intersect, y_intersect);
 
 
 			//Step 5: but we have line segments so we have to check if the intersection point is within the segment
@@ -349,7 +349,7 @@ namespace MZZT.DarkForces {
 
 			// Shapes are the outer perimeter of the sector as well as any subsectors.
 			// Shapes have contiguous walls.
-			List<List<Wall>> shapes = new List<List<Wall>>();
+			List<List<Wall>> shapes = new();
 			List<Wall> pendingWalls = sector.Walls.ToList();
 
 			// We want to know what we're dealing with so figure out the shapes we can make with the walls.
@@ -381,7 +381,7 @@ namespace MZZT.DarkForces {
 
 			// Now we can try and make shapes.
 			while (pendingWalls.Count > 0) {
-				List<Wall> currentShape = new List<Wall>();
+				List<Wall> currentShape = new();
 				shapes.Add(currentShape);
 
 				Wall wall = pendingWalls.FirstOrDefault();
@@ -458,7 +458,7 @@ namespace MZZT.DarkForces {
 				}
 			}*/
 
-			List<int> tris = new List<int>();
+			List<int> tris = new();
 
 			// Process inner shapes first, to get a single contiguous outer shape.
 			// This makes the algorithm for processing that shape simpler.
@@ -904,7 +904,7 @@ namespace MZZT.DarkForces {
 
 				Material material = bm != null ? ResourceCache.Instance.GetMaterial(
 					ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-						LevelLoader.Instance.ColorMap, lightLevel),
+						lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, lightLevel),
 					shader) : null;
 				if (isPlane && material != null) {
 					// Ensure parallaxing is done on sky/pit.
@@ -920,7 +920,7 @@ namespace MZZT.DarkForces {
 						x.Position.Y * LevelGeometryGenerator.GEOMETRY_SCALE)
 					).ToArray();
 
-				GameObject obj = new GameObject() {
+				GameObject obj = new() {
 					name = surface == sector.Ceiling ? "Ceiling" : "Floor",
 					layer = LayerMask.NameToLayer("Geometry")
 				};
@@ -933,7 +933,7 @@ namespace MZZT.DarkForces {
 					0
 				);
 
-				Mesh mesh = new Mesh() {
+				Mesh mesh = new() {
 					vertices = vertices
 				};
 				if (surface == sector.Ceiling) {
@@ -943,15 +943,17 @@ namespace MZZT.DarkForces {
 					mesh.triangles = tris;
 				}
 				if (material != null) {
-					// Configure UV for completely normal texture display.
-					// I guess if we wanted to make it more like DF we could hardcode a value of 64 for the texture size.
-					Vector2 offset = new Vector2(
-						surface.TextureOffset.X / material.mainTexture.width / LevelGeometryGenerator.TEXTURE_SCALE,
-						surface.TextureOffset.Y / material.mainTexture.height / LevelGeometryGenerator.TEXTURE_SCALE
+					Vector2 textureSize = new(material.mainTexture.width, material.mainTexture.height);
+					if (textureSize.y != 64) {
+						textureSize.x *= textureSize.y / 64; // TODO what is this logic really?
+					}
+					Vector2 offset = new(
+						surface.TextureOffset.X / textureSize.x / LevelGeometryGenerator.TEXTURE_SCALE,
+						surface.TextureOffset.Y / textureSize.y / LevelGeometryGenerator.TEXTURE_SCALE
 					);
 					mesh.uv = vertices.Select(x => new Vector2(
-						-offset.x + x.x / LevelGeometryGenerator.GEOMETRY_SCALE / LevelGeometryGenerator.TEXTURE_SCALE / material.mainTexture.width,
-						offset.y - x.z / LevelGeometryGenerator.GEOMETRY_SCALE / LevelGeometryGenerator.TEXTURE_SCALE / material.mainTexture.height
+						offset.x - x.x / LevelGeometryGenerator.GEOMETRY_SCALE / LevelGeometryGenerator.TEXTURE_SCALE / textureSize.x,
+						-offset.y + x.z / LevelGeometryGenerator.GEOMETRY_SCALE / LevelGeometryGenerator.TEXTURE_SCALE / textureSize.y
 					)).ToArray();
 				}
 

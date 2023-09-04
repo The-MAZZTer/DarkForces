@@ -45,7 +45,7 @@ namespace MZZT.DarkForces.Showcase {
 						okDialog = await ResourceCache.Instance.GetAnimationAsync("MENU.LFD", "okaydlg");
 						if (okDialog != null && okDialog.Pages.Count >= 1) {
 							Texture2D dialog = ResourceCache.Instance.ImportDelt(okDialog.Pages[0], pltt);
-							Rect rect = new Rect(0, 0, dialog.width, dialog.height);
+							Rect rect = new(0, 0, dialog.width, dialog.height);
 							Sprite sprite = Sprite.Create(dialog, rect, new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect, new Vector4() {
 								w = 18,
 								x = 64,
@@ -75,7 +75,7 @@ namespace MZZT.DarkForces.Showcase {
 						Texture2D ok = ResourceCache.Instance.ImportDelt(okDialog.Pages[2], pltt);
 						Texture2D okHover = ResourceCache.Instance.ImportDelt(okDialog.Pages[1], pltt);
 
-						Rect rect = new Rect(0, 0, ok.width, ok.height);
+						Rect rect = new(0, 0, ok.width, ok.height);
 						Sprite okSprite = Sprite.Create(ok, rect, new Vector2(0.5f, 0.5f));
 						rect = new Rect(0, 0, okHover.width, okHover.height);
 						Sprite okHoverSprite = Sprite.Create(okHover, rect, new Vector2(0.5f, 0.5f));
@@ -128,7 +128,7 @@ namespace MZZT.DarkForces.Showcase {
 			input.enabled = false;
 			input.enabled = true;
 
-			while (this.background.activeInHierarchy) {
+			while (this.background.activeInHierarchy && this.isActiveAndEnabled) {
 				await Task.Delay(25);
 			}
 		}

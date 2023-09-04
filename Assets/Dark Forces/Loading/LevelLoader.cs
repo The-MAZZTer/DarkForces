@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using static MZZT.DarkForces.FileFormats.DfLevel;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -91,9 +90,9 @@ namespace MZZT.DarkForces {
 
 			await PauseMenu.Instance.BeginLoadingAsync();
 
-			string levelFile = this.CurrentLevelName;
+			string levelName = this.CurrentLevelName;
 
-			this.ColorMap = await ResourceCache.Instance.GetColormapAsync($"{levelFile}.CMP");
+			this.ColorMap = await ResourceCache.Instance.GetColormapAsync($"{levelName}.CMP");
 
 			PauseMenu.Instance.EndLoading();
 		}
@@ -156,9 +155,9 @@ namespace MZZT.DarkForces {
 
 			try {
 				this.Information = await FileLoader.Instance.LoadGobFileAsync<DfLevelInformation>($"{levelFile}.INF");
-				if (this.Level != null) {
+				/*if (this.Level != null) {
 					this.Information.LoadSectorReferences(this.Level);
-				}
+				}*/
 			} catch (Exception ex) {
 				ResourceCache.Instance.AddError($"{levelFile}.INF", ex);
 			}

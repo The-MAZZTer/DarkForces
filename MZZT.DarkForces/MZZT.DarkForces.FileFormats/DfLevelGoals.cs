@@ -32,27 +32,27 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// Death Star plans
 			/// </summary>
-			DeathStarPlans,
+			DeathStarPlans = 0,
 			/// <summary>
 			/// A vial of Phrink
 			/// </summary>
-			PhrikMetal,
+			PhrikMetal = 1,
 			/// <summary>
 			/// A Nava card.
 			/// </summary>
-			NavaCard,
+			NavaCard = 2,
 			/// <summary>
 			/// Data tapes.
 			/// </summary>
-			DataTapes,
+			DataTapes = 4,
 			/// <summary>
 			/// A Broken Dark Tropper Weapon
 			/// </summary>
-			BrokenDTWeapon,
+			BrokenDTWeapon = 5,
 			/// <summary>
 			/// Your gear.
 			/// </summary>
-			YourGear
+			YourGear = 6
 		}
 
 		/// <summary>

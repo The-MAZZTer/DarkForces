@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static MZZT.DarkForces.FileFormats.DfLevel;
+//using static MZZT.DarkForces.FileFormats.DfLevel;
 
 namespace MZZT.DarkForces.FileFormats {
 	/// <summary>
@@ -38,16 +38,22 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The type of script.
 			/// </summary>
 			public ScriptTypes Type { get; set; }
-			internal string SectorName { get; set; }
-			internal int WallNum { get; set; }
 			/// <summary>
-			/// The sector the script is associated with.
+			/// The sector name the script is associated with.
+			/// </summary>
+			public string SectorName { get; set; }
+			/// <summary>
+			/// The wall number the script is associated with.
+			/// </summary>
+			public int WallNum { get; set; }
+			/*/// <summary>
+			/// The sector the script is associated with. Call LoadSectorReferences to populate.
 			/// </summary>
 			public Sector Sector { get; set; }
 			/// <summary>
-			/// The wall the script is associated with.
+			/// The wall the script is associated with.. Call LoadSectorReferences to populate.
 			/// </summary>
-			public Wall Wall { get; set; }
+			public Wall Wall { get; set; }*/
 			/// <summary>
 			/// The script body.
 			/// </summary>
@@ -56,9 +62,9 @@ namespace MZZT.DarkForces.FileFormats {
 			object ICloneable.Clone() => this.Clone();
 			public Item Clone() => new() {
 				Script = this.Script,
-				Sector = null,
+				//Sector = this.Sector,
 				SectorName = this.SectorName,
-				Wall = null,
+				//Wall = this.Wall,
 				WallNum = this.WallNum,
 				Type = this.Type
 			};
@@ -73,7 +79,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// </summary>
 		public List<Item> Items { get; } = new();
 
-		/// <summary>
+		/*/// <summary>
 		/// Assign scripts proper sector and wall references.
 		/// </summary>
 		/// <param name="level">The level geometry.</param>
@@ -97,7 +103,7 @@ namespace MZZT.DarkForces.FileFormats {
 						break;
 				}
 			}
-		}
+		}*/
 
 		public override bool CanLoad => true;
 		
@@ -201,23 +207,31 @@ namespace MZZT.DarkForces.FileFormats {
 								continue;
 							}
 
-							StringBuilder script = new();
-							string text = (await reader.ReadLineAsync()).Trim();
+							string text = (await reader.ReadLineAsync())?.TrimEnd();
 							if (text != null) {
 								this.IncrementCurrentLine();
 							}
-							while (text != null && text.ToUpper() != "SEQEND") {
-								if (script.Length > 0) {
-									script.Append("\n");
-								}
-
-								script.Append(text);
-								text = (await reader.ReadLineAsync()).Trim();
+							List<string> lines = new List<string>();
+							while (text != null && text.Trim().ToUpper() != "SEQEND") {
+								lines.Add(text);
+								text = (await reader.ReadLineAsync())?.TrimEnd();
 								if (text != null) {
 									this.IncrementCurrentLine();
 								}
 							}
-							item.Script = script.ToString();
+
+							int strip = 0;
+							while (lines[0].Length > strip && char.IsWhiteSpace(lines[0][strip]) &&
+								lines.Select(x => x.ElementAtOrDefault(strip)).Distinct().Count() == 1) {
+
+								strip++;
+							}
+							IEnumerable<string> script = lines;
+							if (strip > 0) {
+								script = script.Select(x => x.Substring(strip));
+							}
+
+							item.Script = string.Join("\n", script);
 						}
 					} continue;
 				}
@@ -228,7 +242,7 @@ namespace MZZT.DarkForces.FileFormats {
 
 		public override bool CanSave => true;
 
-		private void SaveSectorReferences() {
+		/*private void SaveSectorReferences() {
 			foreach (Item item in this.Items) {
 				if (item.Sector != null) {
 					item.SectorName = item.Sector.Name;
@@ -237,10 +251,10 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 				}
 			}
-		}
+		}*/
 
 		public override async Task SaveAsync(Stream stream) {
-			this.SaveSectorReferences();
+			//this.SaveSectorReferences();
 			this.ClearWarnings();
 
 			using StreamWriter writer = new(stream, Encoding.ASCII, 1024, true);

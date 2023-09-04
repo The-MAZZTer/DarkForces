@@ -1,4 +1,4 @@
-using MZZT.DataBinding;
+using MZZT.Data.Binding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,9 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private bool items;
 
-		private void OnEnable() {
+		protected override void OnEnable() {
+			base.OnEnable();
+
 			this.Clear();
 			List<LogicSpawnWeight> list = this.items ?
 				Randomizer.Instance.Settings.Object.ItemLogicSpawnWeights :

@@ -21,7 +21,7 @@ namespace MZZT.DarkForces.Showcase {
 		private async void Start() {
 			// This is here in case you run directly from the MapGenerator sccene instead of the menu.
 			if (!FileLoader.Instance.Gobs.Any()) {
-				await FileLoader.Instance.LoadStandardGobFilesAsync();
+				await FileLoader.Instance.LoadStandardFilesAsync();
 			}
 
 			await PauseMenu.Instance.BeginLoadingAsync();
@@ -57,7 +57,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			Vector2 size = this.image.rectTransform.sizeDelta;
 			Vector2 viewport = ((RectTransform)this.image.rectTransform.parent).sizeDelta;
-			Vector2 diff = new Vector2(viewport.x / size.x, viewport.y / size.y);
+			Vector2 diff = new(viewport.x / size.x, viewport.y / size.y);
 			float zoom = Mathf.Min(diff.x, diff.y);
 			this.image.rectTransform.localScale = new Vector3(zoom, zoom, zoom);
 		}
@@ -142,7 +142,7 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			Vector2Int size = new Vector2Int(this.image.texture.width, this.image.texture.height);
+			Vector2Int size = new(this.image.texture.width, this.image.texture.height);
 
 			RectTransformUtility.ScreenPointToLocalPointInRectangle(this.image.rectTransform, this.point, null, out Vector2 localPoint);
 			bool pointerInBounds = localPoint.x >= this.image.rectTransform.rect.xMin &&
@@ -210,7 +210,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			using SKData data = map.GeneratePng(LevelLoader.Instance.Level, LevelLoader.Instance.Information);
 			using Stream stream = data.AsStream();
-			using FileStream fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.None);
+			using FileStream fileStream = new(file, FileMode.Create, FileAccess.Write, FileShare.None);
 			await stream.CopyToAsync(fileStream);
 		}
 	}

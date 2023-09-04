@@ -47,7 +47,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(file);
 
-			ModFile modFile = new ModFile() {
+			ModFile modFile = new() {
 				FilePath = file
 			};
 			switch (Path.GetExtension(file).ToUpper()) {

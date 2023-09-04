@@ -29,14 +29,18 @@ namespace MZZT.DarkForces.FileFormats {
 
 		/// <summary>
 		/// The colormaps for each light level.
-		/// </summary>
+		/// </summary>1
 		public byte[][] PaletteMaps { get; set; }
 		/// <summary>
 		/// The headlight light levels.
 		/// </summary>
-		public byte[] HeadlightLightLevels { get; set; }
+		public byte[] HeadlightLightLevels { get; set; } = new byte[128];
 
 		public override bool CanLoad => true;
+
+		public DfColormap() : base() {
+			this.PaletteMaps = Enumerable.Repeat<byte[]>(null, 32).Select(x => Enumerable.Range(0, 256).Select(x => (byte)x).ToArray()).ToArray();
+		}
 
 		public override async Task LoadAsync(Stream stream) {
 			this.ClearWarnings();

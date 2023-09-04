@@ -1,10 +1,6 @@
-using MZZT.DataBinding;
+﻿using MZZT.Data.Binding;
 
 namespace MZZT.DarkForces.Showcase {
-  public class TemplateList : DataboundList<ObjectTemplate> {
-		private void OnEnable() {
-			this.Clear();
-			this.AddRange(Randomizer.Instance.Settings.Object.DefaultLogicFiles);
-		}
+	public class TemplateList : DataboundList<ObjectTemplate> {
 	}
 }

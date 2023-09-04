@@ -142,12 +142,13 @@ namespace MZZT.DarkForces.Showcase {
 
 			ObjectGenerator.Instance.Animate3dos = this.animate3dos.isOn;
 
-			if (this.levelSelection.SelectedValue != LevelLoader.Instance.CurrentLevelIndex) {
+			int levelIndex = this.levelSelection.SelectedValue != null ? LevelLoader.Instance.LevelList.Levels.IndexOf(this.levelSelection.SelectedValue) : 0;
+			if (levelIndex != LevelLoader.Instance.CurrentLevelIndex) {
 				if (lightingChanged) {
 					ResourceCache.Instance.Clear();
 				}
 
-				await LevelExplorer.Instance.LoadAndRenderLevelAsync(this.levelSelection.SelectedValue);
+				await LevelExplorer.Instance.LoadAndRenderLevelAsync(levelIndex);
 				PlayerInput.all[0].SwitchCurrentActionMap(this.actionMap);
 				this.PopulateLayers();
 			} else {

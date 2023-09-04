@@ -123,7 +123,20 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Raw image data.
 		/// </summary>
-		public byte[] Pixels { get; set; }
+		public byte[] Pixels { get; set; } = Array.Empty<byte>();
+
+		/// <summary>
+		/// Whether or not to choose an optimal compression mode automatically.
+		/// </summary>
+		public bool AutoCompress { get; set; }
+
+		/// <summary>
+		/// The compression to use.
+		/// </summary>
+		public bool Compressed {
+			get => this.cellHeader.Compressed != 0;
+			set => this.cellHeader.Compressed = value ? 1 : 0;
+		}
 
 		internal async Task LoadHeaderAsync(Stream stream) {
 			this.header = await stream.ReadAsync<Header>();
@@ -180,6 +193,7 @@ namespace MZZT.DarkForces.FileFormats {
 					if (rle) {
 						value -= 128;
 					}
+
 					byte color = 0;
 					for (int i = y; i < y + value && i < height; i++) {
 						if (!rle) {
@@ -216,11 +230,9 @@ namespace MZZT.DarkForces.FileFormats {
 		}
 
 		internal async Task SaveCellAsync(Stream stream) {
-			int width = this.Pixels.GetLength(1);
-			int height = this.Pixels.GetLength(0);
+			int width = this.cellHeader.Width;
+			int height = this.cellHeader.Height;
 
-			this.cellHeader.Width = width;
-			this.cellHeader.Height = height;
 			this.cellHeader.ColumnTableOffset = 0;
 
 			byte[] buffer = new byte[width * height];
@@ -232,21 +244,28 @@ namespace MZZT.DarkForces.FileFormats {
 
 				int yRle = 0;
 				while (yRle < height) {
-					(bool isRle, int end) = DfBitmap.GetNextRle(buffer, x * height + yRle, (a, b) => (a == 0 && b == 0));
+					(bool isRle, int end) = DfBitmap.GetNextRle(buffer, x, yRle, height, (a, b) => (a == 0 && b == 0));
+
+					int start = x * height + yRle;
+					int length = end - start;
+
 					if (isRle) {
 						rle0SegmentSizes[x] += 1;
 					} else {
-						rle0SegmentSizes[x] += end - yRle + 1;
+						rle0SegmentSizes[x] += length + 1;
 					}
-					yRle = end;
+					yRle += length;
 				}
 			}
 
 			int noCompressionSize = width * height;
-			int rle0CompressionSize = 4 * width + rle0SegmentSizes.Sum();
+			int rle0CompressionSize = rle0SegmentSizes.Sum() + width * 4;
 
-			bool compressed = rle0CompressionSize < noCompressionSize;
-			this.cellHeader.Compressed = compressed ? 1 : 0;
+			if (this.AutoCompress) {
+				this.Compressed = rle0CompressionSize <= noCompressionSize;
+			}
+
+			bool compressed = this.Compressed;
 			this.cellHeader.DataSize = (uint)(Marshal.SizeOf<CellHeader>() + (compressed ? rle0CompressionSize : noCompressionSize));
 
 			await stream.WriteAsync(this.cellHeader);
@@ -265,14 +284,18 @@ namespace MZZT.DarkForces.FileFormats {
 			for (int x = 0; x < width; x++) {
 				int y = 0;
 				while (y < height) {
-					(bool isRle, int end) = DfBitmap.GetNextRle(buffer, x * height + y, (a, b) => a == 0 && b == 0);
+					(bool isRle, int end) = DfBitmap.GetNextRle(buffer, x, y, height, (a, b) => a == 0 && b == 0);
+
+					int start = x * height + y;
+					int length = end - start;
+
 					if (isRle) {
-						stream.WriteByte((byte)((end - y) | 0x80));
+						stream.WriteByte((byte)(length | 0x80));
 					} else {
-						stream.WriteByte((byte)(end - y));
-						await stream.WriteAsync(buffer, x * height + y, end - y);
+						stream.WriteByte((byte)length);
+						await stream.WriteAsync(buffer, start, length);
 					}
-					y = end;
+					y += length;
 				}
 			}
 		}
@@ -295,8 +318,7 @@ namespace MZZT.DarkForces.FileFormats {
 				InsertionPointY = this.InsertionPointY,
 				Width = this.Width
 			};
-			byte[] cellClone = null;
-			if (cellClones?.TryGetValue(this.Pixels, out cellClone) ?? false) {
+			if (cellClones?.TryGetValue(this.Pixels, out byte[] cellClone) ?? false) {
 				clone.Pixels = cellClone;
 			} else {
 				clone.Pixels = this.Pixels.ToArray();

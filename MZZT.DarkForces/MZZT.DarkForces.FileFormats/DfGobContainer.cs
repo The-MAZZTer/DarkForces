@@ -13,31 +13,6 @@ namespace MZZT.DarkForces.FileFormats {
 	/// </summary>
 	public class DfGobContainer : DfFile<DfGobContainer>, IDisposable {
 		/// <summary>
-		/// Map of file names/extensions to types.
-		/// </summary>
-		public readonly static IReadOnlyDictionary<string, Type> FileTypes = new Dictionary<string, Type>() {
-			[".3DO"] = typeof(Df3dObject),
-			[".BM"] = typeof(DfBitmap),
-			["BRIEFING.LST"] = typeof(DfBriefingList),
-			[".CMP"] = typeof(DfColormap),
-			["CUTMUSE.TXT"] = typeof(DfCutsceneMusicList),
-			["CUTSCENE.LST"] = typeof(DfCutsceneList),
-			[".FME"] = typeof (DfFrame),
-			[".FNT"] = typeof(DfFont),
-			[".GMD"] = typeof(DfGeneralMidi),
-			[".GOL"] = typeof(DfLevelGoals),
-			[".INF"] = typeof(DfLevelInformation),
-			[".MSG"] = typeof(DfMessages),
-			[".O"] = typeof(DfLevelObjects),
-			["JEDI.LVL"] = typeof(DfLevelList),
-			[".LEV"] = typeof(DfLevel),
-			[".PAL"] = typeof(DfPalette),
-			[".VOC"] = typeof(CreativeVoice),
-			[".VUE"] = typeof(AutodeskVue),
-			[".WAX"] = typeof(DfWax)
-		};
-
-		/// <summary>
 		/// Magic header number in a GOB.
 		/// </summary>
 		public const int MAGIC = 0x0A424F47;

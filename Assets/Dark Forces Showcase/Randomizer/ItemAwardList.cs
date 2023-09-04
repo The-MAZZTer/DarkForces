@@ -1,4 +1,4 @@
-using MZZT.DataBinding;
+using MZZT.Data.Binding;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +8,9 @@ namespace MZZT.DarkForces.Showcase {
 		private bool otherLevels;
 
 		private bool populating = false;
-		private void OnEnable() {
+		protected override void OnEnable() {
+			base.OnEnable();
+
 			this.populating = true;
 			List<ItemAward> list = this.otherLevels ?
 				Randomizer.Instance.Settings.Object.ItemAwardOtherLevels :

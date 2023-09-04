@@ -45,13 +45,13 @@ namespace MZZT.DarkForces {
 					return (color, mode);
 				})) {
 					// Create a child mesh.
-					GameObject polygonGo = new GameObject() {
+					GameObject polygonGo = new() {
 						name = obj.Name,
 						layer = LayerMask.NameToLayer("Objects")
 					};
 					polygonGo.transform.SetParent(this.gameObject.transform, false);
 
-					ThreeDoPolygonsRenderer renderer = polygonGo.AddComponent<ThreeDoPolygonsRenderer>();
+					ThreeDoPolygonRenderer renderer = polygonGo.AddComponent<ThreeDoPolygonRenderer>();
 					renderer.Render(obj, group.ToArray());
 				}
 			}
@@ -69,8 +69,7 @@ namespace MZZT.DarkForces {
 
 			Df3dObject threeDo = await ResourceCache.Instance.Get3dObjectAsync(obj.FileName);
 			if (threeDo != null) {
-				Queue<ThreeDoPolygonsRenderer> renderers =
-					new Queue<ThreeDoPolygonsRenderer>(this.GetComponentsInChildren<ThreeDoPolygonsRenderer>(true));
+				Queue<ThreeDoPolygonRenderer> renderers = new(this.GetComponentsInChildren<ThreeDoPolygonRenderer>(true));
 				int vertexColor = threeDo.Objects.SelectMany(x => x.Polygons).FirstOrDefault(x => x.ShadingMode == ShadingModes.Vertex)?.Color ?? -1;
 				foreach (Df3dObject.Object obj2 in threeDo.Objects) {
 					// Recreate the polygon groups from the last function.
@@ -130,7 +129,7 @@ namespace MZZT.DarkForces {
 					}
 					UpdateFlags updateFlags = (UpdateFlags)intUpdateFlags;
 
-					Vector3 rotationSpeed = new Vector3();
+					Vector3 rotationSpeed = new();
 					if ((updateFlags & UpdateFlags.Pitch) > 0 && logic.TryGetValue("D_PITCH", out string[] strPitch) &&
 						float.TryParse(strPitch[0], out float pitchSpeed)) {
 

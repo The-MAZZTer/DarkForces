@@ -1,40 +1,8 @@
-﻿using MZZT.DataBinding;
+﻿using MZZT.Data.Binding;
 using System.IO;
 
 namespace MZZT.DarkForces.Showcase {
 	public class DataboundResourceDumperInputs : DataboundList<string> {
-		private void Start() {
-			this.Refresh();
-		}
-
-		private bool userInput = true;
-		public void Refresh() {
-			this.userInput = false;
-			this.Clear();
-			this.AddRange(this.GetComponentInParent<Databound<ResourceDumperSettings>>().Value.Inputs);
-			this.userInput = true;
-		}
-
-		public override void Insert(int index, string item) {
-			base.Insert(index, item);
-
-			if (!this.userInput) {
-				return;
-			}
-
-			this.GetComponentInParent<Databound<ResourceDumperSettings>>().Value.Inputs.Insert(index, item);
-		}
-
-		public override void RemoveAt(int index) {
-			base.RemoveAt(index);
-
-			if (!this.userInput) {
-				return;
-			}
-
-			this.GetComponentInParent<Databound<ResourceDumperSettings>>().Value.Inputs.RemoveAt(index);
-		}
-
 		private string lastAddPath;
 		public async void AddFileAsync() {
 			if (string.IsNullOrEmpty(this.lastAddPath)) {

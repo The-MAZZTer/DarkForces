@@ -18,6 +18,8 @@ namespace MZZT.DarkForces.FileFormats {
 		/// </summary>
 		[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
 		private struct Header {
+			private static readonly char[] magic = "Creative Voice File\x1A".ToCharArray();
+
 			/// <summary>
 			/// The magic value.
 			/// </summary>
@@ -41,7 +43,7 @@ namespace MZZT.DarkForces.FileFormats {
 			/// </summary>
 			public bool IsValid {
 				get {
-					if (new string(this.FileType) != "Creative Voice File\x1A") {
+					if (!magic.SequenceEqual(this.FileType)) {
 						return false;
 					}
 					if (this.Size != Marshal.SizeOf<Header>()) {
@@ -54,7 +56,7 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 				set {
 					if (value) {
-						this.FileType = "Creative Voice File\x1A".ToCharArray();
+						this.FileType = magic;
 						this.Size = (ushort)Marshal.SizeOf<Header>();
 						this.Checksum = unchecked((ushort)(~this.Version + 0x1234));
 					} else {
@@ -294,6 +296,24 @@ namespace MZZT.DarkForces.FileFormats {
 				SilenceLength = this.SilenceLength,
 				Type = this.Type
 			};
+
+			public Wave ToWave() {
+				byte bitsPerSample = this.BitsPerSample;
+				byte channels = this.Channels;
+				byte[] data = this.Data;
+				if (this.Type == BlockTypes.Silence) {
+					bitsPerSample = 8;
+					channels = 1;
+					data = Enumerable.Repeat<byte>(0x80, this.SilenceLength * channels * bitsPerSample / 8).ToArray();
+				}
+
+				return new Wave() {
+					BitsPerSample = bitsPerSample,
+					Channels = channels,
+					SampleRate = this.Frequency,
+					Data = data
+				};
+			}
 		}
 
 		/// <summary>
@@ -309,15 +329,15 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A marker from the VOC.
 		/// </summary>
-		public struct MarkerData {
+		public class MarkerData {
 			/// <summary>
 			/// Which audio block, based on index, this marker comes before.
 			/// </summary>
-			public int BeforeAudioDataIndex;
+			public int BeforeAudioDataIndex { get; set; }
 			/// <summary>
 			/// The marker data.
 			/// </summary>
-			public ushort Value;
+			public ushort Value { get; set; }
 		}
 
 		/// <summary>
@@ -328,15 +348,15 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// Comments from the VOC.
 		/// </summary>
-		public struct Comment {
+		public class Comment {
 			/// <summary>
 			/// Which audio block, based on index, this comment comes before.
 			/// </summary>
-			public int BeforeAudioDataIndex;
+			public int BeforeAudioDataIndex { get; set; }
 			/// <summary>
 			/// The comment.
 			/// </summary>
-			public string Value;
+			public string Value { get; set; }
 		}
 
 		/// <summary>
@@ -738,7 +758,7 @@ namespace MZZT.DarkForces.FileFormats {
 		}
 
 		public IEnumerable<Wave> ToWaves() {
-			List<AudioData> datas = this.AudioBlocks;
+			List<AudioData> datas = this.AudioBlocks.ToList();
 			for (int i = 0; i < datas.Count; i++) {
 				AudioData data = datas[i];
 				if (data.Type == BlockTypes.Silence) {
@@ -753,6 +773,7 @@ namespace MZZT.DarkForces.FileFormats {
 						break;
 					}
 
+					data = data.Clone();
 					data.BitsPerSample = source.BitsPerSample;
 					data.Channels = source.Channels;
 					data.Codec = source.Codec;
@@ -761,8 +782,8 @@ namespace MZZT.DarkForces.FileFormats {
 					data.Data = Enumerable.Repeat<byte>(0x80, data.SilenceLength * data.Channels * data.BitsPerSample / 8).ToArray();
 				}
 
-				if (data.RepeatCount > 1) {
-					int count = Math.Min(5, data.RepeatCount);
+				if (data.RepeatCount > 0 && data.RepeatStart >= 0) {
+					int count = Math.Min(4, data.RepeatCount);
 					for (int j = 1; j < count; j++) {
 						datas.InsertRange(i + 1, datas.Skip(data.RepeatStart).Take(i - data.RepeatStart + 1));
 					}

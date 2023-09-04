@@ -21,15 +21,15 @@ The Unity specific components should be compatible with the latest versions of U
 
 ## Build
 
-I have only tested building on Windows. YMMV with Unity Editor for Mac/Linux though I am not doing anything platform specific.
+Currently I am using a Windows-only library for some graphics manipulation. I intend to change this in the future. If you want to pull it out and disable the functionality, it should be possible (it is used to read/write PNGs mainly).
 
-To build the file format DLL, open the solution file in the MZZT.DarkForces folder and build the MZZT.DarkForces.FileFormats project for Release AnyCPU. The DLL files will be output in Assets\Dark Forces\File Formats, ready for use in Unity. You can take them from there and use them elsewhere.
+To build the file format DLL, open the solution file in the MZZT.DarkForces folder with Visual Studio 2022 (2019 will probably work as well) and build the MZZT.DarkForces.FileFormats project for Release AnyCPU (use the dropdown at the top of Visual Studio which may say Debug or Release to switch). The DLL files will be output in Assets\Dark Forces\File Formats, ready for use in Unity, which should now be able to open and run the project successfully. You can also take the DLLs from there and use them in other projects if you want.
 
-To build the Unity showcase project, first build the file format DLL as above. Then you can add the folder where you checked out this project to Unity Hub as a project and open it using Unity Editor 2021. You can then build using the File > Build Settings... menu option in Unity Editor. Only Windows build has been tested.
+To build the Unity showcase project, first build the file format DLL as above. Then you can open the checkout folder using Unity Editor 2022.3. You can then build using the File > Build Settings... menu option in Unity Editor.
 
-You can try building for other platforms. Current limitations are the need to directly access local files and folders (so mobile may not work, WebGL definitely won't) and SkiaSharp is currently used for the Map Generator and that has limited platform support (more platforms could be added with a newer version, or just porting the code to use ImageSharp, or just removing the Map Generator altogether). Also you will need a keyboard and mouse on the platform you build for.
+Currently the showcase is locked to Windows platform as it uses the System.Drawing GDI wrapper to import/export palettized PNGs. SkiaSharp is also used for image manipulation in other places. This could be removed or changed to improve platform compatibility as none of it is critical except to a couple features like the map generator which rely heavily on them. Another concern is the use of local file and folder .NET APIs for things like the Open/Save dialog boxes which may prevent some targets like WebGL. A keyboard and mouse are also required but the modern keybind system is in use in Unity so this can be changed fairly easily.
 
-## Showcase
+## Contents
 
 Included in this repo is a Unity project holding all the Unity-specific code in the form of a showcase to help show it all off. A bunch of different scenes are included to showcase what is possible with the included library.
 
@@ -37,20 +37,19 @@ You need to own a copy of Dark Forces on Steam or from the original CD release. 
 
 Upon running the showcase you may be asked to select the Dark Forces install location if an installed Steam copy can't be found. Simply find and select the DARK.GOB file using the included file browser.
 
-From the main menu you're welcome to explore. You can add mods/level files to allow the showcase to utilize community-made content in addition to the built-in original Dark Forces content.
+From the main menu you're welcome to explore the different tools to see what capabilites are included in the code. You can add mods/level files to explore community-made content in addition to the original Dark Forces content.
 
-All the tools have been tested with the default Dark Forces content. Mods may or may not work, feel free to add an issue report.
+All the tools have been tested with the default Dark Forces content. Mods may or may not work, feel free to add an issue report if content that works in Dark Forces does not work in one of the tools here.
 
-## Current Features
+## Features
 
-* Dark Forces file format DLLs that can be dropped into any .NET or Unity project.
-* Can load all game data files, including the Landru (menu/cutscene) data files and in-game data files.
-* Allows reading of GOB/LFD container files.
-* Helper classes to generate materials from textures, geometry from levels, sprites from objects, models from 3DOs, animations from VUEs, audio from VOCs and GMDs.
+* Dark Forces file format DLLs that can be dropped into any .NET or Unity project to provide support for reading and writing many Dark Forces file formats, including cutscene and container file formats.
+* Helper classes to generate materials from textures, geometry from levels, sprites from objects, models from 3DOs, animations from VUEs, audio from VOCs and GMDs, and more.
 * Tolerant to issues when loading/saving data files, will log warnings but keep going if possible.
-* Tool to generate automap-like view (or level editor view) of a level.]
-* Tool to generate randomized object placements in a level.
-* Tool to dump resources from GOBs/LFDs, and/or convert them to modern formats (PNG/MIDI/WAV).
+* Generate automap-like views (or level editor view) of a level.
+* Randomizer! (randomize enemy/object placement, modify basic options of levels) 
+* Dump resources from GOBs/LFDs, and/or convert them to modern formats (PNG/MIDI/WAV).
+* Full-blown editing tools for many DF file formats (textures, sprites, animations, audio, and more!)
 
 I dropped some helper classes unrelated to Dark Forces into the Unity project which I used in the showcase. These may be useful to unrelated projects as well.
 
@@ -102,6 +101,8 @@ A quick breakdown of where everything is.
 
 **Assets\\Dark Forces Showcase\\Resource Dumper\\** - Code and assets relating to the Resource Dumper tool.
 
+**Assets\\Dark Forces Showcase\\Resource Editor\\** - Code and assets relating to the Resource Editor tool.
+
 **Assets\\Data Binding\\** - General purpose code and editor support for data binding C# objects to the Unity GameObject hierarchy. Supports databinding entire objects with overrideded subclass logic to render the objects visually, or binding individual members to form controls without needing to write custom code.
 
 **Assets\\Data Binding\\List\\** - Databinds a list of objects to a Unity GameObject, automaticallty creating and destroying child GameObjects using a prefab template as items are added and removed from the list. I've found this code endlessly useful.
@@ -140,36 +141,28 @@ I'm doing this all as an opportunity to teach myself more Unity skills and as we
 
 You're welcome to fork this project. You may issue pull requests for things like bug fixes, but if you're taking this code to use for some other project it may not make sense to fold the code back in.
 
-## Stuff I'm Working On
+## Future Plans
 
-* Add more Unity helper classes and showcases such as data import/export tool and resource viewer/playback, and cutscene browser/playback.
+I want to add more tools such as:
+* Cutscene player
+* Catwalk 3DO generator (takes a sector and generates a 3DO to precisely fit it, and allows you to choose textures for it, then adds it to your level for you).
+* Resource validator (verify file format library can load/save files properly, determine compression ratio when resaving files)
 
-## Stuff I See Could Use Improvement
+I want to bring this showcase to other platforms such as WebAssembly. This will require dropping the current method of importing/exporting images like PNGs, at least outside of Windows. I will probably need to switch to manually writing BMPs or something which is less than ideal, but I cannot find a working image library that supports 8-bit PNGs. I may try to find one or two more.
 
-* Relace SkiaSharp with ImageSharp for the Map Generator feature. I may not actually do this since the license is more restrictive (still fine for pure OSS). It does make building cross-platform easier, but SkiaSharp has a lot of native binaries even for WebGL now, they'd just need to be set up to work in Unity.
-* Code to save all Dark Forces data file types is present but still needs testing and bug fixing.
-* Code to create/modify GOB/LFD files is very basic and could use improvement.
+In addition, WebAssembly support will require working around limitations regarding file loading and saving. It is likely possible to allow the user to select their Dark Forces folder so the showcase can access it. Then, the internal file browser can be augmented to load files from the internal browser APIs. Finally, saving files from within the tool should download them through the browser.
+
+## Lower Priority Tasks
+
+* Replace the image manipulation libratgies used with a different library for palettized image import/export (libpng?). Currently a few different ones I've tried don't support palettized image loading/saving properly. At worst I could switch to manually generating/consuming BMPs, and generating 32-bit PNG exports intread for users who don't care about reimporting them later.
 * Find a better MIDI soundfont. DOSBox's sounds nice...
-* Add collision support to the Level Explorer. The colliders are in place, just need to implement the movement properly in the camera script.
-* iMUSE support for the music to transition between stalk/fight modes. No idea how this works in practice though. MIDI/GMID can have "markers" in the music, which IIRC is how it is done, but I've never dug into it. In addition there's 
-* Load INF data in Level Explorer and do things like play ambient sounds or even add some of the INF logic in.
+* iMUSE support for the music to transition between stalk/fight modes. No idea how this works in practice though. MIDI/GMID can have "markers" in the music, which IIRC is how it is done, but I've never dug into it. In addition there's the question of if the library I'm using can even support that.
+* Load INF data in Level Explorer and do things like play ambient sounds or even add some of the INF logic in. This will need to be done for the randomizer feature to allow for mirror mode (some scripts will need to move a different direction!)
 * In the Level Explorer, do sign textures in shader. Currently they're rendered on a separate polygon slighty in front. This means culling is not done properly if the sign overlaps the edge of the wall.
 * Look at adapting [this](https://medium.com/@jmickle_/writing-a-doom-style-shader-for-unity-63fa13678634) for Dark Forces colormaps. Current implementation generates 32-bit textures on the CPU side.
 * Add support for reading/writing the PlayStation port file formats (mostly they took the text-based file formats like 3DOs and developed binary formats that otherwise are very similar). Would be fun to see if mods could be converted to run on the PlayStation port.
 
-## Crazy Ideas You Could Make With This, Maybe
-
-* Tool which adapts any VUE to adjust it for a different start or end point, and adjusts the VUE to be relative to that point.
-* Tool which adds additional frames to VUEs in between existing ones to make the animation better (can Dark Forces support this?).
-* Tool to automatically generate Alt Y 3DOs based on selected sector shape and desired thickness of platform, and textures to use.
-* Tool which detects lines-of-sight in a level that would result in HoM effect in Dark Forces (draw distance or over 40 portals in a row at once).
-* Tool which detects overlapping geometry.
-* Tool which converts Doom resources to Dark Forces or vice versa.
-* Unity-based Level Editor for Dark Forces levels with real-time 3D preview.
-* Tool to convert Dark Forces levels to other game engines. CTs rescuing hostages on SECBASE? Sure, why not?
-* Bring mousebots 3DOs and the joy they provide to all games!
-
-## Crazy Ideas Which Were Made With This, For Sure
+## Used In Other Project
 
 * LevelExplorer was converted into [an editor map preview](https://github.com/df21-net/DarkForcesRenderer) for [WDFUSE](https://github.com/df21-net/editor) by [Karjala22](https://github.com/Karjala22).
 
@@ -194,7 +187,7 @@ Sample code for line intersections - https://github.com/Habrador/Computational-g
 
 More details are in the LICENSE file.
 
-These dependencies are not required for use of the Dark Forces file format library. CSharpSynth is required for GMID playback in Unity. ImageSharp is required for the features which draw dynamic images (such as the Map Generator).
+These dependencies are not required for use of the Dark Forces file format library. CSharpSynth is required for GMID playback in Unity. SkiaSharp is required for the features which draw dynamic images (such as the Map Generator).
 
 ## Thanks
 

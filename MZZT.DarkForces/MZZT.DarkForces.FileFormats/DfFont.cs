@@ -142,6 +142,11 @@ namespace MZZT.DarkForces.FileFormats {
 
 		public override bool CanLoad => true;
 
+		public DfFont() : base() {
+			this.First = 33;
+			this.Height = 8;
+		}
+
 		public override async Task LoadAsync(Stream stream) {
 			this.ClearWarnings();
 
@@ -190,7 +195,7 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 		}
 
-		object ICloneable.Clone() => throw new NotImplementedException();
+		object ICloneable.Clone() => this.Clone();
 		public DfFont Clone() {
 			DfFont clone = new() {
 				First = this.First,

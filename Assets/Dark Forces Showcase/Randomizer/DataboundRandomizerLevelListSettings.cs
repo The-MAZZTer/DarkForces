@@ -1,41 +1,47 @@
-﻿using MZZT.DataBinding;
+﻿using MZZT.DarkForces.FileFormats;
+using MZZT.Data.Binding;
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MZZT.DarkForces.Showcase {
-	public class DataboundRandomizerLevelListSettings : Databound<RandomizerJediLvlSettings> {
+	public class DataboundRandomizerLevelListSettings : Databind<RandomizerJediLvlSettings> {
 		[SerializeField]
 		private Toggle includeAllSelectedLevels;
 		[SerializeField]
 		private LevelNameList levelList;
 
-		private void Start() {
-			string[] levels = this.Value.Levels;
-			foreach (LevelNameListItem item in this.levelList.Databinders) {
-				string name = LevelLoader.Instance.LevelList.Levels[item.Value].FileName;
-				item.GetComponent<Toggle>().isOn = levels.Contains(name);
-
-				item.GetComponent<Toggle>().onValueChanged.AddListener(value => this.SaveLevelList());
-			}
-		}
-
-		private void SaveLevelList() {
-			this.Value.Levels = this.levelList.Databinders.Where(x => x.GetComponent<Toggle>().isOn).Select(x =>
-				LevelLoader.Instance.LevelList.Levels[x.Value].FileName).ToArray();
-		}
-
-		private void OnEnable() {
-			this.Value = Randomizer.Instance.Settings.JediLvl;
+		protected override void OnEnable() {
+			base.OnEnable();
 
 			this.includeAllSelectedLevels.isOn = !this.Value.LevelCount.Enabled;
 
 			string[] levels = this.Value.Levels;
-			foreach (LevelNameListItem item in this.levelList.Databinders) {
-				string name = LevelLoader.Instance.LevelList.Levels[item.Value].FileName;
-				item.GetComponent<Toggle>().isOn = levels.Contains(name);
+			foreach (IDatabind item in this.levelList.Children) {
+				string name = ((DfLevelList.Level)item.Value).FileName;
+
+				Toggle toggle = DataboundListChildToggle.FindToggleFor(item);
+				toggle.isOn = levels.Contains(name);
 			}
+		}
+
+		protected override void Start() {
+			base.Start();
+
+			string[] levels = this.Value.Levels;
+			foreach (IDatabind item in this.levelList.Children) {
+				string name = ((DfLevelList.Level)item.Value).FileName;
+
+				Toggle toggle = DataboundListChildToggle.FindToggleFor(item);
+				toggle.isOn = levels.Contains(name);
+				toggle.onValueChanged.AddListener(value => this.SaveLevelList());
+			}
+		}
+
+		private void SaveLevelList() {
+			this.Value.Levels = this.levelList.Children.Where(x => DataboundListChildToggle.FindToggleFor(x).isOn).Select(x =>
+				((DfLevelList.Level)x.Value).FileName).ToArray();
 		}
 	}
 }

@@ -208,7 +208,7 @@ namespace MZZT.DataBinding {
 			set => this.SelectedDatabound = this.GetDatabinder(value);
 		}
 
-		public UnityEvent SelectedValueChanged = new UnityEvent();
+		public UnityEvent SelectedValueChanged = new();
 		private Databound<T> lastSelected;
 		private void OnToggleValueChanged(bool value) {
 			if (this.SelectedDatabound == this.lastSelected) {

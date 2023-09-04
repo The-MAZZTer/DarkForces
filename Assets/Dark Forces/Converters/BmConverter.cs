@@ -1,10 +1,14 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using Color = System.Drawing.Color;
 
 namespace MZZT.DarkForces.Converters {
 	public static class BmConverter {
-		public static Texture2D ToTexture(DfBitmap.Page page, byte[] palette, bool keepTextureReadable = false) {
+		public static Texture2D ToTexture(this DfBitmap.Page page, byte[] palette, bool keepTextureReadable = false) {
 			byte[] pixels = page.Pixels;
 
 			int width = page.Width;
@@ -28,18 +32,80 @@ namespace MZZT.DarkForces.Converters {
 			return texture;
 		}
 
-		public static Texture2D ToTexture(DfBitmap.Page page, DfPalette pal, bool forceTransparent, bool keepTextureReadable = false) =>
-			ToTexture(page, PalConverter.ToByteArray(pal, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0), keepTextureReadable);
+		public static Texture2D ToTexture(this DfBitmap.Page page, DfPalette pal, bool forceTransparent, bool keepTextureReadable = false) =>
+			page.ToTexture(pal.ToByteArray(forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0), keepTextureReadable);
 
-		public static Texture2D ToTexture(DfBitmap.Page page, DfPalette pal, DfColormap cmp, int lightLevel, bool forceTransparent, bool bypassCmpDithering, bool keepTextureReadable = false) {
+		public static Texture2D ToTexture(this DfBitmap.Page page, DfPalette pal, DfColormap cmp, int lightLevel, bool forceTransparent, bool bypassCmpDithering, bool keepTextureReadable = false) {
 			if (lightLevel > 31) {
 				lightLevel = 31;
 			} else if (lightLevel < 0) {
 				lightLevel = 0;
 			}
 
-			return ToTexture(page, CmpConverter.ToByteArray(cmp, pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
+			return page.ToTexture(cmp.ToByteArray(pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
 				bypassCmpDithering), keepTextureReadable);
 		}
+
+		public static Bitmap ToBitmap(this DfBitmap.Page page, byte[] pal) {
+			byte[] pixels = page.Pixels;
+
+			int width = page.Width;
+			int height = page.Height;
+
+			Bitmap bitmap = new(width, height, PixelFormat.Format8bppIndexed);
+
+			ColorPalette palette = bitmap.Palette;
+			for (int i = 0; i < palette.Entries.Length; i++) {
+				palette.Entries[i] = Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
+			}
+			bitmap.Palette = palette;
+
+			try {
+				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+				
+				for (int y = 0; y < height; y++) {
+					Marshal.Copy(pixels, width * y, data.Scan0 + data.Stride * (height - y - 1), data.Width);
+				}
+
+				bitmap.UnlockBits(data);
+			} catch (Exception) {
+				bitmap.Dispose();
+				throw;
+			}
+			return bitmap;
+		}
+
+		public static Bitmap ToBitmap(this DfBitmap.Page page, DfPalette pal, bool forceTransparent) =>
+			page.ToBitmap(pal.ToByteArray(forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0));
+
+		public static Bitmap ToBitmap(this DfBitmap.Page page, DfPalette pal, DfColormap cmp, int lightLevel, bool forceTransparent, bool bypassCmpDithering) {
+			if (lightLevel > 31) {
+				lightLevel = 31;
+			} else if (lightLevel < 0) {
+				lightLevel = 0;
+			}
+
+			return page.ToBitmap(cmp.ToByteArray(pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
+				bypassCmpDithering));
+		}
+
+		/*public static MagickImage ToMagick(this DfBitmap.Page page, byte[] palette) {
+			MagickImage image = new(new MagickColor(0, 0, 0, 0), page.Width, page.Height) {
+				ColormapSize = 256,
+				ColorType = ColorType.Palette,
+				Format = MagickFormat.Raw,
+				HasAlpha = true
+			};
+			image.PreserveColorType();
+			for (int i = 0; i < 256; i++) {
+				image.SetColormapColor(i, new MagickColor(palette[i * 4], palette[i * 4 + 1], palette[i * 4 + 2], palette[i * 4 + 3]));
+			}
+			image.Settings.SetDefine(MagickFormat.Png8, "preserve-colormap", "true");
+
+			using (IPixelCollection<byte> pixels = image.GetPixels()) {
+				pixels.SetBytePixels(page.Pixels);
+			}
+			return image;
+		}*/
 	}
 }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 603840923288153200}
   - component: {fileID: 2643660877495938847}
   - component: {fileID: 4030121333605885985}
+  - component: {fileID: 6169077281984546719}
   m_Layer: 5
   m_Name: Remove
   m_TagString: Untagged
@@ -122,19 +123,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 603840923288153200}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2258435591256264465}
-        m_TargetAssemblyTypeName: MZZT.DarkForces.Showcase.ResourceDumperInput, Assembly-CSharp
-        m_MethodName: Delete
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &4030121333605885985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,6 +150,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &6169077281984546719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24140303268135556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 041477ce4ed94d544963453cf7eea919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  obj: {fileID: 0}
 --- !u!1 &2358009161255969939
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,6 +175,7 @@ GameObject:
   - component: {fileID: 2590948138888855179}
   - component: {fileID: 6313338319738604412}
   - component: {fileID: 3834075554157554529}
+  - component: {fileID: 2228442693010326871}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -317,6 +320,20 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &2228442693010326871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2358009161255969939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e787cd91d4f65004b82fde1c804ea71f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  databinder: {fileID: 6315173172703544544}
+  autoApplyOnChange: 0
 --- !u!1 &4468930466581762716
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,7 +479,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2850251709922708896}
   - component: {fileID: 7904009137967675656}
-  - component: {fileID: 2258435591256264465}
+  - component: {fileID: 6315173172703544544}
   m_Layer: 5
   m_Name: Input
   m_TagString: Untagged
@@ -518,18 +535,27 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
---- !u!114 &2258435591256264465
+--- !u!114 &6315173172703544544
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6650572057100593700}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eae9368effd8db645b312740caf6fa7a, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 
-  toggle: {fileID: 0}
-  nameField: {fileID: 6313338319738604412}
+  valueStorageMethod: 1
+  playerPrefsKey: 
+  beforeValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  valueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  parent: {fileID: 0}
+  memberName: 
+  changeDetectionMode: 16
+  valueChangedEventName: 

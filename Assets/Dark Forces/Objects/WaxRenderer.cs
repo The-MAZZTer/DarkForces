@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Vector3 = UnityEngine.Vector3;
 
 namespace MZZT.DarkForces {
@@ -40,7 +41,7 @@ namespace MZZT.DarkForces {
 			this.frames = wax.Waxes[0].Sequences.Select(x => x.Frames[0]).ToArray();
 
 			this.sprites = this.frames.Select(x => ResourceCache.Instance.ImportFrame(LevelLoader.Instance.Palette,
-				LevelLoader.Instance.ColorMap, x, lightLevel)).ToArray();
+				lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, x, lightLevel)).ToArray();
 
 			SpriteRenderer renderer = this.gameObject.AddComponent<SpriteRenderer>();
 			renderer.color = Color.white;
@@ -57,10 +58,11 @@ namespace MZZT.DarkForces {
 			euler = new Vector3(-euler.x, euler.y, euler.z);
 			Vector3 forward = Quaternion.Euler(euler) * Vector3.forward;
 			Vector3 camera = -Camera.main.transform.forward;
+			camera = new Vector3(camera.x, 0, camera.z);
 			float angle = Vector3.SignedAngle(camera, forward, Vector3.up);
 			int index = (int)((-angle + 360 + 5.625) % 360 / 11.25f);
 
-			renderer.flipX = this.frames[index].Flip;
+			//renderer.flipX = this.frames[index].Flip;
 			renderer.sprite = this.sprites[index];
 		}
 

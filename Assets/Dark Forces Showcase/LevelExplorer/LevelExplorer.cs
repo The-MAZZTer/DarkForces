@@ -6,10 +6,12 @@ namespace MZZT.DarkForces.Showcase {
 	/// Script which powers the Level Explorer showcase.
 	/// </summary>
 	public class LevelExplorer : Singleton<LevelExplorer> {
+		public static string StartLevel { get; set; }
+
 		private async void Start() {
 			// This is here in case you run directly from the LevelExplorer sccene instead of the menu.
 			if (!FileLoader.Instance.Gobs.Any()) {
-				await FileLoader.Instance.LoadStandardGobFilesAsync();
+				await FileLoader.Instance.LoadStandardFilesAsync();
 			}
 
 			await PauseMenu.Instance.BeginLoadingAsync();
@@ -20,8 +22,19 @@ namespace MZZT.DarkForces.Showcase {
 
 			await LevelLoader.Instance.ShowWarningsAsync("JEDI.LVL");
 
-			if (LevelLoader.Instance.CurrentLevelIndex >= 0) {
-				await this.LoadAndRenderLevelAsync(LevelLoader.Instance.CurrentLevelIndex);
+			int index = -1;
+			if (StartLevel != null) {
+				index = LevelLoader.Instance.LevelList.Levels.TakeWhile(x => string.Compare(x.FileName, StartLevel, true) != 0).Count();
+				if (index >= LevelLoader.Instance.LevelList.Levels.Count) {
+					index = -1;
+				}
+				StartLevel = null;
+			}
+			if (index < 0 && LevelLoader.Instance.CurrentLevelIndex >= 0) {
+				index = LevelLoader.Instance.CurrentLevelIndex;
+			}
+			if (index >= 0) {
+				await this.LoadAndRenderLevelAsync(index);
 			}
 
 			PauseMenu.Instance.EndLoading();

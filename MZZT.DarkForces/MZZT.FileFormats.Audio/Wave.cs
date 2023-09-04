@@ -50,19 +50,19 @@ namespace MZZT.FileFormats {
 					if (this.Subchunk1Size != 16) {
 						return false;
 					}
-					if (new string(this.Subchunk1Id) != "data") {
+					if (new string(this.Subchunk2Id) != "data") {
 						return false;
 					}
 					return true;
 				}
 				set {
-					this.ChunkId = "RIFF".ToCharArray();
-					this.Format = "WAVE".ToCharArray();
-					this.Subchunk1Id = "fmt ".ToCharArray();
-					this.AudioFormat = AudioFormats.Pcm;
-					this.Subchunk1Size = 16;
-					this.Subchunk2Id = "data".ToCharArray();
-					this.ChunkSize = this.Subchunk2Size + this.Subchunk1Size + 20;
+					this.ChunkId = value ? "RIFF".ToCharArray() : null;
+					this.Format = value ? "WAVE".ToCharArray() : null;
+					this.Subchunk1Id = value ? "fmt ".ToCharArray() : null;
+					this.AudioFormat = value ? AudioFormats.Pcm : 0;
+					this.Subchunk1Size = value ? (uint)16 : 0;
+					this.Subchunk2Id = value ? "data".ToCharArray() : null;
+					this.ChunkSize = value ? this.Subchunk2Size + this.Subchunk1Size + 20 : 0;
 				}
 			}
 		}
@@ -89,13 +89,13 @@ namespace MZZT.FileFormats {
 		public override bool CanLoad => true;
 
 		public override async Task LoadAsync(Stream stream) {
-			Header header = await stream.ReadAsync<Header>();
-			if (!header.IsValid) {
+			this.header = await stream.ReadAsync<Header>();
+			if (!this.header.IsValid) {
 				throw new FormatException($"WAV header invalid or unspported audio format!");
 			}
 
-			this.Data = new byte[header.Subchunk2Size];
-			await stream.ReadAsync(this.Data, 0, (int)header.Subchunk2Size);
+			this.Data = new byte[this.header.Subchunk2Size];
+			await stream.ReadAsync(this.Data, 0, (int)this.header.Subchunk2Size);
 		}
 
 		public override bool CanSave => true;

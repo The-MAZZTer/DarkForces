@@ -1,4 +1,5 @@
 using MZZT.DarkForces.FileFormats;
+using MZZT.Data.Binding;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -78,7 +79,7 @@ namespace MZZT.DarkForces.Showcase {
 			"REVIVE"
 		};
 
-		public static readonly Dictionary<string, string> DEFAULT_TEMPLATES = new Dictionary<string, string>() {
+		public static readonly Dictionary<string, string> DEFAULT_TEMPLATES = new() {
 			["SHIELD"] = "IARMOR.WAX",
 			["BATTERY"] = "IBATTERY.FME",
 			["CLEATS"] = "ICLEATS.FME",
@@ -194,7 +195,7 @@ namespace MZZT.DarkForces.Showcase {
 
 		private async void Start() {
 			if (!FileLoader.Instance.Gobs.Any()) {
-				await FileLoader.Instance.LoadStandardGobFilesAsync();
+				await FileLoader.Instance.LoadStandardFilesAsync();
 			}
 
 			await this.UpdateModTextAsync();
@@ -202,7 +203,7 @@ namespace MZZT.DarkForces.Showcase {
 			Stream jsonStream = await FileLoader.Instance.GetGobFileStreamAsync("RNDMIZER.JSO");
 			if (jsonStream != null) {
 				using (jsonStream) {
-					DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
+					DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 						UseSimpleDictionaryFormat = true
 					});
 

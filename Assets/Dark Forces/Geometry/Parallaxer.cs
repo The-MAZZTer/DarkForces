@@ -6,7 +6,7 @@ namespace MZZT.DarkForces {
 	/// Handles the parallax effect on sky/pit materials.
 	/// </summary>
 	public class Parallaxer : Singleton<Parallaxer> {
-		private readonly static Vector2 PARALLAX_SCALE = new Vector2(1, -1);
+		private readonly static Vector2 PARALLAX_SCALE = new(1, -1);
 
 		/// <summary>
 		/// The parallax to apply in pixels per degree.
@@ -20,7 +20,7 @@ namespace MZZT.DarkForces {
 			this.materials.Clear();
 		}
 
-		private readonly HashSet<Material> materials = new HashSet<Material>();
+		private readonly HashSet<Material> materials = new();
 		/// <summary>
 		/// Add a material to apply parallax to.
 		/// </summary>
@@ -31,9 +31,9 @@ namespace MZZT.DarkForces {
 
 		private void Update() {
 			Camera camera = Camera.main;
-			Vector4 screenSize = new Vector4(Display.main.renderingWidth, Display.main.renderingHeight);
+			Vector4 screenSize = new(Display.main.renderingWidth, Display.main.renderingHeight);
 			foreach (Material material in materials) {
-				Vector4 parallax = new Vector4(
+				Vector4 parallax = new(
 					camera.transform.eulerAngles.y / 360 * this.Parallax.x / material.mainTexture.width * PARALLAX_SCALE.x,
 					camera.transform.eulerAngles.x / 360 * this.Parallax.y / material.mainTexture.height * PARALLAX_SCALE.y
 				);

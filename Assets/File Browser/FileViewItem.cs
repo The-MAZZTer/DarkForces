@@ -1,6 +1,5 @@
-﻿using MZZT.DataBinding;
+﻿using MZZT.Data.Binding;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,14 +8,14 @@ namespace MZZT {
 	/// <summary>
 	/// A file system item.
 	/// </summary>
-	public class FileViewItem : Databound<FileSystemItem>, IPointerClickHandler {
-		[SerializeField]
+	public class FileViewItem : Databind<FileSystemItem>, IPointerClickHandler {
+		[Header("File View Item"), SerializeField]
 		private FileView childView = null;
 		/// <summary>
 		/// A FileView for the current file system item.
 		/// </summary>
 		public FileView ChildView => this.childView;
-		[SerializeField]
+		[SerializeField] 
 		private Toggle expando = null;
 		[SerializeField]
 		private GameObject collapsed = null;
@@ -24,35 +23,33 @@ namespace MZZT {
 		private GameObject expanded = null;
 		[SerializeField]
 		private Toggle node = null;
-		[SerializeField]
-		private LayoutElement size = null;
+		//[SerializeField]
+		//private LayoutElement size = null;
 		/// <summary>
 		/// The Toggle for the current node.
 		/// </summary>
 		public Toggle Node => this.node;
 
-		public override void Invalidate() {
-			base.Invalidate();
+		protected override void OnInvalidate() {
+			/*if (this.size != null) {
+				this.size.minWidth = this.size.preferredWidth = LayoutUtility.GetPreferredWidth((RectTransform)this.size.transform);
+			}*/
+
+			if (this.childView != null) {
+				// Recurse current settings down to children.
+				FileView parent = (FileView)this.Parent;
+				if (parent != null) {
+					this.childView.AllowNavigateGob = parent.AllowNavigateGob;
+					this.childView.AllowNavigateLfd = parent.AllowNavigateLfd;
+					this.childView.FileSearchPatterns = parent.FileSearchPatterns;
+					this.childView.ToggleGroup = parent.ToggleGroup;
+					this.childView.Container = this.Value;
+				}
+			}
+
+			base.OnInvalidate();
 
 			this.gameObject.name = this.Value.DisplayName;
-
-			if (this.size != null) {
-				this.size.minWidth = this.size.preferredWidth = LayoutUtility.GetPreferredWidth((RectTransform)this.size.transform);
-			}
-
-			if (this.childView == null) {
-				return;
-			}
-
-			// Recurse current settings down to children.
-			FileView parent = this.GetComponentsInParent<FileView>(true).FirstOrDefault();
-			if (parent != null) {
-				this.childView.AllowNavigateGob = parent.AllowNavigateGob;
-				this.childView.AllowNavigateLfd = parent.AllowNavigateLfd;
-				this.childView.FileSearchPatterns = parent.FileSearchPatterns;
-				this.childView.ToggleGroup = parent.ToggleGroup;
-				this.childView.Container = this.Value;
-			}
 		}
 
 		/// <summary>
@@ -123,7 +120,7 @@ namespace MZZT {
 		/// </summary>
 		/// <param name="eventData">Click event data.</param>
 		public async void OnPointerClick(PointerEventData eventData) {
-			this.Toggle.isOn = true;
+			DataboundListChildToggle.FindToggleFor(this).isOn = true;
 
 			// Detect double click.
 			if (Time.fixedTime - this.lastClickTime <= 0.5f) {

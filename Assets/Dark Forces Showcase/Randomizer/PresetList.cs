@@ -1,5 +1,5 @@
 using MZZT.DarkForces.FileFormats;
-using MZZT.DataBinding;
+using MZZT.Data.Binding;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,7 +36,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.applyButton.interactable = value?.Value.Settings != null;
 		}
 
-		private void Start() {
+		protected override void Start() {
 			this.AddDefaults();
 			this.AddFromPlayerPrefs();
 		}
@@ -79,7 +79,7 @@ namespace MZZT.DarkForces.Showcase {
 			});
 
 			int count = 0;
-			foreach ((Preset preset, int i) in this.Values.Where(x => !x.ReadOnly).Select((x, i) => (x, i))) {
+			foreach ((Preset preset, int i) in this.Value.Where(x => !x.ReadOnly).Select((x, i) => (x, i))) {
 				PlayerPrefs.SetString($"Randomizer.Prefab.{i}.Name", preset.Name);
 				
 				StringWriter stringWriter = new();
@@ -129,7 +129,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 			this.lastImportPath = Path.GetDirectoryName(path);
 
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
+			DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 				UseSimpleDictionaryFormat = true
 			});
 
@@ -138,7 +138,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			Stream stream;
 			if (File.Exists(this.lastImportPath)) {
-				using (FileStream gobStream = new FileStream(this.lastImportPath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				using (FileStream gobStream = new(this.lastImportPath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 					DfGobContainer gob = await DfGobContainer.ReadAsync(gobStream);
 					stream = await gob.GetFileStreamAsync(Path.GetFileName(path), gobStream);
 				}
@@ -158,7 +158,7 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			Preset preset = new Preset {
+			Preset preset = new() {
 				Name = Path.GetFileNameWithoutExtension(path),
 				Settings = settings,
 				ReadOnly = false
@@ -192,11 +192,11 @@ namespace MZZT.DarkForces.Showcase {
 			}
 			this.lastImportPath = Path.GetDirectoryName(path);
 
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
+			DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 				UseSimpleDictionaryFormat = true
 			});
 
-			using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
+			using (FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
 				try {
 					serializer.WriteObject(stream, preset.Settings);
 				} catch (Exception) {
@@ -207,7 +207,7 @@ namespace MZZT.DarkForces.Showcase {
 		public void Save() {
 			RandomizerSettings settings = Randomizer.Instance.Settings.Clone();
 
-			Preset preset = new Preset {
+			Preset preset = new() {
 				Name = "New Preset",
 				Settings = settings,
 				ReadOnly = false

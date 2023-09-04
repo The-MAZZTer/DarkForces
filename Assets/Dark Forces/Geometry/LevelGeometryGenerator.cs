@@ -48,11 +48,11 @@ namespace MZZT.DarkForces {
 		public async Task GenerateAsync() {
 			this.Clear();
 
-			Stopwatch watch = new Stopwatch();
+			Stopwatch watch = new();
 			watch.Start();
 
 			foreach ((Sector sectorInfo, int i) in LevelLoader.Instance.Level.Sectors.Select((x, i) => (x, i))) {
-				GameObject sector = new GameObject {
+				GameObject sector = new() {
 					name = sectorInfo.Name ?? LevelLoader.Instance.Level.Sectors.IndexOf(sectorInfo).ToString(),
 					layer = LayerMask.NameToLayer("Geometry")
 				};

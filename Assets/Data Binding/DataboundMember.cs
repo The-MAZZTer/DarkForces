@@ -94,6 +94,9 @@ namespace MZZT.DataBinding {
 				} else {
 					throw new NotSupportedException();
 				}
+				if (val == null) {
+					return default;
+				}
 				if (typeof(T) == typeof(string) && val != null) {
 					val = val.ToString();
 				}
@@ -132,7 +135,12 @@ namespace MZZT.DataBinding {
 					if (type.IsEnum) {
 						type = type.GetEnumUnderlyingType();
 					}
-					object newValue = Convert.ChangeType(value, type);
+					object newValue;
+					if (value == null) {
+						newValue = null;
+					} else {
+						newValue = Convert.ChangeType(value, type);
+					}
 
 					if (this.Member is FieldInfo field2) {
 						field2.SetValue(obj, newValue);

@@ -118,7 +118,7 @@ namespace MZZT.DarkForces {
 		/// <returns>A 256 color 32-bit RGBA palette in a byte array.</returns>
 		public byte[] ImportPalette(DfPalette pal, bool transparent = false) {
 			if (!this.importedPalCache.TryGetValue((pal, transparent), out byte[] palette)) {
-				this.importedPalCache[(pal, transparent)] = palette = PalConverter.ToByteArray(pal, transparent);
+				this.importedPalCache[(pal, transparent)] = palette = pal.ToByteArray(transparent);
 			}
 			return palette;
 		}
@@ -174,7 +174,7 @@ namespace MZZT.DarkForces {
 		/// <returns>A 256 color 32-bit RGBA palette in a byte array.</returns>
 		public byte[] ImportPalette(LandruPalette pltt) {
 			if (!this.importedPlttCache.TryGetValue(pltt, out byte[] palette)) {
-				this.importedPlttCache[pltt] = palette = PlttConverter.ToByteArray(pltt);
+				this.importedPlttCache[pltt] = palette = pltt.ToByteArray();
 			}
 			return palette;
 		}
@@ -250,7 +250,7 @@ namespace MZZT.DarkForces {
 			if (!this.importedCmpCache.TryGetValue((pal, cmp, lightLevel, transparent), out byte[] litPalette)) {
 				byte[] palette = this.ImportPalette(pal);
 
-				this.importedCmpCache[(pal, cmp, lightLevel, transparent)] = litPalette = CmpConverter.ToByteArray(cmp, palette, lightLevel, transparent, this.bypassCmpDithering);
+				this.importedCmpCache[(pal, cmp, lightLevel, transparent)] = litPalette = cmp.ToByteArray(palette, lightLevel, transparent, this.bypassCmpDithering);
 			}
 			return litPalette;
 		}
@@ -333,8 +333,8 @@ namespace MZZT.DarkForces {
 				} else {
 					palette = this.ImportPalette(pal, forceTransparent);
 				}
-				
-				this.importedBmCache[(pal, cmp, page, lightLevel, forceTransparent)] = texture = BmConverter.ToTexture(page, palette, keepTextureReadable);
+
+				this.importedBmCache[(pal, cmp, page, lightLevel, forceTransparent)] = texture = page.ToTexture(palette, keepTextureReadable);
 			}
 
 			return texture;
@@ -412,7 +412,7 @@ namespace MZZT.DarkForces {
 			if (!this.importedDeltCache.TryGetValue((pltt, delt), out Texture2D texture)) {
 				byte[] palette = this.ImportPalette(pltt);
 
-				this.importedDeltCache[(pltt, delt)] = texture = DeltConverter.ToTexture(delt, palette, keepTextureReadable);
+				this.importedDeltCache[(pltt, delt)] = texture = delt.ToTexture(palette, keepTextureReadable);
 			}
 
 			return texture;
@@ -486,7 +486,7 @@ namespace MZZT.DarkForces {
 					palette = this.ImportPalette(pal, true);
 				}
 
-				this.importedFmeCache[(pal, cmp, fme, lightLevel)] = sprite = FmeConverter.ToSprite(fme, palette, keepTextureReadable);
+				this.importedFmeCache[(pal, cmp, fme, lightLevel)] = sprite = fme.ToSprite(palette, keepTextureReadable);
 			}
 
 			return sprite;
@@ -796,47 +796,7 @@ namespace MZZT.DarkForces {
 		/// <returns>The generated AnimationClip.</returns>
 		public AnimationClip ImportVue(VueObject vue) {
 			if (!this.importedVueCache.TryGetValue(vue, out AnimationClip clip)) {
-				Matrix4x4[] transform = vue.Frames.Select(x => x.ToUnity()).ToArray();
-
-				// We could be tweaking in/outs for keyframes but I didn't go that far.
-				clip = new AnimationClip {
-					legacy = true
-				};
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localPosition)}.{nameof(Vector3.x)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i, x.m03 * LevelGeometryGenerator.GEOMETRY_SCALE)).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localPosition)}.{nameof(Vector3.y)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i, x.m23 * LevelGeometryGenerator.GEOMETRY_SCALE)).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localPosition)}.{nameof(Vector3.z)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i, x.m13 * LevelGeometryGenerator.GEOMETRY_SCALE)).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localScale)}.{nameof(Vector3.x)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i,
-					new Vector4(x.m00, x.m10, x.m20, x.m30).magnitude)).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localScale)}.{nameof(Vector3.y)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i,
-					new Vector4(x.m01, x.m11, x.m21, x.m31).magnitude)).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localScale)}.{nameof(Vector3.z)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i,
-					new Vector4(x.m02, x.m12, x.m22, x.m32).magnitude)).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localRotation)}.{nameof(Quaternion.w)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i,
-					Quaternion.LookRotation(new Vector3(x.m01, x.m21, x.m11), new Vector3(x.m02, x.m22, x.m12)).w)
-					).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localRotation)}.{nameof(Quaternion.x)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i,
-					Quaternion.LookRotation(new Vector3(x.m01, x.m21, x.m11), new Vector3(x.m02, x.m22, x.m12)).x)
-					).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localRotation)}.{nameof(Quaternion.y)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i,
-					Quaternion.LookRotation(new Vector3(x.m01, x.m21, x.m11), new Vector3(x.m02, x.m22, x.m12)).y)
-					).ToArray()));
-				clip.SetCurve("", typeof(Transform), $"{nameof(Transform.localRotation)}.{nameof(Quaternion.z)}",
-					new AnimationCurve(transform.Select((x, i) => new Keyframe(i,
-					Quaternion.LookRotation(new Vector3(x.m01, x.m21, x.m11), new Vector3(x.m02, x.m22, x.m12)).z)
-					).ToArray()));
-
-				clip.EnsureQuaternionContinuity();
-
-				this.importedVueCache[vue] = clip;
+				this.importedVueCache[vue] = clip = vue.ToClip();
 			}
 
 			return clip;
@@ -1059,6 +1019,49 @@ namespace MZZT.DarkForces {
 		public void ClearGeneralMidis() {
 			this.gmdCache.Clear();
 			this.gmidCache.Clear();
+		}
+
+		public Task<T> GetAsync<T>(string lfd, string filename) where T : IDfFile {
+			Type type = typeof(T);
+			if (type == typeof(LandruAnimation)) {
+				return this.GetAnimationAsync(lfd, filename) as Task<T>;
+			} else if (type == typeof(CreativeVoice)) {
+				return this.GetCreativeVoiceAsync(lfd, filename) as Task<T>;
+			} else if (type == typeof(LandruDelt)) {
+				return this.GetDeltAsync(lfd, filename) as Task<T>;
+			} else if (type == typeof(LandruFont)) {
+				return this.GetFontAsync(lfd, filename) as Task<T>;
+			} else if (type == typeof(DfGeneralMidi)) {
+				return this.GetGeneralMidi(lfd, filename) as Task<T>;
+			} else if (type == typeof(LandruPalette)) {
+				return this.GetPaletteAsync(lfd, filename) as Task<T>;
+			}
+			return null;
+		}
+		public Task<T> GetAsync<T>(string filename) where T : IDfFile {
+			Type type = typeof(T);
+			if (type == typeof(Df3dObject)) {
+				return this.Get3dObjectAsync(filename) as Task<T>;
+			} else if (type == typeof(DfBitmap)) {
+				return this.GetBitmapAsync(filename) as Task<T>;
+			} else if (type == typeof(DfColormap)) {
+				return this.GetColormapAsync(filename) as Task<T>;
+			} else if (type == typeof(CreativeVoice)) {
+				return this.GetCreativeVoiceAsync(filename) as Task<T>;
+			} else if (type == typeof(DfFont)) {
+				return this.GetFontAsync(filename) as Task<T>;
+			} else if (type == typeof(DfFrame)) {
+				return this.GetFrameAsync(filename) as Task<T>;
+			} else if (type == typeof(DfGeneralMidi)) {
+				return this.GetGeneralMidi(filename) as Task<T>;
+			} else if (type == typeof(DfPalette)) {
+				return this.GetPaletteAsync(filename) as Task<T>;
+			} else if (type == typeof(AutodeskVue)) {
+				return this.GetVueAsync(filename) as Task<T>;
+			} else if (type == typeof(DfWax)) {
+				return this.GetWaxAsync(filename) as Task<T>;
+			}
+			return null;
 		}
 		
 		/// <summary>

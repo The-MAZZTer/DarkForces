@@ -1,4 +1,4 @@
-using MZZT.DataBinding;
+using MZZT.Data.Binding;
 using System.IO;
 using UnityEngine;
 
@@ -13,14 +13,11 @@ namespace MZZT.DarkForces.Showcase {
 				if (this.FilePath == null) {
 					return null;
 				}
-				switch (Path.GetExtension(this.FilePath).ToUpper()) {
-					case ".GOB":
-						return "Any";
-					case ".LFD":
-						return null;
-					default:
-						return this.DisplayName;
-				}
+				return Path.GetExtension(this.FilePath).ToUpper() switch {
+					".GOB" => "Any",
+					".LFD" => null,
+					_ => this.DisplayName,
+				};
 			}
 		}
 
@@ -29,13 +26,10 @@ namespace MZZT.DarkForces.Showcase {
 				if (this.FilePath == null) {
 					return null;
 				}
-				switch (Path.GetExtension(this.FilePath).ToUpper()) {
-					case ".GOB":
-					case ".LFD":
-						return "\uf1c4";
-					default:
-						return "\ue24d";
-				}
+				return Path.GetExtension(this.FilePath).ToUpper() switch {
+					".GOB" or ".LFD" => "\uf1c4",
+					_ => "\ue24d",
+				};
 			}
 		}
 	}

@@ -28,7 +28,7 @@ namespace MZZT.DarkForces {
 			await floorCeiling.RenderAsync(sector);
 
 			foreach ((Wall wallInfo, int j) in sector.Walls.Select((x, i) => (x, i))) {
-				GameObject wall = new GameObject() {
+				GameObject wall = new() {
 					name = j.ToString(),
 					layer = LayerMask.NameToLayer("Geometry")
 				};

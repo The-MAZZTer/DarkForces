@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
+using File = System.IO.File;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -110,7 +111,7 @@ namespace MZZT.DarkForces {
 		}
 
 		private readonly Dictionary<string, List<ResourceLocation>> gobMap = new();
-		private readonly Dictionary<string, LfdInfo> lfdOverrides = new();
+		private readonly Dictionary<string, LfdInfo> lfdFiles = new();
 		private readonly Dictionary<string, string[]> gobFiles = new();
 
 		/// <summary>
@@ -119,13 +120,18 @@ namespace MZZT.DarkForces {
 		public void Clear() {
 			this.gobFiles.Clear();
 			this.gobMap.Clear();
-			this.lfdOverrides.Clear();
+			this.lfdFiles.Clear();
 		}
 
 		/// <summary>
 		/// GOB files we know the contents of.
 		/// </summary>
-		public IEnumerable<string> Gobs => this.gobFiles.Keys;
+		public IEnumerable<string> Gobs => this.gobFiles.Keys.Where(x => string.Compare(Path.GetExtension(x), ".GOB", true) == 0);
+
+		/// <summary>
+		/// LFD files we know the contents of.
+		/// </summary>
+		public IEnumerable<string> Lfds => this.lfdFiles.Values.Select(x => x.LfdPath);
 
 		/// <summary>
 		/// Reads in a GOB file and tracks the files inside of it so we can quickly find them later.
@@ -195,6 +201,21 @@ namespace MZZT.DarkForces {
 			}
 			results.Add(info);
 		}
+
+		/// <summary>
+		/// Returns a list of files that the specified GOB can provide. Files that are overridden by other GOBs are not listed.
+		/// </summary>
+		/// <param name="gob">The path to the GOB file as previously provided to this class.</param>
+		/// <returns>A list of filenames.</returns>
+		public IEnumerable<string> GetFilesProvidedByGob(string gob) =>
+			this.gobMap.Where(x => string.Compare(x.Value.Last().FilePath, gob, true) == 0).Select(x => x.Key);
+
+		/// <summary>
+		/// Returns a list of files that were added direct from the filesystem.
+		/// </summary>
+		/// <returns>A list of filenames.</returns>
+		public IEnumerable<string> GetStandaloneFiles() =>
+			this.gobMap.Select(x => x.Value.Last()).Where(x => x.Offset == 0).Select(x => x.FilePath);
 
 		/// <summary>
 		/// Remove a GOB/file so base files will be used instead.
@@ -271,12 +292,7 @@ namespace MZZT.DarkForces {
 
 			using (stream) {
 				// Load the data
-				name = name.ToUpper();
-				if (!DfGobContainer.FileTypes.TryGetValue(name, out Type type)) {
-					if (!DfGobContainer.FileTypes.TryGetValue(Path.GetExtension(name), out type)) {
-						type = typeof(Raw);
-					}
-				}
+				Type type = DfFile.DetectFileTypeByName(name) ?? typeof(Raw);
 				IFile file = (IFile)Activator.CreateInstance(type);
 				await file.LoadAsync(stream);
 				return file;
@@ -311,7 +327,7 @@ namespace MZZT.DarkForces {
 		public void AddLfd(string path, string replace = null) {
 			replace ??= Path.GetFileName(path);
 
-			this.lfdOverrides[replace.ToUpper()] = new LfdInfo() {
+			this.lfdFiles[replace.ToUpper()] = new LfdInfo() {
 				LfdPath = path
 			};
 		}
@@ -321,11 +337,34 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		/// <param name="path">The path passed into AddLfd.</param>
 		public void RemoveLfd(string path) {
-			string replace = this.lfdOverrides.FirstOrDefault(x => x.Value.LfdPath == path.ToUpper()).Key;
+			string replace = this.lfdFiles.FirstOrDefault(x => x.Value.LfdPath == path.ToUpper()).Key;
 			if (replace == null) {
 				return;
 			}
-			this.lfdOverrides.Remove(replace);
+			this.lfdFiles.Remove(replace);
+		}
+
+		/// <summary>
+		/// Get a list of files in the LFD.
+		/// </summary>
+		/// <param name="lfdPath">The path of the LFD. Will use mod overrides.</param>
+		/// <returns>The list of names and types of files in the LFD.</returns>
+		public async Task<IEnumerable<string>> GetFilesProvidedByLfdAsync(string lfdPath) {
+			LfdInfo map = this.lfdFiles.Values.FirstOrDefault(x => string.Compare(x.LfdPath, lfdPath, true) == 0);
+			if (map.LfdPath == null) {
+				throw new FileNotFoundException();
+			}
+			// If we didn't read this LFD before, load in a map of its files so we don't have to read in
+			// the entire LFD file directory next time.
+			if (map.Files == null) {
+				LandruFileDirectory lfd = await LandruFileDirectory.ReadAsync(map.LfdPath);
+				map.Files = lfd.Files.GroupBy(x => $"{x.name.ToUpper()}.{x.type.ToUpper()}").ToDictionary(x => x.Key, x => new ResourceLocation() {
+					FilePath = map.LfdPath,
+					Offset = x.Last().offset,
+					Length = x.Last().size
+				});
+			}
+			return map.Files.Select(x => x.Key);
 		}
 
 		/// <summary>
@@ -336,7 +375,7 @@ namespace MZZT.DarkForces {
 		/// <param name="typeName">The type of the file.</param>
 		/// <returns>The Stream for the file.</returns>
 		public async Task<Stream> GetLfdFileStreamAsync(string lfdName, string name, string typeName) {
-			if (this.lfdOverrides.TryGetValue(lfdName.ToUpper(), out LfdInfo map)) {
+			if (this.lfdFiles.TryGetValue(lfdName.ToUpper(), out LfdInfo map)) {
 				lfdName = map.LfdPath;
 			} else {
 				map.LfdPath = lfdName;
@@ -352,12 +391,13 @@ namespace MZZT.DarkForces {
 						// While we're here, read the file we need.
 						stream = await lfd.GetFileStreamAsync(name, typeName);
 					});
-					map.Files = lfd.Files.ToDictionary(x => $"{x.name.ToUpper()}.{x.type.ToUpper()}", x => new ResourceLocation() {
+					// DFBRIEF.LFD has multiple SEWERS DELTs. Ignore all but the first (TODO what does DF do?).
+					map.Files = lfd.Files.GroupBy(x => $"{x.name.ToUpper()}.{x.type.ToUpper()}").ToDictionary(x => x.Key, x => new ResourceLocation() {
 						FilePath = lfdName,
-						Offset = x.offset,
-						Length = x.size
+						Offset = x.First().offset,
+						Length = x.First().size
 					});
-					this.lfdOverrides[lfdName.ToUpper()] = map;
+					this.lfdFiles[lfdName.ToUpper()] = map;
 				} else {
 					if (!map.Files.TryGetValue($"{name.ToUpper()}.{typeName.ToUpper()}", out ResourceLocation location)) {
 						return null;
@@ -390,10 +430,7 @@ namespace MZZT.DarkForces {
 			}
 
 			using (stream) {
-				if (!LandruFileDirectory.FileTypes.TryGetValue(typeName, out Type type)) {
-					throw new ArgumentException("Invalid type.", nameof(typeName));
-				}
-
+				Type type = DfFile.DetectFileTypeByName("." + typeName) ?? typeof(Raw);
 				IFile file = (IFile)Activator.CreateInstance(type);
 				await file.LoadAsync(stream);
 				return file;
@@ -425,9 +462,12 @@ namespace MZZT.DarkForces {
 		/// <summary>
 		/// Read standard GOB file directroy information and cache it.
 		/// </summary>
-		public async Task LoadStandardGobFilesAsync() {
+		public async Task LoadStandardFilesAsync() {
 			foreach (string name in DARK_FORCES_STANDARD_DATA_FILES) {
 				await this.AddGobFileAsync(Path.Combine(this.DarkForcesFolder, name));
+			}
+			foreach (string lfd in Directory.EnumerateFiles(Path.Combine(this.DarkForcesFolder, "LFD"), "*.LFD", SearchOption.TopDirectoryOnly)) {
+				this.AddLfd(lfd);
 			}
 		}
 

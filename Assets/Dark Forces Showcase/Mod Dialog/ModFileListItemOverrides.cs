@@ -1,24 +1,24 @@
-﻿using MZZT.DataBinding;
+﻿using MZZT.Data.Binding.UI;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace MZZT.DarkForces.Showcase {
-	public class ModFileListItemOverrides : DataboundTmpStringDropdown {
+	public class ModFileListItemOverrides : DataboundStringDropdown {
 		private string lastDisplayName;
-		protected override void OnInvalidate() {
-			if (this.DataboundObject != null && this.DataboundObject.Value != null &&
-				this.lastDisplayName != ((ModFile)this.DataboundObject.Value).DisplayName.ToUpper()) {
+		protected override void Invalidate() {
+			if (this.Databinder != null && this.Databinder.Value is string modFile &&
+				this.lastDisplayName != modFile?.ToUpper()) {
 
-				this.lastDisplayName = ((ModFile)this.DataboundObject.Value).DisplayName.ToUpper();
+				this.lastDisplayName = modFile?.ToUpper();
 
 				this.Dropdown.ClearOptions();
 
-				HashSet<string> lfds = new HashSet<string>() {
+				HashSet<string> lfds = new() {
+					this.lastDisplayName,
 					"DFBRIEF.LFD",
 					"FTEXTCRA.LFD"
 				};
-				lfds.Add(this.lastDisplayName);
 
 				string folder = FileLoader.Instance.DarkForcesFolder;
 				if (!string.IsNullOrEmpty(folder)) {
@@ -31,8 +31,7 @@ namespace MZZT.DarkForces.Showcase {
 				}
 			}
 
-
-			base.OnInvalidate();
+			base.Invalidate();
 		}
 	}
 }

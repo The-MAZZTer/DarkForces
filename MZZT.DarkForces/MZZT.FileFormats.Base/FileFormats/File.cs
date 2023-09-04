@@ -39,6 +39,58 @@ namespace MZZT.FileFormats {
 		Task SaveAsync(string filename);
 	}
 
+	public static class File {
+		/// <summary>
+		/// Try to read and parse a file from a Stream.
+		/// </summary>
+		/// <param name="stream">The Stream to read from.</param>
+		/// <returns>The read object, or null if the read failed.</returns>
+		public static async Task<T> TryReadAsync<T>(Stream stream) where T : class, IFile, new() {
+			try {
+				return await ReadAsync<T>(stream);
+			} catch (FormatException) {
+			} catch (EndOfStreamException) {
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Try to read and parse a file from disk.
+		/// </summary>
+		/// <param name="filename">The file path to read from.</param>
+		/// <returns>The read object, or null if the read failed.</returns>
+		public static async Task<T> TryReadAsync<T>(string filename) where T : class, IFile, new() {
+			try {
+				return await ReadAsync<T>(filename);
+			} catch (FormatException) {
+			} catch (EndOfStreamException) {
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Read and parse a file from a Stream.
+		/// </summary>
+		/// <param name="stream">The Stream to read.</param>
+		/// <returns>The read object.</returns>
+		public static async Task<T> ReadAsync<T>(Stream stream) where T : class, IFile, new() {
+			T x = new();
+			await x.LoadAsync(stream);
+			return x;
+		}
+
+		/// <summary>
+		/// Read and parse a file from disk.
+		/// </summary>
+		/// <param name="filename">The file path to read from.</param>
+		/// <returns>The read object.</returns>
+		public static async Task<T> ReadAsync<T>(string filename) where T : class, IFile, new() {
+			T x = new();
+			await x.LoadAsync(filename);
+			return x;
+		}
+	}
+
 	/// <summary>
 	/// An abstract class which represents a specific file type, and its deserialized data.
 	/// </summary>
