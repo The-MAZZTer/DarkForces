@@ -73,10 +73,10 @@ namespace MZZT.DarkForces.FileFormats {
 	
 		public static Type DetectFileTypeByName(string path) {
 			path = Path.GetFileName(path).ToUpper();
-			if (FileTypes.TryGetValue(Path.GetExtension(path), out Type type)) {
+			if (FileTypes.TryGetValue(path, out Type type)) {
 				return type;
 			}
-			if (FileTypes.TryGetValue(path, out type)) {
+			if (FileTypes.TryGetValue(Path.GetExtension(path), out type)) {
 				return type;
 			}
 			return typeof(Raw);
@@ -89,8 +89,20 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 
 			if (File.Exists(path)) {
+				// Faster for Unity to load into a memory buffer first before parsing.
+				using MemoryStream mem = new((int)new FileInfo(path).Length);
+				using (FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+					try {
+						await stream.CopyToAsync(mem);
+						mem.Position = 0;
+					} catch (Exception) {
+						mem.Dispose();
+						throw;
+					}
+				}
+
 				IFile file = (IFile)Activator.CreateInstance(type);
-				await file.LoadAsync(path);
+				await file.LoadAsync(mem);
 				return file;
 			}
 			string folder = Path.GetDirectoryName(path);
@@ -116,7 +128,21 @@ namespace MZZT.DarkForces.FileFormats {
 
 		public static async Task<T> GetFileFromFolderOrContainerAsync<T>(string path) where T : File<T>, IFile, new() {
 			if (File.Exists(path)) {
-				return await MZZT.FileFormats.File.ReadAsync<T>(path);
+				// Faster for Unity to load into a memory buffer first before parsing.
+				using MemoryStream mem = new((int)new FileInfo(path).Length);
+				using (FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+					try {
+						await stream.CopyToAsync(mem);
+						mem.Position = 0;
+					} catch (Exception) {
+						mem.Dispose();
+						throw;
+					}
+				}
+
+				T file = new T();
+				await file.LoadAsync(mem);
+				return file;
 			}
 			string folder = Path.GetDirectoryName(path);
 			if (File.Exists(folder)) {

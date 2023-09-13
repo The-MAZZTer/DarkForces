@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -296,10 +295,7 @@ namespace MZZT.Data.Binding {
 				}
 
 				IDatabind bind = this.Children.ElementAtOrDefault(value);
-				if (bind == null) {
-					throw new IndexOutOfRangeException();
-				}
-				Toggle toggle = this.toggles.GetValueOrDefault(bind);
+				Toggle toggle = bind == null ? null : this.toggles.GetValueOrDefault(bind);
 
 				bool allowSwitchOff = this.ToggleGroup.allowSwitchOff;
 				try {
@@ -473,7 +469,10 @@ namespace MZZT.Data.Binding {
 
 		protected override void OnInvalidate() {
 			while (this.transform.childCount > this.Count) {
-				DestroyImmediate(this.transform.GetChild(this.transform.childCount - 1).gameObject);
+				GameObject gameObject = this.transform.GetChild(this.transform.childCount - 1).gameObject;
+				IDatabind bind = gameObject.GetComponent<IDatabind>();
+				this.toggles.Remove(bind);
+				DestroyImmediate(gameObject);
 			}
 
 			base.OnInvalidate();

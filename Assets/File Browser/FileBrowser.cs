@@ -109,9 +109,13 @@ namespace MZZT {
 					return;
 				}
 
-				string path = Path.GetFullPath(Path.Combine(this.folderTree.SelectedValue?.FilePath ?? string.Empty, this.fileInput.text));
 				Databind<FileSystemItem> selectedItem = (Databind<FileSystemItem>)this.fileList.SelectedDatabound;
-				Databind<FileSystemItem> newSelectedItem = this.fileList.Children.Cast<Databind<FileSystemItem>>().FirstOrDefault(x => string.Compare(x.Value.FilePath, path, true) == 0);
+				Databind<FileSystemItem> newSelectedItem = null;
+				if (!Path.GetInvalidPathChars().Any(x => this.fileInput.text.Contains(x))) {
+					string path = Path.GetFullPath(Path.Combine(this.folderTree.SelectedValue?.FilePath ?? string.Empty, this.fileInput.text));
+					newSelectedItem = this.fileList.Children.Cast<Databind<FileSystemItem>>().FirstOrDefault(x => string.Compare(x.Value.FilePath, path, true) == 0);
+				}
+
 				if (selectedItem != newSelectedItem) {
 					this.fileList.SelectedDatabound = newSelectedItem;
 				} else {
@@ -181,28 +185,19 @@ namespace MZZT {
 					options.StartPath = path;
 				}
 			}
-			if (options.StartPath != null) {
+			while (options.StartPath != null) {
 				bool dirExists = Directory.Exists(options.StartPath);
-				if (!dirExists) {
-					bool fileExists = File.Exists(options.StartPath);
-					if (!fileExists) {
-						throw new DirectoryNotFoundException($"Can't find {options.StartPath}!");
-					}
-
-					string ext = Path.GetExtension(options.StartPath).ToUpper();
-					if (ext != ".GOB" && ext != ".LFD") {
-						throw new DirectoryNotFoundException($"Can't find {options.StartPath}!");
-					}
-					if (ext == ".GOB" && !options.AllowNavigateGob) {
-						throw new DirectoryNotFoundException($"Can't find {options.StartPath}!");
-					}
-					if (ext == ".LFD" && !options.AllowNavigateLfd) {
-						throw new DirectoryNotFoundException($"Can't find {options.StartPath}!");
-					}
-					start.Type = FileSystemItemTypes.FileContainer;
-				} else {
+				bool fileExists = File.Exists(options.StartPath);
+				string ext = Path.GetExtension(options.StartPath).ToUpper();
+				if (dirExists) {
 					start.Type = FileSystemItemTypes.Folder;
+					break;
+				} else if (fileExists && ((ext == ".GOB" && options.AllowNavigateGob) || (ext == ".LFD" && options.AllowNavigateLfd))) {
+					start.Type = FileSystemItemTypes.FileContainer;
+					break;
 				}
+
+				options.StartPath = Path.GetDirectoryName(options.StartPath);
 			}
 
 			this.titleText.text = options.Title ?? "Select file";
@@ -513,8 +508,9 @@ namespace MZZT {
 					return true;
 				}
 
+				string path = this.fileInput.text;
 				if (this.options.SelectedFileMustExist) {
-					if (string.IsNullOrWhiteSpace(this.fileInput.text)) {
+					if (string.IsNullOrWhiteSpace(path)) {
 						return false;
 					}
 
@@ -522,23 +518,34 @@ namespace MZZT {
 						return true;
 					}
 
-					return File.Exists(Path.Combine(this.fileList.Container.FilePath, this.fileInput.text));
+					if (path.Intersect(Path.GetInvalidPathChars()).Any()) {
+						return false;
+					}
+
+					return File.Exists(Path.Combine(this.fileList.Container.FilePath, path));
 				}
 
 				if (this.options.SelectedPathMustExist) {
-					FileSystemItem container = this.fileList.Container;
-					if (container.Type == FileSystemItemTypes.FileContainer) {
-						if (!File.Exists(this.fileList.Container.FilePath)) {
-							return false;
+					if (string.IsNullOrWhiteSpace(path)) {
+						FileSystemItem container = this.fileList.Container;
+						if (container.Type == FileSystemItemTypes.FileContainer) {
+							if (!File.Exists(this.fileList.Container.FilePath)) {
+								return false;
+							}
+						} else {
+							if (!Directory.Exists(this.fileList.Container.FilePath)) {
+								return false;
+							}
 						}
 					} else {
-						if (!Directory.Exists(this.fileList.Container.FilePath)) {
+						if (path.Intersect(Path.GetInvalidPathChars()).Any()) {
 							return false;
 						}
+
+						return Directory.Exists(Path.GetDirectoryName(Path.Combine(this.fileList.Container.FilePath, path)));
 					}
 				}
 
-				string path = this.fileInput.text;
 				if (string.IsNullOrWhiteSpace(path) && !this.options.SelectFolder) {
 					return false;
 				}
@@ -722,10 +729,13 @@ namespace MZZT {
 			}
 
 			FileSystemItem selected = this.fileList.SelectedValue;
+
+			// nevigate if double click on non-file
+
 			if (selected != null && (selected.Type == FileSystemItemTypes.FileContainer || selected.Type == FileSystemItemTypes.Folder)) {
 				bool isAlsoFile = !doubleClick && selected.Type == FileSystemItemTypes.FileContainer &&
 					this.options.FileSearchPatterns.Any(x => Regex.IsMatch(Path.GetFileName(this.fileList.SelectedValue.FilePath), Regex.Escape(x).Replace("\\*", ".*").Replace("\\?", ".")));
-				if (!this.options.SelectFolder && !isAlsoFile) {
+				if (/*!this.options.SelectFolder &&*/ !isAlsoFile) {
 					await this.NavigateToFolderAsync(selected.FilePath);
 					return;
 				}

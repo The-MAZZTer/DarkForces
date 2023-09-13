@@ -289,7 +289,7 @@ namespace MZZT.DarkForces.Showcase {
 
 		public async Task ImportAsync(int track) {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
-				AllowNavigateGob = true,
+				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
 				FileSearchPatterns = new[] { "*.MID" },
 				SelectButtonText = "Import",

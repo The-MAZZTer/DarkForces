@@ -13,7 +13,7 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// The individual frames of animation as DELTs.
 		/// </summary>
-		public List<LandruDelt> Pages { get; set; }
+		public List<LandruDelt> Pages { get; } = new();
 
 		public override bool CanLoad => true;
 
@@ -23,7 +23,7 @@ namespace MZZT.DarkForces.FileFormats {
 			byte[] buffer = new byte[4];
 			await stream.ReadAsync(buffer, 0, 2);
 			int count = BitConverter.ToUInt16(buffer, 0);
-			this.Pages = new(count);
+			this.Pages.Clear();
 
 			for (int i = 0; i < count; i++) {
 				await stream.ReadAsync(buffer, 0, 4);

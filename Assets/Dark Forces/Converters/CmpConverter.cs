@@ -1,6 +1,14 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 namespace MZZT.DarkForces.Converters {
 	public static class CmpConverter {
@@ -297,5 +305,51 @@ namespace MZZT.DarkForces.Converters {
 
 		public static Color[] ToUnityColorArray(this DfColormap cmp, DfPalette pal, int lightLevel, bool transparent, bool bypassCmpDithering) =>
 			cmp.ToUnityColorArray(pal.ToUnityColorArray(), lightLevel, transparent, bypassCmpDithering);
+
+		public static Bitmap ToBitmap(this DfColormap cmp, DfPalette pal, int lightLevel) {
+			Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
+
+			System.Drawing.Color[] colors = cmp.ToDrawingColorArray(pal, lightLevel, false, false);
+
+			ColorPalette colorPalette = bitmap.Palette;
+			for (int j = 0; j < pal.Palette.Length; j++) {
+				colorPalette.Entries[j] = colors[j];
+			}
+			bitmap.Palette = colorPalette;
+
+			BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+			for (int y = 0; y < bitmap.Height; y++) {
+				byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
+				Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
+			}
+
+			bitmap.UnlockBits(data);
+			return bitmap;
+		}
+
+		public static async Task WriteJascPalAsync(this DfColormap cmp, DfPalette pal, int lightLevel, Stream stream) {
+			byte[] colors = cmp.ToByteArray(pal, lightLevel, false, false);
+			using StreamWriter writer = new(stream, Encoding.ASCII);
+			await writer.WriteLineAsync("JASC-PAL");
+			await writer.WriteLineAsync("0100");
+			await writer.WriteLineAsync("256");
+
+			for (int j = 0; j < 256; j++) {
+				await writer.WriteLineAsync($"{colors[j * 4]} {colors[j * 4 + 1]} {colors[j * 4 + 2]}");
+			}
+		}
+
+		public static async Task WriteRgbPalAsync(this DfColormap cmp, DfPalette pal, int lightLevel, Stream stream) {
+			byte[] colors = cmp.ToByteArray(pal, lightLevel, false, false);
+			for (int j = 0; j < 256; j++) {
+				await stream.WriteAsync(colors, j * 4, 3);
+			}
+		}
+
+		public static async Task WriteRgbaPalAsync(this DfColormap cmp, DfPalette pal, int lightLevel, Stream stream) {
+			byte[] colors = cmp.ToByteArray(pal, lightLevel, false, false);
+			await stream.WriteAsync(colors);
+		}
 	}
 }

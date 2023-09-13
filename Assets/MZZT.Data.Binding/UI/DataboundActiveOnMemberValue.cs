@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace MZZT.Data.Binding.UI {
@@ -34,14 +35,20 @@ namespace MZZT.Data.Binding.UI {
 			}
 		}
 
-		private void Databinder_Invalidated(object sender, EventArgs e) {
-			string value = this.Databinder?.Value?.ToString();
-			string expected = this.@null ? null : this.expectedValue;
-			bool active = value == expected;
-			if (this.isNot) {
-				active = !active;
+		public bool ShouldBeActive {
+			get {
+				string value = this.Databinder?.Value?.ToString();
+				string expected = this.@null ? null : this.expectedValue;
+				bool active = value == expected;
+				if (this.isNot) {
+					active = !active;
+				}
+				return active;
 			}
-			this.target.SetActive(active);
+		}
+
+		private void Databinder_Invalidated(object sender, EventArgs e) {
+			this.target.SetActive(this.ShouldBeActive);
 		}
 	}
 }

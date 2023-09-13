@@ -50,6 +50,16 @@ namespace MZZT.DarkForces.Showcase {
 				await FileLoader.Instance.LoadStandardFilesAsync();
 			}
 
+#if UNITY_EDITOR
+			if (!UnityEditor.EditorApplication.isPlaying) {
+				return;
+			}
+#endif
+
+			if (!this.isActiveAndEnabled) {
+				return;
+			}
+
 			await this.UpdateModTextAsync();
 
 			string[] files;
@@ -61,6 +71,17 @@ namespace MZZT.DarkForces.Showcase {
 			}
 			foreach (string lfd in FileLoader.Instance.Lfds.OrderBy(x => x)) {
 				files = (await FileLoader.Instance.GetFilesProvidedByLfdAsync(lfd)).OrderBy(x => x).ToArray();
+
+#if UNITY_EDITOR
+				if (!UnityEditor.EditorApplication.isPlaying) {
+					return;
+				}
+#endif
+
+				if (!this.isActiveAndEnabled) {
+					return;
+				}
+
 				ResourceListContainer item = new(new ResourceEditorResource(lfd, async () => await LandruFileDirectory.ReadAsync(lfd), true));
 				item.Resources.AddRange(files.Select(x => new ResourceEditorResource(Path.Combine(lfd, x), async () => {
 					string[] file = x.Split('.');
@@ -136,7 +157,12 @@ namespace MZZT.DarkForces.Showcase {
 			string value = this.searchField.text;
 			List<ResourceEditorResource> results = new();
 
-			this.searchResults.AddRange(this.list.SelectMany(x => x.Resources.Prepend(x.Resource)).Where(x => x?.Name.Contains(value, StringComparison.CurrentCultureIgnoreCase) ?? false));
+			this.searchResults.AddRange(this.list
+				.SelectMany(x => x.Resources.Prepend(x.Resource)/*.Select(y => (x, y))*/)
+				.Where(x => x?.Name.Contains(value, StringComparison.CurrentCultureIgnoreCase) ?? false)
+				/*.Select(x => new ResourceEditorResource(x.y.Path, x.y.GetFileAsync, x.y.PartOfCurrentMod) {
+					Name = x.y == x.x.Resource ? x.y.Name : $"{x.x.Name}{Path.DirectorySeparatorChar}{x.y.Name}"
+				})*/);
 		}
 	}
 
@@ -158,6 +184,7 @@ namespace MZZT.DarkForces.Showcase {
 
 	public class ResourceEditorResource {
 		public ResourceEditorResource(string path, Func<Task<IFile>> fileGetter, bool partOfCurrentMod) {
+			this.Name = System.IO.Path.GetFileName(path);
 			this.Path = path;
 			this.GetFileAsync = fileGetter;
 			this.PartOfCurrentMod = partOfCurrentMod;
@@ -165,7 +192,7 @@ namespace MZZT.DarkForces.Showcase {
 		
 		public bool PartOfCurrentMod { get; }
 		public string Path { get; }
-		public string Name => System.IO.Path.GetFileName(this.Path);
+		public string Name { get; set; }
 		public Func<Task<IFile>> GetFileAsync { get; }
 
 		public override string ToString() => this.Name ?? base.ToString();

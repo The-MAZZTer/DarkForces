@@ -160,7 +160,7 @@ namespace MZZT.DarkForces {
 		public void AddPalette(string lfd, string filename, LandruPalette pltt) {
 			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			this.AddWarnings(Path.Combine(lfd, filename), pltt);
+			this.AddWarnings(Path.Combine(lfd, filename) + ".PLTT", pltt);
 			this.plttCache[(lfd, filename)] = pltt;
 		}
 
@@ -394,7 +394,7 @@ namespace MZZT.DarkForces {
 		public void AddDelt(string lfd, string filename, LandruDelt delt) {
 			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			this.AddWarnings(Path.Combine(lfd, filename), delt);
+			this.AddWarnings(Path.Combine(lfd, filename) + ".DELT", delt);
 			this.deltCache[(lfd, filename)] = delt;
 		}
 
@@ -568,7 +568,7 @@ namespace MZZT.DarkForces {
 		public void AddAnimation(string lfd, string filename, LandruAnimation anim) {
 			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			this.AddWarnings(Path.Combine(lfd, filename), anim);
+			this.AddWarnings(Path.Combine(lfd, filename) + ".ANI<", anim);
 			this.animCache[(lfd, filename)] = anim;
 		}
 
@@ -650,7 +650,7 @@ namespace MZZT.DarkForces {
 		public void AddFont(string lfd, string filename, LandruFont font) {
 			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			this.AddWarnings(Path.Combine(lfd, filename), font);
+			this.AddWarnings(Path.Combine(lfd, filename) + ".FONT", font);
 			this.fontCache[(lfd, filename)] = font;
 		}
 
@@ -886,7 +886,7 @@ namespace MZZT.DarkForces {
 		public void AddCreativeVoice(string lfd, string filename, CreativeVoice voic) {
 			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			this.AddWarnings(Path.Combine(lfd, filename), voic);
+			this.AddWarnings(Path.Combine(lfd, filename) + ".VOIC", voic);
 			this.voicCache[(lfd, filename)] = voic;
 		}
 
@@ -980,17 +980,17 @@ namespace MZZT.DarkForces {
 				try {
 					gmid = await FileLoader.Instance.LoadLfdFileAsync<DfGeneralMidi>(lfd, filename);
 				} catch (Exception e) {
-					this.AddError(@$"{lfd}\{filename}", e);
+					this.AddError(@$"{lfd}\{filename}.GMID", e);
 				}
-				this.AddWarnings(@$"{lfd}\{filename}", gmid);
+				this.AddWarnings(@$"{lfd}\{filename}.GMID", gmid);
 
 				if (gmid == null) {
 					try {
 						gmid = await FileLoader.Instance.LoadLfdFileAsync<DfGeneralMidi>(lfd, "DEFAULT");
 					} catch (Exception e) {
-						this.AddError(@$"{lfd}\{filename}", e);
+						this.AddError(@$"{lfd}\{filename}.GMID", e);
 					}
-					this.AddWarnings(@$"{lfd}\{filename}", gmid);
+					this.AddWarnings(@$"{lfd}\{filename}.GMID", gmid);
 				}
 
 				this.gmidCache[(lfd, filename)] = gmid;
@@ -1007,7 +1007,7 @@ namespace MZZT.DarkForces {
 		public void AddGeneralMidi(string lfd, string filename, DfGeneralMidi gmid) {
 			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			this.AddWarnings(Path.Combine(lfd, filename), gmid);
+			this.AddWarnings(Path.Combine(lfd, filename) + ".GMID", gmid);
 			this.gmidCache[(lfd, filename)] = gmid;
 		}
 
@@ -1034,7 +1034,7 @@ namespace MZZT.DarkForces {
 			} else if (type == typeof(LandruPalette)) {
 				return this.GetPaletteAsync(lfd, filename) as Task<T>;
 			}
-			return null;
+			return Task.FromResult(default(T));
 		}
 		public Task<T> GetAsync<T>(string filename) where T : IDfFile {
 			Type type = typeof(T);
@@ -1059,9 +1059,9 @@ namespace MZZT.DarkForces {
 			} else if (type == typeof(DfWax)) {
 				return this.GetWaxAsync(filename) as Task<T>;
 			}
-			return null;
+			return Task.FromResult(default(T));
 		}
-		
+
 		/// <summary>
 		/// Clear all cached data.
 		/// </summary>

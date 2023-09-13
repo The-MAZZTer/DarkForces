@@ -117,6 +117,11 @@ namespace MZZT.DarkForces.FileFormats {
 			public byte Width;
 		}
 
+		public DfFont() : base() {
+			this.First = 33;
+			this.Height = 8;
+		}
+
 		private Header header;
 
 		/// <summary>
@@ -141,11 +146,6 @@ namespace MZZT.DarkForces.FileFormats {
 		public List<Character> Characters { get; } = new();
 
 		public override bool CanLoad => true;
-
-		public DfFont() : base() {
-			this.First = 33;
-			this.Height = 8;
-		}
 
 		public override async Task LoadAsync(Stream stream) {
 			this.ClearWarnings();

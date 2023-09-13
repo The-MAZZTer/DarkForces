@@ -144,6 +144,111 @@ namespace MZZT.DarkForces.FileFormats {
 		/// </summary>
 		public byte[] Pixels { get; set; }
 
+		public void Trim() {
+			int minx = 0;
+			int miny = 0;
+			int maxx = this.Width;
+			int maxy = this.Height;
+
+			bool resized = false;
+			while (miny < maxy) {
+				bool clear = true;
+				for (int i = minx; i < maxx; i++) {
+					if (this.Mask[miny * this.Width + i]) {
+						clear = false;
+						break;
+					}
+				}
+				if (clear) {
+					miny++;
+					resized = true;
+				} else {
+					break;
+				}
+			}
+
+			while (miny < maxy) {
+				bool clear = true;
+				for (int i = minx; i < maxx; i++) {
+					if (this.Mask[(maxy - 1) * this.Width + i]) {
+						clear = false;
+						break;
+					}
+				}
+				if (clear) {
+					maxy--;
+					resized = true;
+				} else {
+					break;
+				}
+			}
+
+			while (minx < maxx && maxy > miny) {
+				bool clear = true;
+				for (int i = miny; i < maxy; i++) {
+					if (this.Mask[i * this.Width + minx]) {
+						clear = false;
+						break;
+					}
+				}
+				if (clear) {
+					minx++;
+					resized = true;
+				} else {
+					break;
+				}
+			}
+
+			while (minx < maxx && maxy > miny) {
+				bool clear = true;
+				for (int i = miny; i < maxy; i++) {
+					if (this.Mask[i * this.Width + (maxx - 1)]) {
+						clear = false;
+						break;
+					}
+				}
+				if (clear) {
+					maxx--;
+					resized = true;
+				} else {
+					break;
+				}
+			}
+
+			if (miny >= maxy || minx >= maxx) {
+				this.Width = 1;
+				this.Height = 1;
+				this.OffsetX = 0;
+				this.OffsetY = 0;
+				this.Pixels = new byte[] { 0 };
+				this.Mask = new BitArray(new bool[] { false });
+				return;
+			}
+
+			if (!resized) {
+				return;
+			}
+
+			byte[] newPixels = new byte[(maxx - minx) * (maxy - miny)];
+			BitArray newMask = new((maxx - minx) * (maxy - miny));
+			for (int i = 0; i < maxy - miny; i++) {
+				Buffer.BlockCopy(this.Pixels, (i + miny) * this.Width + minx, newPixels, i * (maxx - minx), maxx - minx);
+				for (int j = 0; j < maxx - minx; j++) {
+					if (this.Mask[(i + miny) * this.Width + minx + j]) {
+						newMask[i * (maxx - minx) + j] = true;
+					}
+				}
+			}
+			this.Pixels = newPixels;
+			this.Mask = newMask;
+
+			this.OffsetX += (short)minx;
+			this.OffsetY += (short)miny;
+
+			this.Width = maxx - minx;
+			this.Height = maxy - miny;
+		}
+
 		public override bool CanLoad => true;
 
 		public override async Task LoadAsync(Stream stream) {
@@ -167,30 +272,33 @@ namespace MZZT.DarkForces.FileFormats {
 				int x = header.X - this.header.OffsetX;
 
 				int pixelCount = header.PixelCount;
-				for (int i = (height - y - 1) * width + x; i < (height - y - 1) * width + x + pixelCount; i++) {
-					this.Mask.Set(i, true);
+
+				for (int i = y * width + x; i < y * width + x + pixelCount; i++) {
+					this.Mask[i] = true;
 				}
 
 				if (!header.IsRle) {
-					byte[] buffer = new byte[pixelCount];
-					await stream.ReadAsync(buffer, 0, pixelCount);
-
-					Buffer.BlockCopy(buffer, 0, this.Pixels, (height - y - 1) * width + x, pixelCount);
+					await stream.ReadAsync(this.Pixels, y * width + x, pixelCount);
 				} else {
+					int byteCount = 0;
+
 					int end = x + pixelCount;
 					while (x < end) {
 						byte count = (byte)stream.ReadByte();
+						byteCount++;
 
 						bool isRle = (count & 0x1) != 0;
 						count >>= 1;
+
 						if (!isRle) {
-							byte[] buffer = new byte[count];
-							await stream.ReadAsync(buffer, 0, count);
-							Buffer.BlockCopy(buffer, 0, this.Pixels, (height - y - 1) * width + x, count);
+							await stream.ReadAsync(this.Pixels, y * width + x, count);
+
+							byteCount += count;
 						} else {
 							byte value = (byte)stream.ReadByte();
+							byteCount++;
 							for (int i = x; i < x + count; i++) {
-								this.Pixels[(height - y - 1) * width + i] = value;
+								this.Pixels[y * width + i] = value;
 							}
 						}
 						x += count;
@@ -204,38 +312,28 @@ namespace MZZT.DarkForces.FileFormats {
 		public override async Task SaveAsync(Stream stream) {
 			this.ClearWarnings();
 
-			int width = this.Pixels.GetLength(1);
-			int height = this.Pixels.GetLength(0);
-
-			this.header.Width = width;
-			this.header.Height = height;
+			if (this.Width * this.Height != this.Pixels.Length || this.Pixels.Length != this.Mask.Length) {
+				throw new FormatException("Width and Height must match pixel and mask size.");
+			}
 
 			await stream.WriteAsync(this.header);
 
+			int height = this.Height;
+
 			for (int y = 0; y < height; y++) {
-				int minx = 0;
-				int maxx = width - 1;
-
-				while (minx < maxx && !this.Mask[(height - y - 1) * height + minx]) {
-					minx++;
-				}
-				if (minx >= maxx) {
-					continue;
-				}
-				while (!this.Mask[(height - y - 1) * height + maxx]) {
-					maxx--;
-				}
-
 				(int start, int end)[] segments = this.GetLineSegments(y);
 
-				// Unlike with BM and FME, we can't easily determine how big the resulting data will be ahead of time
-				// so just process it both ways and pick the shorter one.
-				byte[] raw = await this.EncodeRawAsync(segments, y);
-				byte[] rle = await this.EncodeRleAsync(segments[0].start, segments.Last().end, y);
-				if (rle.Length < raw.Length) {
-					await stream.WriteAsync(rle, 0, rle.Length);
-				} else {
-					await stream.WriteAsync(raw, 0, raw.Length);
+				foreach ((int start, int end) in segments) {
+					// Unlike with BM and FME, we can't easily determine how big the resulting data will be ahead of time
+					// so just process it both ways and pick the shorter one.
+					byte[] raw = await this.EncodeRawAsync(start, end, y);
+					byte[] rle = await this.EncodeRleAsync(start, end, y);
+
+					if (rle.Length < raw.Length) {
+						await stream.WriteAsync(rle, 0, rle.Length);
+					} else {
+						await stream.WriteAsync(raw, 0, raw.Length);
+					}
 				}
 			}
 
@@ -244,14 +342,13 @@ namespace MZZT.DarkForces.FileFormats {
 		}
 
 		private (int start, int end)[] GetLineSegments(int y) {
-			int width = this.Pixels.GetLength(1);
-			int height = this.Pixels.GetLength(0);
+			int width = this.Width;
 
-			int x = 0;
 			List<(int start, int end)> segments = new();
 
+			int x = 0;
 			while (x < width) {
-				while (x < width && !this.Mask[(height - y - 1) * width + x]) {
+				while (x < width && !this.Mask[y * width + x]) {
 					x++;
 				}
 
@@ -260,35 +357,12 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 
 				int start = x;
-				int end = Math.Min(x + 127, width);
+				int end = Math.Min(x + 32767, width);
 
-				while (x < end) {
-					while (x < end && this.Mask[(height - y - 1) * width + x]) {
-						x++;
-					}
-
-					if (x >= end) {
-						break;
-					}
-
-					int count = 0;
-					int x2 = x;
-					while (x2 < end && !this.Mask[(height - y - 1) * width + x2]) {
-						count++;
-						x2++;
-					}
-
-					if (count <= 6) {
-						x += count;
-					} else {
-						break;
-					}
+				while (x < end && this.Mask[y * width + x]) {
+					x++;
 				}
 				end = x;
-
-				while (!this.Mask[(height - y - 1) * width + end - 1]) {
-					end--;
-				}
 
 				segments.Add((start, end));
 			}
@@ -296,31 +370,26 @@ namespace MZZT.DarkForces.FileFormats {
 			return segments.ToArray();
 		}
 
-		private async Task<byte[]> EncodeRawAsync((int start, int end)[] segments, int y) {
-			int width = this.Pixels.GetLength(1);
-			int height = this.Pixels.GetLength(0);
+		private async Task<byte[]> EncodeRawAsync(int start, int end, int y) {
+			int width = this.Width;
 
 			using MemoryStream stream = new();
-			foreach ((int start, int end) in segments) {
-				LineSectionHeader header = new() {
-					X = (ushort)(start + this.header.OffsetX),
-					Y = (ushort)(y + this.header.OffsetY),
-					IsRle = false,
-					PixelCount = (ushort)(end - start)
-				};
+			LineSectionHeader header = new() {
+				X = (ushort)(start + this.header.OffsetX),
+				Y = (ushort)(y + this.header.OffsetY),
+				IsRle = false,
+				PixelCount = (ushort)(end - start)
+			};
 
-				await stream.WriteAsync(header);
+			await stream.WriteAsync(header);
 
-				byte[] buffer = new byte[end - start];
-				Buffer.BlockCopy(this.Pixels, (height - y - 1) * width + start, buffer, 0, end - start);
-				await stream.WriteAsync(buffer, 0, end - start);
-			}
+			byte[] buffer = new byte[end - start];
+			await stream.WriteAsync(this.Pixels, y * width + start, end - start);
 			return stream.ToArray();
 		}
 
 		private async Task<byte[]> EncodeRleAsync(int start, int end, int y) {
-			int width = this.Pixels.GetLength(1);
-			int height = this.Pixels.GetLength(0);
+			int width = this.Width;
 
 			using MemoryStream stream = new();
 			LineSectionHeader header = new() {
@@ -333,50 +402,43 @@ namespace MZZT.DarkForces.FileFormats {
 			await stream.WriteAsync(header);
 
 			int x = start;
+			int lastSegmentEnd = x;
+			int rawLength;
 			while (x < end) {
-				if (x == end - 1) {
-					stream.WriteByte(2);
-					stream.WriteByte(this.Pixels[(height - y - 1) * width + x]);
-					break;
-				}
+				byte color = this.Pixels[y * width + x];
+				int runEnd = x;
+				do {
+					runEnd++;
+				} while (runEnd < end && runEnd - x < 127 && this.Pixels[y * width + runEnd] == color);
+				int rleLength = runEnd - x;
 
-				byte color = this.Pixels[(height - y - 1) * width + x];
-				x++;
-				byte nextColor = this.Pixels[(height - y - 1) * width + x];
+				rawLength = x - lastSegmentEnd;
+				if (rleLength > 2 || (rleLength > 1 && (rawLength % 127) == 0)) {
+					while (rawLength > 0) {
+						int length = Math.Min(rawLength, 127);
+						stream.WriteByte((byte)(length * 2));
+						await stream.WriteAsync(this.Pixels, y * width + lastSegmentEnd, length);
 
-				int count;
-				if (color == nextColor) {
-					count = 1;
-					while (color == nextColor && count < 128 && x < end) {
-						count++;
-						x++;
-						if (x < end) {
-							nextColor = this.Pixels[(height - y - 1) * width + x];
-						}
+						lastSegmentEnd += length;
+						rawLength -= length;
 					}
 
-					stream.WriteByte((byte)(count * 2 + 1));
+					stream.WriteByte((byte)(rleLength * 2 + 1));
 					stream.WriteByte(color);
-				}
 
-				count = 0;
-				int x2 = x;
-				while (color != nextColor && count <= 128 && x2 < end) {
-					x2++;
-					if (x2 < end) {
-						color = nextColor;
-						nextColor = this.Pixels[(height - y - 1) * width + x2];
-					} else {
-						x2++;
-					}
+					lastSegmentEnd = runEnd;
 				}
+				x = runEnd;
+			}
 
-				if (x2 > x) {
-					stream.WriteByte((byte)((x2 - x) * 2));
-					byte[] buffer = new byte[x2 - x];
-					Buffer.BlockCopy(this.Pixels, (height - y - 1) * width + x, buffer, 0, x2 - x);
-					await stream.WriteAsync(buffer, 0, x2 - x);
-				}
+			rawLength = x - lastSegmentEnd;
+			while (rawLength > 0) {
+				int length = Math.Min(rawLength, 127);
+				stream.WriteByte((byte)(length * 2));
+				await stream.WriteAsync(this.Pixels, y * width + lastSegmentEnd, length);
+
+				lastSegmentEnd += length;
+				rawLength -= length;
 			}
 
 			return stream.ToArray();

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -11,9 +8,10 @@ namespace MZZT {
 	/// I want my Toggles!
 	/// </summary>
 	public static class ToggleGroupExtensions {
-		private static FieldInfo m_Toggles;
+		//private static FieldInfo m_Toggles;
 		public static IEnumerable<Toggle> GetToggles(this ToggleGroup group) {
-			if (m_Toggles == null) {
+			// This method doesn't work if the objects are in the process of being enabled... they are not considered part of the group then!
+			/*if (m_Toggles == null) {
 				m_Toggles = typeof(ToggleGroup).GetField(nameof(m_Toggles), BindingFlags.Instance | BindingFlags.NonPublic);
 			}
 
@@ -29,7 +27,7 @@ namespace MZZT {
 #endif
 			}
 
-			Debug.LogWarning("ToggleGroup.m_Toggles is gone, update ToggleGroupExtensions!");
+			Debug.LogWarning("ToggleGroup.m_Toggles is gone, update ToggleGroupExtensions!");*/
 
 			return Object.FindObjectsOfType<Toggle>(true).Where(x => x.group == group);
 		}

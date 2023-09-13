@@ -88,24 +88,5 @@ namespace MZZT.DarkForces.Converters {
 			return page.ToBitmap(cmp.ToByteArray(pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
 				bypassCmpDithering));
 		}
-
-		/*public static MagickImage ToMagick(this DfBitmap.Page page, byte[] palette) {
-			MagickImage image = new(new MagickColor(0, 0, 0, 0), page.Width, page.Height) {
-				ColormapSize = 256,
-				ColorType = ColorType.Palette,
-				Format = MagickFormat.Raw,
-				HasAlpha = true
-			};
-			image.PreserveColorType();
-			for (int i = 0; i < 256; i++) {
-				image.SetColormapColor(i, new MagickColor(palette[i * 4], palette[i * 4 + 1], palette[i * 4 + 2], palette[i * 4 + 3]));
-			}
-			image.Settings.SetDefine(MagickFormat.Png8, "preserve-colormap", "true");
-
-			using (IPixelCollection<byte> pixels = image.GetPixels()) {
-				pixels.SetBytePixels(page.Pixels);
-			}
-			return image;
-		}*/
 	}
 }

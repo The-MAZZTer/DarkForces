@@ -251,6 +251,8 @@ namespace MZZT {
 							DfGobContainer gob = await DfGobContainer.ReadAsync(this.container.FilePath, false);
 							children = gob.Files
 								.Where(x => patterns.IsMatch(x.name))
+								.OrderBy(x => Path.GetExtension(x.name).ToUpper())
+								.ThenBy(x => x.name.ToUpper())
 								.Select(x => new FileSystemItem() {
 									FilePath = $"{this.container.FilePath}{Path.DirectorySeparatorChar}{x.name}",
 									DisplayName = x.name,
@@ -258,8 +260,6 @@ namespace MZZT {
 									ContainerOffset = x.offset,
 									Size = x.size
 								})
-								.OrderBy(x => Path.GetExtension(x.FilePath).ToUpper())
-								.ThenBy(x => x.DisplayName.ToUpper())
 								.ToArray();
 						} break;
 						case ".LFD": {
@@ -271,16 +271,16 @@ namespace MZZT {
 
 							LandruFileDirectory lfd = await LandruFileDirectory.ReadAsync(this.container.FilePath);
 							children = lfd.Files
-								.Where(x => patterns.IsMatch(x.name))
+								.Where(x => patterns.IsMatch($"{x.name}.{x.type}"))
+								.OrderBy(x => x.type.ToUpper())
+								.ThenBy(x => x.name.ToUpper())
 								.Select(x => new FileSystemItem() {
-									FilePath = $"{this.container.FilePath}{Path.DirectorySeparatorChar}{x.name}",
-									DisplayName = x.name,
+									FilePath = $"{this.container.FilePath}{Path.DirectorySeparatorChar}{x.name}.{x.type}",
+									DisplayName = $"{x.name}.{x.type}",
 									Type = FileSystemItemTypes.FileContainee,
 									ContainerOffset = x.offset,
 									Size = x.size
 								})
-								.OrderBy(x => Path.GetExtension(x.FilePath).ToUpper())
-								.ThenBy(x => x.DisplayName.ToUpper())
 								.ToArray();
 						} break;
 						default: {

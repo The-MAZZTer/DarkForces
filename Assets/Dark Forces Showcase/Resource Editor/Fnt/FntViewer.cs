@@ -127,39 +127,45 @@ namespace MZZT.DarkForces.Showcase {
 			if (oldFirst <= oldLast) {
 				newFirst = Math.Min(oldFirst, first);
 				newLast = Math.Max(oldLast, last);
+
+				int addToStart = oldFirst - newFirst;
+				int addToEnd = newLast - oldLast;
+				if (addToStart > 0) {
+					this.Value.Characters.InsertRange(0, Enumerable.Repeat<DfFont.Character>(null, addToStart).Select(_ => new DfFont.Character() {
+						Width = 0,
+						Data = Array.Empty<byte>()
+					}));
+				}
+				this.Value.First = newFirst;
+				if (addToEnd > 0) {
+					this.Value.Characters.AddRange(Enumerable.Repeat<DfFont.Character>(null, addToEnd).Select(_ => new DfFont.Character() {
+						Width = 0,
+						Data = Array.Empty<byte>()
+					}));
+				}
+
 			} else {
 				newFirst = first;
 				newLast = last;
-			}
 
-			int addToStart = newFirst - first;
-			int addToEnd = last - newLast;
-			if (addToStart > 0) {
-				this.Value.Characters.InsertRange(0, Enumerable.Repeat<DfFont.Character>(null, addToStart).Select(_ => new DfFont.Character() {
-					Width = 0,
-					Data = Array.Empty<byte>()
-				}));
-			}
-			this.Value.First = newFirst;
-			if (addToEnd > 0) {
-				this.Value.Characters.AddRange(Enumerable.Repeat<DfFont.Character>(null, addToEnd).Select(_ => new DfFont.Character() {
+				this.Value.Characters.InsertRange(0, Enumerable.Repeat<DfFont.Character>(null, chars.Length).Select(_ => new DfFont.Character() {
 					Width = 0,
 					Data = Array.Empty<byte>()
 				}));
 			}
 
-			byte oldHeight = this.Value.Height;
+			ushort newHeight = this.Value.Height;
 			for (byte i = 0; i < chars.Length; i++) {
 				byte index = (byte)(first + i);
 				DfFont.Character c = chars[i];
-				byte newHeight = (byte)(c.Data.Length / c.Width);
+				byte oldHeight = (byte)(c.Width > 0 ? (c.Data.Length / c.Width) : 0);
 
 				if (oldHeight != newHeight) {
 					byte[] a = new byte[newHeight * c.Width];
 					for (int x = 0; x < c.Width; x++) {
 						Buffer.BlockCopy(c.Data, x * oldHeight + ((newHeight < oldHeight) ? oldHeight - newHeight : 0),
 							a, x * newHeight + ((oldHeight < newHeight) ? newHeight - oldHeight : 0),
-						Math.Min(oldHeight, newHeight));
+							Math.Min(oldHeight, newHeight));
 					}
 					c.Data = a;
 				}
@@ -475,9 +481,7 @@ namespace MZZT.DarkForces.Showcase {
 				this.preview.sprite = null;
 				this.preview.color = default;
 			} else {
-				Texture2D texture = c.ToTexture(this.Value, this.pal, true, false);
-
-				this.preview.sprite = Sprite.Create(texture, new Rect(0, 0, c.Width, this.Value.Height), new Vector2(0.5f, 0.5f));
+				this.preview.sprite = c.ToTexture(this.Value, this.pal, true, false).ToSprite(); ;
 				this.preview.color = Color.white;
 
 				this.Thumbnail = this.preview.sprite;
@@ -524,7 +528,7 @@ namespace MZZT.DarkForces.Showcase {
 		public void OnHeightChanged() {
 			byte height = this.Value.Height;
 			foreach (DfFont.Character c in this.Value.Characters) {
-				byte oldHeight = (byte)(c.Data.Length / c.Width);
+				byte oldHeight = (byte)(c.Width > 0 ? (c.Data.Length / c.Width) : 0);
 				if (oldHeight != height) {
 					byte[] a = new byte[height * c.Width];
 					for (int x = 0; x < c.Width; x++) {

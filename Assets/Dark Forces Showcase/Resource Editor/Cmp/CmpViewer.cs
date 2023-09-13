@@ -107,10 +107,8 @@ namespace MZZT.DarkForces.Showcase {
 				this.pal = pal;
 			}
 
-			if (this.pal == null) {
-				// Last ditch effort to be useful, we NEED a palette
-				this.pal = new DfPalette();
-			}
+			// Last ditch effort to be useful, we NEED a palette
+			this.pal ??= new DfPalette();
 
 			if (this.pal != null) {
 				this.palette.Clear();
@@ -314,25 +312,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			using Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
-
-			System.Drawing.Color[] colors = this.Value.ToDrawingColorArray(this.pal, (int)this.colorMapLightLevel.value, false, false);
-
-			ColorPalette colorPalette = bitmap.Palette;
-			for (int j = 0; j < pal.Palette.Length; j++) {
-				colorPalette.Entries[j] = colors[j];
-			}
-			bitmap.Palette = colorPalette;
-
-			BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-			for (int y = 0; y < bitmap.Height; y++) {
-				byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
-				Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
-			}
-
-			bitmap.UnlockBits(data);
-
+			using Bitmap bitmap = this.Value.ToBitmap(this.pal, (int)this.colorMapLightLevel.value);
 			bitmap.Save(path);
 		}
 
@@ -356,17 +336,8 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			byte[] colors = this.Value.ToByteArray(this.pal, (int)this.colorMapLightLevel.value, false, false);
-
 			using FileStream output = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			using StreamWriter writer = new(output, Encoding.ASCII);
-			await writer.WriteLineAsync("JASC-PAL");
-			await writer.WriteLineAsync("0100");
-			await writer.WriteLineAsync("256");
-			
-			for (int j = 0; j < 256; j++) {
-				await writer.WriteLineAsync($"{colors[j * 4]} {colors[j * 4 + 1]} {colors[j * 4 + 2]}");
-			}
+			await this.Value.WriteJascPalAsync(this.pal, (int)this.colorMapLightLevel.value, output);
 		}
 
 		public async void ExportToRgbPalAsync() {
@@ -389,12 +360,8 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			byte[] colors = this.Value.ToByteArray(this.pal, (int)this.colorMapLightLevel.value, false, false);
-
 			using FileStream output = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			for (int j = 0; j < 256; j++) {
-				await output.WriteAsync(colors, j * 4, 3);
-			}
+			await this.Value.WriteRgbPalAsync(this.pal, (int)this.colorMapLightLevel.value, output);
 		}
 
 		public void SetHeadlightsDefault() {
@@ -434,10 +401,8 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			byte[] colors = this.Value.ToByteArray(this.pal, (int)this.colorMapLightLevel.value, false, false);
-
 			using FileStream output = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			await output.WriteAsync(colors);
+			await this.Value.WriteRgbaPalAsync(this.pal, (int)this.colorMapLightLevel.value, output);
 		}
 
 		public async void SaveAsync() {

@@ -64,6 +64,16 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async Task CloseTabAsync(Databind<ResourceEditorTab> tab) {
+			ResourceEditorTabList tabs = (ResourceEditorTabList)tab.Parent;
+			if (tabs.SelectedDatabound == (IDatabind)tab) {
+				int index = tabs.SelectedIndex;
+				if (index > 0) {
+					tabs.SelectedIndex = index - 1;
+				} else if (index < tabs.Count - 1) {
+					tabs.SelectedIndex = index + 1;
+				}
+			}
+
 			if (tab.Value.Viewer != null) {
 				if (tab.Value.Viewer.IsDirty) {
 					this.dirtyText ??= this.dirtyPrompt.text;
@@ -72,6 +82,12 @@ namespace MZZT.DarkForces.Showcase {
 					this.dirtyDialog.SetActive(true);
 
 					while (this.dirtyDialog.activeInHierarchy && this.isActiveAndEnabled) {
+#if UNITY_EDITOR
+						if (!UnityEditor.EditorApplication.isPlaying) {
+							return;
+						}
+#endif
+
 						await Task.Delay(25);
 					}
 
@@ -100,11 +116,14 @@ namespace MZZT.DarkForces.Showcase {
 
 			[SerializeField]
 			private GameObject prefab;
-			public IResourceViewer Prefab => this.prefab?.GetComponent<IResourceViewer>();
+			public IResourceViewer Prefab => this.prefab.GetComponent<IResourceViewer>();
 		}
 
 		[SerializeField]
 		private ResourceViewerPrefab[] resourceViewers;
+		[SerializeField]
+		private GameObject genericViewerPrefab;
+		public IResourceViewer GenericViewerPrefab => this.genericViewerPrefab.GetComponent<IResourceViewer>();
 
 		public async void OnSelectedTabChangedAsync() {
 			ResourceEditorTabItem tab = (ResourceEditorTabItem)this.tabs.SelectedDatabound;
@@ -112,7 +131,6 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			// TODO tab.Value can be null here sometimes when closing a tab?
 			Component content = (Component)tab.Value.Viewer;
 			foreach (Transform child in this.content) {
 				if (content != null && child.gameObject == content.gameObject) {
@@ -125,6 +143,10 @@ namespace MZZT.DarkForces.Showcase {
 			if (tab.Value.Viewer == null) {
 				ResourceTypes type = tab.Value.Type ?? ResourceDumper.GetFileType(tab.Value.Resource.Path);
 				IResourceViewer viewer = this.resourceViewers.FirstOrDefault(x => x.Type == type)?.Prefab;
+				if (viewer == null) {
+					viewer = this.GenericViewerPrefab;
+				}
+
 				if (viewer != null) {
 					GameObject obj = Instantiate(((Component)viewer).gameObject);
 					obj.SetActive(false);
@@ -139,9 +161,11 @@ namespace MZZT.DarkForces.Showcase {
 						await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 						return;
 					}
+
 					if (file is ICloneable cloneable) {
 						file = (IFile)cloneable.Clone();
 					}
+
 					await tab.Value.Viewer.LoadAsync(tab.Value.Resource, file);
 
 					tab.Value.Name = tab.Value.Viewer.TabName;

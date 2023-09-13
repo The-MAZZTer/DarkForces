@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MZZT.Extensions {
-	public static class IEnumerableExtesnions {
+	public static class IEnumerableExtensions {
 		public static void Deconstruct<T>(this IEnumerable<T> me,
 			out T x1, out T x2) {
 

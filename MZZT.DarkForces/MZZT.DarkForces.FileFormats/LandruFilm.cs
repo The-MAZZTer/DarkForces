@@ -76,15 +76,15 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The object type.
 			/// </summary>
 			public string Type {
-				get => new(this.RawType);
-				set => this.RawType = value.ToCharArray();
+				get => new string(this.RawType).TrimEnd('\0');
+				set => this.RawType = value.PadRight(4, '\0').ToCharArray();
 			}
 			/// <summary>
 			/// The object name.
 			/// </summary>
 			public string Name {
-				get => new(this.RawName);
-				set => this.RawName = value.ToCharArray();
+				get => new string(this.RawName).TrimEnd('\0');
+				set => this.RawName = value.PadRight(8, '\0').ToCharArray();
 			}
 		}
 
@@ -129,15 +129,16 @@ namespace MZZT.DarkForces.FileFormats {
 			public CommandTypes Command;
 		}
 
+		[Flags]
 		public enum CommandTypes : short {
 			/// <summary>
 			/// Unknown.
 			/// </summary>
-			Unused00,
+			Unknown00,
 			/// <summary>
 			/// Unknown.
 			/// </summary>
-			Unused01,
+			Unknown01,
 			/// <summary>
 			/// End cutscene.
 			/// </summary>
@@ -182,11 +183,14 @@ namespace MZZT.DarkForces.FileFormats {
 			/// Unknown.
 			/// </summary>
 			Unknown0C,
+			/// <summary>
+			/// Switches visibility of graphics.
+			/// </summary>
 			Switch,
 			/// <summary>
-			/// Unknown.
+			/// Flips an image.
 			/// </summary>
-			Unknown0E,
+			Flip,
 			/// <summary>
 			/// Loads a palette.
 			/// </summary>
@@ -242,7 +246,12 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// Plays a sound in stereo.
 			/// </summary>
-			Stereo
+			Stereo,
+
+			/// <summary>
+			/// Flag to disable command.
+			/// </summary>
+			Disabled = -0x8000
 		}
 
 		private Header header;
@@ -314,7 +323,7 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// The command parameters.
 			/// </summary>
-			public short[] Parameters { get; set; }
+			public short[] Parameters { get; set; } = Array.Empty<short>();
 
 			object ICloneable.Clone() => this.Clone();
 			public Command Clone() => new() {
@@ -333,9 +342,10 @@ namespace MZZT.DarkForces.FileFormats {
 				throw new FormatException("FILM header not found!");
 			}
 
+			FilmObject obj = null;
+
 			this.Objects.Clear();
-			for (int i = 0; i < this.header.ObjectCount; i++) {
-				FilmObject obj;
+			while (obj == null || obj.Type != "END") {
 				this.Objects.Add(obj = new() {
 					header = await stream.ReadAsync<ObjectHeader>()
 				});
@@ -354,7 +364,40 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 			}
 
-			ObjectHeader end = await stream.ReadAsync<ObjectHeader>(Endianness.Keep, 0x12);
+			if (this.header.ObjectCount != this.Objects.Count - 1) {
+				this.AddWarning("Object count is not correct.");
+			}
+
+			this.ValidateObjects();
+		}
+
+		private void ValidateObjects() {
+			if (this.Objects.FirstOrDefault()?.Type != "VIEW") {
+				this.AddWarning("First object is not a VIEW object.");
+			}
+
+			if (this.Objects.Skip(1).Any(x => x.Type == "VIEW")) {
+				this.AddWarning("VIEW object is not first.");
+			}
+			if (this.Objects.Take(this.Objects.Count - 1).Any(x => x.Type == "END")) {
+				this.AddWarning("END object is not last.");
+			}
+			if (this.Objects.Count(x => x.Type == "CUST") > 1) {
+				this.AddWarning("Only one CUST object expected.");
+			}
+
+			if (this.Objects.LastOrDefault()?.Type != "END") {
+				this.AddWarning("Last object is not an END object.");
+			} else if (this.Objects.Last().Commands.Count > 0) {
+				this.AddWarning("END object should not have any commands.");
+			}
+
+			if (this.Objects.Any(x => x.Type != "END" && x.Commands.LastOrDefault()?.Type != CommandTypes.End)) {
+				this.AddWarning("Object commands do not end in End command.");
+			}
+			if (this.Objects.Any(x => x.Type != "END" && x.Commands.Count > 1 && x.Commands.FirstOrDefault()?.Type != CommandTypes.Time)) {
+				this.AddWarning("Object commands must start in TIME before other commands.");
+			}
 		}
 
 		public override bool CanSave => true;
@@ -365,17 +408,23 @@ namespace MZZT.DarkForces.FileFormats {
 			this.header.Magic = MAGIC;
 			this.header.ObjectCount = (ushort)this.Objects.Count;
 
+			if (this.Objects.LastOrDefault()?.Type == "END") {
+				this.header.ObjectCount--;
+			}
+
+			this.ValidateObjects();
+
 			await stream.WriteAsync(this.header);
 
 			foreach (FilmObject obj in this.Objects) {
 				switch (obj.header.Type) {
 					case "END":
 						obj.header.BlockType = BlockTypes.End;
-						obj.header.Name = "UNTITLED";
+						//obj.header.Name = "untitled";
 						break;
 					case "VIEW":
 						obj.header.BlockType = BlockTypes.View;
-						obj.header.Name = "UNTITLED";
+						//obj.header.Name = "untitled";
 						break;
 					case "DELT":
 					case "ANIM":
@@ -383,7 +432,7 @@ namespace MZZT.DarkForces.FileFormats {
 						break;
 					case "CUST":
 						obj.header.BlockType = BlockTypes.DeltAnimCust;
-						obj.header.Name = "CUSTOM";
+						//obj.header.Name = "custom";
 						break;
 					case "PLTT":
 						obj.header.BlockType = BlockTypes.Pltt;
@@ -411,13 +460,6 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 				}
 			}
-
-			await stream.WriteAsync(new ObjectHeader() {
-				Type = "END",
-				Name = "UNTITLED",
-				TotalLength = 0x12,
-				BlockType = BlockTypes.End
-			}, Endianness.Keep, 0x12);
 		}
 
 		object ICloneable.Clone() => this.Clone();

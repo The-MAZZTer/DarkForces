@@ -135,7 +135,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 			this.export.interactable = index >= 0 && this.pal != null;
 			this.export.GetComponentInChildren<TMP_Text>().color = this.export.interactable ? this.buttonTextColor : this.buttonDisabledTextColor;
-			this.delete.interactable = index >= 0 && this.pal != null;
+			this.delete.interactable = index >= 0;
 			this.delete.GetComponentInChildren<TMP_Text>().color = this.delete.interactable ? this.buttonTextColor : this.buttonDisabledTextColor;
 
 			this.framerate.interactable = count > 1;
@@ -437,7 +437,7 @@ namespace MZZT.DarkForces.Showcase {
 					texture = page.ToTexture(this.pal, false, false);
 				}
 
-				this.preview.sprite = Sprite.Create(texture, new Rect(0, 0, page.Width, page.Height), new Vector2(0.5f, 0.5f));
+				this.preview.sprite = texture.ToSprite();
 				this.preview.color = Color.white;
 
 				this.Thumbnail = this.preview.sprite;

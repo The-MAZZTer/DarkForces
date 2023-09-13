@@ -129,6 +129,12 @@ namespace MZZT.DarkForces.Showcase {
 			input.enabled = true;
 
 			while (this.background.activeInHierarchy && this.isActiveAndEnabled) {
+#if UNITY_EDITOR
+				if (!UnityEditor.EditorApplication.isPlaying) {
+					return;
+				}
+#endif
+
 				await Task.Delay(25);
 			}
 		}

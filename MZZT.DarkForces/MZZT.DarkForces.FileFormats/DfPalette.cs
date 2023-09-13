@@ -35,11 +35,11 @@ namespace MZZT.DarkForces.FileFormats {
 		[StructLayout(LayoutKind.Sequential, Pack = 1)]
 		public struct Data {
 			/// <summary>
-			/// Palette entries. Color vaues are from 0 - 63 for each channel.
+			/// Palette entries. Color values are from 0 - 63 for each channel.
 			/// The two high bits per channel seem to shift over the color index used for that color on the menu screen.
 			/// Generally this makes the grayscale higher or even fall out of the grayscale palette area entirely.
-			/// Interestingly during menu fade or screen flash, these bits don't get masked out it looks like,
-			/// So accidentlal use of value 64 can appear "correct" during flashes.
+			/// Interestingly during menu fade or screen flash, these bits don't get masked out it looks like.
+			/// So accidental use of value 64 can appear "correct" during flashes.
 			/// These bits do look like they control the fade out color of the menu, but this could just be
 			/// a side effect of the above bug.
 			/// </summary>

@@ -4409,6 +4409,19 @@ MonoBehaviour:
     prefab: {fileID: 4253544451123580150, guid: 0f0c6708eb30b314a9732116c6c18a16, type: 3}
   - type: 8388608
     prefab: {fileID: 4253544451123580150, guid: 31fb7019cd2710246b45b76c64d17b9c, type: 3}
+  - type: 2
+    prefab: {fileID: 4253544451123580150, guid: 7e1a1fe1c00e0e141a8eec3b4d208a25, type: 3}
+  - type: 128
+    prefab: {fileID: 4253544451123580150, guid: 6edde94db86d69b43b438efca3e09e76, type: 3}
+  - type: 2147483648
+    prefab: {fileID: 4253544451123580150, guid: 707b1dbf532011f4d9dff6c4c0a3a7f6, type: 3}
+  - type: 256
+    prefab: {fileID: 4253544451123580150, guid: 15ee5618590e6d54b84970edfd7c64af, type: 3}
+  - type: 2048
+    prefab: {fileID: 4253544451123580150, guid: 1e0064958248275489e24c7613eac17b, type: 3}
+  - type: 1048576
+    prefab: {fileID: 4253544451123580150, guid: 0bd08edf5c6de5e4a9fcdbbf608231ce, type: 3}
+  genericViewerPrefab: {fileID: 4253544451123580150, guid: cd2956711ecc57545a8fd5bfb941880e, type: 3}
 --- !u!1 &450186983
 GameObject:
   m_ObjectHideFlags: 0

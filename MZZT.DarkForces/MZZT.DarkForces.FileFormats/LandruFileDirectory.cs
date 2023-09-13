@@ -49,15 +49,15 @@ namespace MZZT.DarkForces.FileFormats {
 			/// The file type.
 			/// </summary>
 			public string Type {
-				get => new(this.RawType);
-				set => this.RawType = value.ToCharArray();
+				get => new string(this.RawType).TrimEnd('\0');
+				set => this.RawType = value.PadRight(4, '\0').ToCharArray();
 			}
 			/// <summary>
 			/// The file name`.
 			/// </summary>
 			public string Name {
-				get => new(this.RawName);
-				set => this.RawName = value.ToCharArray();
+				get => new string(this.RawName).TrimEnd('\0');
+				set => this.RawName = value.PadRight(8, '\0').ToCharArray();
 			}
 		}
 
@@ -387,15 +387,13 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 			}
 		}
-
 		/// <summary>
 		/// Adds a file to the LFD.
 		/// </summary>
-		/// <typeparam name="T">Type of the embedded file.</typeparam>
 		/// <param name="name">The file name.</param>
 		/// <param name="type">The type/extension of the file.</param>
 		/// <param name="file">The file object.</param>
-		public void AddFile<T>(string name, string type, T file) where T : File<T>, new() {
+		public void AddFile(string name, string type, IFile file) {
 			FileHeader header = new() {
 				Name = name.Length > 8 ? name.Substring(0, 8) : name,
 				Type = (type.Length > 4 ? type.Substring(0, 4) : type).ToUpper(),
@@ -412,8 +410,18 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <typeparam name="T">Type of the embedded file.</typeparam>
 		/// <param name="name">The file name.</param>
 		/// <param name="type">The type/extension of the file.</param>
+		/// <param name="file">The file object.</param>
+		public void AddFile<T>(string name, string type, T file) where T : File<T>, new() =>
+			this.AddFile(name, type, (IFile)file);
+
+		/// <summary>
+		/// Adds a file to the LFD.
+		/// </summary>
+		/// <typeparam name="T">Type of the embedded file.</typeparam>
+		/// <param name="name">The file name.</param>
+		/// <param name="type">The type/extension of the file.</param>
 		/// <param name="stream">The data stream.</param>
-		public async Task AddFileAsync<T>(string name, string type, Stream stream) where T : File<T>, new() {
+		public async Task AddFileAsync(string name, string type, Stream stream) {
 			Raw raw = await Raw.ReadAsync(stream);
 			this.AddFile(name, type, raw);
 		}

@@ -48,9 +48,7 @@ namespace MZZT.DarkForces.Showcase {
 					} catch (Exception e) {
 						Debug.LogError(e);
 					}
-					if (text == null) {
-						text = Path.GetFileName(path);
-					}
+					text ??= Path.GetFileName(path);
 				} else {
 					path = Mod.Instance.List.First().FilePath;
 					text = Path.GetFileName(path);
@@ -559,23 +557,7 @@ namespace MZZT.DarkForces.Showcase {
 									parameters["lightlevel"] = i.ToString();
 									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-									using Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
-
-									ColorPalette colorPalette = bitmap.Palette;
-									for (int j = 0; j < pal.Palette.Length; j++) {
-										colorPalette.Entries[j] = System.Drawing.Color.FromArgb(colors[j * 4 + 3], colors[j * 4], colors[j * 4 + 1], colors[j * 4 + 2]);
-									}
-									bitmap.Palette = colorPalette;
-
-									BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-									for (int y = 0; y < bitmap.Height; y++) {
-										byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
-										Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
-									}
-
-									bitmap.UnlockBits(data);
-
+									using Bitmap bitmap = cmp.ToBitmap(pal, i);
 									bitmap.Save(outputPath);
 								}
 							}
@@ -589,14 +571,7 @@ namespace MZZT.DarkForces.Showcase {
 									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 									using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-									using StreamWriter writer = new(output, Encoding.ASCII);
-									await writer.WriteLineAsync("JASC-PAL");
-									await writer.WriteLineAsync("0100");
-									await writer.WriteLineAsync("256");
-
-									for (int j = 0; j < 256; j++) {
-										await writer.WriteLineAsync($"{colors[j * 4]} {colors[j * 4 + 1]} {colors[j * 4 + 2]}");
-									}
+									await cmp.WriteJascPalAsync(pal, i, output);
 								}
 							}
 							if (this.Settings.ConvertCmpTo24BitPal) {
@@ -609,9 +584,7 @@ namespace MZZT.DarkForces.Showcase {
 									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 									using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-									for (int j = 0; j < 256; j++) {
-										await output.WriteAsync(colors, j * 4, 3);
-									}
+									await cmp.WriteRgbPalAsync(pal, i, output);
 								}
 							}
 							if (this.Settings.ConvertCmpTo32BitPal) {
@@ -624,7 +597,7 @@ namespace MZZT.DarkForces.Showcase {
 									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 									using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-									await output.WriteAsync(colors);
+									await cmp.WriteRgbaPalAsync(pal, i, output);
 								}
 							}
 						}
@@ -793,7 +766,7 @@ namespace MZZT.DarkForces.Showcase {
 								parameters["character"] = i.ToString();
 
 								await this.SaveTextureAsPngAsync(
-									c.CharacterToTexture(font, this.Settings.FontColor, true),
+									c.ToTexture(font, this.Settings.FontColor, true),
 									this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters)
 								);
 							}
@@ -835,25 +808,7 @@ namespace MZZT.DarkForces.Showcase {
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
-
-							System.Drawing.Color[] colors = pal.ToDrawingColorArray();
-
-							ColorPalette colorPalette = bitmap.Palette;
-							for (int i = 0; i < pal.Palette.Length; i++) {
-								colorPalette.Entries[i] = colors[i];
-							}
-							bitmap.Palette = colorPalette;
-
-							BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-							for (int y = 0; y < bitmap.Height; y++) {
-								byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
-								Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
-							}
-
-							bitmap.UnlockBits(data);
-
+							using Bitmap bitmap = pal.ToBitmap();
 							bitmap.Save(outputPath);
 						}
 						if (this.Settings.ConvertPalPlttToJascPal) {
@@ -863,14 +818,7 @@ namespace MZZT.DarkForces.Showcase {
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-							using StreamWriter writer = new(output, Encoding.ASCII);
-							await writer.WriteLineAsync("JASC-PAL");
-							await writer.WriteLineAsync(pal.Palette.Length.ToString("X4"));
-							await writer.WriteLineAsync(pal.Palette.Length.ToString());
-
-							for (int j = 0; j < pal.Palette.Length; j++) {
-								await writer.WriteLineAsync($"{palette[j * 4]} {palette[j * 4 + 1]} {palette[j * 4 + 2]}");
-							}
+							await pal.WriteJascPalAsync(output);
 						}
 						if (this.Settings.ConvertPalPlttTo24BitPal) {
 							parameters["format"] = "RGB";
@@ -879,9 +827,7 @@ namespace MZZT.DarkForces.Showcase {
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-							for (int j = 0; j < pal.Palette.Length; j++) {
-								await output.WriteAsync(palette, j * 4, 3);
-							}
+							await pal.WriteRgbPalAsync(output);
 						}
 						if (this.Settings.ConvertCmpTo32BitPal) {
 							parameters["format"] = "RGBA";
@@ -890,7 +836,7 @@ namespace MZZT.DarkForces.Showcase {
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-							await output.WriteAsync(palette);
+							await pal.WriteRgbaPalAsync(output);
 						}
 					}
 					break;
@@ -911,25 +857,7 @@ namespace MZZT.DarkForces.Showcase {
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
-
-							System.Drawing.Color[] colors = pltt.ToDrawingColorArray();
-
-							ColorPalette colorPalette = bitmap.Palette;
-							for (int i = 0; i < pltt.Palette.Length; i++) {
-								colorPalette.Entries[i] = colors[i];
-							}
-							bitmap.Palette = colorPalette;
-
-							BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-							for (int y = 0; y < bitmap.Height; y++) {
-								byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
-								Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
-							}
-
-							bitmap.UnlockBits(data);
-
+							using Bitmap bitmap = pltt.ToBitmap();
 							bitmap.Save(outputPath);
 						};
 						if (this.Settings.ConvertPalPlttToJascPal) {
@@ -939,14 +867,7 @@ namespace MZZT.DarkForces.Showcase {
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-							using StreamWriter writer = new(output, Encoding.ASCII);
-							await writer.WriteLineAsync("JASC-PAL");
-							await writer.WriteLineAsync((pltt.Palette.Length + pltt.First).ToString("X4"));
-							await writer.WriteLineAsync((pltt.Palette.Length + pltt.First).ToString());
-
-							for (int j = 0; j < pltt.Palette.Length + pltt.First; j++) {
-								await writer.WriteLineAsync($"{palette[j * 4]} {palette[j * 4 + 1]} {palette[j * 4 + 2]}");
-							}
+							await pltt.WriteJascPalAsync(output);
 						}
 						if (this.Settings.ConvertPalPlttTo24BitPal) {
 							parameters["format"] = "RGB";
@@ -955,9 +876,7 @@ namespace MZZT.DarkForces.Showcase {
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-							for (int j = 0; j < pltt.Palette.Length + pltt.First; j++) {
-								await output.WriteAsync(palette, j * 4, 3);
-							}
+							await pltt.WriteRgbPalAsync(output);
 						}
 						if (this.Settings.ConvertCmpTo32BitPal) {
 							parameters["format"] = "RGBA";
@@ -966,7 +885,7 @@ namespace MZZT.DarkForces.Showcase {
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
-							await output.WriteAsync(palette);
+							await pltt.WriteRgbaPalAsync(output);
 						}
 					}
 					break;

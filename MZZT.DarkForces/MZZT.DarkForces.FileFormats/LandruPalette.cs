@@ -43,6 +43,12 @@ namespace MZZT.DarkForces.FileFormats {
 			set => this.header.Last = value;
 		}
 
+		public LandruPalette() : base() {
+			this.First = 0;
+			this.Palette = Enumerable.Range(0, 256).Select(_ => new RgbColor()).ToArray();
+			this.Last = 255;
+		}
+
 		/// <summary>
 		/// The palette colors.
 		/// </summary>
@@ -60,6 +66,10 @@ namespace MZZT.DarkForces.FileFormats {
 				colors.Add(await stream.ReadAsync<RgbColor>());
 			}
 			this.Palette = colors.ToArray();
+
+			if (stream.ReadByte() != -1) {
+				this.AddWarning("Early end of file!");
+			}
 		}
 
 		public override bool CanSave => true;
@@ -77,6 +87,8 @@ namespace MZZT.DarkForces.FileFormats {
 			foreach (RgbColor color in this.Palette) {
 				await stream.WriteAsync(color);
 			}
+
+			stream.WriteByte(0);
 		}
 
 		object ICloneable.Clone() => this.Clone();

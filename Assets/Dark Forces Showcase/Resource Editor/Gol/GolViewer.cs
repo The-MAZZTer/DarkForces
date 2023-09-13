@@ -60,7 +60,7 @@ namespace MZZT.DarkForces.Showcase {
 			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
 			await mem.CopyToAsync(stream);
 
-			this.OnDirty();
+			this.ResetDirty();
 		}
 
 		public async void SaveAsAsync() {

@@ -64,21 +64,26 @@ namespace MZZT.DarkForces.FileFormats {
 		/// <summary>
 		/// A character.
 		/// </summary>
-		public struct Character : ICloneable {
+		public class Character : ICloneable {
 			/// <summary>
 			/// Character width.
 			/// </summary>
-			public byte Width;
+			public byte Width { get; set; }
 			/// <summary>
 			/// The raw 1-bit pixel data.
 			/// </summary>
-			public BitArray Pixels;
+			public BitArray Pixels { get; set; }
 
 			object ICloneable.Clone() => this.Clone();
 			public Character Clone() => new() {
 				Pixels = new BitArray(this.Pixels),
 				Width = this.Width
 			};
+		}
+
+		public LandruFont() : base() {
+			this.First = 32;
+			this.Height = 8;
 		}
 
 		/// <summary>
@@ -92,7 +97,7 @@ namespace MZZT.DarkForces.FileFormats {
 		public byte BitsPerLine => this.Characters.Max(x => x.Width);
 
 		/// <summary>
-		/// The minimu required bytes per character line to encode the data.
+		/// The minimum required bytes per character line to encode the data.
 		/// </summary>
 		public byte BytesPerLine => (byte)Math.Ceiling(this.header.BitsPerLine / 8f);
 
@@ -110,27 +115,30 @@ namespace MZZT.DarkForces.FileFormats {
 			byte[] widths = new byte[this.header.Length];
 			await stream.ReadAsync(widths, 0, this.header.Length);
 
-			foreach (byte width in widths) {
-				int bytes = (int)Math.Ceiling(this.header.BitsPerLine / 8f) * height;
-				byte[] buffer = new byte[bytes];
-				await stream.ReadAsync(buffer, 0, bytes);
-				
-				BitArray bits = new(buffer);
-				// BitArray stores its bits for each byte in the opposite order which we need to use them to draw.
-				// So swap them around here.
-				for (int i = 0; i < bits.Length; i += 8) {
-					for (int j = 0; j < 4; j++) {
-						int rbit = 7 - j;
+			int widthBytes = (int)Math.Ceiling(this.header.BitsPerLine / 8f);
 
-						bits[i + j] = bits[i + j] ^ bits[i + rbit];
-						bits[i + rbit] = bits[i + j] ^ bits[i + rbit];
-						bits[i + j] = bits[i + j] ^ bits[i + rbit];
+			foreach (byte width in widths) {
+				int charWidthBytes = (int)Math.Ceiling(width / 8f);
+
+				byte[] buffer;
+				int bytes = widthBytes * height;
+				if (charWidthBytes == widthBytes) {
+					buffer = new byte[bytes];
+					await stream.ReadAsync(buffer, 0, bytes);
+				} else {
+					buffer = new byte[charWidthBytes * height];
+
+					for (int y = 0; y < this.header.Height; y++) {
+						await stream.ReadAsync(buffer, y * charWidthBytes, charWidthBytes);
+						for (int i = charWidthBytes; i < widthBytes; i++) {
+							stream.ReadByte();
+						}
 					}
 				}
 
 				this.Characters.Add(new() {
 					Width = width,
-					Pixels = bits
+					Pixels = new(buffer)
 				});
 			}
 		}
@@ -154,29 +162,20 @@ namespace MZZT.DarkForces.FileFormats {
 			byte[] buffer = new byte[widthBytes * this.header.Height];
 			foreach (Character character in this.Characters) {
 				BitArray bits = character.Pixels;
-				for (int i = 0; i < bits.Length; i += 8) {
-					for (int j = 0; j < 4; j++) {
-						int rbit = 7 - j;
-
-						bits[i + j] = bits[i + j] ^ bits[i + rbit];
-						bits[i + rbit] = bits[i + j] ^ bits[i + rbit];
-						bits[i + j] = bits[i + j] ^ bits[i + rbit];
-					}
-				}
 
 				character.Pixels.CopyTo(buffer, 0);
 
-				for (int i = 0; i < bits.Length; i += 8) {
-					for (int j = 0; j < 4; j++) {
-						int rbit = 7 - j;
-
-						bits[i + j] = bits[i + j] ^ bits[i + rbit];
-						bits[i + rbit] = bits[i + j] ^ bits[i + rbit];
-						bits[i + j] = bits[i + j] ^ bits[i + rbit];
+				int charWidthBytes = (int)Math.Ceiling(character.Width / 8f);
+				if (widthBytes == charWidthBytes) {
+					await stream.WriteAsync(buffer, 0, widthBytes * this.header.Height);
+				} else {
+					for (int y = 0; y < this.header.Height; y++) {
+						await stream.WriteAsync(buffer, y * charWidthBytes, charWidthBytes);
+						for (int i = charWidthBytes; i < widthBytes; i++) {
+							stream.WriteByte(0);
+						}
 					}
 				}
-
-				await stream.WriteAsync(buffer, 0, widthBytes * this.header.Height);
 			}
 		}
 

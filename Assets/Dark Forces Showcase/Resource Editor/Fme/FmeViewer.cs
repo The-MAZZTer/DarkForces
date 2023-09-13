@@ -90,7 +90,7 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.BMP", "*.GIF", "*.PNG"},
+				FileSearchPatterns = new[] { "*.BMP", "*.GIF", "*.PNG" },
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,

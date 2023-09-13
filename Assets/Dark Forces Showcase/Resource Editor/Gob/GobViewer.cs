@@ -62,7 +62,7 @@ namespace MZZT.DarkForces.Showcase {
 				SourceFile = this.filePath,
 				SourceOffset = x.offset,
 				Size = x.size,
-				New = false
+				ResourcePath = $"{this.filePath}{Path.DirectorySeparatorChar}{x.name}"
 			}).OrderBy(x => x.Name).ToList();
 		}
 
@@ -84,7 +84,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.lastFolder = Path.GetDirectoryName(path);
 
 			long size = new FileInfo(path).Length;
-			if (size > int.MaxValue) {
+			if (size > uint.MaxValue) {
 				await DfMessageBox.Instance.ShowAsync("File is too big to add to a GOB.");
 				return;
 			}
@@ -94,7 +94,7 @@ namespace MZZT.DarkForces.Showcase {
 				SourceFile = path,
 				SourceOffset = 0,
 				Size = (uint)size,
-				New = true
+				ResourcePath = path
 			});
 
 			this.OnDirty();
@@ -129,6 +129,8 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.Value.Dispose();
 
+			this.ResetDirty();
+
 			this.PopulateList();
 		}
 
@@ -146,12 +148,10 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			this.SaveAsync();
-
-			this.ResetDirty();
 		}
 
 		public async Task ExportAsync(FileLocationInfo info) {
-			string sourcePath = info.New ? info.SourceFile : Path.Combine(info.SourceFile, info.Name);
+			string sourcePath = info.ResourcePath;
 
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
@@ -181,6 +181,7 @@ namespace MZZT.DarkForces.Showcase {
 	class FileLocationInfo {
 		public string Name { get; set; }
 		public string SourceFile { get; set; }
+		public string ResourcePath { get; set; }
 		public uint SourceOffset { get; set; }
 		public uint Size { get; set; }
 		public string SizeText {
@@ -199,6 +200,5 @@ namespace MZZT.DarkForces.Showcase {
 				return $"{size:0.00}{suffixes[suffixPos]}B";
 			}
 		}
-		public bool New { get; set; }
 	}
 }

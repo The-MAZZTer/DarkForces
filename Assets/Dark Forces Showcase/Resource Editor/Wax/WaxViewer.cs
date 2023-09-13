@@ -530,7 +530,7 @@ namespace MZZT.DarkForces.Showcase {
 				this.frameDetails.Value = frame;
 				this.frameDetails.gameObject.SetActive(true);
 
-				this.frameCounter.text = $"{frameIndex + 1} / {frameCount}";
+				this.frameCounter.text = $"{frame.Width}x{frame.Height} | {frameIndex + 1} / {frameCount}";
 
 				this.playButton.interactable = frameCount > 1;
 				this.playImage.gameObject.SetActive(!this.playing);
