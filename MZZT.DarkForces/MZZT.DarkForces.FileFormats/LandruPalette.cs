@@ -67,8 +67,8 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 			this.Palette = colors.ToArray();
 
-			if (stream.ReadByte() != -1) {
-				this.AddWarning("Early end of file!");
+			if (stream.ReadByte() != 0) {
+				this.AddWarning("Missing end of file marker!");
 			}
 		}
 

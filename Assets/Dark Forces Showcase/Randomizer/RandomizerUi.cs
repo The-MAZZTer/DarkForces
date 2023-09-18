@@ -380,6 +380,7 @@ namespace MZZT.DarkForces.Showcase {
 					RandomizeOtherColors = false,
 					RandomizePerLevel = false
 				},
+				SaveSettingsToGob =	true,
 				FixedSeed = false,
 				Version = 1
 			}

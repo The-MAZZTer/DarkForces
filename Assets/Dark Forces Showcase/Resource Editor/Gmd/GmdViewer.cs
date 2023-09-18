@@ -166,10 +166,7 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			byte[] swap = this.Value.TrackData[this.track];
-			this.Value.TrackData[this.track] = this.Value.TrackData[this.track - 1];
-			this.Value.TrackData[this.track - 1] = swap;
-
+			(this.Value.TrackData[this.track - 1], this.Value.TrackData[this.track]) = (this.Value.TrackData[this.track], this.Value.TrackData[this.track - 1]);
 			this.OnDirty();
 
 			this.track--;
@@ -181,10 +178,7 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			byte[] swap = this.Value.TrackData[this.track];
-			this.Value.TrackData[this.track] = this.Value.TrackData[this.track + 1];
-			this.Value.TrackData[this.track + 1] = swap;
-
+			(this.Value.TrackData[this.track + 1], this.Value.TrackData[this.track]) = (this.Value.TrackData[this.track], this.Value.TrackData[this.track + 1]);
 			this.OnDirty();
 
 			this.track++;

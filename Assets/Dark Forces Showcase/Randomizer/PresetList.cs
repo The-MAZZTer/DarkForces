@@ -241,6 +241,7 @@ namespace MZZT.DarkForces.Showcase {
 				Settings = new RandomizerSettings() {
 					Version = 1,
 					FixedSeed = false,
+					SaveSettingsToGob = true,
 					Seed = 0x00000000,
 					Colormap = new RandomizerColormapSettings() {
 						ForceLightLevel = new RandomRange() {
@@ -427,6 +428,7 @@ namespace MZZT.DarkForces.Showcase {
 				Settings = new RandomizerSettings() {
 					Version = 1,
 					FixedSeed = false,
+					SaveSettingsToGob = true,
 					Seed = 0x00000000,
 					Colormap = new RandomizerColormapSettings() {
 						ForceLightLevel = new RandomRange() {

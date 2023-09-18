@@ -11491,7 +11491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   valueStorageMethod: 4
-  playerPrefsKey: ResourceDumperSettings
+  playerPrefsKey: perSettingsperSettings
   beforeValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -15330,8 +15330,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 636286125}
   m_HandleRect: {fileID: 636286124}
   m_Direction: 2
-  m_Value: 0.9999999
-  m_Size: 0.5148776
+  m_Value: 1
+  m_Size: 0.39187747
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

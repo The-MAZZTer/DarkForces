@@ -180,10 +180,7 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			DfBitmap.Page swap = this.Value.Pages[index];
-			this.Value.Pages[index] = this.Value.Pages[index - 1];
-			this.Value.Pages[index - 1] = swap;
-
+			(this.Value.Pages[index - 1], this.Value.Pages[index]) = (this.Value.Pages[index], this.Value.Pages[index - 1]);
 			this.OnDirty();
 
 			this.OnPageChanged();
@@ -196,10 +193,7 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			DfBitmap.Page swap = this.Value.Pages[index];
-			this.Value.Pages[index] = this.Value.Pages[index + 1];
-			this.Value.Pages[index + 1] = swap;
-
+			(this.Value.Pages[index + 1], this.Value.Pages[index]) = (this.Value.Pages[index], this.Value.Pages[index + 1]);
 			this.OnDirty();
 
 			this.OnPageChanged();

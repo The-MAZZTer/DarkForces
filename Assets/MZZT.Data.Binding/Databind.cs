@@ -643,12 +643,21 @@ namespace MZZT.Data.Binding {
 			if (this.changeDetectionMode.HasFlag(DatabindingChangeDetectionModes.PollOnEnable)) {
 				T val = this.Value;
 				if ((this.lastValue != null && this.lastValue.Equals(val)) || (this.lastValue == null && val == null)) {
-					this.lastValue = val;
-					this.Invalidate();
+					return;
 				}
+
+				this.lastValue = val;
+				this.Invalidate();
 			}
 		}
-		protected virtual void OnDisable() => this.UnsubscribeObject();
+		protected virtual void OnDisable() {
+			this.UnsubscribeObject();
+
+			if (this.changeDetectionMode.HasFlag(DatabindingChangeDetectionModes.PollOnEnable)) {
+				T val = this.Value;
+				this.lastValue = val;
+			}
+		}
 
 		private void Update() {
 			if (this.subscribed == null && this.transform.hasChanged) {

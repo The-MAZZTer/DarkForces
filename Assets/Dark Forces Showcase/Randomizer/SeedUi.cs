@@ -8,8 +8,8 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private TMP_InputField input;
 
-		protected override void OnEnable() {
-			base.OnEnable();
+		protected override void OnInvalidate() {
+			base.OnInvalidate();
 
 			this.input.text = this.Value.ToString("X8");
 		}
