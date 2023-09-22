@@ -1,7 +1,3 @@
-# WARNING
-
-Due to Unity's announced licensing changes, future builds of this software may track your PC and send information about it to Unity despite this software being FOSS. This software was developed with earlier versions of Unity without this code and migrating to alternative engines would be a significant time sink.
-
 # Dark Forces Showcase
 
 Find out more about Star Wars Dark Forces on [Wikipedia](https://en.wikipedia.org/wiki/Star_Wars:_Dark_Forces).
