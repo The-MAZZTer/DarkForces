@@ -349,6 +349,43 @@ namespace MZZT.DarkForces.Showcase {
 						LessenItemProbabilityWhenSpawned = true,
 						LogicsForEnemySpawnLocationPool = RandomizerUi.ENEMY_LOGICS.ToArray(),
 						LogicsForItemSpawnLocationPool = RandomizerUi.ITEM_LOGICS.ToArray(),
+						NightmareGeneratorsDelay = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsInterval = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsMaximumAlive = new RandomRange() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						NightmareGeneratorsMaximumDistance = new RandomRange() {
+							Enabled = false,
+							Minimum = 32767,
+							Maximum = 32767
+						},
+						NightmareGeneratorsMinimumDistance = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0,
+						},
+						NightmareGeneratorsNumberTerminate = new RandomRange() {
+							Enabled = false,
+							Minimum = -1,
+							Maximum = -1
+						},
+						NightmareGeneratorsWanderTime = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareKeepOriginalEnemies = false,
+						NightmareMode = false,
 						RandomEnemyLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
 						RandomItemLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
 						RandomizeBosses = true,
@@ -526,6 +563,43 @@ namespace MZZT.DarkForces.Showcase {
 						LessenItemProbabilityWhenSpawned = true,
 						LogicsForEnemySpawnLocationPool = RandomizerUi.ENEMY_LOGICS.ToArray(),
 						LogicsForItemSpawnLocationPool = RandomizerUi.ITEM_LOGICS.ToArray(),
+						NightmareGeneratorsDelay = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsInterval = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsMaximumAlive = new RandomRange() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						NightmareGeneratorsMaximumDistance = new RandomRange() {
+							Enabled = false,
+							Minimum = 32767,
+							Maximum = 32767
+						},
+						NightmareGeneratorsMinimumDistance = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0,
+						},
+						NightmareGeneratorsNumberTerminate = new RandomRange() {
+							Enabled = false,
+							Minimum = -1,
+							Maximum = -1
+						},
+						NightmareGeneratorsWanderTime = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareKeepOriginalEnemies = false,
+						NightmareMode = false,
 						RandomEnemyLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
 						RandomItemLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
 						RandomizeBosses = true,
@@ -575,6 +649,189 @@ namespace MZZT.DarkForces.Showcase {
 						SpawnOnlyFlyingAndDiagonasInWater = true,
 						SpawnOnlyFlyingOverPits = true,
 						UnlockAllDoorsAndIncludeKeysInSpawnLocationPool = true,
+						EnemySpawnSources = SpawnSources.ExistingThenRandom,
+						ItemSpawnSources = SpawnSources.ExistingThenRandom
+					},
+					Palette = new RandomizerPaletteSettings() {
+						LightHue = new RandomRange() {
+							Enabled = false,
+							Minimum = -180,
+							Maximum = 180
+						},
+						LightLum = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 2
+						},
+						LightSat = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 2
+						},
+						RandomizeLightColors = false,
+						RandomizeOtherColors = false,
+						RandomizePerLevel = true
+					}
+				}
+			}, new Preset {
+				Name = "Nightmare Mode",
+				ReadOnly = true,
+				Settings = new RandomizerSettings() {
+					Version = 1,
+					FixedSeed = false,
+					SaveSettingsToGob = true,
+					Seed = 0x00000000,
+					Colormap = new RandomizerColormapSettings() {
+						ForceLightLevel = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 31
+						},
+						HeadlightBrightness = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 31
+						},
+						HeadlightDistance = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 127
+						},
+					},
+					Cutscenes = new RandomizerCutscenesSettings() {
+						AdjustCutsceneMusicVolume = 1,
+						AdjustCutsceneSpeed = new RandomRange() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						RemoveCutscenes = false
+					},
+					JediLvl = new RandomizerJediLvlSettings() {
+						LevelCount = new RandomRange() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						Levels = new[] { "SECBASE", "TALAY", "SEWERS", "TESTBASE", "GROMAS", "DTENTION", "RAMSHED",
+							"ROBOTICS", "NARSHADA", "JABSHIP", "IMPCITY", "FUELSTAT", "EXECUTOR", "ARC" },
+						RandomizeOrder = false
+					},
+					Level = new RandomizerLevelSettings() {
+						MapOverrideMode = MapOverrideModes.None,
+						LightLevelMultiplier = new RandomRange() {
+							Enabled = false,
+							Minimum = 1f,
+							Maximum = 1f
+						},
+						LightLevelMultiplierPerLevel = false,
+						RemoveSecrets = false
+					},
+					ModSourcePaths = new Dictionary<string, string>(),
+					Music = new RandomizerMusicSettings() {
+						RandomizeTrackOrder = false
+					},
+					Object = new RandomizerObjectSettings() {
+						DefaultLogicFiles = RandomizerUi.DEFAULT_TEMPLATES.Select(x => new ObjectTemplate() { Logic = x.Key, Filename = x.Value}).ToArray(),
+						DifficultyEnemySpawnWeights = new List<DifficultySpawnWeight>(),
+						DifficultyItemSpawnWeights = new List<DifficultySpawnWeight>(),
+						EnemyGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
+						EnemyLogicSpawnWeights = new List<LogicSpawnWeight>(),
+						MultiLogicEnemyAction = MultiLogicActions.Shuffle,
+						ItemAwardFirstLevel = new List<ItemAward>(),
+						ItemAwardOtherLevels = new List<ItemAward>(),
+						ItemGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
+						ItemLogicSpawnWeights = new List<LogicSpawnWeight>(),
+						LessenEnemyProbabilityWhenSpawned = true,
+						LessenItemProbabilityWhenSpawned = true,
+						LogicsForEnemySpawnLocationPool = RandomizerUi.ENEMY_LOGICS.ToArray(),
+						LogicsForItemSpawnLocationPool = RandomizerUi.ITEM_LOGICS.ToArray(),
+						NightmareGeneratorsDelay = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsInterval = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsMaximumAlive = new RandomRange() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						NightmareGeneratorsMaximumDistance = new RandomRange() {
+							Enabled = false,
+							Minimum = 32767,
+							Maximum = 32767
+						},
+						NightmareGeneratorsMinimumDistance = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0,
+						},
+						NightmareGeneratorsNumberTerminate = new RandomRange() {
+							Enabled = false,
+							Minimum = -1,
+							Maximum = -1
+						},
+						NightmareGeneratorsWanderTime = new RandomRange() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareKeepOriginalEnemies = false,
+						NightmareMode = true,
+						RandomEnemyLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
+						RandomItemLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
+						RandomizeBosses = false,
+						RandomizeEnemies = false,
+						RandomizeEnemyYaw = false,
+						RandomizeGeneratorsDelay = new RandomRange() {
+							Maximum = 30,
+							Minimum = 30,
+							Enabled = false
+						},
+						RandomizeGeneratorsInterval = new RandomRange() {
+							Maximum = 20,
+							Minimum = 20,
+							Enabled = false
+						},
+						RandomizeGeneratorsMaximumAlive = new RandomRange() {
+							Maximum = 3,
+							Minimum = 3,
+							Enabled = false
+						},
+						RandomizeGeneratorsMaximumDistance = new RandomRange() {
+							Maximum = 200,
+							Minimum = 200,
+							Enabled = false
+						},
+						RandomizeGeneratorsMinimumDistance = new RandomRange() {
+							Maximum = 70,
+							Minimum = 70,
+							Enabled = false
+						},
+						RandomizeGeneratorsNumberTerminate = new RandomRange() {
+							Maximum = 8,
+							Minimum = 8,
+							Enabled = false
+						},
+						RandomizeGeneratorsWanderTime = new RandomRange() {
+							Maximum = 40,
+							Minimum = 40,
+							Enabled = false
+						},
+						RandomizeItems = false,
+						RemoveCheckpoints = false,
+						ReplaceKeyAndCodeOfficersWithTheirItems = false,
+						SpawnDiagonasOnlyInWater = true,
+						SpawnItemsInPits = false,
+						SpawnItemsInWater = false,
+						SpawnOnlyFlyingAndDiagonasInWater = true,
+						SpawnOnlyFlyingOverPits = true,
+						UnlockAllDoorsAndIncludeKeysInSpawnLocationPool = false,
 						EnemySpawnSources = SpawnSources.ExistingThenRandom,
 						ItemSpawnSources = SpawnSources.ExistingThenRandom
 					},

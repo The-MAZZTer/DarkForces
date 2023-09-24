@@ -156,7 +156,7 @@ RectTransform:
   m_Father: {fileID: 2078528756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10.05, y: -20.11}
   m_SizeDelta: {x: 20.1, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -429,7 +429,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 57.555, y: -823.6299}
+  m_AnchoredPosition: {x: 57.555, y: -865.0298}
   m_SizeDelta: {x: 115.11, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9006449
@@ -919,8 +919,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -585.99}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -1059}
+  m_SizeDelta: {x: 1651.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &20879047
 MonoBehaviour:
@@ -1137,8 +1137,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -1690.19}
-  m_SizeDelta: {x: 2546.859, y: 123.02}
+  m_AnchoredPosition: {x: 825.64, y: -2153.905}
+  m_SizeDelta: {x: 1651.28, y: 164.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &25908495
 MonoBehaviour:
@@ -1411,8 +1411,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1278.6926, y: -71.509995}
-  m_SizeDelta: {x: 2537.3853, y: 123.02}
+  m_AnchoredPosition: {x: 853.64, y: -112.905}
+  m_SizeDelta: {x: 1687.28, y: 205.81}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &44347832
 MonoBehaviour:
@@ -1603,8 +1603,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 304.79, y: -20.11}
-  m_SizeDelta: {x: 527.56, y: 40.22}
+  m_AnchoredPosition: {x: 166.9, y: -20.11}
+  m_SizeDelta: {x: 251.78, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &46725997
 MonoBehaviour:
@@ -1988,7 +1988,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -2045,8 +2045,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &65166012
 CanvasRenderer:
@@ -2090,8 +2090,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 238.275, y: -20.11}
-  m_SizeDelta: {x: 394.53, y: 40.22}
+  m_AnchoredPosition: {x: 231.06, y: -20.11}
+  m_SizeDelta: {x: 380.1, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &66044159
 MonoBehaviour:
@@ -2721,7 +2721,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -2778,8 +2778,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &81729623
 CanvasRenderer:
@@ -2827,8 +2827,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 532.45996, y: -356.36}
-  m_SizeDelta: {x: 1064.9199, y: 40.22}
+  m_AnchoredPosition: {x: 618.065, y: -439.15002}
+  m_SizeDelta: {x: 1236.13, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &85912181
 MonoBehaviour:
@@ -2976,8 +2976,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -291.91}
-  m_SizeDelta: {x: 2584.7537, y: 81.62}
+  m_AnchoredPosition: {x: 825.64, y: -312.61002}
+  m_SizeDelta: {x: 1651.28, y: 123.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &91147777
 MonoBehaviour:
@@ -3113,8 +3113,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -858.56995}
-  m_SizeDelta: {x: 2584.7537, y: 123.02}
+  m_AnchoredPosition: {x: 825.64, y: -1112.7249}
+  m_SizeDelta: {x: 1651.28, y: 164.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &93011282
 MonoBehaviour:
@@ -3227,7 +3227,6 @@ GameObject:
   m_Component:
   - component: {fileID: 105922937}
   - component: {fileID: 105922940}
-  - component: {fileID: 105922939}
   - component: {fileID: 105922938}
   m_Layer: 5
   m_Name: Checkmark
@@ -3310,7 +3309,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3344,32 +3343,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &105922939
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 105922936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &105922940
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3522,7 +3495,6 @@ GameObject:
   m_Component:
   - component: {fileID: 122015498}
   - component: {fileID: 122015501}
-  - component: {fileID: 122015500}
   - component: {fileID: 122015499}
   m_Layer: 5
   m_Name: Checkmark
@@ -3605,7 +3577,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3639,32 +3611,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &122015500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 122015497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &122015501
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3767,7 +3713,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3824,8 +3770,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &125048864
 CanvasRenderer:
@@ -3869,7 +3815,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 296.845, y: -2949.5996}
+  m_AnchoredPosition: {x: 296.845, y: -3555.6396}
   m_SizeDelta: {x: 593.69, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &130442748
@@ -4007,7 +3953,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 69.485, y: -522.31}
+  m_AnchoredPosition: {x: 69.485, y: -563.70996}
   m_SizeDelta: {x: 138.97, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &135889317
@@ -4296,7 +4242,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 226.46, y: -1426.2695}
+  m_AnchoredPosition: {x: 226.46, y: -1467.6694}
   m_SizeDelta: {x: 452.92, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &144187440
@@ -4507,7 +4453,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -4564,8 +4510,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &154681397
 CanvasRenderer:
@@ -4669,7 +4615,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -4726,8 +4672,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &164105347
 CanvasRenderer:
@@ -4775,7 +4721,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 259.41, y: -2144.9}
+  m_AnchoredPosition: {x: 259.41, y: -2626.7397}
   m_SizeDelta: {x: 518.82, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &168069429
@@ -5007,7 +4953,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 307.09, y: -2598.0598}
+  m_AnchoredPosition: {x: 307.09, y: -3162.6997}
   m_SizeDelta: {x: 614.18, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &179117757
@@ -5184,7 +5130,6 @@ GameObject:
   m_Component:
   - component: {fileID: 207160683}
   - component: {fileID: 207160686}
-  - component: {fileID: 207160685}
   - component: {fileID: 207160684}
   m_Layer: 5
   m_Name: Checkmark
@@ -5267,7 +5212,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -5301,32 +5246,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &207160685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 207160682}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &207160686
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5729,8 +5648,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1262.165, y: -2748.7197}
-  m_SizeDelta: {x: 2524.33, y: 40.22}
+  m_AnchoredPosition: {x: 825.64, y: -3334.0596}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &230443648
 MonoBehaviour:
@@ -6005,8 +5924,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -1096.44}
-  m_SizeDelta: {x: 2584.7537, y: 332.72}
+  m_AnchoredPosition: {x: 825.64, y: -1391.99}
+  m_SizeDelta: {x: 1651.28, y: 374.12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &248324335
 MonoBehaviour:
@@ -6191,7 +6110,6 @@ GameObject:
   m_Component:
   - component: {fileID: 257053917}
   - component: {fileID: 257053920}
-  - component: {fileID: 257053919}
   - component: {fileID: 257053918}
   m_Layer: 5
   m_Name: Checkmark
@@ -6274,7 +6192,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -6308,32 +6226,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &257053919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 257053916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &257053920
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6352,7 +6244,6 @@ GameObject:
   m_Component:
   - component: {fileID: 269632065}
   - component: {fileID: 269632068}
-  - component: {fileID: 269632067}
   - component: {fileID: 269632066}
   m_Layer: 5
   m_Name: Checkmark
@@ -6435,7 +6326,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -6469,32 +6360,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &269632067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 269632064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &269632068
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6537,7 +6402,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 598.945, y: -2849.1597}
+  m_AnchoredPosition: {x: 598.945, y: -3455.1997}
   m_SizeDelta: {x: 1197.89, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &270500109
@@ -6961,7 +6826,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 394.44, y: -610.11}
+  m_AnchoredPosition: {x: 394.44, y: -802.1699}
   m_SizeDelta: {x: 788.88, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &284726556
@@ -7084,7 +6949,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -7141,8 +7006,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &285118078
 CanvasRenderer:
@@ -7358,7 +7223,6 @@ GameObject:
   m_Component:
   - component: {fileID: 292823592}
   - component: {fileID: 292823595}
-  - component: {fileID: 292823594}
   - component: {fileID: 292823593}
   m_Layer: 5
   m_Name: Checkmark
@@ -7441,7 +7305,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -7475,32 +7339,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &292823594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 292823591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &292823595
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7603,7 +7441,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -7660,8 +7498,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &294828072
 CanvasRenderer:
@@ -7710,8 +7548,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1536.3694, y: -25.11}
-  m_SizeDelta: {x: 2000.9789, y: 50.22}
+  m_AnchoredPosition: {x: 1088.5801, y: -25.11}
+  m_SizeDelta: {x: 1105.4, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &302074284
 MonoBehaviour:
@@ -8001,7 +7839,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -8058,8 +7896,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &309454595
 CanvasRenderer:
@@ -8490,7 +8328,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1976.2504, y: -35.11005}
+  m_AnchoredPosition: {x: 1126.1451, y: -35.11005}
   m_SizeDelta: {x: 441.12543, y: 50.219597}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &315736355
@@ -8648,8 +8486,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 903.56, y: -120.55}
-  m_SizeDelta: {x: 1807.12, y: 40.22}
+  m_AnchoredPosition: {x: 825.64, y: -141.25}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &318001495
 MonoBehaviour:
@@ -8787,7 +8625,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 203.74501, y: -413.05}
+  m_AnchoredPosition: {x: 203.74501, y: -454.45}
   m_SizeDelta: {x: 407.49002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &321293847
@@ -8998,7 +8836,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -9055,8 +8893,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &323165367
 CanvasRenderer:
@@ -9076,7 +8914,6 @@ GameObject:
   m_Component:
   - component: {fileID: 324147080}
   - component: {fileID: 324147083}
-  - component: {fileID: 324147082}
   - component: {fileID: 324147081}
   m_Layer: 5
   m_Name: Checkmark
@@ -9159,7 +8996,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -9193,32 +9030,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &324147082
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 324147079}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &324147083
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9265,8 +9076,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 217.77, y: -463.27002}
-  m_SizeDelta: {x: 435.54, y: 40.22}
+  m_AnchoredPosition: {x: 211.20001, y: -655.32996}
+  m_SizeDelta: {x: 422.40002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &332665348
 MonoBehaviour:
@@ -9492,7 +9303,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 501.53, y: -761.94995}
+  m_AnchoredPosition: {x: 501.53, y: -995.4099}
   m_SizeDelta: {x: 1003.06, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &344113492
@@ -9590,7 +9401,7 @@ RectTransform:
   m_Father: {fileID: 1226940555}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0.0049972534, y: -20.11}
   m_SizeDelta: {x: 0.01, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -9859,8 +9670,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -2276.0398}
-  m_SizeDelta: {x: 2584.7537, y: 81.62}
+  m_AnchoredPosition: {x: 825.64, y: -2778.5796}
+  m_SizeDelta: {x: 1651.28, y: 123.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &364435936
 MonoBehaviour:
@@ -10056,7 +9867,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -10113,8 +9924,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &367280097
 CanvasRenderer:
@@ -10218,7 +10029,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -10275,8 +10086,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &370171037
 CanvasRenderer:
@@ -10592,7 +10403,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 208.67, y: -212.17}
+  m_AnchoredPosition: {x: 208.67, y: -253.56999}
   m_SizeDelta: {x: 417.34, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &385202567
@@ -10745,8 +10556,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1212.3768, y: -85.33}
-  m_SizeDelta: {x: 2424.7537, y: 50.22}
+  m_AnchoredPosition: {x: 745.64, y: -85.33}
+  m_SizeDelta: {x: 1491.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &385628389
 MonoBehaviour:
@@ -10812,7 +10623,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 143.37, y: -1225.3896}
+  m_AnchoredPosition: {x: 143.37, y: -1266.7896}
   m_SizeDelta: {x: 286.74, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &401467977
@@ -11015,8 +10826,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 238.275, y: -20.11}
-  m_SizeDelta: {x: 394.53, y: 40.22}
+  m_AnchoredPosition: {x: 223.86, y: -20.11}
+  m_SizeDelta: {x: 365.7, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &419817887
 MonoBehaviour:
@@ -11284,8 +11095,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -585.99}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -684.48004}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &439149322
 MonoBehaviour:
@@ -11348,8 +11159,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -1289.89}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -1685.81}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &444637533
 MonoBehaviour:
@@ -11417,8 +11228,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.0122, y: -469.78}
-  m_SizeDelta: {x: 2158.5845, y: 939.56}
+  m_AnchoredPosition: {x: 1066.36, y: -469.78}
+  m_SizeDelta: {x: 1707.28, y: 939.56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &455638165
 MonoBehaviour:
@@ -11675,7 +11486,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -11732,8 +11543,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &461073979
 CanvasRenderer:
@@ -11777,8 +11588,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 320.865, y: -25.11}
-  m_SizeDelta: {x: 641.73, y: 50.22}
+  m_AnchoredPosition: {x: 245.935, y: -25.11}
+  m_SizeDelta: {x: 491.87, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &462046653
 MonoBehaviour:
@@ -11887,7 +11698,6 @@ GameObject:
   m_Component:
   - component: {fileID: 464431212}
   - component: {fileID: 464431215}
-  - component: {fileID: 464431214}
   - component: {fileID: 464431213}
   m_Layer: 5
   m_Name: Checkmark
@@ -11970,7 +11780,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -12004,32 +11814,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &464431214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464431211}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &464431215
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12076,7 +11860,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 60.275, y: -672.97}
+  m_AnchoredPosition: {x: 60.275, y: -714.3699}
   m_SizeDelta: {x: 120.55, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &467376716
@@ -12232,8 +12016,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1594.2944, y: -25.11}
-  m_SizeDelta: {x: 1885.1289, y: 50.22}
+  m_AnchoredPosition: {x: 1071.575, y: -25.11}
+  m_SizeDelta: {x: 1139.41, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &469191492
 MonoBehaviour:
@@ -12743,7 +12527,7 @@ RectTransform:
   m_Father: {fileID: 313728535}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10.05, y: -20.11}
   m_SizeDelta: {x: 20.1, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -13037,7 +12821,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 54.415, y: -924.0698}
+  m_AnchoredPosition: {x: 54.415, y: -965.4697}
   m_SizeDelta: {x: 108.83, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &498276233
@@ -13248,7 +13032,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -13305,8 +13089,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &498773613
 CanvasRenderer:
@@ -13501,7 +13285,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -13558,8 +13342,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &505452163
 CanvasRenderer:
@@ -13663,7 +13447,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -13720,8 +13504,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &508338202
 CanvasRenderer:
@@ -13767,8 +13551,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1212.3768, y: -145.55}
-  m_SizeDelta: {x: 2424.7537, y: 50.22}
+  m_AnchoredPosition: {x: 745.64, y: -145.55}
+  m_SizeDelta: {x: 1491.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &509338700
 MonoBehaviour:
@@ -13832,8 +13616,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1212.3768, y: -25.11}
-  m_SizeDelta: {x: 2424.7537, y: 50.22}
+  m_AnchoredPosition: {x: 745.64, y: -25.11}
+  m_SizeDelta: {x: 1491.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &519666655
 MonoBehaviour:
@@ -14168,7 +13952,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 2491.3853, y: -60.22005}
+  m_AnchoredPosition: {x: 1641.28, y: -60.22005}
   m_SizeDelta: {x: 284.57, y: 50.22}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &537058975
@@ -14438,8 +14222,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1335.3768, y: -25.11}
-  m_SizeDelta: {x: 2178.7537, y: 50}
+  m_AnchoredPosition: {x: 868.64, y: -25.11}
+  m_SizeDelta: {x: 1245.28, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556031543
 MonoBehaviour:
@@ -14550,8 +14334,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1278.6799, y: -571.4}
-  m_SizeDelta: {x: 2537.3853, y: 856.7686}
+  m_AnchoredPosition: {x: 853.64, y: -577.685}
+  m_SizeDelta: {x: 1687.28, y: 703.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &561801169
 MonoBehaviour:
@@ -15117,8 +14901,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 959.19, y: -2547.8398}
-  m_SizeDelta: {x: 1918.38, y: 40.22}
+  m_AnchoredPosition: {x: 825.64, y: -3091.7795}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &576048882
 MonoBehaviour:
@@ -15382,7 +15166,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 304.20502, y: -2798.9397}
+  m_AnchoredPosition: {x: 304.20502, y: -3404.9797}
   m_SizeDelta: {x: 608.41003, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &578829732
@@ -15507,7 +15291,6 @@ GameObject:
   m_Component:
   - component: {fileID: 581003195}
   - component: {fileID: 581003198}
-  - component: {fileID: 581003197}
   - component: {fileID: 581003196}
   m_Layer: 5
   m_Name: Checkmark
@@ -15590,7 +15373,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -15624,32 +15407,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &581003197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 581003194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &581003198
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15697,8 +15454,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1594.2944, y: -25.11}
-  m_SizeDelta: {x: 1885.1289, y: 50.22}
+  m_AnchoredPosition: {x: 1131.2996, y: -40.81}
+  m_SizeDelta: {x: 1019.9608, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &584877624
 MonoBehaviour:
@@ -15988,7 +15745,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -16045,8 +15802,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &597738967
 CanvasRenderer:
@@ -16455,8 +16212,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 260.335, y: -25.11}
-  m_SizeDelta: {x: 520.67, y: 50.22}
+  m_AnchoredPosition: {x: 235.3524, y: -40.81}
+  m_SizeDelta: {x: 470.7048, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &606141937
 MonoBehaviour:
@@ -16699,7 +16456,6 @@ GameObject:
   m_Component:
   - component: {fileID: 627716034}
   - component: {fileID: 627716037}
-  - component: {fileID: 627716036}
   - component: {fileID: 627716035}
   m_Layer: 5
   m_Name: Checkmark
@@ -16782,7 +16538,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -16816,32 +16572,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &627716036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627716033}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &627716037
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17018,8 +16748,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1057.7, y: -223.345}
-  m_SizeDelta: {x: 2115.4, y: 205.81}
+  m_AnchoredPosition: {x: 825.64, y: -264.74}
+  m_SizeDelta: {x: 1651.28, y: 288.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &631362225
 MonoBehaviour:
@@ -17164,7 +16894,7 @@ RectTransform:
   m_Father: {fileID: 1712013582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10.05, y: -20.11}
   m_SizeDelta: {x: 20.1, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -17431,8 +17161,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 314939347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.48512232}
-  m_AnchorMax: {x: 1, y: 0.99999994}
+  m_AnchorMin: {x: 0, y: 0.6081225}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -17484,7 +17214,6 @@ GameObject:
   m_Component:
   - component: {fileID: 648483910}
   - component: {fileID: 648483913}
-  - component: {fileID: 648483912}
   - component: {fileID: 648483911}
   m_Layer: 5
   m_Name: Checkmark
@@ -17567,7 +17296,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -17601,32 +17330,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &648483912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 648483909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &648483913
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17729,7 +17432,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -17786,8 +17489,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &650283638
 CanvasRenderer:
@@ -17831,7 +17534,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 811.985, y: -468.675}
+  m_AnchoredPosition: {x: 811.985, y: -551.465}
   m_SizeDelta: {x: 1623.97, y: 164.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &654436606
@@ -18034,7 +17737,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -18091,8 +17794,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &656102559
 CanvasRenderer:
@@ -18138,8 +17841,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1335.3768, y: -25.11}
-  m_SizeDelta: {x: 2178.7537, y: 50}
+  m_AnchoredPosition: {x: 868.64, y: -25.11}
+  m_SizeDelta: {x: 1245.28, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &656276258
 MonoBehaviour:
@@ -18482,8 +18185,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 343.61, y: -25.11}
-  m_SizeDelta: {x: 687.22, y: 50.22}
+  m_AnchoredPosition: {x: 331.23987, y: -40.81}
+  m_SizeDelta: {x: 662.47974, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &658562551
 MonoBehaviour:
@@ -18888,7 +18591,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 474.58002, y: -2698.4998}
+  m_AnchoredPosition: {x: 474.58002, y: -3263.1396}
   m_SizeDelta: {x: 949.16003, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &676498469
@@ -19036,7 +18739,7 @@ RectTransform:
   m_Father: {fileID: 1052898790}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 84.56, y: -20.11}
   m_SizeDelta: {x: 169.12, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -19147,7 +18850,6 @@ GameObject:
   m_Component:
   - component: {fileID: 677383514}
   - component: {fileID: 677383517}
-  - component: {fileID: 677383516}
   - component: {fileID: 677383515}
   m_Layer: 5
   m_Name: Checkmark
@@ -19230,7 +18932,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -19264,32 +18966,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &677383516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 677383513}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &677383517
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19568,8 +19244,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -331.91}
-  m_SizeDelta: {x: 2584.7537, y: 81.62}
+  m_AnchoredPosition: {x: 825.64, y: -352.61002}
+  m_SizeDelta: {x: 1651.28, y: 123.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &711530331
 MonoBehaviour:
@@ -19708,7 +19384,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 65.005, y: -371.65002}
+  m_AnchoredPosition: {x: 65.005, y: -413.05}
   m_SizeDelta: {x: 130.01, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &725826151
@@ -19863,7 +19539,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 95.145, y: -1175.1697}
+  m_AnchoredPosition: {x: 95.145, y: -1216.5696}
   m_SizeDelta: {x: 190.29, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &725970967
@@ -20074,7 +19750,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -20131,8 +19807,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &737191552
 CanvasRenderer:
@@ -20213,8 +19889,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -1441.73}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -1869.05}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &750755976
 MonoBehaviour:
@@ -20850,7 +20526,6 @@ GameObject:
   m_Component:
   - component: {fileID: 760357062}
   - component: {fileID: 760357065}
-  - component: {fileID: 760357064}
   - component: {fileID: 760357063}
   m_Layer: 5
   m_Name: Checkmark
@@ -20933,7 +20608,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -20967,32 +20642,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &760357064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 760357061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &760357065
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21556,8 +21205,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 740331342}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.376799}
-  m_AnchorMax: {x: 1, y: 0.99999994}
+  m_AnchorMin: {x: 0, y: 0.43572098}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -21637,7 +21286,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 61.699997, y: -321.43}
+  m_AnchoredPosition: {x: 61.699997, y: -362.83002}
   m_SizeDelta: {x: 123.399994, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &802566397
@@ -21848,7 +21497,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -21905,8 +21554,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &803263941
 CanvasRenderer:
@@ -22010,7 +21659,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -22067,8 +21716,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &809174340
 CanvasRenderer:
@@ -22088,7 +21737,6 @@ GameObject:
   m_Component:
   - component: {fileID: 814829620}
   - component: {fileID: 814829623}
-  - component: {fileID: 814829622}
   - component: {fileID: 814829621}
   m_Layer: 5
   m_Name: Checkmark
@@ -22171,7 +21819,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -22205,32 +21853,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &814829622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814829619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &814829623
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22333,7 +21955,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -22390,8 +22012,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &817818723
 CanvasRenderer:
@@ -22713,8 +22335,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -165.66}
-  m_SizeDelta: {x: 2584.7537, y: 230.88}
+  m_AnchoredPosition: {x: 825.64, y: -165.66}
+  m_SizeDelta: {x: 1651.28, y: 230.88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &826486814
 MonoBehaviour:
@@ -22780,7 +22402,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 258.485, y: -2346.96}
+  m_AnchoredPosition: {x: 258.485, y: -2870.1997}
   m_SizeDelta: {x: 516.97, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &829641983
@@ -22905,7 +22527,6 @@ GameObject:
   m_Component:
   - component: {fileID: 831331544}
   - component: {fileID: 831331547}
-  - component: {fileID: 831331546}
   - component: {fileID: 831331545}
   m_Layer: 5
   m_Name: Checkmark
@@ -22988,7 +22609,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -23022,32 +22643,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &831331546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 831331543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &831331547
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23150,7 +22745,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -23207,8 +22802,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &832189708
 CanvasRenderer:
@@ -24198,7 +23793,6 @@ GameObject:
   m_Component:
   - component: {fileID: 897206317}
   - component: {fileID: 897206320}
-  - component: {fileID: 897206319}
   - component: {fileID: 897206318}
   m_Layer: 5
   m_Name: Checkmark
@@ -24281,7 +23875,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -24315,32 +23909,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &897206319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 897206316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &897206320
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24359,7 +23927,6 @@ GameObject:
   m_Component:
   - component: {fileID: 898485392}
   - component: {fileID: 898485395}
-  - component: {fileID: 898485394}
   - component: {fileID: 898485393}
   m_Layer: 5
   m_Name: Checkmark
@@ -24442,7 +24009,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -24476,32 +24043,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &898485394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 898485391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &898485395
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24604,7 +24145,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -24661,8 +24202,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &904812716
 CanvasRenderer:
@@ -24808,7 +24349,6 @@ GameObject:
   m_Component:
   - component: {fileID: 917842128}
   - component: {fileID: 917842131}
-  - component: {fileID: 917842130}
   - component: {fileID: 917842129}
   m_Layer: 5
   m_Name: Checkmark
@@ -24891,7 +24431,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -24925,32 +24465,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &917842130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 917842127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &917842131
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24969,7 +24483,6 @@ GameObject:
   m_Component:
   - component: {fileID: 919948359}
   - component: {fileID: 919948362}
-  - component: {fileID: 919948361}
   - component: {fileID: 919948360}
   m_Layer: 5
   m_Name: Checkmark
@@ -25052,7 +24565,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -25086,32 +24599,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &919948361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919948358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &919948362
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -25154,8 +24641,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 320.865, y: -25.11}
-  m_SizeDelta: {x: 641.73, y: 50.22}
+  m_AnchoredPosition: {x: 305.6596, y: -40.81}
+  m_SizeDelta: {x: 611.3192, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &920749257
 MonoBehaviour:
@@ -25694,8 +25181,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 383.58002, y: -220.99}
-  m_SizeDelta: {x: 767.16003, y: 40.22}
+  m_AnchoredPosition: {x: 218.48001, y: -220.99}
+  m_SizeDelta: {x: 436.96002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &937917400
 MonoBehaviour:
@@ -26134,8 +25621,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000061035156}
-  m_SizeDelta: {x: 0, y: 1922.3599}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 2346.5498}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &956247033
 CanvasRenderer:
@@ -26224,8 +25711,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1426.2244, y: -25.11}
-  m_SizeDelta: {x: 2221.2688, y: 50.22}
+  m_AnchoredPosition: {x: 978.43506, y: -25.11}
+  m_SizeDelta: {x: 1325.6901, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &956837806
 MonoBehaviour:
@@ -26459,7 +25946,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 156.975, y: -1275.6096}
+  m_AnchoredPosition: {x: 156.975, y: -1317.0095}
   m_SizeDelta: {x: 313.95, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &970317678
@@ -26824,8 +26311,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -1593.57}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -2036.59}
+  m_SizeDelta: {x: 1651.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &992646097
 MonoBehaviour:
@@ -27139,7 +26626,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 211.98001, y: -262.39}
+  m_AnchoredPosition: {x: 211.98001, y: -303.78998}
   m_SizeDelta: {x: 423.96002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1000564629
@@ -27743,7 +27230,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1047658633}
   - component: {fileID: 1047658636}
-  - component: {fileID: 1047658635}
   - component: {fileID: 1047658634}
   m_Layer: 5
   m_Name: Checkmark
@@ -27826,7 +27312,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -27860,32 +27346,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1047658635
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1047658632}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1047658636
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28562,8 +28022,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 552.96497, y: -20.11}
-  m_SizeDelta: {x: 1023.91, y: 40.22}
+  m_AnchoredPosition: {x: 638.57, y: -20.11}
+  m_SizeDelta: {x: 1195.12, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1073126226
 MonoBehaviour:
@@ -28696,8 +28156,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -1373.83}
-  m_SizeDelta: {x: 2584.7537, y: 81.62}
+  m_AnchoredPosition: {x: 825.64, y: -1690.08}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1092072756
 MonoBehaviour:
@@ -28832,8 +28292,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 238.275, y: -20.11}
-  m_SizeDelta: {x: 394.53, y: 40.22}
+  m_AnchoredPosition: {x: 231.705, y: -20.11}
+  m_SizeDelta: {x: 381.39, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1107888729
 MonoBehaviour:
@@ -29216,8 +28676,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1477.2944, y: -25.11}
-  m_SizeDelta: {x: 2119.129, y: 50.22}
+  m_AnchoredPosition: {x: 1029.505, y: -25.11}
+  m_SizeDelta: {x: 1223.55, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1123554453
 MonoBehaviour:
@@ -29423,7 +28883,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1129751926}
   - component: {fileID: 1129751929}
-  - component: {fileID: 1129751928}
   - component: {fileID: 1129751927}
   m_Layer: 5
   m_Name: Checkmark
@@ -29506,7 +28965,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -29540,32 +28999,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1129751928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129751925}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1129751929
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -29764,7 +29197,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -29821,8 +29254,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1138651079
 CanvasRenderer:
@@ -30060,7 +29493,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -30117,8 +29550,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1144675506
 CanvasRenderer:
@@ -30164,8 +29597,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1212.3768, y: -205.77}
-  m_SizeDelta: {x: 2424.7537, y: 50.22}
+  m_AnchoredPosition: {x: 745.64, y: -205.77}
+  m_SizeDelta: {x: 1491.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1148406757
 MonoBehaviour:
@@ -30226,7 +29659,7 @@ RectTransform:
   m_Father: {fileID: 458943622}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10.05, y: -20.11}
   m_SizeDelta: {x: 20.1, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -30492,7 +29925,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1164705189}
   - component: {fileID: 1164705192}
-  - component: {fileID: 1164705191}
   - component: {fileID: 1164705190}
   m_Layer: 5
   m_Name: Checkmark
@@ -30575,7 +30007,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -30609,32 +30041,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1164705191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1164705188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1164705192
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30653,7 +30059,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1170285161}
   - component: {fileID: 1170285164}
-  - component: {fileID: 1170285163}
   - component: {fileID: 1170285162}
   m_Layer: 5
   m_Name: Checkmark
@@ -30736,7 +30141,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -30770,32 +30175,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1170285163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1170285160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1170285164
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30841,8 +30220,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1372.3768, y: -115.44}
-  m_SizeDelta: {x: 2424.7537, y: 230.88}
+  m_AnchoredPosition: {x: 905.64, y: -115.44}
+  m_SizeDelta: {x: 1491.28, y: 230.88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1171253545
 MonoBehaviour:
@@ -30964,7 +30343,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -31021,8 +30400,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1177767752
 CanvasRenderer:
@@ -31225,7 +30604,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 57.345, y: -873.84985}
+  m_AnchoredPosition: {x: 57.345, y: -915.24976}
   m_SizeDelta: {x: 114.69, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1180992326
@@ -31436,7 +30815,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -31493,8 +30872,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1189070021
 CanvasRenderer:
@@ -31598,7 +30977,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -31655,8 +31034,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1191863771
 CanvasRenderer:
@@ -31676,7 +31055,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1195931985}
   - component: {fileID: 1195931988}
-  - component: {fileID: 1195931987}
   - component: {fileID: 1195931986}
   m_Layer: 5
   m_Name: Checkmark
@@ -31759,7 +31137,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -31793,32 +31171,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1195931987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1195931984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1195931988
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -31861,7 +31213,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 580.58, y: -1365.81}
+  m_AnchoredPosition: {x: 580.58, y: -1777.43}
   m_SizeDelta: {x: 1161.16, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1214961751
@@ -32123,7 +31475,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 61.32, y: -1124.9497}
+  m_AnchoredPosition: {x: 61.32, y: -1166.3496}
   m_SizeDelta: {x: 122.64, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1223805133
@@ -32525,7 +31877,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1244148290}
   - component: {fileID: 1244148293}
-  - component: {fileID: 1244148292}
   - component: {fileID: 1244148291}
   m_Layer: 5
   m_Name: Checkmark
@@ -32608,7 +31959,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -32642,32 +31993,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1244148292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1244148289}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1244148293
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33050,7 +32375,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1254272412}
   - component: {fileID: 1254272415}
-  - component: {fileID: 1254272414}
   - component: {fileID: 1254272413}
   m_Layer: 5
   m_Name: Checkmark
@@ -33133,7 +32457,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -33167,32 +32491,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1254272414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1254272411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1254272415
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33295,7 +32593,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -33352,8 +32650,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1256443848
 CanvasRenderer:
@@ -33373,7 +32671,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1261471932}
   - component: {fileID: 1261471935}
-  - component: {fileID: 1261471934}
   - component: {fileID: 1261471933}
   m_Layer: 5
   m_Name: Checkmark
@@ -33456,7 +32753,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -33490,32 +32787,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1261471934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1261471931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1261471935
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33534,7 +32805,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1263935083}
   - component: {fileID: 1263935086}
-  - component: {fileID: 1263935085}
   - component: {fileID: 1263935084}
   m_Layer: 5
   m_Name: Checkmark
@@ -33617,7 +32887,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -33651,32 +32921,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1263935085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263935082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1263935086
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -34089,7 +33333,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -34146,8 +33390,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1269176875
 CanvasRenderer:
@@ -34540,7 +33784,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -34597,8 +33841,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1290567564
 CanvasRenderer:
@@ -34758,8 +34002,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1270.1455, y: -25.11}
-  m_SizeDelta: {x: 2101.6711, y: 50.22}
+  m_AnchoredPosition: {x: 822.35614, y: -25.11}
+  m_SizeDelta: {x: 1206.0923, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1298871609
 MonoBehaviour:
@@ -35049,7 +34293,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -35106,8 +34350,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1300395633
 CanvasRenderer:
@@ -35149,7 +34393,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1634880999}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.6667081}
+  m_AnchorMin: {x: 0, y: 0.7428343}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
@@ -35227,7 +34471,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 518.265, y: -1832.4698}
+  m_AnchoredPosition: {x: 518.265, y: -2190.1199}
   m_SizeDelta: {x: 1036.53, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1311257522
@@ -35791,7 +35035,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1305582846}
   m_HandleRect: {fileID: 1305582845}
   m_Direction: 2
-  m_Value: 0.9999999
+  m_Value: 1
   m_Size: 0.25716567
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -36147,7 +35391,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 2433.9202, y: -25.11}
+  m_AnchoredPosition: {x: 1538.3412, y: -25.11}
   m_SizeDelta: {x: 205.87778, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1344852824
@@ -36414,7 +35658,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1347716445}
   - component: {fileID: 1347716448}
-  - component: {fileID: 1347716447}
   - component: {fileID: 1347716446}
   m_Layer: 5
   m_Name: Checkmark
@@ -36497,7 +35740,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -36531,32 +35774,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1347716447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1347716444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1347716448
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -36575,7 +35792,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1348814849}
   - component: {fileID: 1348814852}
-  - component: {fileID: 1348814851}
   - component: {fileID: 1348814850}
   m_Layer: 5
   m_Name: Checkmark
@@ -36658,7 +35874,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -36692,32 +35908,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1348814851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1348814848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1348814852
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -36736,7 +35926,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1351334609}
   - component: {fileID: 1351334612}
-  - component: {fileID: 1351334611}
   - component: {fileID: 1351334610}
   m_Layer: 5
   m_Name: Checkmark
@@ -36819,7 +36008,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -36853,32 +36042,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1351334611
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1351334608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1351334612
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -36897,7 +36060,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1354963955}
   - component: {fileID: 1354963958}
-  - component: {fileID: 1354963957}
   - component: {fileID: 1354963956}
   m_Layer: 5
   m_Name: Checkmark
@@ -36980,7 +36142,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -37014,32 +36176,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1354963957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1354963954}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1354963958
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37082,8 +36218,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 388.145, y: -25.11}
-  m_SizeDelta: {x: 776.29, y: 50.22}
+  m_AnchoredPosition: {x: 380.5951, y: -40.81}
+  m_SizeDelta: {x: 761.1902, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1355323722
 MonoBehaviour:
@@ -37405,7 +36541,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1369013197}
   - component: {fileID: 1369013200}
-  - component: {fileID: 1369013199}
   - component: {fileID: 1369013198}
   m_Layer: 5
   m_Name: Checkmark
@@ -37488,7 +36623,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -37522,32 +36657,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1369013199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1369013196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1369013200
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37594,7 +36703,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 34.53, y: -1024.5098}
+  m_AnchoredPosition: {x: 34.53, y: -1065.9097}
   m_SizeDelta: {x: 69.06, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1372704948
@@ -37879,7 +36988,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 779.08, y: -979.34}
+  m_AnchoredPosition: {x: 779.08, y: -1328.16}
   m_SizeDelta: {x: 1558.16, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1381423103
@@ -38017,8 +37126,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 855.215, y: -744.70496}
-  m_SizeDelta: {x: 1710.43, y: 247.21}
+  m_AnchoredPosition: {x: 825.64, y: -879.59}
+  m_SizeDelta: {x: 1651.28, y: 288.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1382626627
 MonoBehaviour:
@@ -38173,8 +37282,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1185.6522, y: -540}
-  m_SizeDelta: {x: 2371.3044, y: 939.56}
+  m_AnchoredPosition: {x: 960, y: -540}
+  m_SizeDelta: {x: 1920, y: 939.56}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1382825349
 MonoBehaviour:
@@ -38387,7 +37496,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1384127005}
   - component: {fileID: 1384127008}
-  - component: {fileID: 1384127007}
   - component: {fileID: 1384127006}
   m_Layer: 5
   m_Name: Checkmark
@@ -38470,7 +37578,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -38504,32 +37612,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1384127007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384127004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1384127008
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -38612,8 +37694,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00012207031}
-  m_SizeDelta: {x: 0, y: 2969.7095}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 3575.7495}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1384679457
 CanvasRenderer:
@@ -39082,8 +38164,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -1055.26}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -1419.78}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1402641800
 MonoBehaviour:
@@ -39339,7 +38421,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -39396,8 +38478,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1414553494
 CanvasRenderer:
@@ -39579,7 +38661,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 65.299995, y: -421.87}
+  m_AnchoredPosition: {x: 65.299995, y: -463.27002}
   m_SizeDelta: {x: 130.59999, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1421655064
@@ -39861,7 +38943,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1444849375}
   - component: {fileID: 1444849378}
-  - component: {fileID: 1444849377}
   - component: {fileID: 1444849376}
   m_Layer: 5
   m_Name: Checkmark
@@ -39944,7 +39025,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -39978,32 +39059,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1444849377
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1444849374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1444849378
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -40106,7 +39161,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -40163,8 +39218,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1446541938
 CanvasRenderer:
@@ -40184,7 +39239,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1447984457}
   - component: {fileID: 1447984460}
-  - component: {fileID: 1447984459}
   - component: {fileID: 1447984458}
   m_Layer: 5
   m_Name: Checkmark
@@ -40267,7 +39321,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -40301,32 +39355,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1447984459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1447984456}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1447984460
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -40371,8 +39399,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1335.3768, y: -25.11}
-  m_SizeDelta: {x: 2178.7537, y: 50}
+  m_AnchoredPosition: {x: 868.64, y: -25.11}
+  m_SizeDelta: {x: 1245.28, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1448281685
 MonoBehaviour:
@@ -40599,7 +39627,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 280, y: -2200.1199}
+  m_AnchoredPosition: {x: 280, y: -2681.9597}
   m_SizeDelta: {x: 560, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1457600851
@@ -40663,8 +39691,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -903.42}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -1252.24}
+  m_SizeDelta: {x: 1651.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1457609321
 MonoBehaviour:
@@ -40731,8 +39759,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1531.4995, y: -25.11}
-  m_SizeDelta: {x: 2010.7189, y: 50.22}
+  m_AnchoredPosition: {x: 1083.71, y: -25.11}
+  m_SizeDelta: {x: 1115.14, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1463643935
 MonoBehaviour:
@@ -40966,7 +39994,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 421.625, y: -2899.3796}
+  m_AnchoredPosition: {x: 421.625, y: -3505.4197}
   m_SizeDelta: {x: 843.25, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1466635862
@@ -41803,7 +40831,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1504120799}
   - component: {fileID: 1504120802}
-  - component: {fileID: 1504120801}
   - component: {fileID: 1504120800}
   m_Layer: 5
   m_Name: Checkmark
@@ -41886,7 +40913,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -41920,32 +40947,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1504120801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1504120798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1504120802
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -42147,8 +41148,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -1610.9999}
-  m_SizeDelta: {x: 2584.7537, y: 372.72}
+  m_AnchoredPosition: {x: 825.64, y: -1947.95}
+  m_SizeDelta: {x: 1651.28, y: 414.12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1508167802
 MonoBehaviour:
@@ -42261,7 +41262,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 58.6, y: -1074.7297}
+  m_AnchoredPosition: {x: 58.6, y: -1116.1296}
   m_SizeDelta: {x: 117.2, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1514162863
@@ -42416,7 +41417,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460.785, y: -2497.6199}
+  m_AnchoredPosition: {x: 460.785, y: -3020.8596}
   m_SizeDelta: {x: 921.57, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1517580095
@@ -42703,8 +41704,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 281.98, y: -70.33}
-  m_SizeDelta: {x: 563.96, y: 40.22}
+  m_AnchoredPosition: {x: 352.605, y: -70.33}
+  m_SizeDelta: {x: 705.21, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1532221447
 MonoBehaviour:
@@ -42829,7 +41830,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1537701023}
   - component: {fileID: 1537701026}
-  - component: {fileID: 1537701025}
   - component: {fileID: 1537701024}
   m_Layer: 5
   m_Name: Checkmark
@@ -42912,7 +41912,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -42946,32 +41946,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1537701025
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1537701022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1537701026
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -43093,7 +42067,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 801590222}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.6232011
+  m_Size: 0.564279
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -43278,7 +42252,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 214.585, y: -362.83002}
+  m_AnchoredPosition: {x: 214.585, y: -404.22998}
   m_SizeDelta: {x: 429.17, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1553249940
@@ -43428,7 +42402,7 @@ RectTransform:
   m_Father: {fileID: 175230373}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10.05, y: -20.11}
   m_SizeDelta: {x: 20.1, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -43696,7 +42670,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 114.274994, y: -723.18994}
+  m_AnchoredPosition: {x: 114.274994, y: -764.58984}
   m_SizeDelta: {x: 228.54999, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1577108049
@@ -43937,8 +42911,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -686.02997}
-  m_SizeDelta: {x: 2584.7537, y: 81.62}
+  m_AnchoredPosition: {x: 825.64, y: -898.7899}
+  m_SizeDelta: {x: 1651.28, y: 123.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1580766059
 MonoBehaviour:
@@ -44129,8 +43103,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 217.77, y: -463.27002}
-  m_SizeDelta: {x: 435.54, y: 40.22}
+  m_AnchoredPosition: {x: 210.55501, y: -605.11}
+  m_SizeDelta: {x: 421.11002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1585309627
 MonoBehaviour:
@@ -44280,7 +43254,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 196.77, y: -170.77}
+  m_AnchoredPosition: {x: 196.77, y: -212.17}
   m_SizeDelta: {x: 393.54, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1588077325
@@ -44564,7 +43538,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -44621,8 +43595,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1595652527
 CanvasRenderer:
@@ -44670,7 +43644,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 197.57501, y: -161.95}
+  m_AnchoredPosition: {x: 197.57501, y: -203.34999}
   m_SizeDelta: {x: 395.15002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1603342341
@@ -44797,7 +43771,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1611947808}
   - component: {fileID: 1611947811}
-  - component: {fileID: 1611947810}
   - component: {fileID: 1611947809}
   m_Layer: 5
   m_Name: Checkmark
@@ -44880,7 +43853,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -44914,32 +43887,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1611947810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1611947807}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1611947811
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -45042,7 +43989,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -45099,8 +44046,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1617686733
 CanvasRenderer:
@@ -45204,7 +44151,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -45261,8 +44208,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1621328863
 CanvasRenderer:
@@ -45519,7 +44466,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 49.6, y: -974.2898}
+  m_AnchoredPosition: {x: 49.6, y: -1015.6897}
   m_SizeDelta: {x: 99.2, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1625097724
@@ -45883,7 +44830,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -45940,8 +44887,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1632349920
 CanvasRenderer:
@@ -46021,8 +44968,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1237.4, y: -1991.1848}
-  m_SizeDelta: {x: 2474.8, y: 247.21}
+  m_AnchoredPosition: {x: 825.64, y: -2410.9297}
+  m_SizeDelta: {x: 1651.28, y: 371.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1640037164
 MonoBehaviour:
@@ -46251,7 +45198,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1790774687}
   m_HandleRect: {fileID: 1790774686}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -46406,8 +45353,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 1588.2195}
+  m_AnchoredPosition: {x: 0, y: 0.000061035156}
+  m_SizeDelta: {x: 0, y: 1629.6194}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1653713847
 CanvasRenderer:
@@ -46467,7 +45414,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1673404498}
   - component: {fileID: 1673404501}
-  - component: {fileID: 1673404500}
   - component: {fileID: 1673404499}
   m_Layer: 5
   m_Name: Checkmark
@@ -46550,7 +45496,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -46584,32 +45530,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1673404500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1673404497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1673404501
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -46783,7 +45703,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1682012985}
   - component: {fileID: 1682012988}
-  - component: {fileID: 1682012987}
   - component: {fileID: 1682012986}
   m_Layer: 5
   m_Name: Checkmark
@@ -46866,7 +45785,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -46900,32 +45819,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1682012987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1682012984}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1682012988
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -47202,7 +46095,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 108.415, y: -773.4099}
+  m_AnchoredPosition: {x: 108.415, y: -814.8098}
   m_SizeDelta: {x: 216.83, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1694958620
@@ -47393,7 +46286,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1699461910}
   - component: {fileID: 1699461913}
-  - component: {fileID: 1699461912}
   - component: {fileID: 1699461911}
   m_Layer: 5
   m_Name: Checkmark
@@ -47476,7 +46368,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -47510,32 +46402,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1699461912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1699461909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1699461913
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -47554,7 +46420,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1700403052}
   - component: {fileID: 1700403055}
-  - component: {fileID: 1700403054}
   - component: {fileID: 1700403053}
   m_Layer: 5
   m_Name: Checkmark
@@ -47637,7 +46502,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -47671,32 +46536,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1700403054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1700403051}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1700403055
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -47715,7 +46554,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1702755005}
   - component: {fileID: 1702755008}
-  - component: {fileID: 1702755007}
   - component: {fileID: 1702755006}
   m_Layer: 5
   m_Name: Checkmark
@@ -47798,7 +46636,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -47832,32 +46670,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1702755007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1702755004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1702755008
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -47876,7 +46688,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1711801920}
   - component: {fileID: 1711801923}
-  - component: {fileID: 1711801922}
   - component: {fileID: 1711801921}
   m_Layer: 5
   m_Name: Checkmark
@@ -47959,7 +46770,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -47993,32 +46804,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1711801922
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1711801919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1711801923
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -48507,7 +47292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 2226.9746, y: -30.11}
+  m_AnchoredPosition: {x: 1775.6699, y: -30.11}
   m_SizeDelta: {x: 268.66, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1723386823
@@ -48724,7 +47509,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -48781,8 +47566,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1726481821
 CanvasRenderer:
@@ -49020,7 +47805,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -49077,8 +47862,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1734605306
 CanvasRenderer:
@@ -49126,7 +47911,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 213.29001, y: -312.61}
+  m_AnchoredPosition: {x: 213.29001, y: -354.01}
   m_SizeDelta: {x: 426.58002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1734949051
@@ -49337,7 +48122,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -49394,8 +48179,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1735321218
 CanvasRenderer:
@@ -49729,7 +48514,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -49786,8 +48571,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1751874841
 CanvasRenderer:
@@ -49833,8 +48618,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1185.6522, y: -1049.89}
-  m_SizeDelta: {x: 2371.3044, y: 60.22}
+  m_AnchoredPosition: {x: 960, y: -1049.89}
+  m_SizeDelta: {x: 1920, y: 60.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1754934177
 MonoBehaviour:
@@ -50068,8 +48853,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 588.77, y: -534.19}
-  m_SizeDelta: {x: 1177.54, y: 81.62}
+  m_AnchoredPosition: {x: 602.755, y: -726.24994}
+  m_SizeDelta: {x: 1205.51, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1765655865
 MonoBehaviour:
@@ -50208,7 +48993,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 2313.2095, y: -30.11}
+  m_AnchoredPosition: {x: 1861.905, y: -30.11}
   m_SizeDelta: {x: 96.19, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1769132796
@@ -50366,8 +49151,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -85.33}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -85.33}
+  m_SizeDelta: {x: 1651.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1774185691
 MonoBehaviour:
@@ -50489,7 +49274,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -50546,8 +49331,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1779105268
 CanvasRenderer:
@@ -50884,7 +49669,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 463.64502, y: -2648.2798}
+  m_AnchoredPosition: {x: 463.64502, y: -3212.9197}
   m_SizeDelta: {x: 927.29004, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1789283988
@@ -51168,7 +49953,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -51225,8 +50010,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1794116925
 CanvasRenderer:
@@ -51404,8 +50189,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1292.3768, y: -91.03}
-  m_SizeDelta: {x: 2584.7537, y: 81.62}
+  m_AnchoredPosition: {x: 825.64, y: -111.729996}
+  m_SizeDelta: {x: 1651.28, y: 123.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1798703217
 MonoBehaviour:
@@ -51577,8 +50362,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 855.215, y: -744.70496}
-  m_SizeDelta: {x: 1710.43, y: 247.21}
+  m_AnchoredPosition: {x: 825.64, y: -1155.62}
+  m_SizeDelta: {x: 1651.28, y: 123.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1799734984
 MonoBehaviour:
@@ -51716,8 +50501,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1046.3223, y: -30.11}
-  m_SizeDelta: {x: 2072.6445, y: 50.22}
+  m_AnchoredPosition: {x: 820.67, y: -30.11}
+  m_SizeDelta: {x: 1621.34, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1800839111
 MonoBehaviour:
@@ -52057,7 +50842,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -52114,8 +50899,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1808918140
 CanvasRenderer:
@@ -52163,7 +50948,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 293.29, y: -2397.18}
+  m_AnchoredPosition: {x: 293.29, y: -2920.4197}
   m_SizeDelta: {x: 586.58, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1812795773
@@ -52311,7 +51096,7 @@ RectTransform:
   m_Father: {fileID: 1368998483}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10.05, y: -20.11}
   m_SizeDelta: {x: 20.1, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -52580,8 +51365,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 404.08502, y: -20.11}
-  m_SizeDelta: {x: 726.15, y: 40.22}
+  m_AnchoredPosition: {x: 238.985, y: -20.11}
+  m_SizeDelta: {x: 395.95, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1847494017
 MonoBehaviour:
@@ -52690,7 +51475,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1855743853}
   - component: {fileID: 1855743856}
-  - component: {fileID: 1855743855}
   - component: {fileID: 1855743854}
   m_Layer: 5
   m_Name: Checkmark
@@ -52773,7 +51557,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -52807,32 +51591,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1855743855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1855743852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1855743856
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -53115,7 +51873,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 47.3, y: -220.99}
+  m_AnchoredPosition: {x: 47.3, y: -262.39}
   m_SizeDelta: {x: 94.6, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1864787219
@@ -53270,7 +52028,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 220.6, y: -1476.4895}
+  m_AnchoredPosition: {x: 220.6, y: -1517.8894}
   m_SizeDelta: {x: 441.2, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1865114970
@@ -53481,7 +52239,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -53538,8 +52296,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1865816835
 CanvasRenderer:
@@ -53587,7 +52345,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 53.074997, y: -572.53}
+  m_AnchoredPosition: {x: 53.074997, y: -613.92993}
   m_SizeDelta: {x: 106.149994, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1867061019
@@ -53894,7 +52652,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 462.445, y: -1297.9099}
+  m_AnchoredPosition: {x: 462.445, y: -1614.1599}
   m_SizeDelta: {x: 924.89, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1868827072
@@ -53933,7 +52691,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1874563948}
   - component: {fileID: 1874563951}
-  - component: {fileID: 1874563950}
   - component: {fileID: 1874563949}
   m_Layer: 5
   m_Name: Checkmark
@@ -54016,7 +52773,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -54050,32 +52807,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1874563950
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1874563947}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1874563951
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -54094,7 +52825,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1888259531}
   - component: {fileID: 1888259534}
-  - component: {fileID: 1888259533}
   - component: {fileID: 1888259532}
   m_Layer: 5
   m_Name: Checkmark
@@ -54177,7 +52907,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -54211,32 +52941,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1888259533
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1888259530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1888259534
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -54339,7 +53043,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -54396,8 +53100,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1889426437
 CanvasRenderer:
@@ -54501,7 +53205,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -54558,8 +53262,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1889600483
 CanvasRenderer:
@@ -54607,7 +53311,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 55.46, y: -472.09003}
+  m_AnchoredPosition: {x: 55.46, y: -513.49}
   m_SizeDelta: {x: 110.92, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1894132251
@@ -54762,8 +53466,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 276.745, y: -120.55}
-  m_SizeDelta: {x: 553.49, y: 40.22}
+  m_AnchoredPosition: {x: 138.85, y: -120.55}
+  m_SizeDelta: {x: 277.7, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1894609998
 MonoBehaviour:
@@ -54972,7 +53676,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -55029,8 +53733,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1896788379
 CanvasRenderer:
@@ -55134,7 +53838,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -55191,8 +53895,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1896859260
 CanvasRenderer:
@@ -55236,7 +53940,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 590.54, y: -1517.65}
+  m_AnchoredPosition: {x: 590.54, y: -1960.67}
   m_SizeDelta: {x: 1181.08, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1898001565
@@ -55565,7 +54269,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -55622,8 +54326,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &1901130711
 CanvasRenderer:
@@ -55803,8 +54507,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1335.3768, y: -25.11}
-  m_SizeDelta: {x: 2178.7537, y: 50}
+  m_AnchoredPosition: {x: 868.64, y: -25.11}
+  m_SizeDelta: {x: 1245.28, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1914022931
 MonoBehaviour:
@@ -56113,8 +54817,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1185.6522, y: -30.11}
-  m_SizeDelta: {x: 2371.3044, y: 60.22}
+  m_AnchoredPosition: {x: 960, y: -30.11}
+  m_SizeDelta: {x: 1920, y: 60.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1916700635
 MonoBehaviour:
@@ -56384,8 +55088,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 302.48502, y: -20.11}
-  m_SizeDelta: {x: 522.95, y: 40.22}
+  m_AnchoredPosition: {x: 373.11002, y: -20.11}
+  m_SizeDelta: {x: 664.2, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1925510720
 MonoBehaviour:
@@ -56628,7 +55332,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1941922374}
   - component: {fileID: 1941922377}
-  - component: {fileID: 1941922376}
   - component: {fileID: 1941922375}
   m_Layer: 5
   m_Name: Checkmark
@@ -56711,7 +55414,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -56745,32 +55448,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1941922376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1941922373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1941922377
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -56953,7 +55630,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 776.475, y: -1172.575}
+  m_AnchoredPosition: {x: 776.475, y: -1552.7949}
   m_SizeDelta: {x: 1552.95, y: 164.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1969091931
@@ -57073,7 +55750,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1975915069}
   - component: {fileID: 1975915072}
-  - component: {fileID: 1975915071}
   - component: {fileID: 1975915070}
   m_Layer: 5
   m_Name: Checkmark
@@ -57156,7 +55832,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -57190,32 +55866,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1975915071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1975915068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1975915072
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -57262,7 +55912,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 217.77, y: -463.27002}
+  m_AnchoredPosition: {x: 217.77, y: -504.66998}
   m_SizeDelta: {x: 435.54, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1981467628
@@ -57552,8 +56202,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1533.7644, y: -25.11}
-  m_SizeDelta: {x: 2006.189, y: 50.22}
+  m_AnchoredPosition: {x: 1060.9924, y: -40.81}
+  m_SizeDelta: {x: 1160.5753, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1983512338
 MonoBehaviour:
@@ -57788,8 +56438,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1661.5745, y: -25.11}
-  m_SizeDelta: {x: 1750.5688, y: 50.22}
+  m_AnchoredPosition: {x: 1206.2351, y: -40.81}
+  m_SizeDelta: {x: 870.0899, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1985928712
 MonoBehaviour:
@@ -57995,7 +56645,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1988546626}
   - component: {fileID: 1988546629}
-  - component: {fileID: 1988546628}
   - component: {fileID: 1988546627}
   m_Layer: 5
   m_Name: Checkmark
@@ -58078,7 +56727,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -58112,32 +56761,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1988546628
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1988546625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1988546629
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -58309,7 +56932,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1990109217}
   - component: {fileID: 1990109220}
-  - component: {fileID: 1990109219}
   - component: {fileID: 1990109218}
   m_Layer: 5
   m_Name: Checkmark
@@ -58392,7 +57014,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -58426,32 +57048,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1990109219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1990109216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &1990109220
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -58787,7 +57383,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 62.915, y: -622.75}
+  m_AnchoredPosition: {x: 62.915, y: -664.1499}
   m_SizeDelta: {x: 125.83, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1996382532
@@ -58938,8 +57534,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 297.25, y: -20.11}
-  m_SizeDelta: {x: 512.48, y: 40.22}
+  m_AnchoredPosition: {x: 159.355, y: -20.11}
+  m_SizeDelta: {x: 236.69, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2002000118
 MonoBehaviour:
@@ -59344,7 +57940,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 58.39, y: -271.21002}
+  m_AnchoredPosition: {x: 58.39, y: -312.61}
   m_SizeDelta: {x: 116.78, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2026280651
@@ -59499,8 +58095,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 217.77, y: -463.27002}
-  m_SizeDelta: {x: 435.54, y: 40.22}
+  m_AnchoredPosition: {x: 203.35501, y: -554.89}
+  m_SizeDelta: {x: 406.71002, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2026980693
 MonoBehaviour:
@@ -59626,7 +58222,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2039860010}
   - component: {fileID: 2039860013}
-  - component: {fileID: 2039860012}
   - component: {fileID: 2039860011}
   m_Layer: 5
   m_Name: Checkmark
@@ -59709,7 +58304,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -59743,32 +58338,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &2039860012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2039860009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &2039860013
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -59944,7 +58513,7 @@ RectTransform:
   m_Father: {fileID: 990590528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 20.095, y: -20.11}
   m_SizeDelta: {x: 40.19, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -60139,7 +58708,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -60196,8 +58765,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &2053750094
 CanvasRenderer:
@@ -60245,7 +58814,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 147.975, y: -1325.8296}
+  m_AnchoredPosition: {x: 147.975, y: -1367.2295}
   m_SizeDelta: {x: 295.95, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2053926180
@@ -60372,7 +58941,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2055163803}
   - component: {fileID: 2055163806}
-  - component: {fileID: 2055163805}
   - component: {fileID: 2055163804}
   m_Layer: 5
   m_Name: Checkmark
@@ -60455,7 +59023,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -60489,32 +59057,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &2055163805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2055163802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!222 &2055163806
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -60557,8 +59099,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1248.7979, y: -1547.4095}
-  m_SizeDelta: {x: 2497.5957, y: 81.62}
+  m_AnchoredPosition: {x: 825.64, y: -1588.8094}
+  m_SizeDelta: {x: 1651.28, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2055189445
 MonoBehaviour:
@@ -60965,7 +59507,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 61.53, y: -1376.0496}
+  m_AnchoredPosition: {x: 61.53, y: -1417.4495}
   m_SizeDelta: {x: 123.06, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2063351418
@@ -61120,7 +59662,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 449.85, y: -2447.4}
+  m_AnchoredPosition: {x: 449.85, y: -2970.6396}
   m_SizeDelta: {x: 899.7, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2063706806
@@ -61510,8 +60052,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1617.0394, y: -25.11}
-  m_SizeDelta: {x: 1839.6389, y: 50.22}
+  m_AnchoredPosition: {x: 1156.8799, y: -40.81}
+  m_SizeDelta: {x: 968.8003, y: 81.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2073574149
 MonoBehaviour:
@@ -61883,8 +60425,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -25.11}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -25.11}
+  m_SizeDelta: {x: 1651.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2108428380
 MonoBehaviour:
@@ -61947,8 +60489,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1273.4294, y: -1786.8099}
-  m_SizeDelta: {x: 2546.859, y: 50.22}
+  m_AnchoredPosition: {x: 825.64, y: -2271.22}
+  m_SizeDelta: {x: 1651.28, y: 50.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2115922183
 MonoBehaviour:
@@ -62130,8 +60672,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 284.285, y: -170.77}
-  m_SizeDelta: {x: 568.57, y: 40.22}
+  m_AnchoredPosition: {x: 146.395, y: -170.77}
+  m_SizeDelta: {x: 292.79, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2126618827
 MonoBehaviour:
@@ -62340,7 +60882,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -62397,8 +60939,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!222 &2126876138
 CanvasRenderer:
@@ -62576,7 +61118,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 766.465, y: -1842.0299}
+  m_AnchoredPosition: {x: 766.465, y: -2326.44}
   m_SizeDelta: {x: 1532.93, y: 40.22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2130338191

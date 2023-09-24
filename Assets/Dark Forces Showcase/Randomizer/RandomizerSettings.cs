@@ -324,6 +324,16 @@ namespace MZZT.DarkForces.Showcase {
 		public bool ReplaceKeyAndCodeOfficersWithTheirItems { get; set; }
 		public bool UnlockAllDoorsAndIncludeKeysInSpawnLocationPool { get; set; }
 
+		public bool NightmareMode { get; set; }
+		public bool NightmareKeepOriginalEnemies { get; set; }
+		public RandomRange NightmareGeneratorsDelay { get; set; } = new RandomRange();
+		public RandomRange NightmareGeneratorsInterval { get; set; } = new RandomRange();
+		public RandomRange NightmareGeneratorsMinimumDistance { get; set; } = new RandomRange();
+		public RandomRange NightmareGeneratorsMaximumDistance { get; set; } = new RandomRange();
+		public RandomRange NightmareGeneratorsMaximumAlive { get; set; } = new RandomRange();
+		public RandomRange NightmareGeneratorsNumberTerminate { get; set; } = new RandomRange();
+		public RandomRange NightmareGeneratorsWanderTime { get; set; } = new RandomRange();
+
 		public bool RandomizeItems { get; set; } = true;
 		public string[] LogicsForItemSpawnLocationPool { get; set; } = Array.Empty<string>();
 		public EntityGenerationPoolSources ItemGenerationPoolSource { get; set; }
@@ -354,6 +364,15 @@ namespace MZZT.DarkForces.Showcase {
 			LessenItemProbabilityWhenSpawned = this.LessenItemProbabilityWhenSpawned,
 			LogicsForEnemySpawnLocationPool = this.LogicsForEnemySpawnLocationPool.ToArray(),
 			LogicsForItemSpawnLocationPool = this.LogicsForItemSpawnLocationPool.ToArray(),
+			NightmareGeneratorsDelay = this.NightmareGeneratorsDelay.Clone(),
+			NightmareGeneratorsInterval = this.NightmareGeneratorsInterval.Clone(),
+			NightmareGeneratorsMaximumAlive = this.NightmareGeneratorsMaximumAlive.Clone(),
+			NightmareGeneratorsMaximumDistance = this.NightmareGeneratorsMaximumDistance.Clone(),
+			NightmareGeneratorsMinimumDistance = this.NightmareGeneratorsMinimumDistance.Clone(),
+			NightmareGeneratorsNumberTerminate = this.NightmareGeneratorsNumberTerminate.Clone(),
+			NightmareGeneratorsWanderTime = this.NightmareGeneratorsWanderTime.Clone(),
+			NightmareKeepOriginalEnemies = this.NightmareKeepOriginalEnemies,
+			NightmareMode = this.NightmareMode,
 			RandomEnemyLocationSelectionMode = this.RandomEnemyLocationSelectionMode,
 			RandomItemLocationSelectionMode = this.RandomItemLocationSelectionMode,
 			RandomizeBosses = this.RandomizeBosses,

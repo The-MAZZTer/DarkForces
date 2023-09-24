@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using UnityEditor.Experimental;
 using UnityEngine;
 using Random = System.Random;
 
@@ -132,7 +133,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (LevelLoader.Instance.LevelList == null) {
 				throw new FormatException("Can't read JEDI.LVL, unable to apply randomizer settings!");
 			}
-
+			
 			// Strip out the levels the user doesn't want.
 			DfLevelList levelList = LevelLoader.Instance.LevelList.Clone();
 			for (int i = 0; i < levelList.Levels.Count; i++) {
@@ -560,7 +561,6 @@ namespace MZZT.DarkForces.Showcase {
 					// Make the ordering deterministic.
 					.OrderBy(x => x)
 					.ToArray();
-
 
 				// Remove enemies with keys and replace with the actual keys.
 				if (settings.ReplaceKeyAndCodeOfficersWithTheirItems) {
@@ -1778,6 +1778,144 @@ namespace MZZT.DarkForces.Showcase {
 				}
 			}
 
+			if (settings.NightmareMode) {
+				foreach (DfLevelObjects.Object obj in o.Objects.ToArray()) {
+					if (obj.Type != DfLevelObjects.ObjectTypes.Sprite && obj.Type != DfLevelObjects.ObjectTypes.Frame &&
+						obj.Type != DfLevelObjects.ObjectTypes.ThreeD) {
+
+						continue;
+					}
+
+					Dictionary<string, string[]> properties = this.GetLogicProperties(obj);
+					if (properties == null) {
+						continue;
+					}
+
+					properties.TryGetValue("LOGIC", out string[] logics);
+					properties.TryGetValue("TYPE", out string[] types);
+					// Get the list of logics this object has by merging the two lists.
+					logics = (logics ?? Enumerable.Empty<string>()).Concat(types ?? Enumerable.Empty<string>())
+						.Select(x => x.ToUpper())
+						.OrderBy(x => x)
+						.ToArray();
+
+					if (logics.Length == 0) {
+						continue;
+					}
+
+					string logic = logics.First().Trim().ToUpper();
+					bool supported = logic switch {
+						"I_OFFICER" => true,
+						"I_OFFICERB" => true,
+						"I_OFFICERY" => true,
+						"I_OFFICERR" => true,
+						"I_OFFICER1" => true,
+						"I_OFFICER2" => true,
+						"I_OFFICER3" => true,
+						"I_OFFICER4" => true,
+						"I_OFFICER5" => true,
+						"I_OFFICER6" => true,
+						"I_OFFICER7" => true,
+						"I_OFFICER8" => true,
+						"I_OFFICER9" => true,
+						"TROOP" => true,
+						"STORM1" => true,
+						"COMMANDO" => true,
+						"BOSSK" => true,
+						"G_GUARD" => true,
+						"REE_YEES" => true,
+						"REE_YEES2" => true,
+						"SEWER1" => true,
+						"INT_DROID" => true,
+						"PROBE_DROID" => true,
+						"REMOTE" => true,
+						_ => false
+					};
+					if (!supported) {
+						continue;
+					}
+
+					DfLevelObjects.Object target;
+					if (settings.NightmareKeepOriginalEnemies) {
+						target = new() {
+							Difficulty = obj.Difficulty,
+							EulerAngles = obj.EulerAngles,
+							FileName = obj.FileName,
+							Position = obj.Position,
+							Type = obj.Type
+						};
+						LevelLoader.Instance.Objects.Objects.Add(target);
+					} else {
+						target = obj;
+					}
+
+					properties.Remove("TYPE");
+					properties["LOGIC"] = new[] { $"GENERATOR {logic}" };
+
+					// floating point values
+					Dictionary<string, RandomRange> randomizedSettings = new() {
+						["DELAY"] = settings.NightmareGeneratorsDelay,
+						["INTERVAL"] = settings.NightmareGeneratorsInterval,
+						["MIN_DIST"] = settings.NightmareGeneratorsMinimumDistance,
+						["MAX_DIST"] = settings.NightmareGeneratorsMaximumDistance,
+						["WANDER_TIME"] = settings.NightmareGeneratorsWanderTime
+					};
+
+					Dictionary<string, float> floatProperties = new();
+					foreach ((string key, RandomRange generatorSetting) in randomizedSettings) {
+						float prop = 0;
+						if (properties.ContainsKey(key)) {
+							if (float.TryParse(properties[key][0], out float result)) {
+								floatProperties[key] = prop = result;
+							}
+						}
+
+						floatProperties[key] = this.RandomizeRange(new RandomRange() {
+							Enabled = true,
+							Minimum = generatorSetting.Minimum,
+							Maximum = generatorSetting.Maximum
+						}, prop);
+					}
+					// Swap values to keep the minimum smaller.
+					if (floatProperties["MAX_DIST"] < floatProperties["MIN_DIST"]) {
+						(floatProperties["MIN_DIST"], floatProperties["MAX_DIST"]) = (floatProperties["MAX_DIST"], floatProperties["MIN_DIST"]);
+					}
+
+					foreach ((string key, float value) in floatProperties) {
+						properties[key] = new[] { value.ToString() };
+					}
+
+					// integer values
+					randomizedSettings = new Dictionary<string, RandomRange>() {
+						["MAX_ALIVE"] = settings.NightmareGeneratorsMaximumAlive,
+						["NUM_TERMINATE"] = settings.NightmareGeneratorsNumberTerminate
+					};
+
+					Dictionary<string, int> intProperties = new();
+					foreach ((string key, RandomRange generatorSetting) in randomizedSettings) {
+						int prop = 0;
+						if (properties.ContainsKey(key)) {
+							if (int.TryParse(properties[key][0], NumberStyles.Integer, null, out int result)) {
+								intProperties[key] = prop = result;
+							}
+						}
+
+						intProperties[key] = this.RandomizeIntRange(new RandomRange() {
+							Enabled = true,
+							Minimum = generatorSetting.Minimum,
+							Maximum = generatorSetting.Maximum
+						}, prop);
+					}
+
+					foreach ((string key, float value) in intProperties) {
+						properties[key] = new[] { value.ToString() };
+					}
+
+					obj.Logic = string.Join(Environment.NewLine, properties.SelectMany(x => x.Value.Select(y => $"{x.Key}: {y}")));
+					modified = true;
+				}
+			}
+
 			if (settings.RandomizeItems) {
 				// Now we want to handle items.
 				// Items work much the same as enemy spawns.
@@ -1787,10 +1925,10 @@ namespace MZZT.DarkForces.Showcase {
 				// If all doors are unlocked, don't spawn any keys.
 				if (settings.UnlockAllDoorsAndIncludeKeysInSpawnLocationPool) {
 					spawnLocationPoolLogics.AddRange(new[] {
-					"BLUE",
-					"YELLOW",
-					"RED",
-				});
+						"BLUE",
+						"YELLOW",
+						"RED",
+					});
 				}
 
 				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool =

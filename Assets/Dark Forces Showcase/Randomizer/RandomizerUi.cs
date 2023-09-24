@@ -252,7 +252,7 @@ namespace MZZT.DarkForces.Showcase {
 					HeadlightBrightness = new RandomRange() {
 						Enabled = false,
 						Minimum = 0,
-						Maximum	= 31
+						Maximum = 31
 					},
 					HeadlightDistance = new RandomRange() {
 						Enabled = false,
@@ -286,7 +286,7 @@ namespace MZZT.DarkForces.Showcase {
 						Maximum = 2
 					},
 					LightLevelMultiplierPerLevel = false,
-					MapOverrideMode =	MapOverrideModes.None,
+					MapOverrideMode = MapOverrideModes.None,
 					RemoveSecrets = false
 				},
 				ModSourcePaths = new Dictionary<string, string>(),
@@ -310,6 +310,43 @@ namespace MZZT.DarkForces.Showcase {
 					LogicsForEnemySpawnLocationPool = ENEMY_LOGICS,
 					LogicsForItemSpawnLocationPool = ITEM_LOGICS,
 					MultiLogicEnemyAction = MultiLogicActions.Shuffle,
+					NightmareGeneratorsDelay = new RandomRange() {
+						Enabled = false,
+						Minimum = 0,
+						Maximum = 0
+					},
+					NightmareGeneratorsInterval = new RandomRange() {
+						Enabled = false,
+						Minimum = 0,
+						Maximum = 0
+					},
+					NightmareGeneratorsMaximumAlive = new RandomRange() {
+						Enabled = false,
+						Minimum = 1,
+						Maximum = 1
+					},
+					NightmareGeneratorsMaximumDistance = new RandomRange() {
+						Enabled = false,
+						Minimum = 32767,
+						Maximum = 32767
+					},
+					NightmareGeneratorsMinimumDistance = new RandomRange() {
+						Enabled = false,
+						Minimum = 0,
+						Maximum = 0,
+					},
+					NightmareGeneratorsNumberTerminate = new RandomRange() {
+						Enabled = false,
+						Minimum = -1,
+						Maximum = -1
+					},
+					NightmareGeneratorsWanderTime	= new RandomRange() {
+						Enabled = false,
+						Minimum = 0,
+						Maximum = 0
+					},
+					NightmareKeepOriginalEnemies = false,
+					NightmareMode = false,
 					RandomEnemyLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
 					RandomItemLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
 					RandomizeBosses = true,
