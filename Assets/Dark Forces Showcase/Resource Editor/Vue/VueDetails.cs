@@ -255,7 +255,7 @@ namespace MZZT.DarkForces.Showcase {
 			float sliderPos;
 			if (this.vueAnimation != null) {
 				this.previewTime.text = string.Format(this.previewTimeFormat,
-					TimeSpan.FromSeconds(this.vueAnimation.time % this.vueAnimation.length / this.framerate),
+					TimeSpan.FromSeconds((this.vueAnimation.length > 0 ? (this.vueAnimation.time % this.vueAnimation.length) : 0) / this.framerate),
 					TimeSpan.FromSeconds(this.vueAnimation.length / this.framerate));
 				sliderPos = this.vueAnimation.normalizedTime % 1;
 			} else {

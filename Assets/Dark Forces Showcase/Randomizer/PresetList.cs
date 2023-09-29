@@ -1,7 +1,6 @@
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -138,10 +137,9 @@ namespace MZZT.DarkForces.Showcase {
 
 			Stream stream;
 			if (File.Exists(this.lastImportPath)) {
-				using (FileStream gobStream = new(this.lastImportPath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-					DfGobContainer gob = await DfGobContainer.ReadAsync(gobStream);
-					stream = await gob.GetFileStreamAsync(Path.GetFileName(path), gobStream);
-				}
+				using FileStream gobStream = new(this.lastImportPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+				DfGobContainer gob = await DfGobContainer.ReadAsync(gobStream);
+				stream = await gob.GetFileStreamAsync(Path.GetFileName(path), gobStream);
 			} else {
 				stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 			}
@@ -196,11 +194,10 @@ namespace MZZT.DarkForces.Showcase {
 				UseSimpleDictionaryFormat = true
 			});
 
-			using (FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
-				try {
-					serializer.WriteObject(stream, preset.Settings);
-				} catch (Exception) {
-				}
+			using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+			try {
+				serializer.WriteObject(stream, preset.Settings);
+			} catch (Exception) {
 			}
 		}
 
@@ -235,53 +232,54 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private void AddDefaults() {
-			this.AddRange(new[] { RandomizerUi.DEFAULT_PRESET, new Preset {
+			this.AddRange(new[] { RandomizerUi.DEFAULT_PRESET, new() {
 				Name = "Darker Forces",
 				ReadOnly = true,
-				Settings = new RandomizerSettings() {
+				Settings = new() {
 					Version = 1,
 					FixedSeed = false,
 					SaveSettingsToGob = true,
 					Seed = 0x00000000,
-					Colormap = new RandomizerColormapSettings() {
-						ForceLightLevel = new RandomRange() {
+					Colormap = new() {
+						ForceLightLevel = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 31
 						},
-						HeadlightBrightness = new RandomRange() {
+						HeadlightBrightness = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 31
 						},
-						HeadlightDistance = new RandomRange() {
+						HeadlightDistance = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 127,
 						},
 						RandomizePerLevel = false
 					},
-					Cutscenes = new RandomizerCutscenesSettings() {
+					Cutscenes = new() {
 						AdjustCutsceneMusicVolume = 1,
-						AdjustCutsceneSpeed = new RandomRange() {
+						AdjustCutsceneSpeed = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
 						RemoveCutscenes = false
 					},
-					JediLvl = new RandomizerJediLvlSettings() {
-						LevelCount = new RandomRange() {
+					JediLvl = new() {
+						LevelCount = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
 						Levels = new[] { "SECBASE" },
-						RandomizeOrder = false
+						RandomizeOrder = false,
+						Title = "Seed: {seed}"
 					},
-					Level = new RandomizerLevelSettings() {
+					Level = new() {
 						MapOverrideMode = MapOverrideModes.None,
-						LightLevelMultiplier = new RandomRange() {
+						LightLevelMultiplier = new() {
 							Enabled = true,
 							Minimum = 0.5f,
 							Maximum = 0.5f
@@ -289,97 +287,97 @@ namespace MZZT.DarkForces.Showcase {
 						LightLevelMultiplierPerLevel = false,
 						RemoveSecrets = false
 					},
-					ModSourcePaths = new Dictionary<string, string>(),
-					Music = new RandomizerMusicSettings() {
+					ModSourcePaths = new(),
+					Music = new() {
 						RandomizeTrackOrder = false
 					},
-					Object = new RandomizerObjectSettings() {
+					Object = new() {
 						DefaultLogicFiles = RandomizerUi.DEFAULT_TEMPLATES.Select(x => new ObjectTemplate() { Logic = x.Key, Filename = x.Value}).ToArray(),
-						DifficultyEnemySpawnWeights = new List<DifficultySpawnWeight>() {
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 0, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 0, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 15, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 10, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 15, Absolute = true }
+						DifficultyEnemySpawnWeights = new() {
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 0, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 0, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 15, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 10, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 15, Absolute = true }
 						},
-						DifficultyItemSpawnWeights = new List<DifficultySpawnWeight>() {
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 10, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 10, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 20, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 0, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 0, Absolute = true }
+						DifficultyItemSpawnWeights = new() {
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 10, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 10, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 20, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 0, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 0, Absolute = true }
 						},
 						EnemyGenerationPoolSource = EntityGenerationPoolSources.None,
-						EnemyLogicSpawnWeights = new List<LogicSpawnWeight>() {
-							new LogicSpawnWeight() { Logic = "D_TROOP1", Weight = 25, Absolute = true },
-							new LogicSpawnWeight() { Logic = "D_TROOP2", Weight = 14, Absolute = true },
-							new LogicSpawnWeight() { Logic = "D_TROOP3", Weight = 1, Absolute = true }
+						EnemyLogicSpawnWeights = new() {
+							new() { Logic = "D_TROOP1", Weight = 25, Absolute = true },
+							new() { Logic = "D_TROOP2", Weight = 14, Absolute = true },
+							new() { Logic = "D_TROOP3", Weight = 1, Absolute = true }
 						},
 						MultiLogicEnemyAction = MultiLogicActions.Shuffle,
-						ItemAwardFirstLevel = new List<ItemAward>() {
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "CANNON", Count = 1 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "LIFE", Count = 2},
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "PLASMA", Count = 5 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "MISSILES", Count = 2 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "REVIVE", Count = 1 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "INVINCIBLE", Count = 1 }
+						ItemAwardFirstLevel = new() {
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "CANNON", Count = 1 },
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "LIFE", Count = 2},
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "PLASMA", Count = 5 },
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "MISSILES", Count = 2 },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "REVIVE", Count = 1 },
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "INVINCIBLE", Count = 1 }
 						},
-						ItemAwardOtherLevels = new List<ItemAward>() {
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "LIFE", Count = 1 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "LIFE", Count = 2},
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "PLASMA", Count = 5 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "MISSILES", Count = 2 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "REVIVE", Count = 1 },
-							new ItemAward() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "INVINCIBLE", Count = 1 }
+						ItemAwardOtherLevels = new() {
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "LIFE", Count = 1 },
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "LIFE", Count = 2},
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "PLASMA", Count = 5 },
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "MISSILES", Count = 2 },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Logic = "REVIVE", Count = 1 },
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Logic = "INVINCIBLE", Count = 1 }
 						},
 						ItemGenerationPoolSource = EntityGenerationPoolSources.None, // OK
-						ItemLogicSpawnWeights = new List<LogicSpawnWeight>() {
-							new LogicSpawnWeight() { Logic = "SHIELD", Weight = 10, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MEDKIT", Weight = 9, Absolute = true },
-							new LogicSpawnWeight() { Logic = "CANNON", Weight = 1, Absolute = true },
-							new LogicSpawnWeight() { Logic = "PLASMA", Weight = 10, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MISSILE", Weight = 4, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MISSILES", Weight = 2, Absolute = true },
-							new LogicSpawnWeight() { Logic = "SUPERCHARGE", Weight = 1, Absolute = true },
-							new LogicSpawnWeight() { Logic = "INVINCIBLE", Weight = 1, Absolute = true },
-							new LogicSpawnWeight() { Logic = "LIFE", Weight = 1, Absolute = true },
-							new LogicSpawnWeight() { Logic = "REVIVE", Weight = 1, Absolute = true }
+						ItemLogicSpawnWeights = new() {
+							new() { Logic = "SHIELD", Weight = 10, Absolute = true },
+							new() { Logic = "MEDKIT", Weight = 9, Absolute = true },
+							new() { Logic = "CANNON", Weight = 1, Absolute = true },
+							new() { Logic = "PLASMA", Weight = 10, Absolute = true },
+							new() { Logic = "MISSILE", Weight = 4, Absolute = true },
+							new() { Logic = "MISSILES", Weight = 2, Absolute = true },
+							new() { Logic = "SUPERCHARGE", Weight = 1, Absolute = true },
+							new() { Logic = "INVINCIBLE", Weight = 1, Absolute = true },
+							new() { Logic = "LIFE", Weight = 1, Absolute = true },
+							new() { Logic = "REVIVE", Weight = 1, Absolute = true }
 						},
 						LessenEnemyProbabilityWhenSpawned = true,
 						LessenItemProbabilityWhenSpawned = true,
 						LogicsForEnemySpawnLocationPool = RandomizerUi.ENEMY_LOGICS.ToArray(),
 						LogicsForItemSpawnLocationPool = RandomizerUi.ITEM_LOGICS.ToArray(),
-						NightmareGeneratorsDelay = new RandomRange() {
+						NightmareGeneratorsDelay = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
 						},
-						NightmareGeneratorsInterval = new RandomRange() {
+						NightmareGeneratorsInterval = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
 						},
-						NightmareGeneratorsMaximumAlive = new RandomRange() {
+						NightmareGeneratorsMaximumAlive = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
-						NightmareGeneratorsMaximumDistance = new RandomRange() {
+						NightmareGeneratorsMaximumDistance = new() {
 							Enabled = false,
 							Minimum = 32767,
 							Maximum = 32767
 						},
-						NightmareGeneratorsMinimumDistance = new RandomRange() {
+						NightmareGeneratorsMinimumDistance = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0,
 						},
-						NightmareGeneratorsNumberTerminate = new RandomRange() {
+						NightmareGeneratorsNumberTerminate = new() {
 							Enabled = false,
 							Minimum = -1,
 							Maximum = -1
 						},
-						NightmareGeneratorsWanderTime = new RandomRange() {
+						NightmareGeneratorsWanderTime = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
@@ -391,37 +389,37 @@ namespace MZZT.DarkForces.Showcase {
 						RandomizeBosses = true,
 						RandomizeEnemies = true,
 						RandomizeEnemyYaw = false,
-						RandomizeGeneratorsDelay = new RandomRange() {
+						RandomizeGeneratorsDelay = new() {
 							Maximum = 30,
 							Minimum = 30,
 							Enabled = false
 						},
-						RandomizeGeneratorsInterval = new RandomRange() {
+						RandomizeGeneratorsInterval = new() {
 							Maximum = 20,
 							Minimum = 20,
 							Enabled = false
 						},
-						RandomizeGeneratorsMaximumAlive = new RandomRange() {
+						RandomizeGeneratorsMaximumAlive = new() {
 							Maximum = 3,
 							Minimum = 3,
 							Enabled = false
 						},
-						RandomizeGeneratorsMaximumDistance = new RandomRange() {
+						RandomizeGeneratorsMaximumDistance = new() {
 							Maximum = 200,
 							Minimum = 200,
 							Enabled = false
 						},
-						RandomizeGeneratorsMinimumDistance = new RandomRange() {
+						RandomizeGeneratorsMinimumDistance = new() {
 							Maximum = 70,
 							Minimum = 70,
 							Enabled = false
 						},
-						RandomizeGeneratorsNumberTerminate = new RandomRange() {
+						RandomizeGeneratorsNumberTerminate = new() {
 							Maximum = 8,
 							Minimum = 8,
 							Enabled = false
 						},
-						RandomizeGeneratorsWanderTime = new RandomRange() {
+						RandomizeGeneratorsWanderTime = new() {
 							Maximum = 40,
 							Minimum = 40,
 							Enabled = false
@@ -438,18 +436,18 @@ namespace MZZT.DarkForces.Showcase {
 						EnemySpawnSources = SpawnSources.ExistingThenRandom,
 						ItemSpawnSources = SpawnSources.ExistingThenRandom
 					},
-					Palette = new RandomizerPaletteSettings() {
-						LightHue = new RandomRange() {
+					Palette = new() {
+						LightHue = new() {
 							Enabled = false,
 							Minimum = -180,
 							Maximum = 180
 						},
-						LightLum = new RandomRange() {
+						LightLum = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 2
 						},
-						LightSat = new RandomRange() {
+						LightSat = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 2
@@ -457,54 +455,60 @@ namespace MZZT.DarkForces.Showcase {
 						RandomizeLightColors = false,
 						RandomizeOtherColors = false,
 						RandomizePerLevel = true
+					},
+					CrossFile = new() {
+						MirrorMode = MirrorModes.Disabled,
+						MirrorSprites = false,
+						MirrorText = false
 					}
 				},
-			}, new Preset {
+			}, new() {
 				Name = "Darkest Forces",
 				ReadOnly = true,
-				Settings = new RandomizerSettings() {
+				Settings = new() {
 					Version = 1,
 					FixedSeed = false,
 					SaveSettingsToGob = true,
 					Seed = 0x00000000,
-					Colormap = new RandomizerColormapSettings() {
-						ForceLightLevel = new RandomRange() {
+					Colormap = new() {
+						ForceLightLevel = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 31
 						},
-						HeadlightBrightness = new RandomRange() {
+						HeadlightBrightness = new() {
 							Enabled = true,
 							Minimum = 31,
 							Maximum = 31
 						},
-						HeadlightDistance = new RandomRange() {
+						HeadlightDistance = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 127,
 						},
 					},
-					Cutscenes = new RandomizerCutscenesSettings() {
+					Cutscenes = new() {
 						AdjustCutsceneMusicVolume = 1,
-						AdjustCutsceneSpeed = new RandomRange() {
+						AdjustCutsceneSpeed = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
 						RemoveCutscenes = false
 					},
-					JediLvl = new RandomizerJediLvlSettings() {
-						LevelCount = new RandomRange() {
+					JediLvl = new() {
+						LevelCount = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
 						Levels = new[] { "SECBASE" },
-						RandomizeOrder = false
+						RandomizeOrder = false,
+						Title = "Seed: {seed}"
 					},
-					Level = new RandomizerLevelSettings() {
+					Level = new() {
 						MapOverrideMode = MapOverrideModes.HideMap,
-						LightLevelMultiplier = new RandomRange() {
+						LightLevelMultiplier = new() {
 							Enabled = true,
 							Minimum = 0.25f,
 							Maximum = 0.25f
@@ -512,88 +516,88 @@ namespace MZZT.DarkForces.Showcase {
 						LightLevelMultiplierPerLevel = false,
 						RemoveSecrets = false
 					},
-					ModSourcePaths = new Dictionary<string, string>(),
-					Music = new RandomizerMusicSettings() {
+					ModSourcePaths = new(),
+					Music = new() {
 						RandomizeTrackOrder = false
 					},
-					Object = new RandomizerObjectSettings() {
+					Object = new() {
 						DefaultLogicFiles = RandomizerUi.DEFAULT_TEMPLATES.Select(x => new ObjectTemplate() { Logic = x.Key, Filename = x.Value}).ToArray(),
-						DifficultyEnemySpawnWeights = new List<DifficultySpawnWeight>() {
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 0, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 0, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 75, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 0, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 0, Absolute = true }
+						DifficultyEnemySpawnWeights = new() {
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 0, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 0, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 75, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 0, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 0, Absolute = true }
 						},
-						DifficultyItemSpawnWeights = new List<DifficultySpawnWeight>() {
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 25, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 25, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 50, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 0, Absolute = true },
-							new DifficultySpawnWeight() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 0, Absolute = true }
+						DifficultyItemSpawnWeights = new() {
+							new() { Difficulty = DfLevelObjects.Difficulties.Easy, Weight = 25, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMedium, Weight = 25, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.EasyMediumHard, Weight = 50, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.MediumHard, Weight = 0, Absolute = true },
+							new() { Difficulty = DfLevelObjects.Difficulties.Hard, Weight = 0, Absolute = true }
 						},
 						EnemyGenerationPoolSource = EntityGenerationPoolSources.None,
-						EnemyLogicSpawnWeights = new List<LogicSpawnWeight>() {
-							new LogicSpawnWeight() { Logic = "MOUSEBOT", Weight = 75, Absolute = true }
+						EnemyLogicSpawnWeights = new() {
+							new() { Logic = "MOUSEBOT", Weight = 75, Absolute = true }
 						},
 						MultiLogicEnemyAction = MultiLogicActions.Shuffle,
-						ItemAwardFirstLevel = new List<ItemAward>(),
-						ItemAwardOtherLevels = new List<ItemAward>(),
+						ItemAwardFirstLevel = new(),
+						ItemAwardOtherLevels = new(),
 						ItemGenerationPoolSource = EntityGenerationPoolSources.None,
-						ItemLogicSpawnWeights = new List<LogicSpawnWeight>() {
-							new LogicSpawnWeight() { Logic = "RIFLE", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "AUTOGUN", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "FUSION", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MORTAR", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "CONCUSSION", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "CANNON", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "ENERGY", Weight = 10, Absolute = true },
-							new LogicSpawnWeight() { Logic = "DETONATOR", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "DETONATORS", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "POWER", Weight = 10, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MINE", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MINES", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "SHELL", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "SHELLS", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "PLASMA", Weight = 10, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MISSILE", Weight = 5, Absolute = true },
-							new LogicSpawnWeight() { Logic = "MISSILES", Weight = 5, Absolute = true }
+						ItemLogicSpawnWeights = new() {
+							new() { Logic = "RIFLE", Weight = 5, Absolute = true },
+							new() { Logic = "AUTOGUN", Weight = 5, Absolute = true },
+							new() { Logic = "FUSION", Weight = 5, Absolute = true },
+							new() { Logic = "MORTAR", Weight = 5, Absolute = true },
+							new() { Logic = "CONCUSSION", Weight = 5, Absolute = true },
+							new() { Logic = "CANNON", Weight = 5, Absolute = true },
+							new() { Logic = "ENERGY", Weight = 10, Absolute = true },
+							new() { Logic = "DETONATOR", Weight = 5, Absolute = true },
+							new() { Logic = "DETONATORS", Weight = 5, Absolute = true },
+							new() { Logic = "POWER", Weight = 10, Absolute = true },
+							new() { Logic = "MINE", Weight = 5, Absolute = true },
+							new() { Logic = "MINES", Weight = 5, Absolute = true },
+							new() { Logic = "SHELL", Weight = 5, Absolute = true },
+							new() { Logic = "SHELLS", Weight = 5, Absolute = true },
+							new() { Logic = "PLASMA", Weight = 10, Absolute = true },
+							new() { Logic = "MISSILE", Weight = 5, Absolute = true },
+							new() { Logic = "MISSILES", Weight = 5, Absolute = true }
 						},
 						LessenEnemyProbabilityWhenSpawned = true,
 						LessenItemProbabilityWhenSpawned = true,
 						LogicsForEnemySpawnLocationPool = RandomizerUi.ENEMY_LOGICS.ToArray(),
 						LogicsForItemSpawnLocationPool = RandomizerUi.ITEM_LOGICS.ToArray(),
-						NightmareGeneratorsDelay = new RandomRange() {
+						NightmareGeneratorsDelay = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
 						},
-						NightmareGeneratorsInterval = new RandomRange() {
+						NightmareGeneratorsInterval = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
 						},
-						NightmareGeneratorsMaximumAlive = new RandomRange() {
+						NightmareGeneratorsMaximumAlive = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
-						NightmareGeneratorsMaximumDistance = new RandomRange() {
+						NightmareGeneratorsMaximumDistance = new() {
 							Enabled = false,
 							Minimum = 32767,
 							Maximum = 32767
 						},
-						NightmareGeneratorsMinimumDistance = new RandomRange() {
+						NightmareGeneratorsMinimumDistance = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0,
 						},
-						NightmareGeneratorsNumberTerminate = new RandomRange() {
+						NightmareGeneratorsNumberTerminate = new() {
 							Enabled = false,
 							Minimum = -1,
 							Maximum = -1
 						},
-						NightmareGeneratorsWanderTime = new RandomRange() {
+						NightmareGeneratorsWanderTime = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
@@ -605,37 +609,37 @@ namespace MZZT.DarkForces.Showcase {
 						RandomizeBosses = true,
 						RandomizeEnemies = true,
 						RandomizeEnemyYaw = false,
-						RandomizeGeneratorsDelay = new RandomRange() {
+						RandomizeGeneratorsDelay = new() {
 							Maximum = 30,
 							Minimum = 30,
 							Enabled = false
 						},
-						RandomizeGeneratorsInterval = new RandomRange() {
+						RandomizeGeneratorsInterval = new() {
 							Maximum = 20,
 							Minimum = 20,
 							Enabled = false
 						},
-						RandomizeGeneratorsMaximumAlive = new RandomRange() {
+						RandomizeGeneratorsMaximumAlive = new() {
 							Maximum = 3,
 							Minimum = 3,
 							Enabled = false
 						},
-						RandomizeGeneratorsMaximumDistance = new RandomRange() {
+						RandomizeGeneratorsMaximumDistance = new() {
 							Maximum = 200,
 							Minimum = 200,
 							Enabled = false
 						},
-						RandomizeGeneratorsMinimumDistance = new RandomRange() {
+						RandomizeGeneratorsMinimumDistance = new() {
 							Maximum = 70,
 							Minimum = 70,
 							Enabled = false
 						},
-						RandomizeGeneratorsNumberTerminate = new RandomRange() {
+						RandomizeGeneratorsNumberTerminate = new() {
 							Maximum = 8,
 							Minimum = 8,
 							Enabled = false
 						},
-						RandomizeGeneratorsWanderTime = new RandomRange() {
+						RandomizeGeneratorsWanderTime = new() {
 							Maximum = 40,
 							Minimum = 40,
 							Enabled = false
@@ -652,18 +656,18 @@ namespace MZZT.DarkForces.Showcase {
 						EnemySpawnSources = SpawnSources.ExistingThenRandom,
 						ItemSpawnSources = SpawnSources.ExistingThenRandom
 					},
-					Palette = new RandomizerPaletteSettings() {
-						LightHue = new RandomRange() {
+					Palette = new() {
+						LightHue = new() {
 							Enabled = false,
 							Minimum = -180,
 							Maximum = 180
 						},
-						LightLum = new RandomRange() {
+						LightLum = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 2
 						},
-						LightSat = new RandomRange() {
+						LightSat = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 2
@@ -671,55 +675,61 @@ namespace MZZT.DarkForces.Showcase {
 						RandomizeLightColors = false,
 						RandomizeOtherColors = false,
 						RandomizePerLevel = true
+					},
+					CrossFile = new() {
+						MirrorMode = MirrorModes.Disabled,
+						MirrorSprites = false,
+						MirrorText = false
 					}
 				}
-			}, new Preset {
+			}, new() {
 				Name = "Nightmare Mode",
 				ReadOnly = true,
-				Settings = new RandomizerSettings() {
+				Settings = new() {
 					Version = 1,
 					FixedSeed = false,
 					SaveSettingsToGob = true,
 					Seed = 0x00000000,
-					Colormap = new RandomizerColormapSettings() {
-						ForceLightLevel = new RandomRange() {
+					Colormap = new() {
+						ForceLightLevel = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 31
 						},
-						HeadlightBrightness = new RandomRange() {
+						HeadlightBrightness = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 31
 						},
-						HeadlightDistance = new RandomRange() {
+						HeadlightDistance = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 127
 						},
 					},
-					Cutscenes = new RandomizerCutscenesSettings() {
+					Cutscenes = new() {
 						AdjustCutsceneMusicVolume = 1,
-						AdjustCutsceneSpeed = new RandomRange() {
+						AdjustCutsceneSpeed = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
 						RemoveCutscenes = false
 					},
-					JediLvl = new RandomizerJediLvlSettings() {
-						LevelCount = new RandomRange() {
+					JediLvl = new() {
+						LevelCount = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
 						Levels = new[] { "SECBASE", "TALAY", "SEWERS", "TESTBASE", "GROMAS", "DTENTION", "RAMSHED",
 							"ROBOTICS", "NARSHADA", "JABSHIP", "IMPCITY", "FUELSTAT", "EXECUTOR", "ARC" },
-						RandomizeOrder = false
+						RandomizeOrder = false,
+						Title = "Nightmare Mode"
 					},
-					Level = new RandomizerLevelSettings() {
+					Level = new() {
 						MapOverrideMode = MapOverrideModes.None,
-						LightLevelMultiplier = new RandomRange() {
+						LightLevelMultiplier = new() {
 							Enabled = false,
 							Minimum = 1f,
 							Maximum = 1f
@@ -727,56 +737,56 @@ namespace MZZT.DarkForces.Showcase {
 						LightLevelMultiplierPerLevel = false,
 						RemoveSecrets = false
 					},
-					ModSourcePaths = new Dictionary<string, string>(),
-					Music = new RandomizerMusicSettings() {
+					ModSourcePaths = new(),
+					Music = new() {
 						RandomizeTrackOrder = false
 					},
-					Object = new RandomizerObjectSettings() {
+					Object = new() {
 						DefaultLogicFiles = RandomizerUi.DEFAULT_TEMPLATES.Select(x => new ObjectTemplate() { Logic = x.Key, Filename = x.Value}).ToArray(),
-						DifficultyEnemySpawnWeights = new List<DifficultySpawnWeight>(),
-						DifficultyItemSpawnWeights = new List<DifficultySpawnWeight>(),
+						DifficultyEnemySpawnWeights = new(),
+						DifficultyItemSpawnWeights = new(),
 						EnemyGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
-						EnemyLogicSpawnWeights = new List<LogicSpawnWeight>(),
+						EnemyLogicSpawnWeights = new(),
 						MultiLogicEnemyAction = MultiLogicActions.Shuffle,
-						ItemAwardFirstLevel = new List<ItemAward>(),
-						ItemAwardOtherLevels = new List<ItemAward>(),
+						ItemAwardFirstLevel = new(),
+						ItemAwardOtherLevels = new(),
 						ItemGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
-						ItemLogicSpawnWeights = new List<LogicSpawnWeight>(),
+						ItemLogicSpawnWeights = new(),
 						LessenEnemyProbabilityWhenSpawned = true,
 						LessenItemProbabilityWhenSpawned = true,
 						LogicsForEnemySpawnLocationPool = RandomizerUi.ENEMY_LOGICS.ToArray(),
 						LogicsForItemSpawnLocationPool = RandomizerUi.ITEM_LOGICS.ToArray(),
-						NightmareGeneratorsDelay = new RandomRange() {
+						NightmareGeneratorsDelay = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
 						},
-						NightmareGeneratorsInterval = new RandomRange() {
+						NightmareGeneratorsInterval = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
 						},
-						NightmareGeneratorsMaximumAlive = new RandomRange() {
+						NightmareGeneratorsMaximumAlive = new() {
 							Enabled = false,
 							Minimum = 1,
 							Maximum = 1
 						},
-						NightmareGeneratorsMaximumDistance = new RandomRange() {
+						NightmareGeneratorsMaximumDistance = new() {
 							Enabled = false,
 							Minimum = 32767,
 							Maximum = 32767
 						},
-						NightmareGeneratorsMinimumDistance = new RandomRange() {
+						NightmareGeneratorsMinimumDistance = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0,
 						},
-						NightmareGeneratorsNumberTerminate = new RandomRange() {
+						NightmareGeneratorsNumberTerminate = new() {
 							Enabled = false,
 							Minimum = -1,
 							Maximum = -1
 						},
-						NightmareGeneratorsWanderTime = new RandomRange() {
+						NightmareGeneratorsWanderTime = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 0
@@ -788,37 +798,37 @@ namespace MZZT.DarkForces.Showcase {
 						RandomizeBosses = false,
 						RandomizeEnemies = false,
 						RandomizeEnemyYaw = false,
-						RandomizeGeneratorsDelay = new RandomRange() {
+						RandomizeGeneratorsDelay = new() {
 							Maximum = 30,
 							Minimum = 30,
 							Enabled = false
 						},
-						RandomizeGeneratorsInterval = new RandomRange() {
+						RandomizeGeneratorsInterval = new() {
 							Maximum = 20,
 							Minimum = 20,
 							Enabled = false
 						},
-						RandomizeGeneratorsMaximumAlive = new RandomRange() {
+						RandomizeGeneratorsMaximumAlive = new() {
 							Maximum = 3,
 							Minimum = 3,
 							Enabled = false
 						},
-						RandomizeGeneratorsMaximumDistance = new RandomRange() {
+						RandomizeGeneratorsMaximumDistance = new() {
 							Maximum = 200,
 							Minimum = 200,
 							Enabled = false
 						},
-						RandomizeGeneratorsMinimumDistance = new RandomRange() {
+						RandomizeGeneratorsMinimumDistance = new() {
 							Maximum = 70,
 							Minimum = 70,
 							Enabled = false
 						},
-						RandomizeGeneratorsNumberTerminate = new RandomRange() {
+						RandomizeGeneratorsNumberTerminate = new() {
 							Maximum = 8,
 							Minimum = 8,
 							Enabled = false
 						},
-						RandomizeGeneratorsWanderTime = new RandomRange() {
+						RandomizeGeneratorsWanderTime = new() {
 							Maximum = 40,
 							Minimum = 40,
 							Enabled = false
@@ -835,18 +845,18 @@ namespace MZZT.DarkForces.Showcase {
 						EnemySpawnSources = SpawnSources.ExistingThenRandom,
 						ItemSpawnSources = SpawnSources.ExistingThenRandom
 					},
-					Palette = new RandomizerPaletteSettings() {
-						LightHue = new RandomRange() {
+					Palette = new() {
+						LightHue = new() {
 							Enabled = false,
 							Minimum = -180,
 							Maximum = 180
 						},
-						LightLum = new RandomRange() {
+						LightLum = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 2
 						},
-						LightSat = new RandomRange() {
+						LightSat = new() {
 							Enabled = false,
 							Minimum = 0,
 							Maximum = 2
@@ -854,6 +864,200 @@ namespace MZZT.DarkForces.Showcase {
 						RandomizeLightColors = false,
 						RandomizeOtherColors = false,
 						RandomizePerLevel = true
+					},
+					CrossFile = new() {
+						MirrorMode = MirrorModes.Disabled,
+						MirrorSprites = false,
+						MirrorText = false
+					}
+				}
+			}, new() {
+				Name = "Mirror Mode",
+				ReadOnly = true,
+				Settings = new() {
+					Version = 1,
+					FixedSeed = false,
+					SaveSettingsToGob = true,
+					Seed = 0x00000000,
+					Colormap = new() {
+						ForceLightLevel = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 31
+						},
+						HeadlightBrightness = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 31
+						},
+						HeadlightDistance = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 127
+						},
+					},
+					Cutscenes = new() {
+						AdjustCutsceneMusicVolume = 1,
+						AdjustCutsceneSpeed = new() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						RemoveCutscenes = false
+					},
+					JediLvl = new() {
+						LevelCount = new() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						Levels = new[] { "SECBASE", "TALAY", "SEWERS", "TESTBASE", "GROMAS", "DTENTION", "RAMSHED",
+							"ROBOTICS", "NARSHADA", "JABSHIP", "IMPCITY", "FUELSTAT", "EXECUTOR", "ARC" },
+						RandomizeOrder = false,
+						Title = "Mirror Mode"
+					},
+					Level = new() {
+						MapOverrideMode = MapOverrideModes.None,
+						LightLevelMultiplier = new() {
+							Enabled = false,
+							Minimum = 1f,
+							Maximum = 1f
+						},
+						LightLevelMultiplierPerLevel = false,
+						RemoveSecrets = false
+					},
+					ModSourcePaths = new(),
+					Music = new() {
+						RandomizeTrackOrder = false
+					},
+					Object = new() {
+						DefaultLogicFiles = RandomizerUi.DEFAULT_TEMPLATES.Select(x => new ObjectTemplate() { Logic = x.Key, Filename = x.Value}).ToArray(),
+						DifficultyEnemySpawnWeights = new(),
+						DifficultyItemSpawnWeights = new(),
+						EnemyGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
+						EnemyLogicSpawnWeights = new(),
+						MultiLogicEnemyAction = MultiLogicActions.Shuffle,
+						ItemAwardFirstLevel = new(),
+						ItemAwardOtherLevels = new(),
+						ItemGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
+						ItemLogicSpawnWeights = new(),
+						LessenEnemyProbabilityWhenSpawned = true,
+						LessenItemProbabilityWhenSpawned = true,
+						LogicsForEnemySpawnLocationPool = RandomizerUi.ENEMY_LOGICS.ToArray(),
+						LogicsForItemSpawnLocationPool = RandomizerUi.ITEM_LOGICS.ToArray(),
+						NightmareGeneratorsDelay = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsInterval = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareGeneratorsMaximumAlive = new() {
+							Enabled = false,
+							Minimum = 1,
+							Maximum = 1
+						},
+						NightmareGeneratorsMaximumDistance = new() {
+							Enabled = false,
+							Minimum = 32767,
+							Maximum = 32767
+						},
+						NightmareGeneratorsMinimumDistance = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0,
+						},
+						NightmareGeneratorsNumberTerminate = new() {
+							Enabled = false,
+							Minimum = -1,
+							Maximum = -1
+						},
+						NightmareGeneratorsWanderTime = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 0
+						},
+						NightmareKeepOriginalEnemies = false,
+						NightmareMode = false,
+						RandomEnemyLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
+						RandomItemLocationSelectionMode = RandomLocationSelectionModes.PositionThenSector,
+						RandomizeBosses = false,
+						RandomizeEnemies = false,
+						RandomizeEnemyYaw = false,
+						RandomizeGeneratorsDelay = new() {
+							Maximum = 30,
+							Minimum = 30,
+							Enabled = false
+						},
+						RandomizeGeneratorsInterval = new() {
+							Maximum = 20,
+							Minimum = 20,
+							Enabled = false
+						},
+						RandomizeGeneratorsMaximumAlive = new() {
+							Maximum = 3,
+							Minimum = 3,
+							Enabled = false
+						},
+						RandomizeGeneratorsMaximumDistance = new() {
+							Maximum = 200,
+							Minimum = 200,
+							Enabled = false
+						},
+						RandomizeGeneratorsMinimumDistance = new() {
+							Maximum = 70,
+							Minimum = 70,
+							Enabled = false
+						},
+						RandomizeGeneratorsNumberTerminate = new() {
+							Maximum = 8,
+							Minimum = 8,
+							Enabled = false
+						},
+						RandomizeGeneratorsWanderTime = new() {
+							Maximum = 40,
+							Minimum = 40,
+							Enabled = false
+						},
+						RandomizeItems = false,
+						RemoveCheckpoints = false,
+						ReplaceKeyAndCodeOfficersWithTheirItems = false,
+						SpawnDiagonasOnlyInWater = true,
+						SpawnItemsInPits = false,
+						SpawnItemsInWater = false,
+						SpawnOnlyFlyingAndDiagonasInWater = true,
+						SpawnOnlyFlyingOverPits = true,
+						UnlockAllDoorsAndIncludeKeysInSpawnLocationPool = false,
+						EnemySpawnSources = SpawnSources.ExistingThenRandom,
+						ItemSpawnSources = SpawnSources.ExistingThenRandom
+					},
+					Palette = new() {
+						LightHue = new() {
+							Enabled = false,
+							Minimum = -180,
+							Maximum = 180
+						},
+						LightLum = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 2
+						},
+						LightSat = new() {
+							Enabled = false,
+							Minimum = 0,
+							Maximum = 2
+						},
+						RandomizeLightColors = false,
+						RandomizeOtherColors = false,
+						RandomizePerLevel = true
+					},
+					CrossFile = new() {
+						MirrorMode = MirrorModes.Enabled,
+						MirrorSprites = true,
+						MirrorText = true
 					}
 				}
 			} });

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2423740504154532410}
   - component: {fileID: 9179352374740989139}
   - component: {fileID: 855591123298519660}
+  - component: {fileID: 1009577189264673970}
   m_Layer: 5
   m_Name: Toolbar
   m_TagString: Untagged
@@ -105,6 +106,26 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &1009577189264673970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524871195680207975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: 0
+  m_LayoutPriority: 1
 --- !u!1 &562490963530141116
 GameObject:
   m_ObjectHideFlags: 0
@@ -172,7 +193,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
@@ -1742,6 +1763,7 @@ GameObject:
   - component: {fileID: 2694337585085130791}
   - component: {fileID: 1945210881466310373}
   - component: {fileID: 1642273906716240904}
+  - component: {fileID: 8991107053781297185}
   m_Layer: 5
   m_Name: Compressed
   m_TagString: Untagged
@@ -1894,6 +1916,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &8991107053781297185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800441736589547964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: 0
+  m_LayoutPriority: 1
 --- !u!1 &1820898811118289999
 GameObject:
   m_ObjectHideFlags: 0
@@ -2128,6 +2170,7 @@ GameObject:
   - component: {fileID: 2012426191750423295}
   - component: {fileID: 4957331509310096552}
   - component: {fileID: 6613308824124482078}
+  - component: {fileID: 7301778184505454678}
   m_Layer: 5
   m_Name: Flip
   m_TagString: Untagged
@@ -2292,6 +2335,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   databinder: {fileID: 0}
   autoApplyOnChange: 1
+--- !u!114 &7301778184505454678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2275381274244534104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: 0
+  m_LayoutPriority: 1
 --- !u!1 &2549937423924450093
 GameObject:
   m_ObjectHideFlags: 0
@@ -2648,7 +2711,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
@@ -3999,7 +4062,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0

@@ -162,6 +162,15 @@ namespace MZZT.DarkForces.Showcase {
 						return;
 					}
 
+					if (file is IDfFile dfFile) {
+						Warning[] warnings = dfFile.Warnings.ToArray();
+						if (warnings.Length > 0) {
+							string warning = string.Join("\n", warnings
+								.Select(x => $"{(x.Line > 0 ? $"{x.Line} - " : string.Empty)}{x.Message}"));
+							await DfMessageBox.Instance.ShowAsync($"{tab.Value.Resource.Name} loaded with warnings:\n\n{warning}");
+						}
+					}
+
 					if (file is ICloneable cloneable) {
 						file = (IFile)cloneable.Clone();
 					}

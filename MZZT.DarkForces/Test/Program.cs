@@ -4,6 +4,7 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Test {
@@ -203,7 +204,14 @@ namespace Test {
 				});
 			}*/
 
-			//DfGobContainer dark = await DfGobContainer.ReadAsync(@"C:\Users\mzzt\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
+			DfGobContainer dark = await DfGobContainer.ReadAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\DARK.GOB");
+			Raw raw = await dark.GetFileAsync<Raw>("KYL3DO.3DO");
+			await raw.SaveAsync(@"D:\Work\KYL3DO.3DO");
+
+			dark = await DfGobContainer.ReadAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\MIRROR.GOB");
+			raw = await dark.GetFileAsync<Raw>("M~~~~~~1.3DO");
+			await raw.SaveAsync(@"D:\Work\OD3LYK.3DO");
+
 			//DfGobContainer sprites = await DfGobContainer.ReadAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\SPRITES.GOB");
 			//DfLevelList lvl = await dark.GetFileAsync<DfLevelList>("JEDI.LVL");
 			//DfLevelGoals gol = await dark.GetFileAsync<DfLevelGoals>("SECBASE.GOL");
@@ -709,7 +717,7 @@ namespace Test {
 			//int total = 0;
 			//int totalObjects = 0;
 
-			LandruFileDirectory lfd = new();
+			/*LandruFileDirectory lfd = new();
 
 			lfd.AddFile<LandruPalette>("palette", new() {
 				First = 0,
@@ -1030,7 +1038,7 @@ namespace Test {
 								Type = LandruFilm.CommandTypes.End
 							}
 						}
-					},*/
+					},*
 					new() {
 						Name = "untitled",
 						Type = "END"
@@ -1038,8 +1046,8 @@ namespace Test {
 				}
 			});
 
-			await lfd.SaveAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\LOGO.LFD");
-			//return;
+			await lfd.SaveAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\LOGO.LFD");*/
+			return;
 
 			//int plttOld = 0;
 			//int plttNew = 0;

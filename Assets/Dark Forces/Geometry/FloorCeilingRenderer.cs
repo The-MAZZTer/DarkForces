@@ -567,7 +567,7 @@ namespace MZZT.DarkForces {
 						}*/
 
 						ResourceCache.Instance.AddWarning($"{LevelLoader.Instance.CurrentLevelName}.LEV",
-							$"Sector {sector.Name ?? LevelLoader.Instance.Level.Sectors.IndexOf(sector).ToString()} failed to draw floor and ceiling (probablty invalid geometry).");
+							$"Sector {sector.Name ?? LevelLoader.Instance.Level.Sectors.IndexOf(sector).ToString()} failed to draw floor and ceiling (probably invalid geometry).");
 						break;
 					}
 					/*} else {

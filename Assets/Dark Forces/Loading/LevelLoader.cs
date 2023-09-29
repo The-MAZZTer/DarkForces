@@ -206,10 +206,10 @@ namespace MZZT.DarkForces {
 			// Show fatal and non-fatal errors that occurred loading level data and generating Unity objects.
 			string fatal = string.Join("\n", warnings
 				.Where(x => x.Fatal)
-				.Select(x => $"{x.FileName}{(x.Line > 0 ? $":{x.Line}" : "")} - {x.Message}"));
+				.Select(x => $"{x.FileName}{(x.Line > 0 ? $":{x.Line}" : string.Empty)} - {x.Message}"));
 			string warning = string.Join("\n", warnings
 				.Where(x => !x.Fatal)
-				.Select(x => $"{x.FileName}{(x.Line > 0 ? $":{x.Line}" : "")} - {x.Message}"));
+				.Select(x => $"{x.FileName}{(x.Line > 0 ? $":{x.Line}" : string.Empty)} - {x.Message}"));
 			if (fatal.Length > 0) {
 				if (warning.Length > 0) {
 					await DfMessageBox.Instance.ShowAsync($"{name} failed to load:\n\n{fatal}\n{warning}");

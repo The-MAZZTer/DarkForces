@@ -60,7 +60,6 @@ namespace MZZT.DarkForces {
 			camera = new Vector3(camera.x, 0, camera.z);
 			float angle = Vector3.SignedAngle(camera, forward, Vector3.up);
 			int index = (int)((-angle + 360 + 5.625) % 360 / 11.25f);
-
 			//renderer.flipX = this.frames[index].Flip;
 			renderer.sprite = this.sprites[index];
 		}

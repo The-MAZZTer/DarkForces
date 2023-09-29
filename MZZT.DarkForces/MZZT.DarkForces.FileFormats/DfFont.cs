@@ -56,17 +56,17 @@ namespace MZZT.DarkForces.FileFormats {
 			/// </summary>
 			public byte Height;
 			/// <summary>
+			/// Spacing between each character.
+			/// </summary>
+			public byte Spacing;
+			/// <summary>
+			/// The width of the space character.
+			/// </summary>
+			public byte SpaceWidth;
+			/// <summary>
 			/// Unknown
 			/// </summary>
 			public byte Unknown;
-			/// <summary>
-			/// Unknown
-			/// </summary>
-			public byte Unknown2;
-			/// <summary>
-			/// Unknown
-			/// </summary>
-			public byte Unknown3;
 			/// <summary>
 			/// The first character in the font.
 			/// </summary>
@@ -120,6 +120,9 @@ namespace MZZT.DarkForces.FileFormats {
 		public DfFont() : base() {
 			this.First = 33;
 			this.Height = 8;
+			this.Spacing = 0;
+			this.SpaceWidth = 2;
+			this.Unknown = 2;
 		}
 
 		private Header header;
@@ -138,6 +141,30 @@ namespace MZZT.DarkForces.FileFormats {
 		public byte First {
 			get => this.header.First;
 			set => this.header.First = value;
+		}
+
+		/// <summary>
+		/// Spacing between each character.
+		/// </summary>
+		public byte Spacing {
+			get => this.header.Spacing;
+			set => this.header.Spacing = value;
+		}
+
+		/// <summary>
+		/// The width of the space character.
+		/// </summary>
+		public byte SpaceWidth {
+			get => this.header.SpaceWidth;
+			set => this.header.SpaceWidth = value;
+		}
+
+		/// <summary>
+		/// Unknown.
+		/// </summary>
+		public byte Unknown {
+			get => this.header.Unknown;
+			set => this.header.Unknown = value;
 		}
 
 		/// <summary>
@@ -199,7 +226,10 @@ namespace MZZT.DarkForces.FileFormats {
 		public DfFont Clone() {
 			DfFont clone = new() {
 				First = this.First,
-				Height = this.Height
+				Height = this.Height,
+				Spacing = this.Spacing,
+				SpaceWidth = this.SpaceWidth,
+				Unknown = this.Unknown
 			};
 			clone.Characters.AddRange(this.Characters.Select(x => x.Clone()));
 			return clone;

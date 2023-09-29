@@ -15,18 +15,20 @@ namespace MZZT.DarkForces.Showcase {
 		public int Seed { get; set; }
 		public bool SaveSettingsToGob { get; set; } = true;
 
-		public RandomizerJediLvlSettings JediLvl { get; set; } = new RandomizerJediLvlSettings();
-		public RandomizerCutscenesSettings Cutscenes { get; set; } = new RandomizerCutscenesSettings();
-		public RandomizerMusicSettings Music { get; set; } = new RandomizerMusicSettings();
-		public RandomizerLevelSettings Level { get; set; } = new RandomizerLevelSettings();
-		public RandomizerObjectSettings Object { get; set; } = new RandomizerObjectSettings();
-		public RandomizerPaletteSettings Palette { get; set; } = new RandomizerPaletteSettings();
-		public RandomizerColormapSettings Colormap { get; set; } = new RandomizerColormapSettings();
+		public RandomizerJediLvlSettings JediLvl { get; set; } = new();
+		public RandomizerCutscenesSettings Cutscenes { get; set; } = new();
+		public RandomizerMusicSettings Music { get; set; } = new();
+		public RandomizerLevelSettings Level { get; set; } = new();
+		public RandomizerObjectSettings Object { get; set; } = new();
+		public RandomizerPaletteSettings Palette { get; set; } = new();
+		public RandomizerColormapSettings Colormap { get; set; } = new();
+		public RandomizerCrossFileSettings CrossFile { get; set; } = new();
 		public Dictionary<string, string> ModSourcePaths { get; set; }
 
 		object ICloneable.Clone() => this.Clone();
 		public RandomizerSettings Clone() => new() {
 			Colormap = this.Colormap.Clone(),
+			CrossFile = this.CrossFile.Clone(),
 			Cutscenes = this.Cutscenes.Clone(),
 			JediLvl = this.JediLvl.Clone(),
 			Level = this.Level.Clone(),
@@ -49,12 +51,14 @@ namespace MZZT.DarkForces.Showcase {
 		};
 		public string[] Levels { get; set; } = new[] { "SECBASE" };
 		public bool RandomizeOrder { get; set; }
+		public string Title { get; set; } = "Seed: {seed}";
 
 		object ICloneable.Clone() => this.Clone();
 		public RandomizerJediLvlSettings Clone() => new() {
 			LevelCount = this.LevelCount.Clone(),
 			Levels = this.Levels.ToArray(),
-			RandomizeOrder = this.RandomizeOrder
+			RandomizeOrder = this.RandomizeOrder,
+			Title = this.Title
 		};
 	}
 
@@ -396,6 +400,28 @@ namespace MZZT.DarkForces.Showcase {
 			UnlockAllDoorsAndIncludeKeysInSpawnLocationPool = this.UnlockAllDoorsAndIncludeKeysInSpawnLocationPool,
 			EnemySpawnSources = this.EnemySpawnSources,
 			ItemSpawnSources = this.ItemSpawnSources
+		};
+	}
+
+	public enum MirrorModes {
+		[DataMember(Name = "Disabled for all levels")]
+		Disabled,
+		[DataMember(Name = "Enabled for all levels")]
+		Enabled,
+		[DataMember(Name = "Random for all levels")]
+		Random
+	}
+
+	public class RandomizerCrossFileSettings : ICloneable {
+		public MirrorModes MirrorMode { get; set; }
+		public bool MirrorSprites { get; set; }
+		public bool MirrorText { get; set; }
+
+		object ICloneable.Clone() => this.Clone();
+		public RandomizerCrossFileSettings Clone() => new() {
+			MirrorMode = this.MirrorMode,
+			MirrorSprites = this.MirrorSprites,
+			MirrorText = this.MirrorText
 		};
 	}
 }

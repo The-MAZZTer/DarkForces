@@ -242,45 +242,46 @@ namespace MZZT.DarkForces.Showcase {
 		public static readonly Preset DEFAULT_PRESET = new() {
 			Name = "Default",
 			ReadOnly = true,
-			Settings = new RandomizerSettings() {
-				Colormap = new RandomizerColormapSettings() {
-					ForceLightLevel = new RandomRange() {
+			Settings = new() {
+				Colormap = new() {
+					ForceLightLevel = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 31
 					},
-					HeadlightBrightness = new RandomRange() {
+					HeadlightBrightness = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 31
 					},
-					HeadlightDistance = new RandomRange() {
+					HeadlightDistance = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 127
 					},
 					RandomizePerLevel = false
 				},
-				Cutscenes = new RandomizerCutscenesSettings() {
+				Cutscenes = new() {
 					AdjustCutsceneMusicVolume = 1,
-					AdjustCutsceneSpeed = new RandomRange() {
+					AdjustCutsceneSpeed = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 1
 					},
 					RemoveCutscenes = false
 				},
-				JediLvl = new RandomizerJediLvlSettings() {
-					LevelCount = new RandomRange() {
+				JediLvl = new() {
+					LevelCount = new() {
 						Enabled = false,
 						Minimum = 1,
 						Maximum = 1
 					},
 					Levels = new[] { "SECBASE" },
-					RandomizeOrder = false
+					RandomizeOrder = false,
+					Title = "Seed: {seed}"
 				},
-				Level = new RandomizerLevelSettings() {
-					LightLevelMultiplier = new RandomRange() {
+				Level = new() {
+					LightLevelMultiplier = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 2
@@ -289,58 +290,58 @@ namespace MZZT.DarkForces.Showcase {
 					MapOverrideMode = MapOverrideModes.None,
 					RemoveSecrets = false
 				},
-				ModSourcePaths = new Dictionary<string, string>(),
-				Music = new RandomizerMusicSettings() {
+				ModSourcePaths = new(),
+				Music = new() {
 					RandomizeTrackOrder = false
 				},
-				Object = new RandomizerObjectSettings() {
+				Object = new() {
 					DefaultLogicFiles = DEFAULT_TEMPLATES.Select(x => new ObjectTemplate() { Logic = x.Key, Filename = x.Value }).ToArray(),
-					DifficultyEnemySpawnWeights = new List<DifficultySpawnWeight>(),
-					DifficultyItemSpawnWeights = new List<DifficultySpawnWeight>(),
+					DifficultyEnemySpawnWeights = new(),
+					DifficultyItemSpawnWeights = new(),
 					EnemyGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
-					EnemyLogicSpawnWeights = new List<LogicSpawnWeight>(),
+					EnemyLogicSpawnWeights = new(),
 					EnemySpawnSources = SpawnSources.ExistingThenRandom,
-					ItemAwardFirstLevel = new List<ItemAward>(),
-					ItemAwardOtherLevels = new List<ItemAward>(),
+					ItemAwardFirstLevel = new(),
+					ItemAwardOtherLevels = new(),
 					ItemGenerationPoolSource = EntityGenerationPoolSources.CurrentLevel,
-					ItemLogicSpawnWeights = new List<LogicSpawnWeight>(),
+					ItemLogicSpawnWeights = new(),
 					ItemSpawnSources = SpawnSources.ExistingThenRandom,
 					LessenEnemyProbabilityWhenSpawned = true,
 					LessenItemProbabilityWhenSpawned = true,
 					LogicsForEnemySpawnLocationPool = ENEMY_LOGICS,
 					LogicsForItemSpawnLocationPool = ITEM_LOGICS,
 					MultiLogicEnemyAction = MultiLogicActions.Shuffle,
-					NightmareGeneratorsDelay = new RandomRange() {
+					NightmareGeneratorsDelay = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 0
 					},
-					NightmareGeneratorsInterval = new RandomRange() {
+					NightmareGeneratorsInterval = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 0
 					},
-					NightmareGeneratorsMaximumAlive = new RandomRange() {
+					NightmareGeneratorsMaximumAlive = new() {
 						Enabled = false,
 						Minimum = 1,
 						Maximum = 1
 					},
-					NightmareGeneratorsMaximumDistance = new RandomRange() {
+					NightmareGeneratorsMaximumDistance = new() {
 						Enabled = false,
 						Minimum = 32767,
 						Maximum = 32767
 					},
-					NightmareGeneratorsMinimumDistance = new RandomRange() {
+					NightmareGeneratorsMinimumDistance = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 0,
 					},
-					NightmareGeneratorsNumberTerminate = new RandomRange() {
+					NightmareGeneratorsNumberTerminate = new() {
 						Enabled = false,
 						Minimum = -1,
 						Maximum = -1
 					},
-					NightmareGeneratorsWanderTime	= new RandomRange() {
+					NightmareGeneratorsWanderTime	= new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 0
@@ -352,37 +353,37 @@ namespace MZZT.DarkForces.Showcase {
 					RandomizeBosses = true,
 					RandomizeEnemies = true,
 					RandomizeEnemyYaw = false,
-					RandomizeGeneratorsDelay = new RandomRange() {
+					RandomizeGeneratorsDelay = new() {
 						Enabled = false,
 						Minimum = 30,
 						Maximum = 30
 					},
-					RandomizeGeneratorsInterval = new RandomRange() {
+					RandomizeGeneratorsInterval = new() {
 						Enabled = false,
 						Minimum = 20,
 						Maximum = 20
 					},
-					RandomizeGeneratorsMaximumAlive = new RandomRange() {
+					RandomizeGeneratorsMaximumAlive = new() {
 						Enabled = false,
 						Maximum = 3,
 						Minimum = 3
 					},
-					RandomizeGeneratorsMaximumDistance = new RandomRange() {
+					RandomizeGeneratorsMaximumDistance = new() {
 						Enabled = false,
 						Minimum = 200,
 						Maximum = 200
 					},
-					RandomizeGeneratorsMinimumDistance = new RandomRange() {
+					RandomizeGeneratorsMinimumDistance = new() {
 						Enabled = false,
 						Minimum = 70,
 						Maximum = 70
 					},
-					RandomizeGeneratorsNumberTerminate = new RandomRange() {
+					RandomizeGeneratorsNumberTerminate = new() {
 						Enabled = false,
 						Minimum = 8,
 						Maximum = 8
 					},
-					RandomizeGeneratorsWanderTime = new RandomRange() {
+					RandomizeGeneratorsWanderTime = new() {
 						Enabled = false,
 						Minimum = 40,
 						Maximum = 40
@@ -397,18 +398,18 @@ namespace MZZT.DarkForces.Showcase {
 					SpawnOnlyFlyingOverPits = true,
 					UnlockAllDoorsAndIncludeKeysInSpawnLocationPool = false
 				},
-				Palette = new RandomizerPaletteSettings() {
-					LightHue = new RandomRange() {
+				Palette = new() {
+					LightHue = new() {
 						Enabled = false,
 						Minimum = -180,
 						Maximum = 180
 					},
-					LightLum = new RandomRange() {
+					LightLum = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 2
 					},
-					LightSat = new RandomRange() {
+					LightSat = new() {
 						Enabled = false,
 						Minimum = 0,
 						Maximum = 2
@@ -419,7 +420,12 @@ namespace MZZT.DarkForces.Showcase {
 				},
 				SaveSettingsToGob =	true,
 				FixedSeed = false,
-				Version = 1
+				Version = 1,
+				CrossFile = new() {
+					MirrorMode = MirrorModes.Disabled,
+					MirrorSprites = false,
+					MirrorText = false
+				}
 			}
 		};
 

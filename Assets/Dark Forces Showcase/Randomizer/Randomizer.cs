@@ -1,3 +1,4 @@
+using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using System;
@@ -8,12 +9,14 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using UnityEditor.Experimental;
+using UnityEditor;
 using UnityEngine;
 using Random = System.Random;
 
 namespace MZZT.DarkForces.Showcase {
 	public class Randomizer : Singleton<Randomizer> {
+		private const float X_OFFSET = 0f;
+
 		private Random rng;
 
 		[SerializeField]
@@ -71,11 +74,14 @@ namespace MZZT.DarkForces.Showcase {
 		/// Loads in all level data required to randomize the level.
 		/// </summary>
 		/// <param name="filename">The base name of the level from the GOB.</param>
-		private async Task LoadLevelAsync(string filename) {
+		private async Task<bool> LoadLevelAsync(string filename) {
 			filename = filename.ToLower();
-			int index = LevelLoader.Instance.LevelList.Levels
+			(DfLevelList.Level level, int index) = LevelLoader.Instance.LevelList.Levels
 				.Select((x, i) => (x, i))
-				.First(x => x.x.FileName.ToLower() == filename).i;
+				.FirstOrDefault(x => x.x.FileName.ToLower() == filename);
+			if (level == null) {
+				return false;
+			}
 
 			await PauseMenu.Instance.BeginLoadingAsync();
 
@@ -86,6 +92,7 @@ namespace MZZT.DarkForces.Showcase {
 			await LevelLoader.Instance.LoadObjectsAsync();
 
 			PauseMenu.Instance.EndLoading();
+			return true;
 		}
 
 		/// <summary>
@@ -125,6 +132,8 @@ namespace MZZT.DarkForces.Showcase {
 		/// </summary>
 		/// <returns>A randomized JEDI.LVL.</returns>
 		private DfLevelList RandomizeJediLvl() {
+			bool modified = false;
+
 			RandomizerJediLvlSettings settings = this.Settings.JediLvl;
 			if (settings.Levels.Length < 1) {
 				throw new ArgumentException("You must select at least one level!");
@@ -139,6 +148,7 @@ namespace MZZT.DarkForces.Showcase {
 			for (int i = 0; i < levelList.Levels.Count; i++) {
 				if (!settings.Levels.Contains(levelList.Levels[i].FileName.ToUpper())) {
 					levelList.Levels.RemoveAt(i);
+					modified = true;
 					i--;
 				}
 			}
@@ -153,6 +163,7 @@ namespace MZZT.DarkForces.Showcase {
 			while (count < levelList.Levels.Count) {
 				int index = this.rng.Next(levelList.Levels.Count);
 				levelList.Levels.RemoveAt(index);
+				modified = true;
 			}
 
 			if (settings.RandomizeOrder) {
@@ -165,11 +176,15 @@ namespace MZZT.DarkForces.Showcase {
 				}
 				// When there's only one item left, there's no randomness needed.
 				levelList.Levels[levelList.Levels.Count - 1] = pending[0];
+				modified = true;
 			}
 
 			// Put the RNG seed in the level name in case the user selects a different GOB filename.
-			levelList.Levels[0].DisplayName = $"Seed: {this.Settings.Seed:X8}";
-			return levelList;
+			if (!string.IsNullOrEmpty(settings.Title)) {
+				levelList.Levels[0].DisplayName = settings.Title.Replace("{seed}", this.Settings.Seed.ToString("X8"));
+				modified = true;
+			}
+			return modified ? levelList : null;
 		}
 
 		/// <summary>
@@ -395,9 +410,9 @@ namespace MZZT.DarkForces.Showcase {
 		/// Customize the LEV based on the user's preferences.
 		/// </summary>
 		/// <returns>The customized LEV or null if no customizations needed.</returns>
-		private DfLevel RandomizeLevel() {
+		private DfLevel RandomizeLevel(bool alwaysGenerate) {
 			RandomizerLevelSettings settings = this.Settings.Level;
-			if (settings.MapOverrideMode == MapOverrideModes.None && !settings.LightLevelMultiplier.Enabled &&
+			if (!alwaysGenerate && settings.MapOverrideMode == MapOverrideModes.None && !settings.LightLevelMultiplier.Enabled &&
 				!settings.RemoveSecrets) {
 
 				// No modification needed.
@@ -687,8 +702,8 @@ namespace MZZT.DarkForces.Showcase {
 		/// </summary>
 		/// <param name="obj">The object to get the properties of.</param>
 		/// <returns>The lookup for properties and value(s).</returns>
-		private Dictionary<string, string[]> GetLogicProperties(DfLevelObjects.Object obj) =>
-			obj.Logic?.Split('\r', '\n')
+		private Dictionary<string, string[]> GetLogicProperties(DfLevelObjects.Object o) =>
+			o.Logic?.Split('\r', '\n')
 				.SelectMany(x => TextBasedFile.SplitKeyValuePairs(TextBasedFile.TokenizeLine(x)))
 				.Select(x => (x.Key.ToUpper(), string.Join(" ", x.Value)))
 				.GroupBy(x => x.Item1)
@@ -698,19 +713,21 @@ namespace MZZT.DarkForces.Showcase {
 		/// Randomize object placements in a level.
 		/// </summary>
 		/// <returns>The modified O file, or null if there is no randomization to be done.</returns>
-		private async Task<DfLevelObjects> RandomizeLevelObjectsAsync() {
+		private async Task<(DfLevelObjects, DfLevelInformation)> RandomizeLevelObjectsAsync(bool alwaysGenerate) {
 			RandomizerObjectSettings settings = this.Settings.Object;
 
-			bool modified = false;
+			bool modifiedO = alwaysGenerate;
+			bool modifiedInf = alwaysGenerate;
 
 			DfLevelObjects o = LevelLoader.Instance.Objects.Clone();
+			DfLevelInformation inf = LevelLoader.Instance.Information.Clone();
 
 			// Determine if there are any boss elevator(s) in the level.
 			// This is important for determineing if we can randomize a boss or not.
 			// If there is no boss elevator, the boss will have no effect when killed, so we can randomize it.
-			DfLevelInformation.Item[] bossElev = LevelLoader.Instance.Information.Items
+			DfLevelInformation.Item[] bossElev = inf.Items
 				.Where(x => x.Type == DfLevelInformation.ScriptTypes.Sector && x.SectorName?.ToUpper() == "BOSS").ToArray();
-			DfLevelInformation.Item[] mohcElev = LevelLoader.Instance.Information.Items
+			DfLevelInformation.Item[] mohcElev = inf.Items
 				.Where(x => x.Type == DfLevelInformation.ScriptTypes.Sector && x.SectorName?.ToUpper() == "MOHC").ToArray();
 
 			// Cache bounds of level and sectors to more efficiently locate a sector containing a specific point.
@@ -913,7 +930,7 @@ namespace MZZT.DarkForces.Showcase {
 				// Remove all objects we added to the spawn pool in preparation for adding replacements.
 				foreach (DfLevelObjects.Object obj in spawnPool.SelectMany(x => x.Value).Concat(pairedBases)) {
 					o.Objects.Remove(obj);
-					modified = true;
+					modifiedO = true;
 				}
 
 				// How many objects to spawn for each difficulty?
@@ -1141,7 +1158,7 @@ namespace MZZT.DarkForces.Showcase {
 								// We also rule out elevators that move walls to prevent items/enemies from being inaccessible.
 								if (candidate.Floor.Y - candidate.Ceiling.Y < 8 ||
 									candidate.Flags.HasFlag(DfLevel.SectorFlags.SectorIsDoor) ||
-									LevelLoader.Instance.Information.Items.Any(x => x.Type == DfLevelInformation.ScriptTypes.Sector &&
+									inf.Items.Any(x => x.Type == DfLevelInformation.ScriptTypes.Sector &&
 									x.SectorName == candidate.Name && elevator.IsMatch(x.Script))) {
 
 									continue;
@@ -1494,7 +1511,7 @@ namespace MZZT.DarkForces.Showcase {
 						baseObj.Position = basePosition;
 						baseObj.EulerAngles = spawnRotation;
 						o.Objects.Add(baseObj);
-						modified = true;
+						modifiedO = true;
 					} else {
 						spawnPosition.Y = sector.Floor.Y;
 					}
@@ -1503,7 +1520,7 @@ namespace MZZT.DarkForces.Showcase {
 					obj.EulerAngles = spawnRotation;
 
 					o.Objects.Add(obj);
-					modified = true;
+					modifiedO = true;
 				}
 			}
 
@@ -1570,7 +1587,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				foreach (DfLevelObjects.Object obj in spawnPool.SelectMany(x => x.Value)) {
 					o.Objects.Remove(obj);
-					modified = true;
+					modifiedO = true;
 				}
 
 				switch (settings.EnemyGenerationPoolSource) {
@@ -1766,7 +1783,7 @@ namespace MZZT.DarkForces.Showcase {
 					}
 
 					o.Objects.Add(obj);
-					modified = true;
+					modifiedO = true;
 				}
 			}
 
@@ -1774,7 +1791,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (settings.RemoveCheckpoints) {
 				foreach (DfLevelObjects.Object obj in o.Objects.Where(x => x.Type == DfLevelObjects.ObjectTypes.Safe).ToArray()) {
 					o.Objects.Remove(obj);
-					modified = true;
+					modifiedO = true;
 				}
 			}
 
@@ -1912,7 +1929,7 @@ namespace MZZT.DarkForces.Showcase {
 					}
 
 					obj.Logic = string.Join(Environment.NewLine, properties.SelectMany(x => x.Value.Select(y => $"{x.Key}: {y}")));
-					modified = true;
+					modifiedO = true;
 				}
 			}
 
@@ -1968,7 +1985,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				foreach (DfLevelObjects.Object obj in spawnPool.SelectMany(x => x.Value)) {
 					o.Objects.Remove(obj);
-					modified = true;
+					modifiedO = true;
 				}
 
 				// Don't actually spawn keys.
@@ -2167,7 +2184,7 @@ namespace MZZT.DarkForces.Showcase {
 								// Place into the smallest gap a player can enter to maximize the chance they can reach it.
 								if (candidate.Floor.Y - candidate.Ceiling.Y < 3 ||
 									candidate.Flags.HasFlag(DfLevel.SectorFlags.SectorIsDoor) ||
-									LevelLoader.Instance.Information.Items.Any(x => x.Type == DfLevelInformation.ScriptTypes.Sector &&
+									inf.Items.Any(x => x.Type == DfLevelInformation.ScriptTypes.Sector &&
 									x.SectorName == candidate.Name && elevator.IsMatch(x.Script))) {
 
 									continue;
@@ -2378,18 +2395,18 @@ namespace MZZT.DarkForces.Showcase {
 					}
 
 					o.Objects.Add(obj);
-					modified = true;
+					modifiedO = true;
 				}
 
 				//bool infModified = false;
 				// Remove key statements from door scripts.
 				if (settings.UnlockAllDoorsAndIncludeKeysInSpawnLocationPool) {
 					Regex keyRegex = new(@"^\s*key:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-					foreach (DfLevelInformation.Item item in LevelLoader.Instance.Information.Items) {
+					foreach (DfLevelInformation.Item item in inf.Items) {
 						item.Script = string.Join(Environment.NewLine, item.Script.Split('\r', '\n')
 							.Select(x => keyRegex.IsMatch(x) ? "" : x)
 							.Where(x => !string.IsNullOrWhiteSpace(x)));
-						//infModified = true;
+						modifiedInf = true;
 					}
 				}
 			}
@@ -2454,15 +2471,433 @@ namespace MZZT.DarkForces.Showcase {
 
 				for (int i = 0; i < award.Count; i++) {
 					o.Objects.Add(obj.Clone());
-					modified = true;
+					modifiedO = true;
 				}
 			}
 
-			if (modified) {
-				return o;
+			return ((modifiedO ? o : null, modifiedInf ? inf : null));
+		}
+
+		private static readonly char[] FILENAME_CHARS = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
+			'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+		private readonly Dictionary<string, string> lastGeneratedMirroredFilenames = new();
+		private string GenerateMirroredFilename(string filename) {
+			string ext = Path.GetExtension(filename).ToUpper();
+			string last = this.lastGeneratedMirroredFilenames.GetValueOrDefault(ext);
+			if (last == null) {
+				last = string.Empty;
+			} else {
+				int pos = last.Length - 1;
+				while (pos >= 0 && pos < last.Length) {
+					char currChar = last[pos];
+					int index = Array.IndexOf(FILENAME_CHARS, currChar);
+					index++;
+					if (index >= FILENAME_CHARS.Length) {
+						pos--;
+						continue;
+					} else {
+						last = last.Substring(0, pos) + FILENAME_CHARS[index] + new string(FILENAME_CHARS[0], last.Length - pos - 1);
+						pos++;
+					}
+				}
+				if (pos < 0) {
+					last = new string(FILENAME_CHARS[0], last.Length + 1);
+				}
 			}
 
-			return null;
+			this.lastGeneratedMirroredFilenames[ext] = last;
+			return 'M' + new string('~', 7 - last.Length) + last + ext;
+		}
+
+		private readonly Dictionary<string, string> mirrorFileMap = new();
+		private async Task<string> MirrorFileAsync(DfGobContainer gob, string filename) {
+			if (this.mirrorFileMap.TryGetValue(filename.ToUpper(), out string newFilename)) {
+				return newFilename;
+			}
+
+			IDfFile file = null;
+			try {
+				file = (IDfFile)(await FileLoader.Instance.LoadGobFileAsync(filename));
+			} catch (Exception e) {
+				ResourceCache.Instance.AddError(filename, e);
+			}
+			if (file == null) {
+				mirrorFileMap[filename.ToUpper()] = filename;
+				return filename;
+			} 
+			ResourceCache.Instance.AddWarnings(filename, file);
+
+			switch (Path.GetExtension(filename).ToUpper()) {
+				case ".3DO": {
+					Df3dObject threeDo = ((Df3dObject)file).Clone();
+					foreach (Df3dObject.Object obj in threeDo.Objects) {
+						foreach (Df3dObject.Polygon polygon in obj.Polygons) {
+							System.Numerics.Vector3[] vertices = polygon.Vertices.Select(x => new System.Numerics.Vector3(-x.X, x.Y, x.Z)).Reverse().ToArray();
+							polygon.Vertices.Clear();
+							polygon.Vertices.AddRange(vertices);
+							polygon.TextureVertices.Reverse();
+						}
+					}
+					newFilename = this.GenerateMirroredFilename(filename);
+					await gob.AddFileAsync(newFilename, threeDo);
+					mirrorFileMap[filename.ToUpper()] = newFilename;
+					return newFilename;
+				}
+				case ".BM": {
+					DfBitmap bm = ((DfBitmap)file).Clone();
+					bm.AutoCompress = true;
+					foreach (DfBitmap.Page page in bm.Pages) {
+						for (int i = 0; i < page.Pixels.Length; i += page.Width) {
+							Array.Reverse(page.Pixels, i, page.Width);
+						}
+					}
+					newFilename = this.GenerateMirroredFilename(filename);
+					await gob.AddFileAsync(newFilename, bm);
+					mirrorFileMap[filename.ToUpper()] = newFilename;
+					return newFilename;
+				}
+				case ".FME": {
+					DfFrame fme = ((DfFrame)file).Clone();
+					fme.AutoCompress = true;
+					fme.Flip = !fme.Flip;
+					fme.InsertionPointX = -fme.Width - fme.InsertionPointX;
+					newFilename = this.GenerateMirroredFilename(filename);
+					await gob.AddFileAsync(newFilename, fme);
+					mirrorFileMap[filename.ToUpper()] = newFilename;
+					return newFilename;
+				}
+				case ".FNT": {
+					DfFont font = ((DfFont)file).Clone();
+					foreach (DfFont.Character c in font.Characters) {
+						for (int x = 0; x < c.Width / 2; x++) {
+							for (int y = 0; y < font.Height; y++) {
+								(c.Data[x * font.Height + y], c.Data[(c.Width - x - 1) * font.Height + y]) =
+									(c.Data[(c.Width - x - 1) * font.Height + y], c.Data[x * font.Height + y]);
+							}
+						}
+					}
+					await gob.AddFileAsync(filename, font);
+					mirrorFileMap[filename.ToUpper()] = filename;
+					return filename;
+				}
+				case ".MSG": {
+					DfMessages msg = ((DfMessages)file).Clone();
+					foreach (DfMessages.Message message in msg.Messages.Values) {
+						char[] chars = message.Text.ToCharArray();
+						Array.Reverse(chars);
+						message.Text = new(chars);
+					}
+					await gob.AddFileAsync(filename, msg);
+					mirrorFileMap[filename.ToUpper()] = filename;
+					return filename;
+				}
+				case ".WAX": {
+					DfWax wax = ((DfWax)file).Clone();
+					foreach (DfFrame fme in wax.Waxes.SelectMany(x => x.Sequences).SelectMany(x => x.Frames).Distinct()) {
+						fme.AutoCompress = true;
+						fme.Flip = !fme.Flip;
+						fme.InsertionPointX = -fme.Width - fme.InsertionPointX;
+					}
+					foreach (DfWax.SubWax subWax in wax.Waxes) {
+						for (int i = 1; i < 15; i++) {
+							int otherI = 32 - i;
+							if (subWax.Sequences.Count <= otherI) {
+								continue;
+							}
+							(subWax.Sequences[i], subWax.Sequences[otherI]) = (subWax.Sequences[otherI], subWax.Sequences[i]);
+						}
+					}
+					newFilename = this.GenerateMirroredFilename(filename);
+					await gob.AddFileAsync(newFilename, wax);
+					mirrorFileMap[filename.ToUpper()] = newFilename;
+					return newFilename;
+				}
+				case ".VUE": {
+					AutodeskVue vue = ((AutodeskVue)file).Clone();
+					foreach (AutodeskVue.SubVue subVue in vue.Vues) {
+						foreach (AutodeskVue.Light light in subVue.Lights) {
+							light.Position = new System.Numerics.Vector3(-light.Position.X + X_OFFSET, light.Position.Y, light.Position.Z);
+						}
+						foreach (AutodeskVue.VueObject obj in subVue.Objects.Values) {
+							Matrix4x4[] frames = obj.Frames.Select((x, i) => {
+								Matrix4x4 matrix = x.ToUnity();
+								Vector3 pos = matrix.GetUnityPositionFromAutodesk();
+								Quaternion rot = matrix.GetUnityRotationFromAutodesk();
+								Vector3 scale = matrix.lossyScale;
+
+								pos = new Vector3(-pos.x + X_OFFSET, pos.y, pos.z);
+								Vector3 euler = rot.eulerAngles;
+								euler = new Vector3(euler.x, -euler.y, euler.z);
+								rot = Quaternion.Euler(euler);
+
+								// Adjust back to different coordinate system for Autodesk
+								pos = new Vector3(pos.x, pos.z, pos.y);
+
+								matrix = Matrix4x4.TRS(pos, rot, scale);
+								return new Matrix4x4(
+									new Vector4(matrix.m00, matrix.m20, matrix.m10, matrix.m30),
+									new Vector4(matrix.m02, matrix.m22, matrix.m12, matrix.m31),
+									new Vector4(matrix.m01, matrix.m21, matrix.m11, matrix.m32),
+									new Vector4(matrix.m03, matrix.m13, matrix.m23, matrix.m33)
+								);
+							}).ToArray();
+
+							obj.Frames.Clear();
+							obj.Frames.AddRange(frames.Select(x => x.ToNet()));
+						}
+						foreach (AutodeskVue.Viewport viewport in subVue.Viewports.Values) {
+							viewport.HorizontalAngle = -viewport.HorizontalAngle;
+							viewport.Position = new System.Numerics.Vector3(-viewport.Position.X + X_OFFSET, viewport.Position.Y, viewport.Position.Z);
+						}
+					}
+					newFilename = this.GenerateMirroredFilename(filename);
+					await gob.AddFileAsync(newFilename, vue);
+					mirrorFileMap[filename.ToUpper()] = newFilename;
+					return newFilename;
+				}
+				default: {
+					mirrorFileMap[filename.ToUpper()] = filename;
+					return filename;
+				}
+			}
+		}
+
+		private IEnumerable<KeyValuePair<string, string>> GetScriptProperties(DfLevelInformation.Item item) =>
+			item.Script?.Split('\r', '\n')
+				.SelectMany(x => TextBasedFile.SplitKeyValuePairs(TextBasedFile.TokenizeLine(x)))
+				.Select(x => new KeyValuePair<string, string>(x.Key.ToLower(), string.Join(" ", x.Value)));
+
+		private async Task MirrorAsync(DfGobContainer gob, DfLevel level, DfLevelInformation inf, DfLevelObjects o) {
+			RandomizerCrossFileSettings settings = this.Settings.CrossFile;
+			Dictionary<string, int> textureWidths = new();
+
+			foreach (DfLevel.Sector sector in level.Sectors) {
+				sector.Ceiling.TextureFile = await this.MirrorFileAsync(gob, sector.Ceiling.TextureFile);
+				sector.Ceiling.TextureOffset = new System.Numerics.Vector2(-sector.Ceiling.TextureOffset.X, sector.Ceiling.TextureOffset.Y);
+				sector.Floor.TextureFile = await this.MirrorFileAsync(gob, sector.Floor.TextureFile);
+				sector.Floor.TextureOffset = new System.Numerics.Vector2(-sector.Floor.TextureOffset.X, sector.Floor.TextureOffset.Y);
+
+				foreach (DfLevel.Vertex vertex in sector.Walls.SelectMany(x => new[] { x.LeftVertex, x.RightVertex }).Distinct()) {
+					vertex.Position = new System.Numerics.Vector2(-vertex.Position.X + X_OFFSET, vertex.Position.Y);
+				}
+
+				foreach (DfLevel.Wall wall in sector.Walls) {
+					wall.TextureAndMapFlags ^= DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally;
+
+					(wall.RightVertex, wall.LeftVertex) = (wall.LeftVertex, wall.RightVertex);
+
+					float wallLength = (wall.RightVertex.Position - wall.LeftVertex.Position).Length();
+
+					int textureWidth;
+					foreach (var texture in new[] { wall.BottomEdgeTexture, wall.MainTexture, wall.TopEdgeTexture }) {
+						textureWidth = 0;
+						if (!string.IsNullOrEmpty(texture.TextureFile) &&
+							!textureWidths.TryGetValue(texture.TextureFile.ToUpper(), out textureWidth)) {
+
+							DfBitmap bitmap = null;
+							try {
+								bitmap = await FileLoader.Instance.LoadGobFileAsync<DfBitmap>(texture.TextureFile);
+							} catch (Exception e) {
+								ResourceCache.Instance.AddError(texture.TextureFile, e);
+							}
+
+							if (bitmap != null) {
+								textureWidth = bitmap.Pages[0].Width;
+							}
+
+							textureWidths[texture.TextureFile.ToUpper()] = textureWidth;
+						}
+
+						texture.TextureOffset = new System.Numerics.Vector2((textureWidth / 8f) - wallLength - texture.TextureOffset.X, texture.TextureOffset.Y);
+					}
+
+					textureWidth = 0;
+					if (!string.IsNullOrEmpty(wall.SignTexture.TextureFile) &&
+						!textureWidths.TryGetValue(wall.SignTexture.TextureFile.ToUpper(), out textureWidth)) {
+
+						DfBitmap bitmap = null;
+						try {
+							bitmap = await FileLoader.Instance.LoadGobFileAsync<DfBitmap>(wall.SignTexture.TextureFile);
+						} catch (Exception e) {
+							ResourceCache.Instance.AddError(wall.SignTexture.TextureFile, e);
+						}
+
+						if (bitmap != null) {
+							textureWidth = bitmap.Pages[0].Width;
+						}
+
+						textureWidths[wall.SignTexture.TextureFile.ToUpper()] = textureWidth;
+					}
+
+					wall.SignTexture.TextureOffset = new System.Numerics.Vector2((textureWidth / 8f) - wall.SignTexture.TextureOffset.X, wall.SignTexture.TextureOffset.Y);
+				}
+			}
+
+			foreach (DfLevelInformation.Item item in inf.Items) {
+				if (item.Type == DfLevelInformation.ScriptTypes.Level) {
+					continue;
+				}
+
+				List<KeyValuePair<string, string>> properties = this.GetScriptProperties(item).ToList();
+				string classProp = properties.FirstOrDefault(x => x.Key == "class").Value;
+				if (classProp == null) {
+					continue;
+				}
+
+				string[] infClass = classProp.Split(' ');
+				if (infClass.Length < 2 || infClass[0].ToLower() != "elevator") {
+					continue;
+				}
+
+				for (int i = 0; i < properties.Count; i++) {
+					KeyValuePair<string, string> property = properties[i];
+					switch (infClass[1].ToUpper()) {
+						case "SCROLL_FLOOR":
+						case "SCROLL_CEILING":
+						case "MORPH_MOVE1":
+						case "MORPH_MOVE2":
+						case "MOVE_WALL":
+						case "SCROLL_WALL":
+							if (property.Key == "angle") {
+								if (double.TryParse(property.Value, out double value)) {
+									value = -value;
+									property = new KeyValuePair<string, string>(property.Key, value.ToString());
+									properties[i] = property;
+								}
+							}
+							break;
+						case "MORPH_SPIN1":
+						case "MORPH_SPIN2":
+						case "ROTATE_WALL":
+							if (property.Key == "stop") {
+								string[] stopSplit = property.Value.Split(' ');
+								bool relative = false;
+								if (stopSplit[0].StartsWith('@')) {
+									relative = true;
+									stopSplit[0] = stopSplit[0].Substring(1);
+								}
+								if (double.TryParse(stopSplit[0], out double stopValue)) {
+									stopValue = -stopValue;
+									stopSplit[0] = $"{(relative ? "@" : string.Empty)}{stopValue}";
+									property = new KeyValuePair<string, string>(property.Key, string.Join(' ', stopSplit));
+									properties[i] = property;
+								}
+							} else if (property.Key == "center") {
+								string[] centerSplit = property.Value.Split(' ');
+								if (double.TryParse(centerSplit[0], out double centerX)) {
+									centerX = -centerX + X_OFFSET;
+									centerSplit[0] = centerX.ToString();
+									property = new KeyValuePair<string, string>(property.Key, string.Join(' ', centerSplit));
+									properties[i] = property;
+								}
+							}
+							break;
+					}
+					if (property.Key == "message") {
+						string[] messageSplit = property.Value.Split(' ');
+						if (messageSplit.Length < 5 || !messageSplit[1].Contains('(') ||
+							(messageSplit[2].ToUpper() != "clear_bits" && messageSplit[2].ToUpper() != "set_bits") || messageSplit[3] != "1") {
+
+							continue;
+						}
+
+						bool set = messageSplit[2].ToUpper() == "set_bits";
+						if (!int.TryParse(messageSplit[4], out int flags)) {
+							continue;
+						}
+						if (!((DfLevel.WallTextureAndMapFlags)flags).HasFlag(DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally)) {
+							continue;
+						}
+						flags ^= (int)DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally;
+						if (flags == 0) {
+							messageSplit[4] = ((int)DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally).ToString();
+							if (set) {
+								messageSplit[2] = "clear_bits";
+							} else {
+								messageSplit[2] = "set_bits";
+							}
+							property = new KeyValuePair<string, string>(property.Key, string.Join(' ', messageSplit));
+							properties[i] = property;
+						} else {
+							messageSplit[4] = flags.ToString();
+							property = new KeyValuePair<string, string>(property.Key, string.Join(' ', messageSplit));
+							properties[i] = property;
+							i++;
+							property = new KeyValuePair<string, string>(property.Key, $"{messageSplit[0]} {messageSplit[1]} {(set ? "clear_bits" : "set_bits")} 1 4");
+							properties.Insert(i, property);
+						}
+					}
+				}
+
+				item.Script = string.Join(Environment.NewLine, properties.Select(x => $"{x.Key}: {x.Value}"));
+			}
+
+			foreach (DfLevelObjects.Object obj in o.Objects) {
+				obj.EulerAngles = new System.Numerics.Vector3(obj.EulerAngles.X, -obj.EulerAngles.Y, obj.EulerAngles.Z);
+
+				Dictionary<string, string[]> properties = this.GetLogicProperties(obj);
+				if (properties != null) {
+					properties.TryGetValue("LOGIC", out string[] logics);
+					properties.TryGetValue("TYPE", out string[] types);
+
+					if ((logics ?? Enumerable.Empty<string>()).Concat(types ?? Enumerable.Empty<string>()).Any(x => x.ToUpper() == "UPDATE")) {
+						if (properties.TryGetValue("D_YAW", out string[] yaws)) {
+							for (int i = 0; i < yaws.Length; i++) {
+								string yaw = yaws[i];
+
+								if (double.TryParse(yaw, out double value)) {
+									value = -value;
+									yaws[i] = value.ToString();
+								}
+							}
+							properties["D_YAW"] = yaws;
+						}
+					}
+
+					if ((logics ?? Enumerable.Empty<string>()).Concat(types ?? Enumerable.Empty<string>()).Any(x => x.ToUpper() == "KEY")) {
+						if (properties.TryGetValue("VUE", out string[] vues)) {
+							for (int i = 0; i < vues.Length; i++) {
+								string[] vue = vues[i].Split(' ');
+								vue[0] = await this.MirrorFileAsync(gob, vue[0]);
+								if (vue.Length >= 2) {
+									vue[1] = $"\"{vue[1]}\"";
+								}
+								vues[i] = string.Join(' ', vue);
+							}
+							properties["VUE"] = vues;
+						}
+						if (properties.TryGetValue("VUE_APPEND", out string[] vues2)) {
+							for (int i = 0; i < vues2.Length; i++) {
+								string[] vue = vues2[i].Split(' ');
+								vue[0] = await this.MirrorFileAsync(gob, vue[0]);
+								if (vue.Length >= 2) {
+									vue[1] = $"\"{vue[1]}\"";
+								} 
+								vues2[i] = string.Join(' ', vue);
+							}
+							properties["VUE_APPEND"] = vues2;
+						}
+					}
+
+					obj.Logic = string.Join(Environment.NewLine, properties.SelectMany(x => x.Value.Select(y => $"{x.Key}: {y}")));
+				}
+
+				obj.Position = new System.Numerics.Vector3(-obj.Position.X + X_OFFSET, obj.Position.Y, obj.Position.Z);
+
+				if ((obj.Type == DfLevelObjects.ObjectTypes.ThreeD || (settings.MirrorSprites &&
+					(obj.Type == DfLevelObjects.ObjectTypes.Frame || obj.Type == DfLevelObjects.ObjectTypes.Sprite))) && obj.FileName != null) {
+
+					obj.FileName = await this.MirrorFileAsync(gob, obj.FileName);
+				}
+			}
+		}
+
+		private async Task RandomizeCrossFileAsync(DfGobContainer gob) {
+			RandomizerCrossFileSettings settings = this.Settings.CrossFile;
+			if (settings.MirrorText) {
+				await this.MirrorFileAsync(gob, "GLOWING.FNT");
+				await this.MirrorFileAsync(gob, "TEXT.MSG");
+			}
 		}
 
 		/// <summary>
@@ -2526,6 +2961,9 @@ namespace MZZT.DarkForces.Showcase {
 		/// Take the settings selected and build the randomized GOB.
 		/// </summary>
 		public async Task<string> BuildAsync() {
+			this.mirrorFileMap.Clear();
+			this.lastGeneratedMirroredFilenames.Clear();
+
 			// Reset campaign spawn pools so they're recalculated again.
 			this.enemySpawnPool = null;
 			this.bossSpawnPool = null;
@@ -2565,7 +3003,9 @@ namespace MZZT.DarkForces.Showcase {
 				DfGobContainer gob = new();
 
 				DfLevelList levels = this.RandomizeJediLvl();
-				await gob.AddFileAsync("JEDI.LVL", levels);
+				if (levels != null) {
+					await gob.AddFileAsync("JEDI.LVL", levels);
+				}
 
 				DfCutsceneList cutscenes = this.RandomizeCutscenes();
 				if (cutscenes != null) {
@@ -2575,7 +3015,9 @@ namespace MZZT.DarkForces.Showcase {
 				await this.RandomizeMusicAsync(gob);
 
 				foreach (string levelName in this.Settings.JediLvl.Levels) {
-					await this.LoadLevelAsync(levelName);
+					if (!(await this.LoadLevelAsync(levelName))) {
+						continue;
+					}
 
 					DfPalette pal = this.RandomizeLevelPalette();
 					if (pal != null) {
@@ -2587,19 +3029,31 @@ namespace MZZT.DarkForces.Showcase {
 						await gob.AddFileAsync($"{levelName}.CMP", cmp);
 					}
 
-					DfLevel level = this.RandomizeLevel();
+					RandomizerCrossFileSettings settings = this.Settings.CrossFile;
+					bool mirror = settings.MirrorMode switch {
+						MirrorModes.Enabled => true,
+						MirrorModes.Random => this.rng.Next(2) > 0,
+						_ => false
+					};
+
+					DfLevel level = this.RandomizeLevel(mirror);
+					(DfLevelObjects o, DfLevelInformation inf) = await this.RandomizeLevelObjectsAsync(mirror);
+					if (mirror) {
+						await this.MirrorAsync(gob, level, inf, o);
+					}
+
 					if (level != null) {
 						await gob.AddFileAsync($"{levelName}.LEV", level);
 					}
-
-					DfLevelObjects o = await this.RandomizeLevelObjectsAsync();
 					if (o != null) {
 						await gob.AddFileAsync($"{levelName}.O", o);
-						if (this.Settings.Object.UnlockAllDoorsAndIncludeKeysInSpawnLocationPool) {
-							await gob.AddFileAsync($"{levelName}.INF", LevelLoader.Instance.Information);
-						}
+					}
+					if (inf != null) {
+						await gob.AddFileAsync($"{levelName}.INF", inf);
 					}
 				}
+
+				await this.RandomizeCrossFileAsync(gob);
 
 				await this.AddDependentModFilesAsync(gob);
 
@@ -2607,17 +3061,18 @@ namespace MZZT.DarkForces.Showcase {
 					DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
 						UseSimpleDictionaryFormat = true
 					});
-					using (MemoryStream jsonStream = new()) {
-						serializer.WriteObject(jsonStream, this.Settings);
-						jsonStream.Position = 0;
+					using MemoryStream jsonStream = new();
+					serializer.WriteObject(jsonStream, this.Settings);
+					jsonStream.Position = 0;
 
-						await gob.AddFileAsync("RNDMIZER.JSO", jsonStream);
-					}
+					await gob.AddFileAsync("RNDMIZER.JSO", jsonStream);
 				}
 
-				using (FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None)) {
-					await gob.SaveAsync(stream);
-				}
+				this.mirrorFileMap.Clear();
+				this.lastGeneratedMirroredFilenames.Clear();
+
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				await gob.SaveAsync(stream);
 			} catch (Exception ex) {
 				ResourceCache.Instance.AddError("Randomizer", ex);
 				path = null;

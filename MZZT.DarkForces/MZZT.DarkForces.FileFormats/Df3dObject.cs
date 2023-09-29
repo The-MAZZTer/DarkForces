@@ -540,7 +540,7 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 			}
 
-			await writer.WriteLineAsync("3DO 1.2");
+			await writer.WriteLineAsync("3DO 1.20");
 			await this.WriteLineAsync(writer, $"3DONAME {this.Name}");
 			await this.WriteLineAsync(writer, $"OBJECTS {this.Objects.Count}");
 
@@ -552,17 +552,17 @@ namespace MZZT.DarkForces.FileFormats {
 
 			string[] textures = this.Objects.Select(x => x.TextureFile).Where(x => x != null).Distinct().ToArray();
 
-			await this.WriteLineAsync(writer, $"TEXTURES ${textures.Length}");
+			await this.WriteLineAsync(writer, $"TEXTURES {textures.Length}");
 			foreach (string texture in textures) {
-				await this.WriteLineAsync(writer, $"TEXTURE: ${texture}");
+				await this.WriteLineAsync(writer, $"TEXTURE: {texture}");
 			}
 
 			for (int i = 0; i < this.Objects.Count; i++) {
 				Object obj = this.Objects[i];
 				Vector3[] objVertices = vertices[i];
 
-				await this.WriteLineAsync(writer, $"OBJECT ${this.Escape(obj.Name)}");
-				await this.WriteLineAsync(writer, $"TEXTURE ${(obj.TextureFile != null ? Array.IndexOf(textures, obj.TextureFile) : -1)}");
+				await this.WriteLineAsync(writer, $"OBJECT {this.Escape(obj.Name)}");
+				await this.WriteLineAsync(writer, $"TEXTURE {(obj.TextureFile != null ? Array.IndexOf(textures, obj.TextureFile) : -1)}");
 
 				await this.WriteLineAsync(writer, $"VERTICES {objVertices.Length}");
 				for (int j = 0; j < objVertices.Length; j++) {
@@ -588,39 +588,71 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 				}
 
-				Vector2[] textureVertices = obj.Polygons.SelectMany(x => x.TextureVertices).Distinct().ToArray();
-				if (textureVertices.Length > 0) {
-					await this.WriteLineAsync(writer, $"TEXTURE VERTICES {textureVertices.Length}");
-					for (int j = 0; j < textureVertices.Length; j++) {
-						Vector2 textureVertex = textureVertices[j];
-						await this.WriteLineAsync(writer, $"{j}: {textureVertex.X:0.00} {textureVertex.Y:0.00}");
-					}
-				}
+				if (obj.TextureFile != null) {
+					/*await this.WriteLineAsync(writer, $"TEXTURE VERTICES {objVertices.Length}");
+					for (int j = 0; j < objVertices.Length; j++) {
+						Vector3 vertex = objVertices[j];
 
-				int textureTriangles = triangles.Count(x => x.TextureVertices.Count == 3);
-				if (textureTriangles > 0) {
-					await this.WriteLineAsync(writer, $"TEXTURE TRIANGLES {textureTriangles}");
-					for (int j = 0; j < triangles.Length; j++) {
-						Polygon triangle = triangles[j];
-						if (triangle.TextureVertices.Count != 3) {
-							continue;
-						}
-						await this.WriteLineAsync(writer, $"{j}: {Array.IndexOf(textureVertices, triangle.TextureVertices[0])} {Array.IndexOf(textureVertices, triangle.TextureVertices[1])} {Array.IndexOf(textureVertices, triangle.TextureVertices[2])}");
-					}
-				}
+						Polygon polygon = obj.Polygons.First(x => x.Vertices.Any(x => x == vertex));
+						int index = polygon.Vertices.IndexOf(vertex);
 
-				int textureQuads = triangles.Count(x => x.TextureVertices.Count == 4);
-				if (textureQuads > 0) {
-					await this.WriteLineAsync(writer, $"TEXTURE QUADS {textureQuads}");
-					for (int j = 0; j < quads.Length; j++) {
-						Polygon quad = quads[j];
-						if (quad.TextureVertices.Count != 4) {
-							continue;
+						Vector2 textureVertex = polygon.TextureVertices[index];
+
+						await this.WriteLineAsync(writer, $"{j}: {textureVertex.X:0.000} {textureVertex.Y:0.000}");
+					}
+
+					if (triangles.Length > 0) {
+						await this.WriteLineAsync(writer, $"TEXTURE TRIANGLES {triangles.Length}");
+						for (int j = 0; j < triangles.Length; j++) {
+							Polygon triangle = triangles[j];
+							await this.WriteLineAsync(writer, $"{j}: {Array.IndexOf(objVertices, triangle.Vertices[0])} {Array.IndexOf(objVertices, triangle.Vertices[1])} {Array.IndexOf(objVertices, triangle.Vertices[2])}");
 						}
-						await this.WriteLineAsync(writer, $"{j}: {Array.IndexOf(textureVertices, quad.TextureVertices[0])} {Array.IndexOf(textureVertices, quad.TextureVertices[1])} {Array.IndexOf(textureVertices, quad.TextureVertices[2])} {Array.IndexOf(textureVertices, quad.TextureVertices[3])}");
+					}
+
+					if (quads.Length > 0) {
+						await this.WriteLineAsync(writer, $"TEXTURE QUADS {quads.Length}");
+						for (int j = 0; j < quads.Length; j++) {
+							Polygon quad = quads[j];
+							await this.WriteLineAsync(writer, $"{j}: {Array.IndexOf(objVertices, quad.Vertices[0])} {Array.IndexOf(objVertices, quad.Vertices[1])} {Array.IndexOf(objVertices, quad.Vertices[2])} {Array.IndexOf(objVertices, quad.Vertices[3])}");
+						}
+					}*/
+
+					Vector2[] textureVertices = obj.Polygons.SelectMany(x => x.TextureVertices).Distinct().ToArray();
+					if (textureVertices.Length > 0) {
+						await this.WriteLineAsync(writer, $"TEXTURE VERTICES {textureVertices.Length}");
+						for (int j = 0; j < textureVertices.Length; j++) {
+							Vector2 textureVertex = textureVertices[j];
+							await this.WriteLineAsync(writer, $"{j}: {textureVertex.X:0.000} {textureVertex.Y:0.000}");
+						}
+					}
+
+					int textureTriangles = triangles.Count(x => x.TextureVertices.Count == 3);
+					if (textureTriangles > 0) {
+						await this.WriteLineAsync(writer, $"TEXTURE TRIANGLES {textureTriangles}");
+						for (int j = 0; j < triangles.Length; j++) {
+							Polygon triangle = triangles[j];
+							if (triangle.TextureVertices.Count != 3) {
+								continue;
+							}
+							await this.WriteLineAsync(writer, $"{j}: {Array.IndexOf(textureVertices, triangle.TextureVertices[0])} {Array.IndexOf(textureVertices, triangle.TextureVertices[1])} {Array.IndexOf(textureVertices, triangle.TextureVertices[2])}");
+						}
+					}
+
+					int textureQuads = quads.Count(x => x.TextureVertices.Count == 4);
+					if (textureQuads > 0) {
+						await this.WriteLineAsync(writer, $"TEXTURE QUADS {textureQuads}");
+						for (int j = 0; j < quads.Length; j++) {
+							Polygon quad = quads[j];
+							if (quad.TextureVertices.Count != 4) {
+								continue;
+							}
+							await this.WriteLineAsync(writer, $"{j}: {Array.IndexOf(textureVertices, quad.TextureVertices[0])} {Array.IndexOf(textureVertices, quad.TextureVertices[1])} {Array.IndexOf(textureVertices, quad.TextureVertices[2])} {Array.IndexOf(textureVertices, quad.TextureVertices[3])}");
+						}
 					}
 				}
 			}
+
+			await writer.WriteAsync('\x1A');
 		}
 
 		object ICloneable.Clone() => this.Clone();

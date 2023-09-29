@@ -239,7 +239,7 @@ namespace MZZT.DarkForces.FileFormats {
 			string[] line = await this.ReadTokenizedLineAsync(reader);
 			if (line?[0].ToUpper() == "VERSION") {
 				if (line.Length != 2 || line[1] != "201") {
-					this.AddWarning("VERSION tag found but version absent or unexepected value.");
+					this.AddWarning("VERSION tag found but version absent or unexpected value.");
 				}
 
 				line = await this.ReadTokenizedLineAsync(reader);
@@ -316,7 +316,7 @@ namespace MZZT.DarkForces.FileFormats {
 						line = await this.ReadTokenizedLineAsync(reader);
 					}
 				} break;
-				// Indicates alternatve file format.
+				// Indicates alternative file format.
 				case "frame": {
 					this.Format = Formats.SingleVue;
 

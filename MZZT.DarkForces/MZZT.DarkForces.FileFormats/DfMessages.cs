@@ -79,6 +79,10 @@ namespace MZZT.DarkForces.FileFormats {
 					break;
 				}
 
+				if (line.Length == 1 && line[0].ToUpper() == "END") {
+					break;
+				}
+
 				if (line.Length < 3 || !line[1].EndsWith(":") ||
 					!int.TryParse(line[0], NumberStyles.Integer, null, out int id) ||
 					!byte.TryParse(line[1].Substring(0, line[1].Length - 1), NumberStyles.Integer, null, out byte priority)) {
@@ -112,6 +116,10 @@ namespace MZZT.DarkForces.FileFormats {
 			foreach ((int id, Message message) in this.Messages) {
 				await this.WriteLineAsync(writer, $"{id} {message.Priority}: {this.Escape(message.Text)}");
 			}
+
+			await writer.WriteLineAsync("END");
+
+			await writer.WriteAsync('\x1A');
 		}
 
 		object ICloneable.Clone() => this.Clone();

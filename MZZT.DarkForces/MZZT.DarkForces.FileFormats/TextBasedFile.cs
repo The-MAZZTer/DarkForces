@@ -133,7 +133,7 @@ namespace MZZT.DarkForces.FileFormats {
 				line = await this.ReadLineAsync(reader);
 
 				// If we find an end-of-file marker remember it.
-				int index = line?.IndexOf("\x1A") ?? -1;
+				int index = line?.IndexOf('\x1A') ?? -1;
 				if (index >= 0) {
 					this.eof = true;
 					line = line.Substring(0, index);
