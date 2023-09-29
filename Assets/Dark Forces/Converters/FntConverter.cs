@@ -45,7 +45,11 @@ namespace MZZT.DarkForces.Converters {
 				lightLevel = 0;
 			}
 
-			return fnt.ToTexture(cmp.ToByteArray(pal, lightLevel, forceTransparent, bypassCmpDithering), keepTextureReadable);
+			if (cmp == null) {
+				return fnt.ToTexture(pal, forceTransparent, keepTextureReadable);
+			} else {
+				return fnt.ToTexture(cmp.ToByteArray(pal, lightLevel, forceTransparent, bypassCmpDithering), keepTextureReadable);
+			}
 		}
 
 		public static Texture2D ToTexture(this DfFont.Character c, DfFont fnt, byte[] palette, bool keepTextureReadable = false) {
@@ -80,7 +84,11 @@ namespace MZZT.DarkForces.Converters {
 				lightLevel = 0;
 			}
 
-			return c.ToTexture(fnt, cmp.ToByteArray(pal, lightLevel, forceTransparent, bypassCmpDithering), keepTextureReadable);
+			if (cmp == null) {
+				return c.ToTexture(fnt, pal, forceTransparent, keepTextureReadable);
+			} else {
+				return c.ToTexture(fnt, cmp.ToByteArray(pal, lightLevel, forceTransparent, bypassCmpDithering), keepTextureReadable);
+			}
 		}
 
 		public static Bitmap ToBitmap(this DfFont font, byte[] pal) {

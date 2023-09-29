@@ -85,8 +85,12 @@ namespace MZZT.DarkForces.Converters {
 				lightLevel = 0;
 			}
 
-			return page.ToBitmap(cmp.ToByteArray(pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
-				bypassCmpDithering));
+			if (cmp == null) {
+				return page.ToBitmap(pal, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0);
+			} else {
+				return page.ToBitmap(cmp.ToByteArray(pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
+					bypassCmpDithering));
+			}
 		}
 	}
 }

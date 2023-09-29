@@ -199,6 +199,8 @@ namespace MZZT.DarkForces.Showcase {
 				fullPath = root;
 			}
 
+			Debug.Log(fullPath);
+
 			string pathPart = filePath ?? Path.GetFileName(root);
 			string filename = Path.GetFileName(pathPart);
 			pathPart = pathPart[..^filename.Length].TrimEnd(Path.DirectorySeparatorChar);
@@ -450,6 +452,8 @@ namespace MZZT.DarkForces.Showcase {
 			pathPart ??= Path.GetFileName(origin);
 			string filename = Path.GetFileName(resource.FullPath);
 			pathPart = pathPart[..^filename.Length].TrimEnd(Path.DirectorySeparatorChar);
+
+			Debug.Log(resource.FullPath);
 
 			Dictionary<string, string> outputParameters = new() {
 				["output"] = this.Settings.BaseOutputFolder,

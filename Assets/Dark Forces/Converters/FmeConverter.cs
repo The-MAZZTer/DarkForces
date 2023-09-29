@@ -112,7 +112,11 @@ namespace MZZT.DarkForces.Converters {
 				lightLevel = 0;
 			}
 
-			return fme.ToBitmap(cmp.ToByteArray(pal, lightLevel, true, bypassCmpDithering));
+			if (cmp == null) {
+				return fme.ToBitmap(pal);
+			} else {
+				return fme.ToBitmap(cmp.ToByteArray(pal, lightLevel, true, bypassCmpDithering));
+			}
 		}
 	}
 }

@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using static MZZT.DarkForces.FileFormats.AutodeskVue;
 
 namespace MZZT.DarkForces.Converters {
 	public static class FontConverter {

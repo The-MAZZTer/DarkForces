@@ -1,15 +1,12 @@
-using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace MZZT.DarkForces.Showcase {
 	public class GenericViewer : Databind<Raw>, IResourceViewer {
