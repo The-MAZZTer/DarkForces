@@ -17,17 +17,23 @@ The .NET DLL is compiled for .NET Standard 2.0 and thus is compatible with a wid
 
 See [the official .NET documentation](https://docs.microsoft.com/en-us/dotnet/standard/net-standard?tabs=net-standard-2-0) for more information on compatibility.
 
-The Unity specific components should be compatible with the latest versions of Unity 2021. Probably Unity 2020 as well but I haven't tested it since 2021 came out.
+The Unity-specific components are perpetually updated to be compatible with the latest versions of Unity LTS. They will probably work fine on older versions back to 2020 but no promises.
 
 ## Build
 
-Currently I am using a Windows-only library for some graphics manipulation. I intend to change this in the future. If you want to pull it out and disable the functionality, it should be possible (it is used to read/write PNGs mainly).
+### File Format DLL
 
-To build the file format DLL, open the solution file in the MZZT.DarkForces folder with Visual Studio 2022 (2019 will probably work as well) and build the MZZT.DarkForces.FileFormats project for Release AnyCPU (use the dropdown at the top of Visual Studio which may say Debug or Release to switch). The DLL files will be output in Assets\Dark Forces\File Formats, ready for use in Unity, which should now be able to open and run the project successfully. You can also take the DLLs from there and use them in other projects if you want.
+This DLL should work fine on any .NET Core target platform.
+
+To build, open the solution file in the MZZT.DarkForces folder with Visual Studio 2022 (previous versions may work as well) and build the MZZT.DarkForces.FileFormats project for Release AnyCPU (use the dropdown at the top of Visual Studio which may say Debug or Release to switch). The DLL files will be output in Assets\Dark Forces\File Formats, ready for use in Unity, which should now be able to open and run the project successfully. You can also take the DLLs from there and use them in other projects if you want.
+
+### Unity Project
+
+Ensure you build the file format DLL in Release mode otherwise the Unity project will be unable to run or build.
 
 To build the Unity showcase project, first build the file format DLL as above. Then you can open the checkout folder using Unity Editor 2022.3. You can then build using the File > Build Settings... menu option in Unity Editor.
 
-Currently the showcase is locked to Windows platform as it uses the System.Drawing GDI wrapper to import/export palettized PNGs. SkiaSharp is also used for image manipulation in other places. This could be removed or changed to improve platform compatibility as none of it is critical except to a couple features like the map generator which rely heavily on them. Another concern is the use of local file and folder .NET APIs for things like the Open/Save dialog boxes which may prevent some targets like WebGL. A keyboard and mouse are also required but the modern keybind system is in use in Unity so this can be changed fairly easily.
+Currently the showcase is locked to Windows platform as it uses the System.Drawing GDI wrapper to import/export palettized PNGs. SkiaSharp is also used for image manipulation in other places. This could be removed or changed to improve platform compatibility as none of it is critical except to a couple features like the map generator which rely heavily on them. Another concern is the use of local file and folder .NET APIs for things like the Open/Save dialog boxes which may prevent some targets like WebGL. A keyboard and mouse are also required but the modern keybind system is in use in Unity so this can likely be changed fairly easily.
 
 ## Contents
 
@@ -39,7 +45,7 @@ Upon running the showcase you may be asked to select the Dark Forces install loc
 
 From the main menu you're welcome to explore the different tools to see what capabilites are included in the code. You can add mods/level files to explore community-made content in addition to the original Dark Forces content.
 
-All the tools have been tested with the default Dark Forces content. Mods may or may not work, feel free to add an issue report if content that works in Dark Forces does not work in one of the tools here.
+All the tools have been tested with the default Dark Forces content. Mods may or may not work.
 
 ## Features
 
@@ -129,7 +135,7 @@ A quick breakdown of where everything is.
 
 **MZZT.DarkForces\\MZZT.Steam\\** - Used by the showcase to parse Steam's library folders file.
 
-**MZZT.DarkForces\\Test\\** - Test app used mainly for dumping files from GOBs/LFDs and testing file format parsing by converting files to modern formats. Lots of unorganized commented out code in here which can be useful, and showcases using the file formats library from .NET code.
+**MZZT.DarkForces\\Test\\** - Test app used to quickly debug file format DLL issues. Some useful code snippets may still be in here.
 
 ## Reporting Bugs / Feature Requests 
 
@@ -137,7 +143,7 @@ Feel free to use GitHub Issues. Try to make sure any issue you have is reproduca
 
 Log files made by the showcase are stored in `C:\Users\\\<username\>\AppData\LocalLow\MZZT\Dark Forces Showcase\Player.log`. You can use this to try and get an error message and stack trace when an issue occurs which usually makes things far easier for me.
 
-I'm doing this all as an opportunity to teach myself more Unity skills and as well as a passion project. No guarantees on updates, bug fixes or features.
+I'm doing this all as a passion project. No guarantees on updates, bug fixes or features.
 
 You're welcome to fork this project. You may issue pull requests for things like bug fixes, but if you're taking this code to use for some other project it may not make sense to fold the code back in.
 
@@ -147,17 +153,16 @@ I want to add more tools such as:
 * Cutscene player
 * Catwalk 3DO generator (takes a sector and generates a 3DO to precisely fit it, and allows you to choose textures for it, then adds it to your level for you).
 * Resource validator (verify file format library can load/save files properly, determine compression ratio when resaving files)
+* Dedicated embeddable 3D level preview tool (push new level data to it dynamically, embed it anywhere, etc)
 
-I want to bring this showcase to other platforms such as WebAssembly. This will require dropping the current method of importing/exporting images like PNGs, at least outside of Windows. I will probably need to switch to manually writing BMPs or something which is less than ideal, but I cannot find a working image library that supports 8-bit PNGs. I may try to find one or two more.
-
-In addition, WebAssembly support will require working around limitations regarding file loading and saving. It is likely possible to allow the user to select their Dark Forces folder so the showcase can access it. Then, the internal file browser can be augmented to load files from the internal browser APIs. Finally, saving files from within the tool should download them through the browser.
+I want to bring this showcase to other platforms such as WebAssembly. This will require dropping the current method of importing/exporting images like PNGs, at least outside of Windows. I am still trying to find a suitable method of cross-platform 8-bit PNG loading and saving that preserves the palette. I will also need to work around the tool currently expecting full disk access.
 
 ## Lower Priority Tasks
 
-* Replace the image manipulation libratgies used with a different library for palettized image import/export (libpng?). Currently a few different ones I've tried don't support palettized image loading/saving properly. At worst I could switch to manually generating/consuming BMPs, and generating 32-bit PNG exports intread for users who don't care about reimporting them later.
+* Improve compatibility with cross-platform (remove/replace Windows-specific dependencies, remove direct filesystem access, etc)
 * Find a better MIDI soundfont. DOSBox's sounds nice...
 * iMUSE support for the music to transition between stalk/fight modes. No idea how this works in practice though. MIDI/GMID can have "markers" in the music, which IIRC is how it is done, but I've never dug into it. In addition there's the question of if the library I'm using can even support that.
-* Load INF data in Level Explorer and do things like play ambient sounds or even add some of the INF logic in. This will need to be done for the randomizer feature to allow for mirror mode (some scripts will need to move a different direction!)
+* Load INF data in Level Explorer and do things like play ambient sounds or even add some of the INF logic in.
 * In the Level Explorer, do sign textures in shader. Currently they're rendered on a separate polygon slighty in front. This means culling is not done properly if the sign overlaps the edge of the wall.
 * Look at adapting [this](https://medium.com/@jmickle_/writing-a-doom-style-shader-for-unity-63fa13678634) for Dark Forces colormaps. Current implementation generates 32-bit textures on the CPU side.
 * Add support for reading/writing the PlayStation port file formats (mostly they took the text-based file formats like 3DOs and developed binary formats that otherwise are very similar). Would be fun to see if mods could be converted to run on the PlayStation port.
@@ -180,10 +185,13 @@ License - https://github.com/kewlniss/CSharpSynthForUnity/blob/master/LICENSE (M
 
 Fixes were cherry picked from GitHub Issues for CSharpSynthForUnity (namely issues relating to locales which don't use . as the decimal character). I also made small modifications of my own so I could send some different data structures into CSharpSynth in a more efficient manner.
 
+System.Drawing.Common - https://github.com/dotnet/winforms/src/System.Drawing.Common
+License - hhttps://github.com/dotnet/winforms/LICENSE.TXT (MIT)
+
 SkiaSharp - https://github.com/mono/SkiaSharp
 License - https://github.com/mono/SkiaSharp/blob/main/LICENSE.md (MIT)
 
-Sample code for line intersections - https://github.com/Habrador/Computational-geometry (MIT License)
+Sample code for line intersections - https://github.com/Habrador/Computational-geometry (MIT)
 
 More details are in the LICENSE file.
 
