@@ -81,7 +81,7 @@ namespace MZZT.DarkForces.Showcase {
 				.Count();
 			this.textureCount.text = $"Textures: {textureCount}";
 			this.signCount.text = $"Signs: {this.Value.Sectors.Sum(x => x.Walls.Where(x => x.SignTexture.TextureFile != null).Count())}";
-			this.layerCount.text = $"Layers: {this.Value.Sectors.Select(x => x.Layer).Distinct().Sum()}";
+			this.layerCount.text = $"Layers: {this.Value.Sectors.Select(x => x.Layer).Distinct().Count()}";
 			this.sectorHeightAverage.text = $"Sector Height: {this.Value.Sectors.Average(x => x.Floor.Y - x.Ceiling.Y):0.0}";
 			this.wallAverage.text = $"Walls Per Sector: {this.Value.Sectors.Average(x => x.Walls.Count):0.0}";
 			this.adjoinAverage.text = $"Adjoins Per Sector: {this.Value.Sectors.Average(x => x.Walls.Where(x => x.Adjoined != null).Count()):0.0}";

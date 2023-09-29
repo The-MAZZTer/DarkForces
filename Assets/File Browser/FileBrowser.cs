@@ -730,14 +730,22 @@ namespace MZZT {
 
 			FileSystemItem selected = this.fileList.SelectedValue;
 
-			// nevigate if double click on non-file
+			// navigate if double click on non-file
 
 			if (selected != null && (selected.Type == FileSystemItemTypes.FileContainer || selected.Type == FileSystemItemTypes.Folder)) {
-				bool isAlsoFile = !doubleClick && selected.Type == FileSystemItemTypes.FileContainer &&
-					this.options.FileSearchPatterns.Any(x => Regex.IsMatch(Path.GetFileName(this.fileList.SelectedValue.FilePath), Regex.Escape(x).Replace("\\*", ".*").Replace("\\?", ".")));
-				if (/*!this.options.SelectFolder &&*/ !isAlsoFile) {
-					await this.NavigateToFolderAsync(selected.FilePath);
-					return;
+				if (selected.Type == FileSystemItemTypes.Folder) {
+					if (doubleClick || !this.options.SelectFolder) {
+						await this.NavigateToFolderAsync(selected.FilePath);
+						return;
+					}
+				} else {
+					bool canNavigate = (Path.GetExtension(selected.DisplayName).ToUpper() == ".GOB" && this.options.AllowNavigateGob) ||
+						(Path.GetExtension(selected.DisplayName).ToUpper() == ".LFD" && this.options.AllowNavigateLfd);
+					bool canSelect = this.options.FileSearchPatterns.Any(x => Regex.IsMatch(Path.GetFileName(this.fileList.SelectedValue.FilePath), Regex.Escape(x).Replace("\\*", ".*").Replace("\\?", ".")));
+					if ((doubleClick || !canSelect) && canNavigate) {
+						await this.NavigateToFolderAsync(selected.FilePath);
+						return;
+					}
 				}
 			}
 
