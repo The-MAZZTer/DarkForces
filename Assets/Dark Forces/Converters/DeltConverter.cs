@@ -2,11 +2,11 @@
 using SkiaSharp;
 using System;
 using System.Collections;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.Runtime.InteropServices;
 using UnityEngine;
-using Color = System.Drawing.Color;
+using MZZT.Drawing;
+using Free.Ports.libpng;
+using System.Linq;
+using System.Drawing;
 
 namespace MZZT.DarkForces.Converters {
 	public static class DeltConverter {
@@ -82,64 +82,58 @@ namespace MZZT.DarkForces.Converters {
 		public static Texture2D ToTextureWithOffset(this LandruDelt delt, LandruPalette pltt, bool keepTextureReadable = false) =>
 			delt.ToTextureWithOffset(pltt.ToByteArray(), keepTextureReadable);
 
-		public static Bitmap ToUnmaskedBitmap(this LandruDelt delt, byte[] pal) {
-			byte[] pixels = delt.Pixels;
-
+		public static Png ToUnmaskedPng(this LandruDelt delt, byte[] pal) {
 			int width = delt.Width;
 			int height = delt.Height;
 
-			Bitmap bitmap = new(width, height, PixelFormat.Format8bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			for (int i = 1; i < palette.Entries.Length; i++) {
-				palette.Entries[i] = Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
+			Png png = new(width, height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[256]
+			};
+			for (int i = 0; i < 256; i++) {
+				png.Palette[i] = System.Drawing.Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
 			}
-			bitmap.Palette = palette;
-
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-				for (int y = 0; y < height; y++) {
-					Marshal.Copy(pixels, width * y, data.Scan0 + data.Stride * y, data.Width);
-				}
-
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
+			
+			for (int y = 0; y < height; y++) {
+				Buffer.BlockCopy(delt.Pixels, (height - y - 1) * width, png.Data[y], 0, width);
 			}
-			return bitmap;
+			return png;
 		}
 
-		public static Bitmap ToUnmaskedBitmap(this LandruDelt delt, LandruPalette pltt) => delt.ToUnmaskedBitmap(pltt.ToByteArray());
+		public static Png ToUnmaskedPng(this LandruDelt delt, LandruPalette pltt) => delt.ToUnmaskedPng(pltt.ToByteArray());
 
-		public static Bitmap MaskToBitmap(this LandruDelt delt) {
+		public static Png MaskToPng(this LandruDelt delt) {
 			int width = delt.Width;
 			int height = delt.Height;
 
-			Bitmap bitmap = new(width, height, PixelFormat.Format1bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			palette.Entries[0] = Color.FromArgb(0, 0, 0, 0);
-			palette.Entries[1] = Color.FromArgb(255, 255, 255, 255);
-			bitmap.Palette = palette;
-
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-				for (int y = 0; y < height; y++) {
-					for (int x = 0; x < width; x++) {
-						Marshal.WriteByte(data.Scan0 + data.Stride * y + x, (byte)(delt.Mask.Get(y * width + x) ? 1 : 0));
-					}
+			Png png = new(width, height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[] {
+					System.Drawing.Color.Transparent,
+					System.Drawing.Color.FromArgb(255, 255, 255, 255)
 				}
+			};
 
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					png.Data[y][x] = delt.Mask.Get(y * width + x) ? (byte)1 : (byte)0;
+				}
 			}
-			return bitmap;
+			return png;
 		}
+
+		public static Png ToMaskedPng(this LandruDelt delt, byte[] pal) {
+			int width = delt.Width;
+			int height = delt.Height;
+
+			Png png = new(width, height, PNG_COLOR_TYPE.RGB_ALPHA);
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					Buffer.BlockCopy(pal, delt.Pixels[(height - y - 1) * width + x], png.Data[y], x * 4, 4);
+				}
+			}
+			return png;
+		}
+		public static Png ToMaskedPng(this LandruDelt delt, LandruPalette pltt) => delt.ToMaskedPng(pltt.ToByteArray());
 
 		public static SKImage ToSKImage(this LandruDelt delt, byte[] palette) {
 			byte[] pixels = delt.Pixels;
@@ -171,5 +165,59 @@ namespace MZZT.DarkForces.Converters {
 		}
 		public static SKImage ToSKImage(this LandruDelt delt, LandruPalette pltt) =>
 			delt.ToSKImage(pltt.ToByteArray());
+
+		public static LandruDelt ToDelt(this Png png) {
+			if (png.ColorType != PNG_COLOR_TYPE.PALETTE) {
+				return null;
+			}
+
+			LandruDelt delt = new() {
+				Width = (int)png.Width,
+				Height = (int)png.Height,
+				Mask = new BitArray((int)(png.Width * png.Height), true),
+				Pixels = new byte[png.Width * png.Height]
+			};
+
+			for (int y = 0; y < png.Height; y++) {
+				Buffer.BlockCopy(png.Data[y], 0, delt.Pixels, (int)((png.Height - y - 1) * png.Width), (int)png.Width);
+
+				for (int x = 0; x < png.Width; x++) {
+					delt.Mask[(int)((png.Height - y - 1) * png.Width + x)] = png.Palette[png.Data[y][x]].A > 0x7F;
+				}
+			}
+			return delt;
+		}
+
+		public static BitArray ToDeltMask(this Png png) {
+			bool palette = png.ColorType.HasFlag(PNG_COLOR_TYPE.PALETTE_MASK);
+
+			byte[] transparent = null;
+			if (!png.ColorType.HasFlag(PNG_COLOR_TYPE.ALPHA_MASK) && !palette && png.TransparentColor != null) {
+				if (png.ColorType == PNG_COLOR_TYPE.GRAY) {
+					transparent = new[] { (byte)png.TransparentColor.Value.gray };
+				} else {
+					transparent = new[] { (byte)png.TransparentColor.Value.red, (byte)png.TransparentColor.Value.green,
+						(byte)png.TransparentColor.Value.blue };
+				}
+			}
+
+			int pixelSize = png.BytesPerPixel;
+			BitArray bits = new((int)(png.Width * png.Height));
+			for (int i = 0; i < png.Height; i++) {
+				for (int j = 0; j < png.Width; j++) {
+					byte[] color = png.Data[i].Skip(j * pixelSize).Take(pixelSize).ToArray();
+					byte alpha = 255;
+					if (png.ColorType.HasFlag(PNG_COLOR_TYPE.ALPHA_MASK)) {
+						alpha = color[color.Length - 1];
+					} else if (palette) {
+						alpha = png.Palette[color[0]].A;
+					} else if (transparent != null) {
+						alpha = color.SequenceEqual(transparent) ? (byte)0 : (byte)255;
+					}
+					bits.Set(i * (int)png.Width + j, alpha > 0x7F);
+				}
+			}
+			return bits;
+		}
 	}
 }

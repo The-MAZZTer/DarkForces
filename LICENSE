@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2021 The MAZZTer
+Copyright (c) 2021-Present The MAZZTer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,36 @@ SOFTWARE.
 
 --- End of MIT License
 
-The above license applies to the source code in this repository only.
+The above license applies to the source code in this repository only. The following projects may have their own licensing restrictions.
 
-This software utilizes the following libraries in compliance with their licenses. The links lead to the appropriate source code repository (for compliance with the licenses that require it).
+This software utilizes the following libraries in compliance with their licenses.
+
+When licenses dicate original source code must be made available, the source code may be retrieved using the links in the following list.
 
 Material Design Icons - https://github.com/google/material-design-icons/tree/master/font
 License - https://github.com/google/material-design-icons/blob/master/LICENSE (Apache 2.0)
+Use - Various UI glyphs
 
 CSharpSynthForUnity - https://github.com/kewlniss/CSharpSynthForUnity
 License - https://github.com/kewlniss/CSharpSynthForUnity/blob/master/LICENSE (MIT)
+Use - To play GMID and MID files.
 
-SkiaSharp - https://github.com/mono/SkiaSharp 
+Fixes were cherry picked from GitHub Issues for CSharpSynthForUnity (namely issues relating to locales which don't use . as the decimal character). I also made small modifications of my own so I could send some different data structures into CSharpSynth in a more efficient manner.
+
+zlib.net - https://github.com/JoshDullen/zlib.net
+License - https://github.com/JoshDullen/zlib.net/blob/master/License.txt
+Use - Dependency for libpng
+
+libpng.net - https://github.com/JoshDullen/libpng.net
+License - https://github.com/JoshDullen/libpng.net/blob/master/License.txt
+Use - Read/write palettized and RGB(A) PNG images.
+
+These two projects were modified to build for .NET Standard through use of new .csproj files. No code changes have been made.
+
+SkiaSharp - https://github.com/mono/SkiaSharp
 License - https://github.com/mono/SkiaSharp/blob/main/LICENSE.md (MIT)
+Use - Dynamic image/texture generation.
 
-Sample code for line intersections - https://github.com/Habrador/Computational-geometry (MIT License)
+Sample code for line intersections - https://github.com/Habrador/Computational-geometry
+License - MIT
+Use - Breaking down Dark Forces sectors into non-overlapping triangles that can be used to generate meshes.

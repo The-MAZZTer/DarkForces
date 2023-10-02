@@ -1,9 +1,9 @@
-﻿using MZZT.DarkForces.FileFormats;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using Free.Ports.libpng;
+using MZZT.DarkForces.FileFormats;
+using MZZT.Drawing;
+using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -33,7 +33,6 @@ namespace MZZT.DarkForces.Converters {
 				}
 				return x.ToDrawingColor();
 			}).ToArray();
-
 		public static System.Drawing.Color ToDrawingColor(this RgbColor color) => System.Drawing.Color.FromArgb(
 			255,
 			(byte)Mathf.Clamp(Mathf.Round(color.R * 255 / 63f), 0, 255),
@@ -51,26 +50,16 @@ namespace MZZT.DarkForces.Converters {
 
 		public static Color ToUnityColor(this RgbColor color) => new(color.R / 63f, color.G / 63f, color.B / 63f, 1f);
 
-		public static Bitmap ToBitmap(this DfPalette pal) {
-			Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
+		public static Png ToPng(this DfPalette pal) {
+			Png png = new(16, 16, PNG_COLOR_TYPE.PALETTE) {
+				Palette = pal.ToDrawingColorArray(false)
+			};
 
-			System.Drawing.Color[] colors = pal.ToDrawingColorArray(false);
-
-			ColorPalette colorPalette = bitmap.Palette;
-			for (int j = 0; j < pal.Palette.Length; j++) {
-				colorPalette.Entries[j] = colors[j];
-			}
-			bitmap.Palette = colorPalette;
-
-			BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-			for (int y = 0; y < bitmap.Height; y++) {
-				byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
-				Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
+			for (int y = 0; y < 16; y++) {
+				png.Data[y] = Enumerable.Range(y * 16, 16).Select(x => (byte)x).ToArray();
 			}
 
-			bitmap.UnlockBits(data);
-			return bitmap;
+			return png;
 		}
 
 		public async static Task WriteJascPalAsync(this DfPalette pal, Stream stream) {

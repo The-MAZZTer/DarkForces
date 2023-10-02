@@ -1,14 +1,12 @@
- using MZZT.DarkForces.Converters;
+using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.Drawing;
 using MZZT.FileFormats;
 using System;
 using System.Collections;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -275,11 +273,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.ANIM", "*.ANM", "*.DELT", "*.DLT", "*.BMP", "*.GIF", "*.PNG"},
+				FileSearchPatterns = new[] { "*.ANIM", "*.ANM", "*.DELT", "*.DLT", "*.PNG"},
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Import 8-bit ANIM, DELT, BMP, GIF, or PNG"
+				Title = "Import 8-bit ANIM, DELT, or PNG"
 			});
 			if (path == null) {
 				return;
@@ -318,45 +316,23 @@ namespace MZZT.DarkForces.Showcase {
 
 				this.Value.Pages.Insert(index, delt);
 			} else {
-				Bitmap bitmap;
+				Png png;
 				try {
-					bitmap = BitmapLoader.LoadBitmap(path);
+					using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					png = new(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 					return;
 				}
-				if (bitmap == null) {
+				if (png == null) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file.");
 					return;
 				}
-				LandruDelt page;
-				using (bitmap) {
-					if (!bitmap.PixelFormat.HasFlag(PixelFormat.Indexed)) {
-						await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
-						return;
-					}
 
-					if (bitmap.Width > ushort.MaxValue || bitmap.Height > ushort.MaxValue) {
-						await DfMessageBox.Instance.ShowAsync($"Image is too large to import.");
-						return;
-					}
-
-					bool[] mask = bitmap.Palette.Entries.Select(x => x.A >= 0x80).ToArray();
-
-					page = new() {
-						Mask = new BitArray(bitmap.Width * bitmap.Height),
-						Width = (ushort)bitmap.Width,
-						Height = (ushort)bitmap.Height,
-						Pixels = new byte[bitmap.Width * bitmap.Height]
-					};
-					BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-					for (int i = 0; i < bitmap.Height; i++) {
-						Marshal.Copy(data.Scan0 + data.Stride * (bitmap.Height - i - 1), page.Pixels, i * bitmap.Width, bitmap.Width);
-						for (int j = 0; j < bitmap.Width; j++) {
-							page.Mask.Set(i * bitmap.Width + j, mask[Marshal.ReadByte(data.Scan0 + data.Stride * (bitmap.Height - i - 1) + j)]);
-						}
-					}
-					bitmap.UnlockBits(data);
+				LandruDelt page = png.ToDelt();
+				if (page == null) {
+					await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
+					return;
 				}
 
 				this.Value.Pages.Insert(index, page);
@@ -431,9 +407,10 @@ namespace MZZT.DarkForces.Showcase {
 
 				byte[] bytePalette = this.pltt.ToByteArray();
 
-				using Bitmap bitmap = page.ToUnmaskedBitmap(bytePalette);
+				Png png = page.ToUnmaskedPng(bytePalette);
 				try {
-					bitmap.Save(path);
+					using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+					png.Write(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 				}
@@ -463,45 +440,47 @@ namespace MZZT.DarkForces.Showcase {
 			string palette = this.palette.text;
 			LandruPalette pltt = null;
 
-			if (string.IsNullOrWhiteSpace(palette)) {
-				string folder = Path.GetDirectoryName(this.filePath);
-				string file = Path.GetFileNameWithoutExtension(this.filePath).ToLower();
-				if (File.Exists(folder)) {
-					await LandruFileDirectory.ReadAsync(folder, async x => {
-						string name = x.Files.FirstOrDefault(x => x.name.ToLower() == file && x.type.ToLower() == "pltt").name;
-						if (name == null) {
-							name = x.Files.FirstOrDefault(x => x.type.ToLower() == "pltt").name;
-						}
-						if (name != null) {
-							pltt = await x.GetFileAsync<LandruPalette>(name);
-						}
-					});
-				} else if (Directory.Exists(folder)) {
-					if (File.Exists(Path.Combine(folder, file + ".PLTT"))) {
-						pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLTT"));
-					}
-					if (pltt == null && File.Exists(Path.Combine(folder, file + ".PLT"))) {
-						pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLT"));
-					}
-					if (pltt == null) {
-						string path = Directory.EnumerateFiles(folder).FirstOrDefault(x => {
-							string ext = Path.GetExtension(x).ToLower();
-							return ext == ".pltt" || ext == ".plt";
+			if (this.filePath != null) {
+				if (string.IsNullOrWhiteSpace(palette)) {
+					string folder = Path.GetDirectoryName(this.filePath);
+					string file = Path.GetFileNameWithoutExtension(this.filePath).ToLower();
+					if (File.Exists(folder)) {
+						await LandruFileDirectory.ReadAsync(folder, async x => {
+							string name = x.Files.FirstOrDefault(x => x.name.ToLower() == file && x.type.ToLower() == "pltt").name;
+							if (name == null) {
+								name = x.Files.FirstOrDefault(x => x.type.ToLower() == "pltt").name;
+							}
+							if (name != null) {
+								pltt = await x.GetFileAsync<LandruPalette>(name);
+							}
 						});
-						if (path != null) {
-							pltt = await LandruPalette.ReadAsync(path);
+					} else if (Directory.Exists(folder)) {
+						if (File.Exists(Path.Combine(folder, file + ".PLTT"))) {
+							pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLTT"));
+						}
+						if (pltt == null && File.Exists(Path.Combine(folder, file + ".PLT"))) {
+							pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLT"));
+						}
+						if (pltt == null) {
+							string path = Directory.EnumerateFiles(folder).FirstOrDefault(x => {
+								string ext = Path.GetExtension(x).ToLower();
+								return ext == ".pltt" || ext == ".plt";
+							});
+							if (path != null) {
+								pltt = await LandruPalette.ReadAsync(path);
+							}
 						}
 					}
+				} else {
+					pltt = await this.GetFileAsync<LandruPalette>(this.filePath, palette);
 				}
-			} else {
-				pltt = await this.GetFileAsync<LandruPalette>(this.filePath, palette);
 			}
 
 			if (pltt != null) {
 				this.pltt = pltt;
-
-				this.RefreshPreview();
 			}
+
+			this.RefreshPreview();
 
 			LandruDelt page = (LandruDelt)((IDatabind)this.currentPage).Value;
 
@@ -588,11 +567,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.DELT", "*.DLT", "*.BMP", "*.GIF", "*.PNG" },
+				FileSearchPatterns = new[] { "*.DELT", "*.DLT", "*.PNG" },
 				SelectButtonText = "Import Mask",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Import Mask From DELT, BMP, GIF, or PNG"
+				Title = "Import Mask From DELT or PNG"
 			});
 			if (path == null) {
 				return;
@@ -623,32 +602,30 @@ namespace MZZT.DarkForces.Showcase {
 				page.Mask.SetAll(false);
 				page.Mask.Or(delt.Mask);
 			} else {
-				Bitmap bitmap;
+				Png png;
 				try {
-					bitmap = BitmapLoader.LoadBitmap(path);
+					using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					png = new(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 					return;
 				}
-				if (bitmap == null) {
+				if (png == null) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file.");
 					return;
 				}
 
-				using (bitmap) {
-					if (bitmap.Width != page.Width || bitmap.Height != page.Height) {
-						await DfMessageBox.Instance.ShowAsync($"Image must be the same size as the current page to import its mask.");
-						return;
-					}
-
-					BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-					for (int i = 0; i < bitmap.Height; i++) {
-						for (int j = 0; j < bitmap.Width; j++) {
-							page.Mask.Set(i * bitmap.Width + j, Marshal.ReadByte(data.Scan0 + data.Stride * (bitmap.Height - i - 1) + (j * 4)) >= 0x80);
-						}
-					}
-					bitmap.UnlockBits(data);
+				if (png.Width != page.Width || png.Height != page.Height) {
+					await DfMessageBox.Instance.ShowAsync($"Image must be the same size as the current DELT to import its mask.");
+					return;
 				}
+
+				BitArray mask = png.ToDeltMask();
+				if (mask == null) {
+					await DfMessageBox.Instance.ShowAsync($"Image must have transparency or an alpha channel to import as a mask.");
+					return;
+				}
+				page.Mask = mask;
 			}
 
 			this.OnDirty();
@@ -678,9 +655,10 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			using Bitmap bitmap = page.MaskToBitmap();
+			Png png = page.MaskToPng();
 			try {
-				bitmap.Save(path);
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 			}

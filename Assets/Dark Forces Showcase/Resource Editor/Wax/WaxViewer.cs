@@ -1,14 +1,12 @@
 ﻿using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.Drawing;
 using MZZT.FileFormats;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -703,11 +701,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.FME", "*.BMP", "*.GIF", "*.PNG" },
+				FileSearchPatterns = new[] { "*.FME", "*.PNG" },
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Import 8-bit FME, BMP, GIF, or PNG"
+				Title = "Import 8-bit FME or PNG"
 			});
 			if (path == null) {
 				return;
@@ -733,35 +731,20 @@ namespace MZZT.DarkForces.Showcase {
 					return;
 				}
 			} else {
-				Bitmap bitmap;
+				Png png;
 				try {
-					bitmap = BitmapLoader.LoadBitmap(path);
+					using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					png = new(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 					return;
 				}
-				if (bitmap == null) {
+				if (png == null) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file.");
 					return;
 				}
-				using (bitmap) {
-					if (!bitmap.PixelFormat.HasFlag(PixelFormat.Indexed)) {
-						await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
-						return;
-					}
 
-					frame = new() {
-						Width = bitmap.Width,
-						Height = bitmap.Height,
-						Pixels = new byte[bitmap.Width * bitmap.Height]
-					};
-
-					BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-					for (int i = 0; i < bitmap.Height; i++) {
-						Marshal.Copy(data.Scan0 + data.Stride * (bitmap.Height - i - 1), frame.Pixels, i * bitmap.Width, bitmap.Width);
-					}
-					bitmap.UnlockBits(data);
-				}
+				frame = png.ToFrame();
 			}
 
 			frame.AutoCompress = this.autoCompress.isOn;
@@ -829,9 +812,10 @@ namespace MZZT.DarkForces.Showcase {
 				bytePalette = this.pal.ToByteArray(false);
 			}
 
-			using Bitmap bitmap = frame.ToBitmap(bytePalette);
+			Png png = frame.ToPng(bytePalette);
 			try {
-				bitmap.Save(path);
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 			}

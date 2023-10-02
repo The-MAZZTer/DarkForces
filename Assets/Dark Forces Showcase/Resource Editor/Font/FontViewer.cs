@@ -1,14 +1,12 @@
 using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.Drawing;
 using MZZT.FileFormats;
 using System;
 using System.Collections;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
@@ -259,11 +257,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.FON", "*.FONT", "*.BMP", "*.GIF", "*.PNG" },
+				FileSearchPatterns = new[] { "*.FON", "*.FONT", "*.PNG" },
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Import 1-bit FONT, BMP, GIF, or PNG"
+				Title = "Import 1-bit FONT or PNG"
 			});
 			if (path == null) {
 				return;
@@ -286,46 +284,23 @@ namespace MZZT.DarkForces.Showcase {
 
 				this.SetCharacters(font.First, font.Characters.ToArray());
 			} else {
-				Bitmap bitmap;
+				Png png;
 				try {
-					bitmap = BitmapLoader.LoadBitmap(path);
+					using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					png = new(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 					return;
 				}
-				if (bitmap == null) {
+				if (png == null) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file.");
 					return;
 				}
-				LandruFont.Character c;
-				using (bitmap) {
-					if (!bitmap.PixelFormat.HasFlag(PixelFormat.Indexed)) {
-						await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
-						return;
-					}
 
-					if (bitmap.Width > ushort.MaxValue || bitmap.Height > ushort.MaxValue) {
-						await DfMessageBox.Instance.ShowAsync($"Image is too large to import.");
-						return;
-					}
-
-					int stride = Mathf.CeilToInt(bitmap.Width / 8f);
-					byte[] buffer = new byte[stride * 8 * this.Value.Height];
-
-					BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format1bppIndexed);
-
-					int height = Math.Min(this.Value.Height, bitmap.Height);
-					for (int y = 0; y < height; y++) {
-						for (int x = 0; x < Mathf.CeilToInt(bitmap.Width / 8f); x++) {
-							buffer[stride * y + x] = Marshal.ReadByte(data.Scan0, y * data.Stride + x);
-						}
-					}
-					bitmap.UnlockBits(data);
-
-					c = new() {
-						Width = (byte)bitmap.Width,
-						Pixels = new BitArray(buffer)
-					};
+				LandruFont.Character c = png.ToFontCharacter(this.Value.Height);
+				if (c == null) {
+					await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
+					return;
 				}
 
 				this.SetCharacter(this.currentIndex, c);
@@ -341,9 +316,10 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			using Bitmap bitmap = c.ToBitmap(this.Value.Height, new Color(this.r.value, this.g.value, this.b.value));
+			Png png = c.ToPng(this.Value.Height, new Color(this.r.value, this.g.value, this.b.value));
 			try {
-				bitmap.Save(path);
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 			}
@@ -409,9 +385,10 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			using Bitmap bitmap = this.Value.ToBitmap(new Color(this.r.value, this.g.value, this.b.value));
+			Png png = this.Value.ToPng(new Color(this.r.value, this.g.value, this.b.value));
 			try {
-				bitmap.Save(path);
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 			}

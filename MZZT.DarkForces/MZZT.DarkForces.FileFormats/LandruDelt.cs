@@ -447,10 +447,10 @@ namespace MZZT.DarkForces.FileFormats {
 		object ICloneable.Clone() => this.Clone();
 		public LandruDelt Clone() => new() {
 			Height = this.Height,
-			Mask = new BitArray(this.Mask),
+			Mask = this.Mask != null ? new BitArray(this.Mask) : null,
 			OffsetX = this.OffsetX,
 			OffsetY = this.OffsetY,
-			Pixels = this.Pixels.ToArray(),
+			Pixels = this.Pixels != null ? this.Pixels.ToArray() : null,
 			Width = this.Width
 		};
 	}

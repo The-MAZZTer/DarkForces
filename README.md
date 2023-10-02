@@ -33,7 +33,7 @@ Ensure you build the file format DLL in Release mode otherwise the Unity project
 
 To build the Unity showcase project, first build the file format DLL as above. Then you can open the checkout folder using Unity Editor 2022.3. You can then build using the File > Build Settings... menu option in Unity Editor.
 
-Currently the showcase is locked to Windows platform as it uses the System.Drawing GDI wrapper to import/export palettized PNGs. SkiaSharp is also used for image manipulation in other places. This could be removed or changed to improve platform compatibility as none of it is critical except to a couple features like the map generator which rely heavily on them. Another concern is the use of local file and folder .NET APIs for things like the Open/Save dialog boxes which may prevent some targets like WebGL. A keyboard and mouse are also required but the modern keybind system is in use in Unity so this can likely be changed fairly easily.
+Currently for future releases development is ongoing to make things more cross-platform. For now it will only build for Windows.
 
 ## Contents
 
@@ -155,11 +155,11 @@ I want to add more tools such as:
 * Resource validator (verify file format library can load/save files properly, determine compression ratio when resaving files)
 * Dedicated embeddable 3D level preview tool (push new level data to it dynamically, embed it anywhere, etc)
 
-I want to bring this showcase to other platforms such as WebAssembly. This will require dropping the current method of importing/exporting images like PNGs, at least outside of Windows. I am still trying to find a suitable method of cross-platform 8-bit PNG loading and saving that preserves the palette. I will also need to work around the tool currently expecting full disk access.
+I want to bring this showcase to other platforms such as WebAssembly. This will require refactoring the code base to remove direct disk access and replacing it with web browser-based file selection.
 
 ## Lower Priority Tasks
 
-* Improve compatibility with cross-platform (remove/replace Windows-specific dependencies, remove direct filesystem access, etc)
+* Improve compatibility with cross-platform (remove direct filesystem access, etc)
 * Find a better MIDI soundfont. DOSBox's sounds nice...
 * iMUSE support for the music to transition between stalk/fight modes. No idea how this works in practice though. MIDI/GMID can have "markers" in the music, which IIRC is how it is done, but I've never dug into it. In addition there's the question of if the library I'm using can even support that.
 * Load INF data in Level Explorer and do things like play ambient sounds or even add some of the INF logic in.
@@ -177,25 +177,7 @@ This repo is licensed under the MIT license, with the exception of any dependenc
 
 Thanks to the developers of these projects who have made this project a little easier.
 
-Material Design Icons - https://github.com/google/material-design-icons/tree/master/font
-License - https://github.com/google/material-design-icons/blob/master/LICENSE (Apache 2.0)
-
-CSharpSynthForUnity - https://github.com/kewlniss/CSharpSynthForUnity
-License - https://github.com/kewlniss/CSharpSynthForUnity/blob/master/LICENSE (MIT)
-
-Fixes were cherry picked from GitHub Issues for CSharpSynthForUnity (namely issues relating to locales which don't use . as the decimal character). I also made small modifications of my own so I could send some different data structures into CSharpSynth in a more efficient manner.
-
-System.Drawing.Common - https://github.com/dotnet/winforms/src/System.Drawing.Common
-License - hhttps://github.com/dotnet/winforms/LICENSE.TXT (MIT)
-
-SkiaSharp - https://github.com/mono/SkiaSharp
-License - https://github.com/mono/SkiaSharp/blob/main/LICENSE.md (MIT)
-
-Sample code for line intersections - https://github.com/Habrador/Computational-geometry (MIT)
-
-More details are in the LICENSE file.
-
-These dependencies are not required for use of the Dark Forces file format library. CSharpSynth is required for GMID playback in Unity. SkiaSharp is required for the features which draw dynamic images (such as the Map Generator).
+See LICENSE file for more details on the projects used, their source locations, and licenses.
 
 ## Thanks
 

@@ -1,13 +1,12 @@
 using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.Drawing;
 using MZZT.FileFormats;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
+using System.Collections;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -92,11 +91,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.BMP", "*.GIF", "*.PNG" },
+				FileSearchPatterns = new[] { "*.PNG" },
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Import 8-bit BMP, GIF, or PNG"
+				Title = "Import 8-bit PNG"
 			});
 			if (path == null) {
 				return;
@@ -104,38 +103,28 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			Bitmap bitmap;
+			Png png;
 			try {
-				bitmap = BitmapLoader.LoadBitmap(path);
+				using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				png = new(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 				return;
 			}
-			if (bitmap == null) {
+			if (png == null) {
 				await DfMessageBox.Instance.ShowAsync($"Error reading file.");
 				return;
 			}
-			using (bitmap) {
-				if (!bitmap.PixelFormat.HasFlag(PixelFormat.Indexed)) {
-					await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
-					return;
-				}
 
-				bool[] mask = bitmap.Palette.Entries.Select(x => x.A >= 0x80).ToArray();
-
-				this.Value.Width = (ushort)bitmap.Width;
-				this.Value.Height = (ushort)bitmap.Height;
-				this.Value.Pixels = new byte[bitmap.Width * bitmap.Height];
-
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-				for (int i = 0; i < bitmap.Height; i++) {
-					Marshal.Copy(data.Scan0 + data.Stride * i, this.Value.Pixels, i * bitmap.Width, bitmap.Width);
-					for (int j = 0; j < bitmap.Width; j++) {
-						this.Value.Mask.Set(i * bitmap.Width + j, mask[Marshal.ReadByte(data.Scan0 + data.Stride * i + j)]);
-					}
-				}
-				bitmap.UnlockBits(data);
+			LandruDelt delt = png.ToDelt();
+			if (delt == null) {
+				await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
+				return;
 			}
+
+			this.Value.Width = delt.Width;
+			this.Value.Height = delt.Height;
+			this.Value.Pixels = delt.Pixels;
 
 			this.OnDirty();
 
@@ -161,9 +150,10 @@ namespace MZZT.DarkForces.Showcase {
 
 			byte[] bytePalette = this.pltt.ToByteArray();
 
-			using Bitmap bitmap = this.Value.ToUnmaskedBitmap(bytePalette);
+			Png png = this.Value.ToUnmaskedPng(bytePalette);
 			try {
-				bitmap.Save(path);
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 			}
@@ -192,45 +182,47 @@ namespace MZZT.DarkForces.Showcase {
 			string palette = this.palette.text;
 			LandruPalette pltt = null;
 
-			if (string.IsNullOrWhiteSpace(palette)) {
-				string folder = Path.GetDirectoryName(this.filePath);
-				string file = Path.GetFileNameWithoutExtension(this.filePath).ToLower();
-				if (File.Exists(folder)) {
-					await LandruFileDirectory.ReadAsync(folder, async x => {
-						string name = x.Files.FirstOrDefault(x => x.name.ToLower() == file && x.type.ToLower() == "pltt").name;
-						if (name == null) {
-							name = x.Files.FirstOrDefault(x => x.type.ToLower() == "pltt").name;
-						}
-						if (name != null) {
-							pltt = await x.GetFileAsync<LandruPalette>(name);
-						}
-					});
-				} else if (Directory.Exists(folder)) {
-					if (File.Exists(Path.Combine(folder, file + ".PLTT"))) {
-						pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLTT"));
-					}
-					if (pltt == null && File.Exists(Path.Combine(folder, file + ".PLT"))) {
-						pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLT"));
-					}
-					if (pltt == null) {
-						string path = Directory.EnumerateFiles(folder).FirstOrDefault(x => {
-							string ext = Path.GetExtension(x).ToLower();
-							return ext == ".pltt" || ext == ".plt";
+			if (this.filePath != null) {
+				if (string.IsNullOrWhiteSpace(palette)) {
+					string folder = Path.GetDirectoryName(this.filePath);
+					string file = Path.GetFileNameWithoutExtension(this.filePath).ToLower();
+					if (File.Exists(folder)) {
+						await LandruFileDirectory.ReadAsync(folder, async x => {
+							string name = x.Files.FirstOrDefault(x => x.name.ToLower() == file && x.type.ToLower() == "pltt").name;
+							if (name == null) {
+								name = x.Files.FirstOrDefault(x => x.type.ToLower() == "pltt").name;
+							}
+							if (name != null) {
+								pltt = await x.GetFileAsync<LandruPalette>(name);
+							}
 						});
-						if (path != null) {
-							pltt = await LandruPalette.ReadAsync(path);
+					} else if (Directory.Exists(folder)) {
+						if (File.Exists(Path.Combine(folder, file + ".PLTT"))) {
+							pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLTT"));
+						}
+						if (pltt == null && File.Exists(Path.Combine(folder, file + ".PLT"))) {
+							pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLT"));
+						}
+						if (pltt == null) {
+							string path = Directory.EnumerateFiles(folder).FirstOrDefault(x => {
+								string ext = Path.GetExtension(x).ToLower();
+								return ext == ".pltt" || ext == ".plt";
+							});
+							if (path != null) {
+								pltt = await LandruPalette.ReadAsync(path);
+							}
 						}
 					}
+				} else {
+					pltt = await this.GetFileAsync<LandruPalette>(this.filePath, palette);
 				}
-			} else {
-				pltt = await this.GetFileAsync<LandruPalette>(this.filePath, palette);
 			}
 
 			if (pltt != null) {
 				this.pltt = pltt;
-
-				this.RefreshPreview();
 			}
+
+			this.RefreshPreview();
 
 			this.export.interactable = pltt != null;
 		}
@@ -301,11 +293,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.DELT", "*.DLT", "*.BMP", "*.GIF", "*.PNG" },
+				FileSearchPatterns = new[] { "*.DELT", "*.DLT", "*.PNG" },
 				SelectButtonText = "Import Mask",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Import Mask From DELT, BMP, GIF, or PNG"
+				Title = "Import Mask From DELT or PNG"
 			});
 			if (path == null) {
 				return;
@@ -336,32 +328,30 @@ namespace MZZT.DarkForces.Showcase {
 				this.Value.Mask.SetAll(false);
 				this.Value.Mask.Or(delt.Mask);
 			} else {
-				Bitmap bitmap;
+				Png png;
 				try {
-					bitmap = BitmapLoader.LoadBitmap(path);
+					using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					png = new(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 					return;
 				}
-				if (bitmap == null) {
+				if (png == null) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file.");
 					return;
 				}
 
-				using (bitmap) {
-					if (bitmap.Width != this.Value.Width || bitmap.Height != this.Value.Height) {
-						await DfMessageBox.Instance.ShowAsync($"Image must be the same size as the current DELT to import its mask.");
-						return;
-					}
-
-					BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-					for (int i = 0; i < bitmap.Height; i++) {
-						for (int j = 0; j < bitmap.Width; j++) {
-							this.Value.Mask.Set(i * bitmap.Width + j, Marshal.ReadByte(data.Scan0 + data.Stride * i + (j * 4)) >= 0x80);
-						}
-					}
-					bitmap.UnlockBits(data);
+				if (png.Width != this.Value.Width || png.Height != this.Value.Height) {
+					await DfMessageBox.Instance.ShowAsync($"Image must be the same size as the current DELT to import its mask.");
+					return;
 				}
+
+				BitArray mask = png.ToDeltMask();
+				if (mask == null) {
+					await DfMessageBox.Instance.ShowAsync($"Image must have transparency or an alpha channel to import as a mask.");
+					return;
+				}
+				this.Value.Mask = mask;
 			}
 
 			this.OnDirty();
@@ -386,9 +376,10 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			using Bitmap bitmap = this.Value.MaskToBitmap();
+			Png png = this.Value.MaskToPng();
 			try {
-				bitmap.Save(path);
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 			}

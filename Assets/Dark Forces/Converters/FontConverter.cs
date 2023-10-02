@@ -1,10 +1,10 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using System;
-using System.Drawing.Imaging;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using UnityEngine;
+using MZZT.Drawing;
+using Free.Ports.libpng;
+using System.Collections;
 
 namespace MZZT.DarkForces.Converters {
 	public static class FontConverter {
@@ -80,77 +80,58 @@ namespace MZZT.DarkForces.Converters {
 			return texture;
 		}
 
-
-		public static Bitmap ToBitmap(this LandruFont font, UnityEngine.Color color) {
-			Bitmap bitmap = new(font.Characters.Sum(x => x.Width + 1) - 1, font.Height, PixelFormat.Format1bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			palette.Entries[0] = System.Drawing.Color.FromArgb(0, 0, 0, 0);
-			palette.Entries[1] = color.ToDrawing();
-			bitmap.Palette = palette;
-
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format1bppIndexed);
-
-				int pos = 0;
-				foreach (LandruFont.Character c in font.Characters) {
-					int stride = Mathf.CeilToInt(c.Width / 8f);
-					byte[] buffer = new byte[font.Height * stride];
-					c.Pixels.CopyTo(buffer, 0);
-
-					for (int y = 0; y < font.Height; y++) {
-						for (int x = 0; x < c.Width; x += 8) {
-							byte value = buffer[y * stride + x / 8];
-							int offset = data.Stride * y + (pos + x) / 8;
-							if (pos % 8 == 0) {
-								Marshal.WriteByte(data.Scan0, offset, value);
-							} else {
-								byte existing = Marshal.ReadByte(data.Scan0, offset);
-
-								Marshal.WriteByte(data.Scan0, offset, (byte)(existing | (value >> (pos % 8))));
-								Marshal.WriteByte(data.Scan0, offset + 1, (byte)((value << (8 - (pos % 8)) & 0xFF)));
-							}
-						}
-					}
-					pos += c.Width + 1;
+		public static Png ToPng(this LandruFont font, UnityEngine.Color color) {
+			Png png = new(font.Characters.Sum(x => x.Width + 1) - 1, font.Height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[] {
+					System.Drawing.Color.Transparent,
+					color.ToDrawing()
 				}
+			};
 
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
+			int pos = 0;
+			foreach (LandruFont.Character c in font.Characters) {
+				for (int y = 0; y < font.Height; y++) {
+					for (int x = 0; x < c.Width; x ++) {
+						png.Data[y][pos + x] = c.Pixels[(font.Height - y - 1) * c.Width + x] ? (byte)1 : (byte)1;
+					}
+				}
+				pos += c.Width + 1;
 			}
-			return bitmap;
+			return png;
 		}
 
-
-		public static Bitmap ToBitmap(this LandruFont.Character c, int height, UnityEngine.Color color) {
-			int width = c.Width;
-
-			Bitmap bitmap = new(width, height, PixelFormat.Format1bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			palette.Entries[0] = System.Drawing.Color.FromArgb(0, 0, 0, 0);
-			palette.Entries[1] = color.ToDrawing();
-			bitmap.Palette = palette;
-
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format1bppIndexed);
-
-				int stride = Mathf.CeilToInt(width / 8f);
-				byte[] buffer = new byte[height * stride];
-				c.Pixels.CopyTo(buffer, 0);
-
-				for (int y = 0; y < height; y++) {
-					Marshal.Copy(buffer, stride * y, data.Scan0 + y * data.Stride, stride);
+		public static Png ToPng(this LandruFont.Character c, int height, Color color) {
+			Png png = new(c.Width, height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[] {
+					System.Drawing.Color.Transparent,
+					color.ToDrawing()
 				}
+			};
 
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < c.Width; x++) {
+					png.Data[y][x] = c.Pixels[(height - y - 1) * c.Width + x] ? (byte)1 : (byte)0;
+				}
 			}
-			return bitmap;
+			return png;
+		}
+
+		public static LandruFont.Character ToFontCharacter(this Png png, int height) {
+			if (png.ColorType != PNG_COLOR_TYPE.PALETTE) {
+				return null;
+			}
+
+			LandruFont.Character c = new() {
+				Width = (byte)png.Width ,
+				Pixels = new BitArray((int)png.Width * height),
+			};
+
+			for (int y = 0; y < height && y < png.Height; y++) {
+				for (int x = 0; x < c.Width; x++) {
+					c.Pixels[y * (int)png.Width + x] = png.Data[height - y - 1][x] > 0;
+				}
+			}
+			return c;
 		}
 	}
 }

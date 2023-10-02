@@ -1,11 +1,9 @@
-﻿using MZZT.DarkForces.FileFormats;
+﻿using Free.Ports.libpng;
+using MZZT.DarkForces.FileFormats;
+using MZZT.Drawing;
 using System;
-using System.Drawing.Imaging;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using UnityEngine;
-using Color = System.Drawing.Color;
 
 namespace MZZT.DarkForces.Converters {
 	public static class FntConverter {
@@ -86,73 +84,71 @@ namespace MZZT.DarkForces.Converters {
 
 			if (cmp == null) {
 				return c.ToTexture(fnt, pal, forceTransparent, keepTextureReadable);
-			} else {
+ 			} else {
 				return c.ToTexture(fnt, cmp.ToByteArray(pal, lightLevel, forceTransparent, bypassCmpDithering), keepTextureReadable);
 			}
 		}
 
-		public static Bitmap ToBitmap(this DfFont font, byte[] pal) {
- 			Bitmap bitmap = new(font.Characters.Sum(x => x.Width), font.Height, PixelFormat.Format8bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			for (int i = 0; i < palette.Entries.Length; i++) {
-				palette.Entries[i] = Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
+		public static Png ToPng(this DfFont font, byte[] pal) {
+			Png png = new(font.Characters.Sum(x => x.Width), font.Height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[256]
+			};
+			for (int i = 0; i < 256; i++) {
+				png.Palette[i] = System.Drawing.Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
 			}
-			bitmap.Palette = palette;
 
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-				int pos = 0;
-				foreach (DfFont.Character c in font.Characters) {
-					for (int y = 0; y < bitmap.Height; y++) {
-						for (int x = 0; x < c.Width; x++) {
-							Marshal.WriteByte(data.Scan0, y * data.Stride + x + pos, c.Data[x * bitmap.Height + (bitmap.Height - y - 1)]);
-						}
+			int pos = 0;
+			foreach (DfFont.Character c in font.Characters) {
+				for (int y = 0; y < font.Height; y++) {
+					for (int x = 0; x < c.Width; x++) {
+						png.Data[font.Height - y - 1][x + pos] = c.Data[x * font.Height + y];
 					}
-					pos += c.Width;
 				}
-
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
+				pos += c.Width;
 			}
-			return bitmap;
+			return png;
 		}
 
-		public static Bitmap ToBitmap(this DfFont font,  DfPalette pal, bool forceTransparent) =>
-			font.ToBitmap(pal.ToByteArray(forceTransparent));
+		public static Png ToPng(this DfFont font, DfPalette pal, bool forceTransparent) =>
+			font.ToPng(pal.ToByteArray(forceTransparent));
 
-		public static Bitmap ToBitmap(this DfFont.Character c, int height, byte[] pal) {
+		public static Png ToPng(this DfFont.Character c, int height, byte[] pal) {
 			int width = c.Width;
 
-			Bitmap bitmap = new(width, height, PixelFormat.Format8bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			for (int i = 0; i < palette.Entries.Length; i++) {
-				palette.Entries[i] = Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
+			Png png = new(width, height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[256]
+			};
+			for (int i = 0; i < 256; i++) {
+				png.Palette[i] = System.Drawing.Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
 			}
-			bitmap.Palette = palette;
 
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-				for (int y = 0; y < height; y++) {
-					for (int x = 0; x < width; x++) {
-						Marshal.WriteByte(data.Scan0, y * data.Stride + x, c.Data[x * height + (height - y - 1)]);
-					}
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					png.Data[height - y - 1][x] = c.Data[x * height + y];
 				}
-
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
 			}
-			return bitmap;
+			return png;
 		}
 
-		public static Bitmap ToBitmap(this DfFont.Character c, int height, DfPalette pal, bool forceTransparent) =>
-			c.ToBitmap(height, pal.ToByteArray(forceTransparent));
+		public static Png ToPng(this DfFont.Character c, int height, DfPalette pal, bool forceTransparent) =>
+			c.ToPng(height, pal.ToByteArray(forceTransparent));
+
+		public static DfFont.Character ToFntCharacter(this Png png, int height) {
+			if (png.ColorType != PNG_COLOR_TYPE.PALETTE) {
+				return null;
+			}
+
+			DfFont.Character c = new() {
+				Width = (byte)png.Width,
+				Data = new byte[png.Width * height],
+			};
+
+			for (int y = 0; y < height && y < png.Height; y++) {
+				for (int x = 0; x < c.Width; x++) {
+					c.Data[x * height + y] = png.Data[png.Height - y - 1][x];
+				}
+			}
+			return c;
+		}
 	}
 }

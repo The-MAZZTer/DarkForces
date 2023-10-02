@@ -1,13 +1,12 @@
 using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
+using MZZT.Drawing;
 using MZZT.FileFormats;
 using MZZT.FileFormats.Audio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -518,20 +517,13 @@ namespace MZZT.DarkForces.Showcase {
 							foreach (int i in lightLevels) {
 								parameters["lightlevel"] = i < 0 ? "" : i.ToString();
 
-								foreach ((DfBitmap.Page page, int index) in bm.Pages.Select((x, i) => (x, i))) {
+								foreach ((Page page, int index) in bm.Pages.Select((x, i) => (x, i))) {
 									parameters["index"] = index.ToString();
-#if SKIA
-									await this.SaveTextureAsPngAsync(
-										ResourceCache.Instance.ImportBitmap(page, pal, i < 0 ? null : cmp, i, false, true),
-										this.FillOutputTemplate(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters)
-									);
-#else
-									using Bitmap bitmap = page.ToBitmap(pal, i < 0 ? null : cmp, i, false, true);
-									bitmap.Save(
-										this.FillOutputTemplate(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters),
-										ImageFormat.Png
-									);
-#endif
+
+									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters);
+									Png png = page.ToPng(pal, i < 0 ? null : cmp, i, false, true);
+									using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									png.Write(stream);
 								}
 							}
 						}
@@ -560,8 +552,9 @@ namespace MZZT.DarkForces.Showcase {
 									parameters["lightlevel"] = i.ToString();
 									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-									using Bitmap bitmap = cmp.ToBitmap(pal, i);
-									bitmap.Save(outputPath);
+									Png png = cmp.ToPng(pal, i);
+									using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									png.Write(stream);
 								}
 							}
 							if (this.Settings.ConvertCmpToJascPal) {
@@ -658,18 +651,10 @@ namespace MZZT.DarkForces.Showcase {
 							foreach (int i in lightLevels) {
 								parameters["lightlevel"] =  i < 0 ? "" : i.ToString();
 
-#if SKIA
-								await this.SaveTextureAsPngAsync(
-									ResourceCache.Instance.ImportFrame(pal, i < 0 ? null : cmp, fme, i, true).texture,
-									this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
-								);
-#else
-								using Bitmap bitmap = fme.ToBitmap(pal, i < 0 ? null : cmp, i, false);
-								bitmap.Save(
-									this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters),
-									ImageFormat.Png
-								);
-#endif
+								string outputPath = this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters);
+								Png png = fme.ToPng(pal, i < 0 ? null : cmp, i, false);
+								using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+								png.Write(stream);
 							}
 						}
 					}
@@ -709,35 +694,20 @@ namespace MZZT.DarkForces.Showcase {
 
 								if (this.Settings.ConvertFntFontToSingleImage) {
 									parameters["character"] = "";
-#if SKIA
-									await this.SaveTextureAsPngAsync(
-										fnt.ToTexture(colors, true),
-										this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
-									);
-#else
-									using Bitmap bitmap = fnt.ToBitmap(colors);
-									bitmap.Save(
-										this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters),
-										ImageFormat.Png
-									);
-#endif
+
+									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters);
+									Png png = fnt.ToPng(colors);
+									using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									png.Write(stream);
 								}
 								if (this.Settings.ConvertFntFontToCharacterImages) {
 									foreach ((DfFont.Character c, int i) in fnt.Characters.Select((x, i) => (x, i + fnt.First))) {
 										parameters["character"] = i.ToString();
 
-#if SKIA
-										await this.SaveTextureAsPngAsync(
-											c.ToTexture(fnt, colors, true),
-											this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters)
-										);
-#else
-										using Bitmap bitmap = c.ToBitmap(fnt.Height, colors);
-										bitmap.Save(
-											this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters),
-											ImageFormat.Png
-										);
-#endif
+										string outputPath = this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters);
+										Png png = c.ToPng(fnt.Height, colors);
+										using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+										png.Write(stream);
 									}
 								}
 							}
@@ -811,8 +781,9 @@ namespace MZZT.DarkForces.Showcase {
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using Bitmap bitmap = pal.ToBitmap();
-							bitmap.Save(outputPath);
+							Png png = pal.ToPng();
+							using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							png.Write(stream);
 						}
 						if (this.Settings.ConvertPalPlttToJascPal) {
 							parameters["format"] = "JASC";
@@ -860,8 +831,9 @@ namespace MZZT.DarkForces.Showcase {
 
 							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using Bitmap bitmap = pltt.ToBitmap();
-							bitmap.Save(outputPath);
+							Png png = pltt.ToPng();
+							using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							png.Write(stream);
 						};
 						if (this.Settings.ConvertPalPlttToJascPal) {
 							parameters["format"] = "JASC";

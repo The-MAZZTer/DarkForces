@@ -1,10 +1,9 @@
-﻿using MZZT.DarkForces.FileFormats;
+﻿using Free.Ports.libpng;
+using MZZT.DarkForces.FileFormats;
+using MZZT.Drawing;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -46,7 +45,7 @@ namespace MZZT.DarkForces.Converters {
 						continue;
 					}
 
-					// Find the currnet light level from 0 to 1, where 0 is fully dark and 1 is fully lit.
+					// Find the current light level from 0 to 1, where 0 is fully dark and 1 is fully lit.
 					// Add this to the totalWeight.
 					byte index = map[i];
 					byte r = palette[index * 4];
@@ -128,9 +127,7 @@ namespace MZZT.DarkForces.Converters {
 			} else if (lightLevel < 0) {
 				lightLevel = 0;
 			}
-
 			byte[][] cmpData = cmp.PaletteMaps;
-
 			System.Drawing.Color[] litPalette = new System.Drawing.Color[256];
 			byte[] map = cmpData[lightLevel];
 			// If we want to generate a 24-bit colormap (no difference at light level 0 or 31).
@@ -143,15 +140,12 @@ namespace MZZT.DarkForces.Converters {
 				for (int i = 0; i < 256; i++) {
 					byte targetIndex = cmpData[0][i];
 					System.Drawing.Color target = palette[targetIndex];
-
 					byte fullIndex = cmpData[31][i];
 					System.Drawing.Color full = palette[fullIndex];
-
 					// No difference between fully lit and fully dark so skip this color.
 					if (full == target) {
 						continue;
 					}
-
 					// Find the currnet light level from 0 to 1, where 0 is fully dark and 1 is fully lit.
 					// Add this to the totalWeight.
 					byte index = map[i];
@@ -172,24 +166,20 @@ namespace MZZT.DarkForces.Converters {
 						count++;
 					}
 				}
-
 				// The final weight will be the average % close to fully light (as opposed to fully dark)
 				// this light level is.
 				float weight = 1;
 				if (count > 0) {
 					weight = totalWeight / count;
 				}
-
 				for (int i = 0; i < 256; i++) {
 					if (transparent && i == 0) {
 						litPalette[0] = default;
 					} else {
 						byte targetIndex = cmpData[0][i];
 						System.Drawing.Color target = palette[targetIndex];
-
 						byte fullIndex = cmpData[31][i];
 						System.Drawing.Color full = palette[fullIndex];
-
 						// Weighted average between light and dark.
 						litPalette[i] = System.Drawing.Color.FromArgb(
 							palette[map[i]].A,
@@ -210,7 +200,6 @@ namespace MZZT.DarkForces.Converters {
 			}
 			return litPalette;
 		}
-
 		public static System.Drawing.Color[] ToDrawingColorArray(this DfColormap cmp, DfPalette pal, int lightLevel, bool transparent, bool bypassCmpDithering) =>
 			cmp.ToDrawingColorArray(pal.ToDrawingColorArray(), lightLevel, transparent, bypassCmpDithering);
 
@@ -306,26 +295,16 @@ namespace MZZT.DarkForces.Converters {
 		public static Color[] ToUnityColorArray(this DfColormap cmp, DfPalette pal, int lightLevel, bool transparent, bool bypassCmpDithering) =>
 			cmp.ToUnityColorArray(pal.ToUnityColorArray(), lightLevel, transparent, bypassCmpDithering);
 
-		public static Bitmap ToBitmap(this DfColormap cmp, DfPalette pal, int lightLevel) {
-			Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
+		public static Png ToPng(this DfColormap cmp, DfPalette pal, int lightLevel) {
+			Png png = new(16, 16, PNG_COLOR_TYPE.PALETTE) {
+				Palette = cmp.ToDrawingColorArray(pal, lightLevel, false, false)
+			};
 
-			System.Drawing.Color[] colors = cmp.ToDrawingColorArray(pal, lightLevel, false, false);
-
-			ColorPalette colorPalette = bitmap.Palette;
-			for (int j = 0; j < pal.Palette.Length; j++) {
-				colorPalette.Entries[j] = colors[j];
-			}
-			bitmap.Palette = colorPalette;
-
-			BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-			for (int y = 0; y < bitmap.Height; y++) {
-				byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
-				Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
+			for (int y = 0; y < 16; y++) {
+				png.Data[y] = Enumerable.Range(y * 16, 16).Select(x => (byte)x).ToArray();
 			}
 
-			bitmap.UnlockBits(data);
-			return bitmap;
+			return png;
 		}
 
 		public static async Task WriteJascPalAsync(this DfColormap cmp, DfPalette pal, int lightLevel, Stream stream) {

@@ -1,13 +1,11 @@
 using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.Drawing;
 using MZZT.FileFormats;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -90,11 +88,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.BMP", "*.GIF", "*.PNG" },
+				FileSearchPatterns = new[] { "*.PNG" },
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Import 8-bit BMP, GIF, or PNG"
+				Title = "Import 8-bit PNG"
 			});
 			if (path == null) {
 				return;
@@ -102,33 +100,28 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			Bitmap bitmap;
+			Png png;
 			try {
-				bitmap = BitmapLoader.LoadBitmap(path);
+				using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				png = new(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
 				return;
 			}
-			if (bitmap == null) {
+			if (png == null) {
 				await DfMessageBox.Instance.ShowAsync($"Error reading file.");
 				return;
 			}
-			using (bitmap) {
-				if (!bitmap.PixelFormat.HasFlag(PixelFormat.Indexed)) {
-					await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
-					return;
-				}
 
-				this.Value.Width = bitmap.Width;
-				this.Value.Height = bitmap.Height;
-				this.Value.Pixels = new byte[bitmap.Width * bitmap.Height];
-
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-				for (int i = 0; i < bitmap.Height; i++) {
-					Marshal.Copy(data.Scan0 + data.Stride * (bitmap.Height - i - 1), this.Value.Pixels, i * bitmap.Width, bitmap.Width);
-				}
-				bitmap.UnlockBits(data);
+			DfFrame frame = png.ToFrame();
+			if (frame == null) {
+				await DfMessageBox.Instance.ShowAsync($"Image must be 256 colors or less to import.");
+				return;
 			}
+
+			this.Value.Width = frame.Width;
+			this.Value.Height = frame.Height;
+			this.Value.Pixels = frame.Pixels;
 
 			this.OnDirty();
 
@@ -159,9 +152,10 @@ namespace MZZT.DarkForces.Showcase {
 				bytePalette = this.pal.ToByteArray(false);
 			}
 
-			using Bitmap bitmap = this.Value.ToBitmap(bytePalette);
+			Png png = this.Value.ToPng(bytePalette);
 			try {
-				bitmap.Save(path);
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 			}

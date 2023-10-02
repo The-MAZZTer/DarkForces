@@ -1,9 +1,8 @@
-﻿using MZZT.DarkForces.FileFormats;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using Free.Ports.libpng;
+using MZZT.DarkForces.FileFormats;
+using MZZT.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
@@ -34,26 +33,16 @@ namespace MZZT.DarkForces.Converters {
 				pltt.Palette.Select(x => new Color(x.R / 255f, x.G / 255f, x.B / 255f, 1f))).Concat(
 				Enumerable.Repeat<Color>(default, 255 - pltt.Last)).ToArray();
 
-		public static Bitmap ToBitmap(this LandruPalette pltt) {
-			Bitmap bitmap = new(16, 16, PixelFormat.Format8bppIndexed);
+		public static Png ToPng(this LandruPalette pltt) {
+			Png png = new(16, 16, PNG_COLOR_TYPE.PALETTE) {
+				Palette = pltt.ToDrawingColorArray()
+			};
 
-			System.Drawing.Color[] colors = pltt.ToDrawingColorArray();
-
-			ColorPalette colorPalette = bitmap.Palette;
-			for (int j = 0; j < colors.Length; j++) {
-				colorPalette.Entries[j] = colors[j];
-			}
-			bitmap.Palette = colorPalette;
-
-			BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-			for (int y = 0; y < bitmap.Height; y++) {
-				byte[] bytes = Enumerable.Range(y * bitmap.Width, bitmap.Width).Select(x => (byte)x).ToArray();
-				Marshal.Copy(bytes, 0, data.Scan0 + data.Stride * y, bytes.Length);
+			for (int y = 0; y < 16; y++) {
+				png.Data[y] = Enumerable.Range(y * 16, 16).Select(x => (byte)x).ToArray();
 			}
 
-			bitmap.UnlockBits(data);
-			return bitmap;
+			return png;
 		}
 
 		public static async Task WriteJascPalAsync(this LandruPalette pltt, Stream stream) {

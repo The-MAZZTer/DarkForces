@@ -1,10 +1,9 @@
-﻿using MZZT.DarkForces.FileFormats;
+﻿using Free.Ports.libpng;
+using MZZT.DarkForces.FileFormats;
+using MZZT.Drawing;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using UnityEngine;
-using Color = System.Drawing.Color;
+using static MZZT.DarkForces.FileFormats.AutodeskVue;
 
 namespace MZZT.DarkForces.Converters {
 	public static class BmConverter {
@@ -46,39 +45,29 @@ namespace MZZT.DarkForces.Converters {
 				bypassCmpDithering), keepTextureReadable);
 		}
 
-		public static Bitmap ToBitmap(this DfBitmap.Page page, byte[] pal) {
-			byte[] pixels = page.Pixels;
-
+		public static Png ToPng(this DfBitmap.Page page, byte[] pal) {
 			int width = page.Width;
 			int height = page.Height;
 
-			Bitmap bitmap = new(width, height, PixelFormat.Format8bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			for (int i = 0; i < palette.Entries.Length; i++) {
-				palette.Entries[i] = Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
+			Png png = new(width, height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[256]
+			};
+			for (int i = 0; i < 256; i++) {
+				png.Palette[i] = System.Drawing.Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
 			}
-			bitmap.Palette = palette;
 
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-				
-				for (int y = 0; y < height; y++) {
-					Marshal.Copy(pixels, width * y, data.Scan0 + data.Stride * (height - y - 1), data.Width);
-				}
-
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
+			for (int y = 0; y < height; y++) {
+				Buffer.BlockCopy(page.Pixels, y * width, png.Data[height - y - 1], 0, width);
 			}
-			return bitmap;
+			return png;
 		}
 
-		public static Bitmap ToBitmap(this DfBitmap.Page page, DfPalette pal, bool forceTransparent) =>
-			page.ToBitmap(pal.ToByteArray(forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0));
+		public static Png ToPng(this DfBitmap.Page page, DfPalette pal, bool forceTransparent) =>
+			page.ToPng(pal.ToByteArray(forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0));
 
-		public static Bitmap ToBitmap(this DfBitmap.Page page, DfPalette pal, DfColormap cmp, int lightLevel, bool forceTransparent, bool bypassCmpDithering) {
+		public static Png ToPng(this DfBitmap.Page page, DfPalette pal, DfColormap cmp, int lightLevel, bool forceTransparent,
+			bool bypassCmpDithering) {
+
 			if (lightLevel > 31) {
 				lightLevel = 31;
 			} else if (lightLevel < 0) {
@@ -86,11 +75,29 @@ namespace MZZT.DarkForces.Converters {
 			}
 
 			if (cmp == null) {
-				return page.ToBitmap(pal, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0);
+				return page.ToPng(pal, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0);
 			} else {
-				return page.ToBitmap(cmp.ToByteArray(pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
+				return page.ToPng(cmp.ToByteArray(pal, lightLevel, forceTransparent || (page.Flags & DfBitmap.Flags.Transparent) > 0,
 					bypassCmpDithering));
 			}
+		}
+
+		public static DfBitmap.Page ToBmPage(this Png png) {
+			if (png.ColorType != PNG_COLOR_TYPE.PALETTE) {
+				return null;
+			}
+
+			DfBitmap.Page page = new() {
+				Flags = (Math.Abs(Math.Log(png.Width, 2) % 1) < 0.001 && Math.Abs(Math.Log(png.Height, 2) % 1) < 0.001) ? DfBitmap.Flags.NotWeapon : 0,
+				Width = (ushort)png.Width,
+				Height = (ushort)png.Height,
+				Pixels = new byte[png.Width * png.Height]
+			};
+
+			for (int y = 0; y < png.Height; y++) {
+				Buffer.BlockCopy(png.Data[png.Height - y - 1], 0, page.Pixels, y * (int)png.Width, (int)png.Width);
+			}
+			return page;
 		}
 	}
 }

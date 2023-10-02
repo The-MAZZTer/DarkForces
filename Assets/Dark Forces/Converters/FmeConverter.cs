@@ -1,10 +1,10 @@
-﻿using MZZT.DarkForces.FileFormats;
+﻿using Free.Ports.libpng;
+using MZZT.DarkForces.FileFormats;
+using MZZT.Drawing;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using UnityEngine;
-using Color = System.Drawing.Color;
+using static MZZT.DarkForces.FileFormats.AutodeskVue;
 
 namespace MZZT.DarkForces.Converters {
 	public static class FmeConverter {
@@ -67,45 +67,29 @@ namespace MZZT.DarkForces.Converters {
 		public static Sprite ToSprite(this DfFrame fme, DfPalette pal, DfColormap cmp, int lightLevel, bool bypassCmpDithering, bool keepTextureReadable = false) =>
 			fme.ToSprite(fme.ToTexture(pal, cmp, lightLevel, bypassCmpDithering, keepTextureReadable));
 
-		public static Bitmap ToBitmap(this DfFrame fme, byte[] pal) {
-			byte[] pixels = fme.Pixels;
-
+		public static Png ToPng(this DfFrame fme, byte[] pal) {
 			int width = fme.Width;
 			int height = fme.Height;
 
-			Bitmap bitmap = new(width, height, PixelFormat.Format8bppIndexed);
-
-			ColorPalette palette = bitmap.Palette;
-			for (int i = 0; i < palette.Entries.Length; i++) {
-				palette.Entries[i] = Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
+			Png png = new(width, height, PNG_COLOR_TYPE.PALETTE) {
+				Palette = new System.Drawing.Color[256]
+			};
+			for (int i = 0; i < 256; i++) {
+				png.Palette[i] = System.Drawing.Color.FromArgb(pal[i * 4 + 3], pal[i * 4], pal[i * 4 + 1], pal[i * 4 + 2]);
 			}
-			bitmap.Palette = palette;
 
-			try {
-				BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-
-				for (int y = 0; y < height; y++) {
-					if (!fme.Flip) {
-						Marshal.Copy(pixels, width * y, data.Scan0 + data.Stride * (height - y - 1), data.Width);
-					} else {
-						for (int x = 0; x < width; x++) {
-							Marshal.Copy(pixels, width * y + x, data.Scan0 + data.Stride * (height - y - 1) + (width - x - 1), 1);
-						}
-					}
+			for (int y = 0; y < height; y++) {
+				Buffer.BlockCopy(fme.Pixels, y * width, png.Data[height - y - 1], 0, width);
+				if (fme.Flip) {
+					Array.Reverse(png.Data[height - y - 1]);
 				}
-
-				bitmap.UnlockBits(data);
-			} catch (Exception) {
-				bitmap.Dispose();
-				throw;
 			}
-			return bitmap;
+			return png;
 		}
 
-		public static Bitmap ToBitmap(this DfFrame fme, DfPalette pal) =>
-			fme.ToBitmap(pal.ToByteArray(true));
+		public static Png ToPng(this DfFrame fme, DfPalette pal) => fme.ToPng(pal.ToByteArray(true));
 
-		public static Bitmap ToBitmap(this DfFrame fme, DfPalette pal, DfColormap cmp, int lightLevel, bool bypassCmpDithering) {
+		public static Png ToPng(this DfFrame fme, DfPalette pal, DfColormap cmp, int lightLevel, bool bypassCmpDithering) {
 			if (lightLevel > 31) {
 				lightLevel = 31;
 			} else if (lightLevel < 0) {
@@ -113,10 +97,27 @@ namespace MZZT.DarkForces.Converters {
 			}
 
 			if (cmp == null) {
-				return fme.ToBitmap(pal);
+				return fme.ToPng(pal);
 			} else {
-				return fme.ToBitmap(cmp.ToByteArray(pal, lightLevel, true, bypassCmpDithering));
+				return fme.ToPng(cmp.ToByteArray(pal, lightLevel, true, bypassCmpDithering));
 			}
+		}
+
+		public static DfFrame ToFrame(this Png png) {
+			if (png.ColorType != PNG_COLOR_TYPE.PALETTE) {
+				return null;
+			}
+
+			DfFrame frame = new() {
+				Width = (int)png.Width,
+				Height = (int)png.Height,
+				Pixels = new byte[png.Width * png.Height]
+			};
+
+			for (int y = 0; y < png.Height; y++) {
+				Buffer.BlockCopy(png.Data[png.Height - y - 1], 0, frame.Pixels, y * (int)png.Width, (int)png.Width);
+			}
+			return frame;
 		}
 	}
 }

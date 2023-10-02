@@ -1,9 +1,9 @@
 using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.Drawing;
 using MZZT.FileFormats;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -176,11 +176,11 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.BMP", "*.GIF", "*.PNG" },
+				FileSearchPatterns = new[] { "*.PNG" },
 				SelectButtonText = "Export",
 				SelectedPathMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Export to BMP/GIF/PNG"
+				Title = "Export to PNG"
 			});
 			if (path == null) {
 				return;
@@ -188,8 +188,13 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			using Bitmap bitmap = this.Value.ToBitmap();
-			bitmap.Save(path);
+			Png png = this.Value.ToPng();
+			try {
+				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				png.Write(stream);
+			} catch (Exception ex) {
+				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
+			}
 		}
 
 		public async void ExportToJascPalAsync() {
