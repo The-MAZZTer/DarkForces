@@ -45,9 +45,13 @@ This DLL should work fine on any .NET Core target platform.
 
 To build, open the solution file in the MZZT.DarkForces folder with Visual Studio 2022 (previous versions may work as well) and build the MZZT.DarkForces.FileFormats project for Release AnyCPU (use the dropdown at the top of Visual Studio which may say Debug or Release to switch). The DLL files will be output in Assets\Dark Forces\File Formats, ready for use in Unity, which should now be able to open and run the project successfully. You can also take the DLLs from there and use them in other projects if you want.
 
+For IL2CPP builds (eg WebGL) you should add the IL2CPP define symbol to the MZZT.DarkForces.FileFormats project before building it, which adds a workaround to GMD/MIDI files not loading/saving properly.
+
 ### Unity Project
 
 Ensure you build the file format DLL in Release mode otherwise the Unity project will be unable to run or build.
+
+For IL2CPP builds (eg WebGL) you should add the IL2CPP define symbol to the MZZT.DarkForces.FileFormats DLL project before building it, which adds a workaround to GMD/MIDI files not loading/saving properly.
 
 To build the Unity showcase project, first build the file format DLL as above. Then you can open the checkout folder using Unity Editor 2022.3. You can then build using the File > Build Settings... menu option in Unity Editor.
 
