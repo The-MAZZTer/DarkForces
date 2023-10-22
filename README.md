@@ -13,11 +13,15 @@ It contains:
 
 ## Usage
 
+You can use the live web version here: https://the-mazzter.github.io/DarkForcesSite/
+
+Or you can download and run on your PC.
+
 For Windows, extract the release ZIP file anywhere you want on disk, and run the Dark Forces Showcase EXE.
 
 For Linux, extract the TAR.GZ and run the .x86_64 binary file.
 
-For WebAssembly, throw the files up on a web server. The web server must support gzip decompression of GZ files (you can create your own build with that optiond isabled if it doens't; see Unity docs for more details).
+For WebAssembly, if you want to reproduce the website version for some reason, throw the files up on a web server. The web server must support gzip decompression of GZ files (you can create your own build with that optiond isabled if it doens't; see Unity docs for more details).
 
 WebAssembly has extra directions included in a dialog that appears on start.
 
