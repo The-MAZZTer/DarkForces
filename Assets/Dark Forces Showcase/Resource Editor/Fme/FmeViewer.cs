@@ -3,6 +3,7 @@ using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.Drawing;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (baseFile != null) {
 				string folder = Path.GetDirectoryName(baseFile);
 				string path = Path.Combine(folder, file);
-				return await DfFile.GetFileFromFolderOrContainerAsync<T>(path) ?? await ResourceCache.Instance.GetAsync<T>(file);
+				return await DfFileManager.Instance.ReadAsync<T>(path) ?? await ResourceCache.Instance.GetAsync<T>(file);
 			}
 
 			return await ResourceCache.Instance.GetAsync<T>(file);
@@ -88,7 +89,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PNG" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("PNG Images", "*.PNG"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -102,7 +106,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			Png png;
 			try {
-				using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 				png = new(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
@@ -132,7 +136,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PNG" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("PNG Image", "*.PNG"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedPathMustExist = true,				
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -154,7 +161,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			Png png = this.Value.ToPng(bytePalette);
 			try {
-				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
 				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
@@ -165,7 +172,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PAL", "*.CMP" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Palette Files", "*.PAL", "*.CMP"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Select",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -236,19 +246,22 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
 			}
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await this.Value.SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await this.Value.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await this.Value.SaveAsync(stream);
+			}
 
 			this.ResetDirty();
 		}
@@ -261,7 +274,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}

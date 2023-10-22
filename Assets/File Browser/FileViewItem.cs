@@ -1,5 +1,8 @@
 ﻿using MZZT.Data.Binding;
+using MZZT.IO.FileProviders;
+using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,7 +11,7 @@ namespace MZZT {
 	/// <summary>
 	/// A file system item.
 	/// </summary>
-	public class FileViewItem : Databind<FileSystemItem>, IPointerClickHandler {
+	public class FileViewItem : Databind<IVirtualItem>, IPointerClickHandler {
 		[Header("File View Item"), SerializeField]
 		private FileView childView = null;
 		/// <summary>
@@ -23,27 +26,73 @@ namespace MZZT {
 		private GameObject expanded = null;
 		[SerializeField]
 		private Toggle node = null;
-		//[SerializeField]
-		//private LayoutElement size = null;
+		[SerializeField]
+		private TMP_Text icon = null;
+		[SerializeField]
+		private TMP_Text sizeText = null;
 		/// <summary>
 		/// The Toggle for the current node.
 		/// </summary>
 		public Toggle Node => this.node;
 
+		/// <summary>
+		/// Convert the size to a user readable string.
+		/// </summary>
+		private string DisplaySize {
+			get {
+				if (this.Value.Size == null) {
+					return string.Empty;
+				}
+
+				string prefix = "BKMGTPEZY??????????????????????";
+				float size = this.Value.Size.Value;
+				int pos = 0;
+				while (size >= 1000) {
+					size /= 1024;
+					pos++;
+				}
+				if (pos == 0) {
+					return $"{size:0} bytes";
+				}
+				return $"{size:0.##} {prefix[pos]}B";
+			}
+		}
+
+		/// <summary>
+		/// The material icon glyph to use for the item.
+		/// </summary>
+		private string IconGlyph {
+			get {
+				// Unity doesn't support ligatures so we need to use the code point.
+				// TODO file container "\ueb2c"
+				if (this.Value.Parent == null) {
+					return "\ue30a";
+				}
+				if (this.Value is IVirtualFolder) {
+					if (Path.GetPathRoot(this.Value.FullPath) == this.Value.FullPath) {
+						return "\ue1db";
+					}
+					return "\ue2c7";
+				}
+				return "\ue24d";
+			}
+		}
+
 		protected override void OnInvalidate() {
-			/*if (this.size != null) {
-				this.size.minWidth = this.size.preferredWidth = LayoutUtility.GetPreferredWidth((RectTransform)this.size.transform);
-			}*/
+			if (this.icon != null) {
+				this.icon.text = this.IconGlyph;
+			}
+			if (this.sizeText != null) {
+				this.sizeText.text = this.DisplaySize;
+			}
 
 			if (this.childView != null) {
 				// Recurse current settings down to children.
 				FileView parent = (FileView)this.Parent;
 				if (parent != null) {
-					this.childView.AllowNavigateGob = parent.AllowNavigateGob;
-					this.childView.AllowNavigateLfd = parent.AllowNavigateLfd;
 					this.childView.FileSearchPatterns = parent.FileSearchPatterns;
 					this.childView.ToggleGroup = parent.ToggleGroup;
-					this.childView.Container = this.Value;
+					this.childView.Container = (IVirtualFolder)this.Value;
 				}
 			}
 

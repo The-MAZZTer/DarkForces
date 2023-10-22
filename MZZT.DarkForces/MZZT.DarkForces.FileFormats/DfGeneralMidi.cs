@@ -2,8 +2,10 @@
 using MZZT.FileFormats.Audio;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using static MZZT.FileFormats.Audio.Midi;
@@ -89,11 +91,18 @@ namespace MZZT.DarkForces.FileFormats {
 		public override async Task LoadAsync(Stream stream) {
 			this.ClearWarnings();
 
+#if !IL2CPP
 			Header header = await stream.ReadAsync<Header>(Endianness.Big);
+#else
+			Header header = await stream.ReadAsync<Header>();
+			byte[] a = BitConverter.GetBytes(header.Size);
+			Array.Reverse(a);
+			header.Size = BitConverter.ToInt32(a, 0);
+#endif
 			if (!header.IsMagicValid) {
 				throw new FormatException("GMID header not found!");
 			}
-
+			 
 			this.Mdpg = null;
 			this.Tempo = 0x1E0;
 			this.TrackData.Clear();
@@ -127,10 +136,20 @@ namespace MZZT.DarkForces.FileFormats {
 			size += Marshal.SizeOf<ChunkHeader>() + Marshal.SizeOf<TracksHeader>();
 			size += this.TrackData.Sum(x => Marshal.SizeOf<ChunkHeader>() + x.Length);
 
+#if !IL2CPP
+			await stream.WriteAsync(new Header() {
+				IsMagicValid = true,
+				Size = size
+			}, Endianness.Big);
+#else
+			byte[] a = BitConverter.GetBytes(size);
+			Array.Reverse(a);
+			size = BitConverter.ToInt32(a, 0);
 			await stream.WriteAsync(new Header() {
 				IsMagicValid = true,
 				Size = size
 			});
+#endif
 
 			Midi midi = this.ToMidi();
 			await midi.SaveAsync(stream);

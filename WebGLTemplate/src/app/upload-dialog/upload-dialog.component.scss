@@ -1,0 +1,11 @@
+:host {
+	div[mat-dialog-actions] {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+
+		> .spacer {
+			flex: 1 1 0;
+		}
+	}
+}

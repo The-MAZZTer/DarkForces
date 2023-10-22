@@ -3,7 +3,15 @@ using CSharpSynth.Synthesis;
 using MZZT.DarkForces.FileFormats;
 using MZZT.FileFormats.Audio;
 using System;
+#if !UNITY_WEBGL
+using System;
+#else
+using System.Diagnostics;
+#endif
 using System.IO;
+#if UNITY_WEBGL
+using System.Linq;
+#endif
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -21,37 +29,67 @@ namespace MZZT.DarkForces {
     private MidiSequencer midiSequencer;
     private StreamSynthesizer midiStreamSynthesizer;
 
-    private void Start() {
-      this.GetComponent<AudioSource>().spatialize = false;
-
-      this.midiStreamSynthesizer = new StreamSynthesizer(44100, 2, 1024, 40);
-      this.sampleBuffer = new float[this.midiStreamSynthesizer.BufferSize];
-
-      this.midiStreamSynthesizer.LoadBank(this.bankFilePath);
-
-      this.midiSequencer = new MidiSequencer(this.midiStreamSynthesizer) {
-        Looping = true
-      };
-    }
-
-    /// <summary>
-    /// Whether or not the fight music should be played instead of the stalk music.
-    /// </summary>
-    public bool FightMusic { get; set; }
+		/// <summary>
+		/// Whether or not the fight music should be played instead of the stalk music.
+		/// </summary>
+		public bool FightMusic { get; set; }
 
     /// <summary>
     /// Whether or not the music is currently playing.
     /// </summary>
     public bool IsPlaying { get; private set; }
 
-    /// <summary>
-    /// Play music.
-    /// </summary>
-    /// <param name="level">Which level music to play, starting at 0.</param>
-    public async Task PlayAsync(int level) {
+		private void Start() {
+			this.Init();
+		}
+
+		private void Init() {
+			if (this.midiSequencer != null) {
+				return;
+			}
+
+			this.GetComponent<AudioSource>().spatialize = false;
+
+#if !UNITY_WEBGL
+			this.midiStreamSynthesizer = new StreamSynthesizer(44100, 2, 1024, 40);
+#else
+			this.midiStreamSynthesizer = new StreamSynthesizer(44100, 2, 102400, 40);
+#endif
+			this.sampleBuffer = new float[this.midiStreamSynthesizer.BufferSize];
+
+			this.midiStreamSynthesizer.LoadBank(this.bankFilePath);
+
+			this.midiSequencer = new MidiSequencer(this.midiStreamSynthesizer) {
+				Looping = true
+			};
+
+#if UNITY_WEBGL
+			this.sources = Enumerable.Range(0, 2).Select(x => {
+				GameObject child = new() {
+					name = "AudioSource"
+				};
+				child.transform.SetParent(this.transform, false);
+				AudioSource source = child.AddComponent<AudioSource>();
+				source.playOnAwake = false;
+				source.spatialBlend = 0;
+				source.spatialize = false;
+				source.volume = this.GetComponent<AudioSource>().volume;
+				source.clip = AudioClip.Create(x.ToString(), this.sampleBuffer.Length, 2, 44100, false);
+				return source;
+			}).ToArray();
+#endif
+		}
+
+		/// <summary>
+		/// Play music.
+		/// </summary>
+		/// <param name="level">Which level music to play, starting at 0.</param>
+		public async Task PlayAsync(int level) {
+			this.Init();
+
       this.Stop();
 
-      string filename = $"{(this.FightMusic ? "FIGHT" : "STALK")}-{level + 1:00}.GMD";
+			string filename = $"{(this.FightMusic ? "FIGHT" : "STALK")}-{level + 1:00}.GMD";
       DfGeneralMidi gmidi = await ResourceCache.Instance.GetGeneralMidi(filename);
       if (gmidi == null) {
         return;
@@ -59,27 +97,53 @@ namespace MZZT.DarkForces {
 
       // Music player can't handle GMIDI, convert to MIDI.
       Midi midi = gmidi.ToMidi();
-      // Remove the weird chunks not standard to MIDI.
-      midi.Chunks.Clear();
+			// Remove the weird chunks not standard to MIDI.
+			midi.Chunks.Clear();
       using MemoryStream mem = new();
       await midi.SaveAsync(mem);
       mem.Position = 0;
 
-      this.midiSequencer.LoadMidi(mem, 0, false);
-      this.midiSequencer.Play();
+			this.midiSequencer.LoadMidi(mem, 0, false);
+			this.midiSequencer.Play();
 
 			this.IsPlaying = true;
-    }
+#if UNITY_WEBGL
+			this.nextClipTime = AudioSettings.dspTime;
+			this.nextClipOffset = 0;
 
-    /// <summary>
-    /// Stop playback.
-    /// </summary>
-    public void Stop() {
-      this.midiSequencer.Stop(true);
-      this.IsPlaying = false;
-    }
+			this.nextClip = this.GenerateClip();
+#endif
+		}
 
-    private void OnAudioFilterRead(float[] data, int _) {
+		/// <summary>
+		/// Stop playback.
+		/// </summary>
+		public void Stop() {
+      if (this.midiSequencer != null) {
+				this.midiSequencer.Stop(true);
+			}
+
+			this.IsPlaying = false;
+#if UNITY_WEBGL
+			if (this.sources != null) {
+				Array.Clear(this.sampleBuffer, 0, this.sampleBuffer.Length);
+				foreach (AudioSource source in this.sources) {
+					source.Stop();
+					source.clip.SetData(this.sampleBuffer, 0);
+				}
+			}
+			this.currentClip = null;
+			this.nextClip = null;
+			this.nextQueuedClip = null;
+			this.nextClipTime = -1;
+			this.nextQueuedClipTime = double.PositiveInfinity;
+			this.nextSourceIndex = 0;
+			this.nextClipOffset = 0;
+#endif
+		}
+
+#if !UNITY_WEBGL
+		private void OnAudioFilterRead(float[] data, int _) {
       if (!this.IsPlaying) {
         Array.Clear(data, 0, data.Length);
         return;
@@ -89,8 +153,27 @@ namespace MZZT.DarkForces {
 
       Buffer.BlockCopy(this.sampleBuffer, 0, data, 0, sizeof(float) * data.Length);
     }
+#else
+		private AudioClip GenerateClip() {
+			this.midiStreamSynthesizer.GetNext(this.sampleBuffer);
 
-    public bool PlayWhilePaused { get; set; } = true;
+			AudioClip clip = this.sources[(this.nextSourceIndex + 1) % this.sources.Length].clip;
+			clip.SetData(this.sampleBuffer, 0);
+
+			return clip;
+		}
+
+		private AudioSource[] sources;
+		private AudioClip currentClip;
+		private AudioClip nextQueuedClip;
+		private double nextQueuedClipTime = double.PositiveInfinity;
+		private double nextClipTime = -1;
+		private AudioClip nextClip;
+		private int nextSourceIndex = 0;
+		private double nextClipOffset = 0;
+#endif
+
+		public bool PlayWhilePaused { get; set; } = true;
 
     private bool wasPaused = false;
 		private void Update() {
@@ -105,6 +188,43 @@ namespace MZZT.DarkForces {
         }
         this.wasPaused = isPaused;
       }
-    }
+
+#if UNITY_WEBGL
+			if (!this.IsPlaying) {
+				return;
+			}
+
+			if (this.nextQueuedClipTime == double.PositiveInfinity && (this.currentClip == null || AudioSettings.dspTime >= this.nextClipTime -
+				this.currentClip.length / 3)) {
+
+				this.nextQueuedClipTime = this.nextClipTime;
+				this.nextQueuedClip = this.nextClip;
+
+				AudioSource source = this.sources[this.nextSourceIndex];
+				this.nextSourceIndex = (this.nextSourceIndex + 1) % this.sources.Length;
+				if (AudioSettings.dspTime > this.nextClipTime) {
+					//source.time = (float)(this.nextClipOffset + AudioSettings.dspTime - this.nextClipTime);
+					source.time = (float)this.nextClipOffset;
+					source.Play();
+				} else {
+					source.time = (float)this.nextClipOffset;
+					source.PlayScheduled(this.nextClipTime);
+				}
+#if UNITY_EDITOR
+				this.nextClipTime += this.nextClip.length / 4;
+#else
+				this.nextClipTime += this.nextClip.length / 2;
+#endif
+				this.nextClip = this.GenerateClip();
+			}
+
+			if (AudioSettings.dspTime >= this.nextQueuedClipTime) {
+				this.currentClip = this.nextQueuedClip;
+				this.nextQueuedClipTime = double.PositiveInfinity;
+				this.nextQueuedClip = null;
+				this.nextClipOffset = 0;
+			}
+#endif
+		}
 	}
 }

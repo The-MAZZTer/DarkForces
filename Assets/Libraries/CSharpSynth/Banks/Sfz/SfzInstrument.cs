@@ -20,7 +20,7 @@ namespace CSharpSynth.Banks.Sfz {
       //ReadFromStream(File.Open(Instrumentfile, FileMode.Open), Path.GetDirectoryName(Instrumentfile) + "\\", bank);
       TextAsset instrumentFile = Resources.Load(Instrumentfile) as TextAsset;
       Stream instrumentStream = new MemoryStream(instrumentFile.bytes);
-      Debug.Log(Instrumentfile);
+      //Debug.Log(Instrumentfile);
       this.ReadFromStream(instrumentStream, Path.GetDirectoryName(Instrumentfile) + "/", bank);
 
       this.CreateKeyMap();

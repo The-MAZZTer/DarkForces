@@ -1,7 +1,6 @@
 ﻿using Free.Ports.libpng;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Drawing;
-using System;
 using System.IO;
 using System.Linq;
 using System.Text;

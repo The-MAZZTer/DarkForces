@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace MZZT.DarkForces.Showcase {
 	/// <summary>
@@ -17,6 +18,13 @@ namespace MZZT.DarkForces.Showcase {
 			await PauseMenu.Instance.BeginLoadingAsync();
 
 			ResourceCache.Instance.ClearWarnings();
+
+			bool mute = PlayerPrefs.GetInt("PlayMusic", 1) == 0;
+			float volume = PlayerPrefs.GetFloat("Volume", 1);
+			foreach (AudioSource source in LevelMusic.Instance.GetComponentsInChildren<AudioSource>(true)) {
+				source.mute = mute;
+				source.volume = volume;
+			}
 
 			await LevelLoader.Instance.LoadLevelListAsync(true);
 

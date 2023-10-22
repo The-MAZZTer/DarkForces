@@ -12,10 +12,10 @@ namespace CSharpSynth.Wave {
 		public Sample(string filename)
         {
 			//UnitySynth - remove non Unity file path check
-			//if (System.IO.File.Exists(filename) == false)
+			//if (System.IO.FileManager.Instance.FileExists(filename) == false)
 			//    throw new System.IO.FileNotFoundException("Sample not found: " + Path.GetFileNameWithoutExtension(filename));
 			this.Name = Path.GetFileNameWithoutExtension(filename);
-            Debug.Log("filename: " + filename + " name " + this.Name);
+            //Debug.Log("filename: " + filename + " name " + this.Name);
             WaveFileReader WaveReader = new WaveFileReader(filename);
             IChunk[] chunks = WaveReader.ReadAllChunks();
             WaveReader.Close(); //Close the reader and the underlying stream.

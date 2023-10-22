@@ -1,4 +1,5 @@
 ﻿using MZZT.Data.Binding.UI;
+using MZZT.IO.FileProviders;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Linq;
 namespace MZZT.DarkForces.Showcase {
 	public class ModFileListItemOverrides : DataboundStringDropdown {
 		private string lastDisplayName;
-		protected override void Invalidate() {
+		protected override async void Invalidate() {
 			if (this.Databinder != null && this.Databinder.Value is string modFile &&
 				this.lastDisplayName != modFile?.ToUpper()) {
 
@@ -23,7 +24,7 @@ namespace MZZT.DarkForces.Showcase {
 				string folder = FileLoader.Instance.DarkForcesFolder;
 				if (!string.IsNullOrEmpty(folder)) {
 					folder = Path.Combine(folder, "LFD");
-					foreach (string lfd in Directory.EnumerateFiles(folder, "*.LFD")) {
+					await foreach (string lfd in FileManager.Instance.FolderEnumerateFilesAsync(folder, "*.LFD")) {
 						lfds.Add(Path.GetFileName(lfd).ToUpper());
 					}
 

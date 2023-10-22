@@ -1,5 +1,6 @@
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -101,20 +102,23 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
 			}
 
-			using (FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None)) {
+			using (Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None)) {
 				if (this.encoding == null) {
 					// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-					using MemoryStream mem = new();
-					await this.Value.SaveAsync(mem);
-
-					mem.Position = 0;
-					await mem.CopyToAsync(stream);
+					if (stream is FileStream) {
+						using MemoryStream mem = new();
+						await this.Value.SaveAsync(mem);
+						mem.Position = 0;
+						await mem.CopyToAsync(stream);
+					} else {
+						await this.Value.SaveAsync(stream);
+					}
 				} else {
 					using StreamWriter writer = new(stream, this.encoding);
 					await writer.WriteAsync(this.text.text);
@@ -132,7 +136,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}

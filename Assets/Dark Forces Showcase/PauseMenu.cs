@@ -24,6 +24,7 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		protected int loadingCount;
+		private TaskCompletionSource<bool> taskSource;
 		public async Task BeginLoadingAsync() {
 			if (this.loadingCount == 0) {
 				if (this.background != null) {
@@ -45,9 +46,13 @@ namespace MZZT.DarkForces.Showcase {
 				}
 
 				this.loading.gameObject.SetActive(true);
-			}
+				this.loadingCount++;
 
-			this.loadingCount++;
+				this.taskSource = new TaskCompletionSource<bool>();
+				await this.taskSource.Task;
+			} else {
+				this.loadingCount++;
+			}
 		}
 
 		public virtual void EndLoading() {
@@ -83,8 +88,19 @@ namespace MZZT.DarkForces.Showcase {
 			}
 		}
 
+		private int taskCount = 0;
 		protected virtual void Update() {
 			PlayerInput.all[0].uiInputModule.enabled = true;
+
+			if (this.taskSource != null) {
+				this.taskCount++;
+
+				if (this.taskCount >= 2) {
+					this.taskSource.SetResult(true);
+					this.taskSource = null;
+					this.taskCount = 0;
+				}
+			}
 		}
 
 		protected virtual void GenerateMenu() {
@@ -133,6 +149,12 @@ namespace MZZT.DarkForces.Showcase {
 			this.ApplyMenuChanges();
 
 			SceneManager.LoadScene("Menu");
+		}
+
+		protected override void OnDestroy() {
+			base.OnDestroy();
+
+			Time.timeScale = 1;
 		}
 	}
 }

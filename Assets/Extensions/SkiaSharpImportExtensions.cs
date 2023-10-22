@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿#if SKIASHARP
+using SkiaSharp;
 using UnityEngine;
 
 namespace MZZT {
@@ -19,3 +20,4 @@ namespace MZZT {
 		);
 	}
 }
+#endif

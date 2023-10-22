@@ -70,7 +70,7 @@ namespace MZZT.DarkForces.FileFormats {
 			[".PLT"] = typeof(LandruPalette),
 			[".VOIC"] = typeof(CreativeVoice)
 		};
-	
+
 		public static Type DetectFileTypeByName(string path) {
 			path = Path.GetFileName(path).ToUpper();
 			if (FileTypes.TryGetValue(path, out Type type)) {
@@ -140,7 +140,7 @@ namespace MZZT.DarkForces.FileFormats {
 					}
 				}
 
-				T file = new T();
+				T file = new();
 				await file.LoadAsync(mem);
 				return file;
 			}

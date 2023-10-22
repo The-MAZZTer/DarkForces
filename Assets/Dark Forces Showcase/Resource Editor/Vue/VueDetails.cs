@@ -1,6 +1,7 @@
 ﻿using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.IO.FileProviders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -402,7 +403,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.3DO" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("3D Objects", "*.3DO"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Open",
 				SelectedFileMustExist = true,
 				SelectedPathMustExist = true,
@@ -417,7 +421,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			Df3dObject obj = await DfFile.GetFileFromFolderOrContainerAsync<Df3dObject>(path);
+			Df3dObject obj = await DfFileManager.Instance.ReadAsync<Df3dObject>(path);
 			if (obj == null) {
 				await DfMessageBox.Instance.ShowAsync("Could not read file.");
 				return;
@@ -440,7 +444,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.VUE" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("VUE File", "*.VUE"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedFileMustExist = false,
 				SelectedPathMustExist = true,
@@ -463,12 +470,15 @@ namespace MZZT.DarkForces.Showcase {
 			objects[this.Value.Key] = this.Value.Value;
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await vue.SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await vue.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await vue.SaveAsync(stream);
+			}
 		}
 
 		public async void RebaseAsync() {

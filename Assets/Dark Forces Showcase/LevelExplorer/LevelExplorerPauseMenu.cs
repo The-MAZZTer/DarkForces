@@ -41,13 +41,6 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private Toggle warnings = null;
 
-		protected override void Start() {
-			base.Start();
-
-			LevelMusic.Instance.GetComponent<AudioSource>().mute = PlayerPrefs.GetInt("PlayMusic", 1) == 0;
-			LevelMusic.Instance.GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("Volume", 1);
-		}
-
 		private int[] layers;
 		private void PopulateLayers() {
 			this.layerSelection.ClearOptions();
@@ -175,22 +168,25 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void OnPlayMusicValueChangedAsync(int value) {
-			int existing = LevelMusic.Instance.IsPlaying ? (LevelMusic.Instance.FightMusic ? 2 : 1) : 0;
+			int existing = !LevelMusic.Instance.GetComponent<AudioSource>().mute ? (LevelMusic.Instance.FightMusic ? 2 : 1) : 0;
 			if (existing == value) {
 				return;
 			}
 
-			PlayerPrefs.SetInt("PlayMusic", (value > 0) ? 1 : 0);
+			bool mute = value == 0;
+			PlayerPrefs.SetInt("PlayMusic", mute ? 0 : 1);
 
-			LevelMusic.Instance.Stop();
-			LevelMusic.Instance.FightMusic = value == 2;
-			if (value > 0) {
-				await LevelMusic.Instance.PlayAsync(LevelLoader.Instance.CurrentLevelIndex);
+			foreach (AudioSource source in LevelMusic.Instance.GetComponentsInChildren<AudioSource>(true)) {
+				source.mute = mute;
 			}
+			LevelMusic.Instance.FightMusic = value == 2;
+			await LevelMusic.Instance.PlayAsync(LevelLoader.Instance.CurrentLevelIndex);
 		}
 
 		public void OnVolumeChanged(float value) {
-			LevelMusic.Instance.GetComponent<AudioSource>().volume = value;
+			foreach (AudioSource source in LevelMusic.Instance.GetComponentsInChildren<AudioSource>(true)) {
+				source.volume = value;
+			}
 			PlayerPrefs.SetFloat("Volume", value);
 		}
 	}

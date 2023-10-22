@@ -264,7 +264,7 @@ namespace MZZT.DarkForces {
 
 		public double TotalLength => Enumerable.Range(0, this.clips.Length).Select(x => this.GetBlockLength(x)).Sum();
 
-		private void FixedUpdate() {
+		private void Update() {
 			if (this.currentClipStartPos < 0 || this.pauseTime > 0) {
 				return;
 			}
@@ -288,8 +288,13 @@ namespace MZZT.DarkForces {
 						AudioSource source = this.sources[this.nextSourceIndex];
 						this.nextSourceIndex = (this.nextSourceIndex + 1) % this.sources.Length;
 						source.clip = clip;
-						source.time = (float)this.nextClipOffset;
-						source.PlayScheduled(this.nextClipTime);
+						if (AudioSettings.dspTime > this.nextClipTime) {
+							source.time = (float)(this.nextClipOffset + AudioSettings.dspTime - this.nextClipTime);
+							source.Play();
+						} else {
+							source.time = (float)this.nextClipOffset;
+							source.PlayScheduled(this.nextClipTime);
+						}
 						this.nextClipTime += (double)data.Data.Length / data.Frequency - this.nextClipOffset;
 					}
 

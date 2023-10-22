@@ -2,9 +2,7 @@
 using MZZT.DarkForces.FileFormats;
 using MZZT.Drawing;
 using System;
-using System.Drawing;
 using UnityEngine;
-using static MZZT.DarkForces.FileFormats.AutodeskVue;
 
 namespace MZZT.DarkForces.Converters {
 	public static class FmeConverter {

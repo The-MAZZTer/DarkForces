@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>{{{ PRODUCT_NAME }}}</title>
+		<base href="/">
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="manifest" href="assets/manifest.webmanifest">
+		<script type="text/javascript" src="Build/{{{ LOADER_FILENAME }}}"></script>
+		<script type="text/javascript">
+      window.addEventListener("load", function () {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("assets/ServiceWorker.js");
+        }
+      });
+
+			window.unityData = {
+				dataUrl: "Build/{{{ DATA_FILENAME }}}",
+				frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+	#if USE_THREADS
+				workerUrl: "Build/{{{ WORKER_FILENAME }}}",
+	#endif
+	#if USE_WASM
+				codeUrl: "Build/{{{ CODE_FILENAME }}}",
+	#endif
+	#if MEMORY_FILENAME
+				memoryUrl: "Build/{{{ MEMORY_FILENAME }}}",
+	#endif
+	#if SYMBOLS_FILENAME
+				symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
+	#endif
+				streamingAssetsUrl: "StreamingAssets",
+				companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+				productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+				productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+				// matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+				// devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+			};
+		</script>
+	</head>
+	<body class="mat-app-background mat-typography">
+		<app-root></app-root>
+	</body>
+</html>

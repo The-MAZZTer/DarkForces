@@ -1,6 +1,7 @@
 using MZZT.DarkForces.Converters;
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.IO.FileProviders;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -2979,7 +2980,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.GOB" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("GOB Container", "*.GOB"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Save",
 				SelectedFileMustExist = false,
 				SelectedPathMustExist = true,
@@ -3071,7 +3075,7 @@ namespace MZZT.DarkForces.Showcase {
 				this.mirrorFileMap.Clear();
 				this.lastGeneratedMirroredFilenames.Clear();
 
-				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
 				await gob.SaveAsync(stream);
 			} catch (Exception ex) {
 				ResourceCache.Instance.AddError("Randomizer", ex);

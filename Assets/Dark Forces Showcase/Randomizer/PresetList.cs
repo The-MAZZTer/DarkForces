@@ -1,5 +1,6 @@
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MZZT.DarkForces.Showcase {
 		public bool ReadOnly { get; set; }
 	}
 
-  public class PresetList : DataboundList<Preset> {
+	public class PresetList : DataboundList<Preset> {
 		[SerializeField]
 		private Button applyButton;
 
@@ -114,14 +115,17 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
-				 AllowNavigateGob = true,
-				 AllowNavigateLfd = false,
-				 FileSearchPatterns = new[] { "*.GOB", "RNDMIZER.JSO", "*.JSON" },
-				 SelectButtonText = "Import",
-				 SelectedFileMustExist = true,
-				 SelectedPathMustExist = true,
-				 StartPath = this.lastImportPath,
-				 Title = "Import Randomizer Preset"
+				AllowNavigateGob = true,
+				AllowNavigateLfd = false,
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Supported Files", "*.GOB", "RNDMIZER.JSO", "*.JSON"),
+					FileBrowser.FileType.AllFiles
+				},
+				SelectButtonText = "Import",
+				SelectedFileMustExist = true,
+				SelectedPathMustExist = true,
+				StartPath = this.lastImportPath,
+				Title = "Import Randomizer Preset"
 			});
 			if (path == null) {
 				return;
@@ -136,12 +140,12 @@ namespace MZZT.DarkForces.Showcase {
 			RandomizerSettings settings = null;
 
 			Stream stream;
-			if (File.Exists(this.lastImportPath)) {
-				using FileStream gobStream = new(this.lastImportPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+			if (FileManager.Instance.FileExists(this.lastImportPath)) {
+				using Stream gobStream = await FileManager.Instance.NewFileStreamAsync(this.lastImportPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 				DfGobContainer gob = await DfGobContainer.ReadAsync(gobStream);
 				stream = await gob.GetFileStreamAsync(Path.GetFileName(path), gobStream);
 			} else {
-				stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 			}
 
 			using (stream) {
@@ -176,7 +180,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.JSON" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("JSON File", "*.JSON"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedFileMustExist = false,
 				SelectedPathMustExist = true,
@@ -194,7 +201,7 @@ namespace MZZT.DarkForces.Showcase {
 				UseSimpleDictionaryFormat = true
 			});
 
-			using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
 			try {
 				serializer.WriteObject(stream, preset.Settings);
 			} catch (Exception) {
@@ -1062,5 +1069,5 @@ namespace MZZT.DarkForces.Showcase {
 				}
 			} });
 		}
-  }
+	}
 }

@@ -1,12 +1,10 @@
-﻿using MZZT.DarkForces.FileFormats;
-using SkiaSharp;
+﻿using Free.Ports.libpng;
+using MZZT.Drawing;
+using MZZT.DarkForces.FileFormats;
 using System;
 using System.Collections;
-using UnityEngine;
-using MZZT.Drawing;
-using Free.Ports.libpng;
 using System.Linq;
-using System.Drawing;
+using UnityEngine;
 
 namespace MZZT.DarkForces.Converters {
 	public static class DeltConverter {
@@ -94,7 +92,7 @@ namespace MZZT.DarkForces.Converters {
 			}
 			
 			for (int y = 0; y < height; y++) {
-				Buffer.BlockCopy(delt.Pixels, (height - y - 1) * width, png.Data[y], 0, width);
+				Buffer.BlockCopy(delt.Pixels, y * width, png.Data[y], 0, width);
 			}
 			return png;
 		}
@@ -128,43 +126,12 @@ namespace MZZT.DarkForces.Converters {
 
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
-					Buffer.BlockCopy(pal, delt.Pixels[(height - y - 1) * width + x], png.Data[y], x * 4, 4);
+					Buffer.BlockCopy(pal, delt.Pixels[y * width + x], png.Data[y], x * 4, 4);
 				}
 			}
 			return png;
 		}
 		public static Png ToMaskedPng(this LandruDelt delt, LandruPalette pltt) => delt.ToMaskedPng(pltt.ToByteArray());
-
-		public static SKImage ToSKImage(this LandruDelt delt, byte[] palette) {
-			byte[] pixels = delt.Pixels;
-			BitArray mask = delt.Mask;
-			int width = delt.Width;
-			int height = delt.Height;
-
-			if (width < 1 || height < 1) {
-				return null;
-			}
-			
-			SKData data = SKData.Create(width * height * 4);
-			Span<byte> span = data.Span;
-			Span<byte> paletteSpan = palette.AsSpan();
-			Span<byte> zero = new(new byte[] { 0, 0, 0, 0 });
-
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					int offset = y * width + x;
-					if (mask[offset]) {
-						paletteSpan.Slice(pixels[offset] * 4, 4).CopyTo(span.Slice(offset * 4, 4));
-					} else {
-						zero.CopyTo(span.Slice(offset * 4, 4));
-					}
-				}
-			}
-
-			return SKImage.FromPixels(new SKImageInfo(width, height, SKColorType.Rgba8888), data, width * 4);
-		}
-		public static SKImage ToSKImage(this LandruDelt delt, LandruPalette pltt) =>
-			delt.ToSKImage(pltt.ToByteArray());
 
 		public static LandruDelt ToDelt(this Png png) {
 			if (png.ColorType != PNG_COLOR_TYPE.PALETTE) {
@@ -179,10 +146,10 @@ namespace MZZT.DarkForces.Converters {
 			};
 
 			for (int y = 0; y < png.Height; y++) {
-				Buffer.BlockCopy(png.Data[y], 0, delt.Pixels, (int)((png.Height - y - 1) * png.Width), (int)png.Width);
+				Buffer.BlockCopy(png.Data[y], 0, delt.Pixels, (int)(y * png.Width), (int)png.Width);
 
 				for (int x = 0; x < png.Width; x++) {
-					delt.Mask[(int)((png.Height - y - 1) * png.Width + x)] = png.Palette[png.Data[y][x]].A > 0x7F;
+					delt.Mask[(int)(y * png.Width + x)] = png.Palette[png.Data[y][x]].A > 0x7F;
 				}
 			}
 			return delt;

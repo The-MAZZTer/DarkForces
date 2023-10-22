@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MZZT {
 	/// <summary>
@@ -36,13 +37,13 @@ namespace MZZT {
 
 			// Does the type define the size of a char? We should take note of that.
 			StructLayoutAttribute attr = type.StructLayoutAttribute;
+
 			CharSet charSet = attr?.CharSet ?? CharSet.Auto;
 			int charSize = charSet switch {
 				CharSet.None => 1,
 				CharSet.Ansi => 1,
 				CharSet.Unicode => 2,
-				_ => 2 // Assume unicode, which .NET Framework uses.
-							 // Though .NET Core runs with UTF-8 internally so that might not work there.
+				_ => 2
 			};
 
 			foreach (FieldInfo field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)) {

@@ -3,7 +3,6 @@ using MZZT.DarkForces.FileFormats;
 using MZZT.Drawing;
 using System;
 using UnityEngine;
-using static MZZT.DarkForces.FileFormats.AutodeskVue;
 
 namespace MZZT.DarkForces.Converters {
 	public static class BmConverter {

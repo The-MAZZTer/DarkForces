@@ -1,6 +1,7 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -258,8 +259,9 @@ namespace MZZT.DarkForces.Showcase {
 
 			Texture2D texture = new(width, height, TextureFormat.RGBA32, false, true) {
 #if UNITY_EDITOR
-				alphaIsTransparency = true
+				alphaIsTransparency = true,
 #endif
+				filterMode = FilterMode.Point
 			};
 			texture.LoadRawTextureData(buffer);
 			texture.Apply(true, true);
@@ -272,19 +274,22 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
 			}
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await this.Value.SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await this.Value.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await this.Value.SaveAsync(stream);
+			}
 
 			this.ResetDirty();
 		}
@@ -297,7 +302,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}

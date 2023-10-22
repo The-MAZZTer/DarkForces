@@ -1,8 +1,17 @@
-﻿using Microsoft.Win32;
+﻿#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN) && !UNITY_WEBGL
+using Microsoft.Win32;
+#endif
 using MZZT.DarkForces.FileFormats;
+using MZZT.DarkForces.Showcase;
 using MZZT.Extensions;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using MZZT.IO.FileSystemProviders;
+#endif
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN) && !UNITY_WEBGL
 using MZZT.Steam;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +19,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
-using File = System.IO.File;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -51,11 +59,11 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		/// <returns>The folder found, or null if not.</returns>
 		public async Task<string> LocateDarkForcesAsync() {
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN) && !UNITY_WEBGL
 			// TODO Add support for my Knight launcher, which stores the DF path in the regsitry.
 			// I haven't run it in forever and my own path it stored is now wrong so meh.
 			// We could also leverage Knight data to make picking mods easier since it knows what files
 			// a mod needs and which files they override.
-
 			// Try and find Steam and see if DF is installed there.
 			string path = null;
 			try {
@@ -69,13 +77,13 @@ namespace MZZT.DarkForces {
 			path = path.Replace('/', Path.DirectorySeparatorChar);
 
 			// Is Dark Forces installed in the Steam folder?
-			if (File.Exists(Path.Combine(path, "SteamApps", "common", "Dark Forces", "Game", "DARK.GOB"))) {
+			if (FileManager.Instance.FileExists(Path.Combine(path, "SteamApps", "common", "Dark Forces", "Game", "DARK.GOB"))) {
 				return Path.Combine(path, "SteamApps", "common", "Dark Forces", "Game");
 			}
 
 			// Check other library folders. Start by reading the list of library folders.
 			ValveDefinitionFile libraryFoldersVdf =
-				await ValveDefinitionFile.ReadAsync(Path.Combine(path, "SteamApps", "libraryfolders.vdf"));
+				await DfFileManager.Instance.ReadAsync<ValveDefinitionFile>(Path.Combine(path, "SteamApps", "libraryfolders.vdf"));
 
 			// Normally we could deserialize into a type but the format of this file doesn't work well for that.
 			// But we can read the tokens by hand.
@@ -102,12 +110,28 @@ namespace MZZT.DarkForces {
 			}
 
 			foreach (string libraryFolder in libraryFolders) {
-				if (File.Exists(Path.Combine(libraryFolder, "SteamApps", "common", "Dark Forces", "Game", "DARK.GOB"))) {
+				if (FileManager.Instance.FileExists(Path.Combine(libraryFolder, "SteamApps", "common", "Dark Forces", "Game", "DARK.GOB"))) {
 					return Path.Combine(libraryFolder, "SteamApps", "common", "Dark Forces", "Game");
 				}
 			}
 
 			return null;
+#elif !UNITY_EDITOR && UNITY_WEBGL
+			IVirtualFolder uploads = await FileManager.Instance.GetByPathAsync($"{Path.DirectorySeparatorChar}Uploads") as IVirtualFolder;
+			if ((await uploads.GetChildAsync("DARK.GOB")) is IVirtualFile) {
+				return uploads.FullPath;
+			}
+
+			await foreach (IVirtualFolder folder in uploads.GetFoldersAsync()) {
+				if ((await folder.GetChildAsync("DARK.GOB")) is IVirtualFile) {
+					return folder.FullPath;
+				}
+			}
+			return null;
+#else
+			await Task.CompletedTask;
+			return null;
+#endif
 		}
 
 		private readonly Dictionary<string, List<ResourceLocation>> gobMap = new();
@@ -141,7 +165,7 @@ namespace MZZT.DarkForces {
 			if (this.DarkForcesFolder != null) {
 				path = Path.Combine(this.DarkForcesFolder, path);
 			}
-			string key = path.ToUpper();
+			string key = path;
 			// Skip if we already loaded it.
 			if (this.gobFiles.ContainsKey(key)) {
 				return;
@@ -149,7 +173,7 @@ namespace MZZT.DarkForces {
 
 			switch (Path.GetExtension(key)) {
 				case ".GOB": {
-					DfGobContainer gob = await DfGobContainer.ReadAsync(path, false);
+					DfGobContainer gob = await DfFileManager.Instance.ReadAsync<DfGobContainer>(path);
 					List<string> files = new();
 					foreach ((string name, uint offset, uint size) in gob.Files) {
 						files.Add(name.ToUpper());
@@ -185,7 +209,7 @@ namespace MZZT.DarkForces {
 					this.AddToGobMap(file, new ResourceLocation() {
 						FilePath = path,
 						Offset = 0,
-						Length = new FileInfo(path).Length
+						Length = await FileManager.Instance.GetSizeAsync(path)
 					});
 					this.gobFiles[key] = new[] { file };
 				} break;
@@ -225,7 +249,7 @@ namespace MZZT.DarkForces {
 			if (this.DarkForcesFolder != null) {
 				path = Path.Combine(this.DarkForcesFolder, path);
 			}
-			string key = path.ToUpper();
+			string key = path;
 			string[] files = this.gobFiles[key];
 			this.gobFiles.Remove(key);
 			foreach (string file in files) {
@@ -254,7 +278,7 @@ namespace MZZT.DarkForces {
 			ResourceLocation location = results.Last();
 
 			// Open the GOB/file and read in the data at the specified offset and size.
-			FileStream stream = new(location.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+			Stream stream = await FileManager.Instance.NewFileStreamAsync(location.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 			Stream scoped = null;
 			try {
 				stream.Seek(location.Offset, SeekOrigin.Begin);
@@ -327,7 +351,7 @@ namespace MZZT.DarkForces {
 		public void AddLfd(string path, string replace = null) {
 			replace ??= Path.GetFileName(path);
 
-			this.lfdFiles[replace.ToUpper()] = new LfdInfo() {
+			this.lfdFiles[replace] = new LfdInfo() {
 				LfdPath = path
 			};
 		}
@@ -337,7 +361,7 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		/// <param name="path">The path passed into AddLfd.</param>
 		public void RemoveLfd(string path) {
-			string replace = this.lfdFiles.FirstOrDefault(x => x.Value.LfdPath == path.ToUpper()).Key;
+			string replace = this.lfdFiles.FirstOrDefault(x => x.Value.LfdPath == path).Key;
 			if (replace == null) {
 				return;
 			}
@@ -357,7 +381,7 @@ namespace MZZT.DarkForces {
 			// If we didn't read this LFD before, load in a map of its files so we don't have to read in
 			// the entire LFD file directory next time.
 			if (map.Files == null) {
-				LandruFileDirectory lfd = await LandruFileDirectory.ReadAsync(map.LfdPath);
+				LandruFileDirectory lfd = await DfFileManager.Instance.ReadAsync<LandruFileDirectory>(lfdPath);
 				map.Files = lfd.Files.GroupBy(x => $"{x.name.ToUpper()}.{x.type.ToUpper()}").ToDictionary(x => x.Key, x => new ResourceLocation() {
 					FilePath = map.LfdPath,
 					Offset = x.Last().offset,
@@ -375,7 +399,7 @@ namespace MZZT.DarkForces {
 		/// <param name="typeName">The type of the file.</param>
 		/// <returns>The Stream for the file.</returns>
 		public async Task<Stream> GetLfdFileStreamAsync(string lfdName, string name, string typeName) {
-			if (this.lfdFiles.TryGetValue(lfdName.ToUpper(), out LfdInfo map)) {
+			if (this.lfdFiles.TryGetValue(lfdName, out LfdInfo map)) {
 				lfdName = map.LfdPath;
 			} else {
 				map.LfdPath = lfdName;
@@ -387,7 +411,7 @@ namespace MZZT.DarkForces {
 				// If we didn't read this LFD before, load in a map of its files so we don't have to read in
 				// the entire LFD file directory next time.
 				if (map.Files == null) {
-					LandruFileDirectory lfd = await LandruFileDirectory.ReadAsync(lfdPath, async lfd => {
+					LandruFileDirectory lfd = await DfFileManager.Instance.ReadLandruFileDirectoryAsync(lfdPath, async lfd => {
 						// While we're here, read the file we need.
 						stream = await lfd.GetFileStreamAsync(name, typeName);
 					});
@@ -397,13 +421,13 @@ namespace MZZT.DarkForces {
 						Offset = x.First().offset,
 						Length = x.First().size
 					});
-					this.lfdFiles[lfdName.ToUpper()] = map;
+					this.lfdFiles[lfdName] = map;
 				} else {
 					if (!map.Files.TryGetValue($"{name.ToUpper()}.{typeName.ToUpper()}", out ResourceLocation location)) {
 						return null;
 					}
 					// Otherwise seek right to the location in the LFD where the file is and read it.
-					using FileStream fileStream = new(lfdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+					using Stream fileStream = await FileManager.Instance.NewFileStreamAsync(lfdPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 					fileStream.Seek(location.Offset, SeekOrigin.Begin);
 					stream = new MemoryStream((int)location.Length);
 					await fileStream.CopyToWithLimitAsync(stream, (int)location.Length);
@@ -460,13 +484,20 @@ namespace MZZT.DarkForces {
 		}
 
 		/// <summary>
-		/// Read standard GOB file directroy information and cache it.
+		/// Read standard GOB file directory information and cache it.
 		/// </summary>
 		public async Task LoadStandardFilesAsync() {
+#if UNITY_WEBGL && !UNITY_EDITOR
+			while (!WebFileSystemProviderBrowserCallback.Instance.BrowserFilesUploaded) {
+				await Task.Delay(25);
+			}
+#endif
+
 			foreach (string name in DARK_FORCES_STANDARD_DATA_FILES) {
 				await this.AddGobFileAsync(Path.Combine(this.DarkForcesFolder, name));
 			}
-			foreach (string lfd in Directory.EnumerateFiles(Path.Combine(this.DarkForcesFolder, "LFD"), "*.LFD", SearchOption.TopDirectoryOnly)) {
+
+			await foreach (string lfd in FileManager.Instance.FolderEnumerateFilesAsync(Path.Combine(this.DarkForcesFolder, "LFD"), "*.LFD", SearchOption.TopDirectoryOnly)) {
 				this.AddLfd(lfd);
 			}
 		}
@@ -481,7 +512,7 @@ namespace MZZT.DarkForces {
 			string[][] files;
 			if (gob != null) {
 				files = new string[][] { null };
-				if (!this.gobFiles.TryGetValue(gob.ToUpper(), out files[0])) {
+				if (!this.gobFiles.TryGetValue(gob, out files[0])) {
 					return Enumerable.Empty<string>();
 				}
 			} else {

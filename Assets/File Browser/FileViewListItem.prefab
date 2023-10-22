@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 6599116595520089108}
   - component: {fileID: 272277011043178893}
   - component: {fileID: 7011708175990812916}
-  - component: {fileID: 3855798389016248928}
-  - component: {fileID: 5946090644182555207}
   m_Layer: 5
   m_Name: Size
   m_TagString: Untagged
@@ -34,7 +32,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 938497455690123569}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -158,44 +155,6 @@ MonoBehaviour:
   m_FlexibleWidth: 0.5
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &3855798389016248928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103648797291436648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  valueStorageMethod: 0
-  playerPrefsKey: 
-  beforeValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  valueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  parent: {fileID: 0}
-  memberName: DisplaySize
-  changeDetectionMode: 0
-  valueChangedEventName: 
---- !u!114 &5946090644182555207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103648797291436648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e787cd91d4f65004b82fde1c804ea71f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  databinder: {fileID: 0}
-  autoApplyOnChange: 0
 --- !u!1 &7221255322607446935
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +189,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4547387095757691356}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -392,6 +350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   databinder: {fileID: 0}
   autoApplyOnChange: 0
+  format: 
 --- !u!1 &7634614926343986124
 GameObject:
   m_ObjectHideFlags: 0
@@ -404,8 +363,6 @@ GameObject:
   - component: {fileID: 3171299539279898839}
   - component: {fileID: 4215608984343232197}
   - component: {fileID: 7088506954664412598}
-  - component: {fileID: 3062421741425142265}
-  - component: {fileID: 503151561589898178}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -426,7 +383,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4547387095757691356}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -550,44 +506,6 @@ MonoBehaviour:
   m_FlexibleWidth: 0
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &3062421741425142265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7634614926343986124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f36131f6b1c07a46ae1a2dbdce9c8f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  valueStorageMethod: 0
-  playerPrefsKey: 
-  beforeValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  valueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  parent: {fileID: 0}
-  memberName: IconGlyph
-  changeDetectionMode: 0
-  valueChangedEventName: 
---- !u!114 &503151561589898178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7634614926343986124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e787cd91d4f65004b82fde1c804ea71f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  databinder: {fileID: 0}
-  autoApplyOnChange: 0
 --- !u!1 &8313773923677684326
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +539,6 @@ RectTransform:
   - {fileID: 2656462960125976539}
   - {fileID: 4322120524607912198}
   m_Father: {fileID: 938497455690123569}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -711,7 +628,6 @@ RectTransform:
   - {fileID: 4547387095757691356}
   - {fileID: 7238272043357992789}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -871,6 +787,8 @@ MonoBehaviour:
   collapsed: {fileID: 0}
   expanded: {fileID: 0}
   node: {fileID: 3019695183125824968}
+  icon: {fileID: 4215608984343232197}
+  sizeText: {fileID: 272277011043178893}
 --- !u!114 &1101815357708801631
 MonoBehaviour:
   m_ObjectHideFlags: 0

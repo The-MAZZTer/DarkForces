@@ -1,5 +1,6 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using MZZT.Input;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 namespace MZZT.DarkForces.Showcase {
 	[ProgramHelpInfo(
@@ -18,6 +20,10 @@ namespace MZZT.DarkForces.Showcase {
 	public class Menu : Singleton<Menu> {
 		[SerializeField, Header("References")]
 		private Image background = null;
+		[SerializeField]
+#pragma warning disable CS0414 
+		private GameObject closeContainer = null;
+#pragma warning restore CS0414
 		[SerializeField]
 		private GameObject menu = null;
 		[SerializeField]
@@ -42,6 +48,9 @@ namespace MZZT.DarkForces.Showcase {
 			ProgramArguments.OverrideConsoleWidth = 1000;
 			ProgramArguments.HelpDescriptionIndent = 36;
 #if !UNITY_EDITOR
+#if UNITY_WEBGL
+			ProgramArguments.Parser = new UrlQueryStringParser(new Uri(Application.absoluteURL));
+#endif
 			if (!ProgramArguments.Inject(this)) {
 				if (string.IsNullOrEmpty(ProgramArguments.ParseError)) {
 					this.showHelp = ProgramArguments.GetHelp<Menu>();
@@ -79,7 +88,7 @@ namespace MZZT.DarkForces.Showcase {
 			HelpOrder = 100,
 			ValueName = "TOOLNAME",
 			PrependedGroupName = "Tools:",
-			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer, MapGenerator, Randomizer, ResourceDumper"
+			HelpDescription = "Jump to a specific tool on startup. Values: LevelExplorer, MapGenerator, Randomizer, ResourceDumper, ResourceEditor"
 		)]
 		public string CommandLineTool { get; set; }
 
@@ -98,12 +107,12 @@ namespace MZZT.DarkForces.Showcase {
 
 		[ProgramValidateArguments]
 		public ParseResult ValidateArguments() {
-			if (this.CommandLineDarkForcesFolder != null && !File.Exists(Path.Combine(this.CommandLineDarkForcesFolder, "DARK.GOB"))) {
+			/*if (this.CommandLineDarkForcesFolder != null && !FileManager.Instance.FileExists(Path.Combine(this.CommandLineDarkForcesFolder, "DARK.GOB"))) {
 				this.CommandLineDarkForcesFolder = null;
 				return new ParseResult() {
 					Error = "Invalid Dark Forces folder."
 				};
-			}
+			}*/
 			if (this.CommandLineTool != null) {
 				string[] scenes = Enumerable.Range(0, SceneManager.sceneCountInBuildSettings).Select(x => SceneUtility.GetScenePathByBuildIndex(x)).ToArray();
 				string[] names = scenes.Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
@@ -124,12 +133,12 @@ namespace MZZT.DarkForces.Showcase {
 						};
 					}
 					if (isLfd) {
-						if (!File.Exists(keyValue[1])) {
+						if (!FileManager.Instance.FileExists(keyValue[1])) {
 							return new ParseResult() {
 								Error = $"File not found {keyValue[1]}."
 							};
 						}
-					} else if (!File.Exists(keyValue[0])) {
+					} else if (!FileManager.Instance.FileExists(keyValue[0])) {
 						return new ParseResult() {
 							Error = $"File not found {keyValue[0]}."
 						};
@@ -140,6 +149,10 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private async void Start() {
+#if UNITY_WEBGL && !UNITY_EDITOR
+			this.closeContainer.SetActive(false);
+#endif
+
 			this.ParseCommandLine();
 
 			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
@@ -265,7 +278,10 @@ namespace MZZT.DarkForces.Showcase {
 			string folder = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "DARK.GOB" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Dark Forces GOB", "DARK.GOB"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Select",
 				SelectedFileMustExist = true,
 				SelectedPathMustExist = true,
@@ -289,6 +305,28 @@ namespace MZZT.DarkForces.Showcase {
 					LandruDelt cursor = await ResourceCache.Instance.GetDeltAsync("MENU.LFD", "cursor");
 					if (cursor != null) {
 						Texture2D texture = ResourceCache.Instance.ImportDelt(cursor, pltt, keepTextureReadable: true);
+//#if !UNITY_EDITOR && !UNITY_STANDALONE_WIN
+						int scale = 3;
+						Texture2D resized = new(texture.width * scale, texture.height * scale, TextureFormat.RGBA32, false, true) {
+#if UNITY_EDITOR
+							alphaIsTransparency = true,
+#endif
+							filterMode = FilterMode.Point
+						};
+						byte[] bytes = texture.GetRawTextureData();
+						byte[] newBytes = new byte[bytes.Length * scale * scale];
+						for (int y = 0; y < texture.height; y++) {
+							for (int x = 0; x < texture.width; x++) {
+								for (int y1 = 0; y1 < scale; y1++) {
+									for (int x1 = 0; x1 < scale; x1++) {
+										Buffer.BlockCopy(bytes, (y * texture.width + x) * 4, newBytes, ((y * scale + y1) * resized.width + (x * scale + x1)) * 4, 4);
+									}
+								}
+							}
+						}
+						resized.LoadRawTextureData(newBytes);
+						texture = resized;
+//#endif
 						Cursor.SetCursor(texture, Vector2.zero, CursorMode.Auto);
 					}
 				}
@@ -344,7 +382,11 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public void OnCloseClicked() {
+#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+#elif !UNITY_WEBGL
 			Application.Quit();
+#endif
 		}
 
 		public void OnSelectedShowcaseChanged() {

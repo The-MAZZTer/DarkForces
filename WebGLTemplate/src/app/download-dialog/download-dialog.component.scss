@@ -1,0 +1,121 @@
+:host {
+	.hidden {
+		display: none;
+	}
+
+	h1 {
+		margin: 0;
+	}
+
+	.downloadAll {
+		position: absolute;
+		right: 8px;
+		top: 8px;
+	}
+
+	.mdc-dialog__content {
+		display: flex;
+		width: 800px;
+		height: 600px;	
+		max-width: 100%;
+
+		flex-direction: row;
+		align-items: flex-start;
+
+		mat-button-toggle-group {
+			flex: 1 1 0;
+			overflow: auto;
+			box-sizing: border-box;
+			height: 100%;
+
+			mat-tree {
+				min-width: 100%;
+		
+				li {
+					.mdc-icon-button {
+						width: 20px;
+						padding: 0;
+
+						mat-icon {
+							vertical-align: middle;
+						}
+					}
+					list-style: none;
+		
+					mat-button-toggle {
+						white-space: nowrap;
+						text-overflow: ellipsis;
+		
+						> mat-icon {
+							display: inline-block;
+							vertical-align: middle;
+		
+							margin: 0 10px;
+							
+							width: 24px;
+							height: 24px;
+						}
+					}
+				}
+				mat-nested-tree-node ul {
+					margin: 0;
+					padding-inline-start: 20px;
+				}
+			}
+		}	
+
+		div.tableContainer {
+			flex: 2 2 0;
+			box-sizing: border-box;
+			height: 100%;
+			overflow: auto;
+			
+			table {
+				::ng-deep thead {
+					position: sticky;
+					top: 0;
+				}
+
+				.mat-column-name {
+					button[disabled] {
+						color: white;
+					}	
+				}
+
+				.mat-column-size {
+					text-align: right;
+				}
+	
+				.mat-column-download {
+					text-align: center;
+
+					button {
+						min-width: 0;
+
+						mat-icon {
+							margin-right: 0;
+						}
+					}
+				}
+
+				mat-icon {
+					vertical-align: middle;
+				}
+
+				td {
+					white-space: nowrap;
+					text-overflow: ellipsis;
+				}
+			}
+		}
+	}
+	div[mat-dialog-actions] {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+
+		> .spacer {
+			flex: 1 1 0;
+		}
+	}
+}

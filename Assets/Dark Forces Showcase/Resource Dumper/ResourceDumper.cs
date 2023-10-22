@@ -3,10 +3,13 @@ using MZZT.DarkForces.FileFormats;
 using MZZT.Drawing;
 using MZZT.FileFormats;
 using MZZT.FileFormats.Audio;
+using MZZT.IO.FileProviders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+#if UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX                                             
 using System.Diagnostics;
+#endif
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -17,7 +20,6 @@ using TMPro;
 using UnityEngine;
 using static MZZT.DarkForces.FileFormats.DfBitmap;
 using Debug = UnityEngine.Debug;
-using File = System.IO.File;
 
 namespace MZZT.DarkForces.Showcase {
 	public class ResourceDumper : Singleton<ResourceDumper> {
@@ -70,7 +72,6 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*" },
 				SelectButtonText = "Select",
 				SelectedFileMustExist = false,
 				SelectedPathMustExist = false,
@@ -216,13 +217,13 @@ namespace MZZT.DarkForces.Showcase {
 						["inputpath"] = pathPart
 					};
 
-					string outputPath = this.FillOutputTemplate(this.Settings.MiscFilenameFormat, new() {
+					string outputPath = await this.FillOutputTemplateAsync(this.Settings.MiscFilenameFormat, new() {
 						["inputname"] = Path.GetFileNameWithoutExtension(filename),
 						["inputext"] = Path.GetExtension(filename)[1..],
 						["outputext"] = this.ConvertExtension(Path.GetExtension(filename)[1..])
 					}, outputParameters);
 
-					using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+					using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 					await stream.CopyToAsync(output);
 
 					stream.Seek(0, SeekOrigin.Begin);
@@ -415,31 +416,28 @@ namespace MZZT.DarkForces.Showcase {
 			return matches.FirstOrDefault();
 		}
 
-		private string FillOutputTemplate(string fileTemplate, Dictionary<string, string> fileParameters, Dictionary<string, string> pathParameters) {
+		private async Task<string> FillOutputTemplateAsync(string fileTemplate, Dictionary<string, string> fileParameters, Dictionary<string, string> pathParameters) {
 			string outputPath = this.FillTemplate(fileTemplate, fileParameters);
 			pathParameters["file"] = outputPath;
 			outputPath = this.FillTemplate(this.Settings.BaseOutputFormat, pathParameters);
 
 			string folder = Path.GetDirectoryName(outputPath);
-			if (!Directory.Exists(folder)) {
-				Directory.CreateDirectory(folder);
+			if (!FileManager.Instance.FolderExists(folder)) {
+				await FileManager.Instance.FolderCreateAsync(folder);
 			}
 
 			return outputPath;
 		}
 
-#if SKIA
-#else
 		private async Task SaveTextureAsPngAsync(Texture2D texture, string outputPath) {
 			if (texture == null) {
 				return;
 			}
 
 			byte[] buffer = texture.EncodeToPNG();
-			using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+			using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 			await output.WriteAsync(buffer, 0, buffer.Length);
 		}
-#endif
 
 		private async Task DumpFileAsync(List<Resource> inputs, Resource resource) {
 			if (resource.ResourceObject == null) {
@@ -480,7 +478,7 @@ namespace MZZT.DarkForces.Showcase {
 								parameters["index"] = i.ToString();
 								await this.SaveTextureAsPngAsync(
 									ResourceCache.Instance.ImportDelt(delt, (LandruPalette)pltt.ResourceObject, true),
-									this.FillOutputTemplate(this.Settings.ConvertedAnimFilenameFormat, parameters, outputParameters)
+									await this.FillOutputTemplateAsync(this.Settings.ConvertedAnimFilenameFormat, parameters, outputParameters)
 								);
 							}
 						}
@@ -520,9 +518,9 @@ namespace MZZT.DarkForces.Showcase {
 								foreach ((Page page, int index) in bm.Pages.Select((x, i) => (x, i))) {
 									parameters["index"] = index.ToString();
 
-									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters);
+									string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedBmFilenameFormat, parameters, outputParameters);
 									Png png = page.ToPng(pal, i < 0 ? null : cmp, i, false, true);
-									using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									using Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 									png.Write(stream);
 								}
 							}
@@ -550,10 +548,10 @@ namespace MZZT.DarkForces.Showcase {
 									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
 
 									parameters["lightlevel"] = i.ToString();
-									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+									string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 									Png png = cmp.ToPng(pal, i);
-									using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									using Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 									png.Write(stream);
 								}
 							}
@@ -564,9 +562,9 @@ namespace MZZT.DarkForces.Showcase {
 									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
 
 									parameters["lightlevel"] = i.ToString();
-									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+									string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-									using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 									await cmp.WriteJascPalAsync(pal, i, output);
 								}
 							}
@@ -577,9 +575,9 @@ namespace MZZT.DarkForces.Showcase {
 									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
 
 									parameters["lightlevel"] = i.ToString();
-									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+									string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-									using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 									await cmp.WriteRgbPalAsync(pal, i, output);
 								}
 							}
@@ -590,9 +588,9 @@ namespace MZZT.DarkForces.Showcase {
 									byte[] colors = ResourceCache.Instance.ImportColormap(pal, cmp, i, false);
 
 									parameters["lightlevel"] = i.ToString();
-									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+									string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-									using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 									await cmp.WriteRgbaPalAsync(pal, i, output);
 								}
 							}
@@ -615,7 +613,7 @@ namespace MZZT.DarkForces.Showcase {
 
 							await this.SaveTextureAsPngAsync(
 								ResourceCache.Instance.ImportDelt(delt, (LandruPalette)pltt.ResourceObject, true),
-								this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
+								await this.FillOutputTemplateAsync(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
 							);
 						}
 					}
@@ -651,9 +649,9 @@ namespace MZZT.DarkForces.Showcase {
 							foreach (int i in lightLevels) {
 								parameters["lightlevel"] =  i < 0 ? "" : i.ToString();
 
-								string outputPath = this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters);
+								string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters);
 								Png png = fme.ToPng(pal, i < 0 ? null : cmp, i, false);
-								using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+								using Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 								png.Write(stream);
 							}
 						}
@@ -695,18 +693,18 @@ namespace MZZT.DarkForces.Showcase {
 								if (this.Settings.ConvertFntFontToSingleImage) {
 									parameters["character"] = "";
 
-									string outputPath = this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters);
+									string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters);
 									Png png = fnt.ToPng(colors);
-									using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+									using Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 									png.Write(stream);
 								}
 								if (this.Settings.ConvertFntFontToCharacterImages) {
 									foreach ((DfFont.Character c, int i) in fnt.Characters.Select((x, i) => (x, i + fnt.First))) {
 										parameters["character"] = i.ToString();
 
-										string outputPath = this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters);
+										string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters);
 										Png png = c.ToPng(fnt.Height, colors);
-										using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+										using Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 										png.Write(stream);
 									}
 								}
@@ -731,7 +729,7 @@ namespace MZZT.DarkForces.Showcase {
 
 							await this.SaveTextureAsPngAsync(
 								font.ToTexture(this.Settings.FontColor, true),
-								this.FillOutputTemplate(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
+								await this.FillOutputTemplateAsync(this.Settings.ConvertedImageFilenameFormat, parameters, outputParameters)
 							);
 						}
 						if (this.Settings.ConvertFntFontToCharacterImages) {
@@ -740,7 +738,7 @@ namespace MZZT.DarkForces.Showcase {
 
 								await this.SaveTextureAsPngAsync(
 									c.ToTexture(font, this.Settings.FontColor, true),
-									this.FillOutputTemplate(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters)
+									await this.FillOutputTemplateAsync(this.Settings.ConvertedFntFontFilenameFormat, parameters, outputParameters)
 								);
 							}
 						}
@@ -757,9 +755,9 @@ namespace MZZT.DarkForces.Showcase {
 							["outputext"] = "mid"
 						};
 
-						string outputPath = this.FillOutputTemplate(this.Settings.MiscFilenameFormat, parameters, outputParameters);
+						string outputPath = await this.FillOutputTemplateAsync(this.Settings.MiscFilenameFormat, parameters, outputParameters);
 
-						using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+						using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 						midi.Chunks.Clear();
 						await midi.SaveAsync(output);
 					}
@@ -779,37 +777,37 @@ namespace MZZT.DarkForces.Showcase {
 							parameters["format"] = "PNG";
 							parameters["outputext"] = "png";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							Png png = pal.ToPng();
-							using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							png.Write(stream);
 						}
 						if (this.Settings.ConvertPalPlttToJascPal) {
 							parameters["format"] = "JASC";
 							parameters["outputext"] = "pal";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							await pal.WriteJascPalAsync(output);
 						}
 						if (this.Settings.ConvertPalPlttTo24BitPal) {
 							parameters["format"] = "RGB";
 							parameters["outputext"] = "pal";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							await pal.WriteRgbPalAsync(output);
 						}
 						if (this.Settings.ConvertCmpTo32BitPal) {
 							parameters["format"] = "RGBA";
 							parameters["outputext"] = "pal";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							await pal.WriteRgbaPalAsync(output);
 						}
 					}
@@ -829,37 +827,37 @@ namespace MZZT.DarkForces.Showcase {
 							parameters["format"] = "PNG";
 							parameters["outputext"] = "png";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
 							Png png = pltt.ToPng();
-							using FileStream stream = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							png.Write(stream);
 						};
 						if (this.Settings.ConvertPalPlttToJascPal) {
 							parameters["format"] = "JASC";
 							parameters["outputext"] = "pal";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							await pltt.WriteJascPalAsync(output);
 						}
 						if (this.Settings.ConvertPalPlttTo24BitPal) {
 							parameters["format"] = "RGB";
 							parameters["outputext"] = "pal";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							await pltt.WriteRgbPalAsync(output);
 						}
 						if (this.Settings.ConvertCmpTo32BitPal) {
 							parameters["format"] = "RGBA";
 							parameters["outputext"] = "pal";
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedPalPlttFilenameFormat, parameters, outputParameters);
 
-							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							await pltt.WriteRgbaPalAsync(output);
 						}
 					}
@@ -880,9 +878,9 @@ namespace MZZT.DarkForces.Showcase {
 								parameters["index"] = i.ToString();
 							}
 
-							string outputPath = this.FillOutputTemplate(this.Settings.ConvertedVocFilenameFormat, parameters, outputParameters);
+							string outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedVocFilenameFormat, parameters, outputParameters);
 
-							using FileStream output = new(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+							using Stream output = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
 							await wave.SaveAsync(output);
 						}
 					}
@@ -934,10 +932,10 @@ namespace MZZT.DarkForces.Showcase {
 													case WaxOutputModes.NoDuplicates:
 														continue;
 													case WaxOutputModes.Shortcut:
-														outputPath = this.FillOutputTemplate(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
-
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 														parameters["outputext"] = "lnk";
+
+														outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
 
 														IShellLink link = (IShellLink)new ShellLink();
 														link.SetPath(existing);
@@ -947,7 +945,9 @@ namespace MZZT.DarkForces.Showcase {
 #else
 														parameters["outputext"] = "desktop";
 
-														using (FileStream stream = new(outputPath, FileMode.Open, FileAccess.Write, FileShare.None)) {
+														outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
+
+														using (Stream stream = await FileManager.Instance.NewFileStreamAsync(outputPath, FileMode.Create, FileAccess.Write, FileShare.None)) {
 															using StreamWriter writer = new(stream, Encoding.UTF8);
 															await writer.WriteLineAsync("[Desktop Entry]");
 															await writer.WriteLineAsync("Encoding=UTF-8");
@@ -963,28 +963,28 @@ namespace MZZT.DarkForces.Showcase {
 													case WaxOutputModes.SymLink:
 														parameters["outputext"] = "png";
 
-														outputPath = this.FillOutputTemplate(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
+														outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 														if (!CreateSymbolicLink(outputPath, existing, SYMBOLIC_LINK_FLAG.FILE | SYMBOLIC_LINK_FLAG.ALLOW_UNPRIVILEGED_CREATE)) {
 															int error = Marshal.GetLastWin32Error();
 															ResourceCache.Instance.AddError(outputPath, new Win32Exception(error));
 														}
-#else
+#elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
 														Process.Start("ln", $"-s \"{existing}\" \"{outputPath}\"");
 #endif
 														continue;
 													case WaxOutputModes.HardLink:
 														parameters["outputext"] = "png";
 
-														outputPath = this.FillOutputTemplate(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
+														outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 														if (!CreateHardLink(outputPath, existing)) {
 															int error = Marshal.GetLastWin32Error();
 															ResourceCache.Instance.AddError(outputPath, new Win32Exception(error));
 														}
-#else
+#elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
 														Process.Start("ln", $"\"{existing}\" \"{outputPath}\"");
 #endif
 
@@ -994,7 +994,7 @@ namespace MZZT.DarkForces.Showcase {
 
 											parameters["outputext"] = "png";
 
-											outputPath = this.FillOutputTemplate(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
+											outputPath = await this.FillOutputTemplateAsync(this.Settings.ConvertedWaxFilenameFormat, parameters, outputParameters);
 											uniqueMap[fme.Pixels] = outputPath;
 
 											await this.SaveTextureAsPngAsync(
@@ -1012,22 +1012,31 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void DumpAsync() {
-			if (string.IsNullOrWhiteSpace(this.Settings.BaseOutputFolder) || File.Exists(this.Settings.BaseOutputFolder)) {
+			this.settings.SaveToPlayerPrefs();
+
+			if (string.IsNullOrWhiteSpace(this.Settings.BaseOutputFolder) || FileManager.Instance.FileExists(this.Settings.BaseOutputFolder)) {
 				await DfMessageBox.Instance.ShowAsync("Base Output Folder is set to an invalid location. Please specify a folder.");
 				return;
 			}
-			if (!Directory.Exists(this.Settings.BaseOutputFolder)) {
+			if (!FileManager.Instance.FolderExists(this.Settings.BaseOutputFolder)) {
 				try {
-					Directory.CreateDirectory(this.Settings.BaseOutputFolder);
+					await FileManager.Instance.FolderCreateAsync(this.Settings.BaseOutputFolder);
 				} catch (Exception) {
 					await DfMessageBox.Instance.ShowAsync("Could not create base output folder. Please verify the location you specified is accurate.");
 					return;
 				}
 			}
 
-			await PauseMenu.Instance.BeginLoadingAsync();
+#if UNITY_WEBGL
+			if (this.Settings.ProcessTypes.HasFlag(ResourceTypes.Wax) && (this.Settings.WaxOutputMode == WaxOutputModes.HardLink ||
+				this.Settings.WaxOutputMode == WaxOutputModes.SymLink)) {
 
-			this.settings.SaveToPlayerPrefs();
+				await DfMessageBox.Instance.ShowAsync("HardLink or SymLink WAX output modes can't be used in WebAssembly.");
+				return;
+			}
+#endif
+
+			await PauseMenu.Instance.BeginLoadingAsync();
 
 			ResourceCache.Instance.ClearWarnings();
 			ResourceCache.Instance.Clear();
@@ -1036,11 +1045,11 @@ namespace MZZT.DarkForces.Showcase {
 
 			List<Resource> inputs = new();
 			foreach (string path in this.Settings.Inputs) {
-				if (File.Exists(path)) {
+				if (FileManager.Instance.FileExists(path)) {
 					Resource resource;
 					switch (GetFileType(path)) {
 						case ResourceTypes.OtherInGob:
-							using (FileStream gobStream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+							using (Stream gobStream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 								DfGobContainer gob = await DfGobContainer.TryReadAsync(gobStream, false);
 
 								foreach (string file in gob.Files.Select(x => x.name)) {
@@ -1061,7 +1070,7 @@ namespace MZZT.DarkForces.Showcase {
 							}
 							break;
 						case ResourceTypes.OtherInLfd:
-							using (FileStream lfdStream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+							using (Stream lfdStream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 								await LandruFileDirectory.TryReadAsync(lfdStream, async lfd => {
 									foreach ((string fileName, string fileType, uint offset, uint size) in lfd.Files) {
 										ResourceTypes type = GetFileType($".{fileType}");
@@ -1086,7 +1095,7 @@ namespace MZZT.DarkForces.Showcase {
 							break;
 						default:
 							resource = null;
-							using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+							using (Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 								resource = await this.LoadFileAsync(path, null, stream);
 							}
 							if (resource != null) {
@@ -1095,12 +1104,12 @@ namespace MZZT.DarkForces.Showcase {
 							break;
 					}
 				} else {
-					if (Directory.Exists(path)) {
-						foreach (string child in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)) {
+					if (FileManager.Instance.FolderExists(path)) {
+						await foreach (string child in FileManager.Instance.FolderEnumerateFilesAsync(path, "*", SearchOption.AllDirectories)) {
 							string childPart = child[path.Length..].Trim(Path.DirectorySeparatorChar);
 							ResourceTypes type = GetFileType(child);
 							if (this.Settings.AlwaysScanInsideGobs && type == ResourceTypes.OtherInGob) {
-								FileStream gobStream = new(child, FileMode.Open, FileAccess.Read, FileShare.Read);
+								using Stream gobStream = await FileManager.Instance.NewFileStreamAsync(child, FileMode.Open, FileAccess.Read, FileShare.Read);
 								DfGobContainer gob = await DfGobContainer.TryReadAsync(gobStream, false);
 
 								foreach (string file in gob.Files.Select(x => x.name)) {
@@ -1119,7 +1128,7 @@ namespace MZZT.DarkForces.Showcase {
 									}
 								}
 							} else if (this.Settings.AlwaysScanInsideLfds && type == ResourceTypes.OtherInLfd) {
-								FileStream lfdStream = new(child, FileMode.Open, FileAccess.Read, FileShare.Read);
+								using Stream lfdStream = await FileManager.Instance.NewFileStreamAsync(child, FileMode.Open, FileAccess.Read, FileShare.Read);
 								await LandruFileDirectory.TryReadAsync(lfdStream, async lfd => {
 									foreach ((string fileName, string fileType, uint offset, uint size) in lfd.Files) {
 										type = GetFileType($".{fileType}");
@@ -1139,7 +1148,7 @@ namespace MZZT.DarkForces.Showcase {
 								});
 							} else if (this.Settings.ProcessTypes.HasFlag(type) || type == ResourceTypes.Pltt || type == ResourceTypes.Pal || type == ResourceTypes.Cmp) {
 								Resource resource = null;
-								using (Stream stream = new FileStream(child, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+								using (Stream stream = await FileManager.Instance.NewFileStreamAsync(child, FileMode.Open, FileAccess.Read, FileShare.Read)) {
 									resource = await this.LoadFileAsync(path, childPart, stream);
 								}
 								if (resource != null) {
@@ -1149,42 +1158,44 @@ namespace MZZT.DarkForces.Showcase {
 						}
 					} else {
 						string parent = Path.GetDirectoryName(path);
-						if (File.Exists(parent)) {
+						if (FileManager.Instance.FileExists(parent)) {
 							string child = Path.GetFileName(path).ToLower();
 							switch (GetFileType(parent)) {
 								case ResourceTypes.OtherInGob:
-									FileStream gobStream = new(parent, FileMode.Open, FileAccess.Read, FileShare.Read);
-									DfGobContainer gob = await DfGobContainer.TryReadAsync(gobStream, false);
+									using (Stream gobStream = await FileManager.Instance.NewFileStreamAsync(parent, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+										DfGobContainer gob = await DfGobContainer.TryReadAsync(gobStream, false);
 
-									string name = gob.Files.FirstOrDefault(x => x.name.ToLower() == child).name;
-									if (name != null) {
-										Resource resource = null;
-										using (Stream stream = await gob.GetFileStreamAsync(name, gobStream)) {
-											resource = await this.LoadFileAsync(path, name, stream);
-										}
-										if (resource != null) {
-											inputs.Add(resource);
-										}
-									} else {
-										ResourceCache.Instance.AddWarning(path, "Can't find file in GOB.");
-									}
-									break;
-								case ResourceTypes.OtherInLfd:
-									FileStream lfdStream = new(parent, FileMode.Open, FileAccess.Read, FileShare.Read);
-									await LandruFileDirectory.TryReadAsync(lfdStream, async lfd => {
-										(string name, string lfdType, uint _, uint _) = lfd.Files.FirstOrDefault(x => $"{x.name}.{x.type}".ToLower() == child);
+										string name = gob.Files.FirstOrDefault(x => x.name.ToLower() == child).name;
 										if (name != null) {
 											Resource resource = null;
-											using (Stream stream = await lfd.GetFileStreamAsync(name, lfdType)) {
-												resource = await this.LoadFileAsync(path, $"{name}.{lfdType}", stream);
+											using (Stream stream = await gob.GetFileStreamAsync(name, gobStream)) {
+												resource = await this.LoadFileAsync(path, name, stream);
 											}
 											if (resource != null) {
 												inputs.Add(resource);
 											}
 										} else {
-											ResourceCache.Instance.AddWarning(path, "Can't find file in LFD.");
+											ResourceCache.Instance.AddWarning(path, "Can't find file in GOB.");
 										}
-									});
+									}
+									break;
+								case ResourceTypes.OtherInLfd:
+									using (Stream lfdStream = await FileManager.Instance.NewFileStreamAsync(parent, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+										await LandruFileDirectory.TryReadAsync(lfdStream, async lfd => {
+											(string name, string lfdType, uint _, uint _) = lfd.Files.FirstOrDefault(x => $"{x.name}.{x.type}".ToLower() == child);
+											if (name != null) {
+												Resource resource = null;
+												using (Stream stream = await lfd.GetFileStreamAsync(name, lfdType)) {
+													resource = await this.LoadFileAsync(path, $"{name}.{lfdType}", stream);
+												}
+												if (resource != null) {
+													inputs.Add(resource);
+												}
+											} else {
+												ResourceCache.Instance.AddWarning(path, "Can't find file in LFD.");
+											}
+										});
+									}
 									break;
 								default:
 									ResourceCache.Instance.AddWarning(path, "Can't find container of file.");
@@ -1224,8 +1235,11 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			PauseMenu.Instance.EndLoading();
-
-			Process.Start(this.Settings.BaseOutputFolder);
+			try {
+				FileManager.Instance.Show(this.Settings.BaseOutputFolder);
+			} catch (Exception e) {
+				Debug.LogException(e);
+			}
 		}
 
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN

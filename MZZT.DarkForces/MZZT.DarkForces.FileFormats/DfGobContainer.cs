@@ -2,8 +2,10 @@
 using MZZT.FileFormats;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -147,8 +149,7 @@ namespace MZZT.DarkForces.FileFormats {
 				throw new FormatException("GOB file format not found!");
 			}
 
-			this.data?.Dispose();
-			this.data = null;
+			this.ClearCachedData();
 
 			uint dataSize = header.FooterPointer - (uint)Marshal.SizeOf<Header>();
 
@@ -178,6 +179,7 @@ namespace MZZT.DarkForces.FileFormats {
 			for (int i = 0; i < fileCount; i++) {
 				FileTrailer file = BinarySerializer.Deserialize<FileTrailer>(buffer, trailerSize * i);
 				file.FileName = file.FileName.TrimEnd('\0');
+
 				this.files.Add(file);
 			}
 
@@ -203,7 +205,7 @@ namespace MZZT.DarkForces.FileFormats {
 		}
 
 		/// <summary>
-		/// Retrieves a file frem the GOB.
+		/// Retrieves a file from the GOB.
 		/// </summary>
 		/// <param name="name">The name of the file.</param>
 		/// <param name="type">The type of the file, inherited from File&lt;T&gt;</param>
@@ -237,7 +239,7 @@ namespace MZZT.DarkForces.FileFormats {
 		}
 
 		/// <summary>
-		/// Retrieves a file frem the GOB.
+		/// Retrieves a file from the GOB.
 		/// </summary>
 		/// <param name="name">The name of the file.</param>
 		/// <param name="type">The type of the file, inherited from File&lt;T&gt;</param>
@@ -258,7 +260,7 @@ namespace MZZT.DarkForces.FileFormats {
 		}
 
 		/// <summary>
-		/// Retrieves a file frem the GOB.
+		/// Retrieves a file from the GOB.
 		/// </summary>
 		/// <typeparam name="T">The type of the file, inherited from File&lt;T&gt;</typeparam>
 		/// <param name="name">The name of the file.</param>
@@ -343,13 +345,17 @@ namespace MZZT.DarkForces.FileFormats {
 			});
 		}
 
+		public void ClearCachedData() {
+			this.data?.Dispose();
+			this.data = null;
+		}
+
 		private bool disposedValue;
 
 		protected virtual void Dispose(bool disposing) {
 			if (!this.disposedValue) {
 				if (disposing) {
-					this.data?.Dispose();
-					this.data = null;
+					this.ClearCachedData();
 				}
 
 				this.disposedValue = true;

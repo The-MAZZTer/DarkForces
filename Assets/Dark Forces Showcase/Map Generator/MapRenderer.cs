@@ -1,4 +1,10 @@
-﻿using SkiaSharp;
+﻿using MZZT.IO.FileProviders;
+#if !SKIASHARP
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+#else
+using SkiaSharp;
+#endif
 using System;
 using System.IO;
 using System.Linq;
@@ -7,6 +13,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+#if !SKIASHARP
+using Image = SixLabors.ImageSharp.Image;
+#endif
 
 namespace MZZT.DarkForces.Showcase {
 	/// <summary>
@@ -57,6 +66,10 @@ namespace MZZT.DarkForces.Showcase {
 
 			Vector2 size = this.image.rectTransform.sizeDelta;
 			Vector2 viewport = ((RectTransform)this.image.rectTransform.parent).sizeDelta;
+			if (viewport == Vector2.zero) {
+				Canvas.ForceUpdateCanvases();
+				viewport = ((RectTransform)this.image.rectTransform.parent).sizeDelta;
+			}
 			Vector2 diff = new(viewport.x / size.x, viewport.y / size.y);
 			float zoom = Mathf.Min(diff.x, diff.y);
 			this.image.rectTransform.localScale = new Vector3(zoom, zoom, zoom);
@@ -190,7 +203,10 @@ namespace MZZT.DarkForces.Showcase {
 			string file = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PNG" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("PNG Image", "*.PNG"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Save",
 				SelectedFileMustExist = false,
 				SelectedPathMustExist = true,
@@ -208,10 +224,16 @@ namespace MZZT.DarkForces.Showcase {
 
 			MapGenerator map = this.GetComponent<MapGenerator>();
 
+			using Stream fileStream = await FileManager.Instance.NewFileStreamAsync(file, FileMode.Create, FileAccess.Write, FileShare.None);
+
+#if SKIASHARP
 			using SKData data = map.GeneratePng(LevelLoader.Instance.Level, LevelLoader.Instance.Information);
 			using Stream stream = data.AsStream();
-			using FileStream fileStream = new(file, FileMode.Create, FileAccess.Write, FileShare.None);
 			await stream.CopyToAsync(fileStream);
+#else
+			using Image image = map.GeneratePng(LevelLoader.Instance.Level, LevelLoader.Instance.Information);
+			await image.SaveAsPngAsync(fileStream, new PngEncoder());
+#endif
 		}
 	}
 }

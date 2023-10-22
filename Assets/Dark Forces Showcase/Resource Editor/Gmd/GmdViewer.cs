@@ -4,6 +4,7 @@ using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
 using MZZT.FileFormats.Audio;
+using MZZT.IO.FileProviders;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +16,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static MZZT.DarkForces.FileFormats.DfBitmap;
+
 
 namespace MZZT.DarkForces.Showcase {
 	public class GmdViewer : Databind<DfGeneralMidi>, IResourceViewer {
@@ -62,6 +63,49 @@ namespace MZZT.DarkForces.Showcase {
 		public event EventHandler ThumbnailChanged;
 #pragma warning restore CS0067
 
+		private void Init() {
+			if (this.midiSequencer != null) {
+				return;
+			}
+
+			this.GetComponent<AudioSource>().spatialize = false;
+
+#if !UNITY_WEBGL
+			this.midiStreamSynthesizer = new StreamSynthesizer(44100, 2, 1024, 40);
+#else
+			this.midiStreamSynthesizer = new StreamSynthesizer(44100, 2, 102400, 40);
+#endif
+			this.sampleBuffer = new float[this.midiStreamSynthesizer.BufferSize];
+
+			this.midiStreamSynthesizer.LoadBank(this.bankFilePath);
+
+			this.midiSequencer = new MidiSequencer(this.midiStreamSynthesizer) {
+				Looping = true
+			};
+
+#if UNITY_WEBGL
+			this.sources = Enumerable.Range(0, 2).Select(x => {
+				GameObject child = new() {
+					name = "AudioSource"
+				};
+				child.transform.SetParent(this.transform, false);
+				AudioSource source = child.AddComponent<AudioSource>();
+				source.playOnAwake = false;
+				source.spatialBlend = 0;
+				source.spatialize = false;
+				source.volume = this.GetComponent<AudioSource>().volume;
+				source.clip = AudioClip.Create(x.ToString(), this.sampleBuffer.Length, 2, 44100, false);
+				return source;
+			}).ToArray();
+#endif
+		}
+
+		protected override void Start() {
+			this.Init();
+
+			base.Start();
+		}
+
 		public void ResetDirty() {
 			if (!this.IsDirty) {
 				return;
@@ -87,23 +131,11 @@ namespace MZZT.DarkForces.Showcase {
 		public async Task LoadAsync(ResourceEditorResource resource, IFile file) {
 			this.filePath = resource?.Path;
 
-			this.GetComponent<AudioSource>().spatialize = false;
-
-			if (this.midiSequencer == null) {
-				this.midiStreamSynthesizer = new StreamSynthesizer(44100, 2, 1024, 40);
-
-				this.sampleBuffer = new float[this.midiStreamSynthesizer.BufferSize];
-
-				this.midiStreamSynthesizer.LoadBank(this.bankFilePath);
-
-				this.midiSequencer = new MidiSequencer(this.midiStreamSynthesizer) {
-					Looping = true
-				};
-			}
-
 			this.Value = (DfGeneralMidi)file;
 
 			this.mdpg.text = string.Join("", this.Value.Mdpg.Select(x => x.ToString("X2")));
+
+			this.Init();
 
 			if (this.Value.TrackData.Count > 0) {
 				await this.LoadTrackAsync(0);
@@ -194,18 +226,52 @@ namespace MZZT.DarkForces.Showcase {
 			if (this.isPaused) {
 				this.midiSequencer.Unpause();
 				this.isPaused = false;
+
+#if UNITY_WEBGL
+				if (this.pauseTime == 0) {
+					return;
+				}
+				double delta = AudioSettings.dspTime - this.pauseTime;
+				this.nextClipTime += delta;
+				this.nextQueuedClipTime += delta;
+				this.currentClipStartTime += delta;
+				this.pauseTime = 0;
+				foreach (AudioSource source in this.sources) {
+					source.UnPause();
+				}
+#endif
 			} else if (this.midiSequencer.IsPlaying) {
 				this.midiSequencer.Pause(true);
 				this.isPaused = true;
+
+#if UNITY_WEBGL
+				if (this.pauseTime > 0) {
+					return;
+				}
+				foreach (AudioSource source in this.sources) {
+					source.Pause();
+				}
+				this.pauseTime = AudioSettings.dspTime;
+#endif
 			} else {
 				this.midiSequencer.Play();
 
 				if (this.slider.value > 0) {
 					this.midiSequencer.Time = this.midiSequencer.EndTime * this.slider.value;
 				}
+
+#if UNITY_WEBGL
+				this.currentClipStartPos = 0;
+				this.currentClipStartTime = AudioSettings.dspTime;
+				this.nextClipTime = AudioSettings.dspTime;
+				this.nextClipOffset = 0;
+
+				this.nextClip = this.GenerateClip();
+#endif
 			}
 		}
 
+#if !UNITY_WEBGL
 		private void OnAudioFilterRead(float[] data, int _) {
 			if (!this.midiSequencer.IsPlaying) {
 				Array.Clear(data, 0, data.Length);
@@ -216,30 +282,88 @@ namespace MZZT.DarkForces.Showcase {
 
 			Buffer.BlockCopy(this.sampleBuffer, 0, data, 0, sizeof(float) * data.Length);
 		}
+#else
+		private AudioClip GenerateClip() {
+			this.midiStreamSynthesizer.GetNext(this.sampleBuffer);
+
+			AudioClip clip = this.sources[(this.nextSourceIndex + 1) % this.sources.Length].clip;
+			clip.SetData(this.sampleBuffer, 0);
+
+			return clip;
+		}
+
+		private AudioSource[] sources;
+		private AudioClip currentClip;
+		private AudioClip nextQueuedClip;
+		private double currentClipStartPos = -1;
+		private double currentClipStartTime = -1;
+		private double nextQueuedClipTime = double.PositiveInfinity;
+		private double nextClipTime = -1;
+		private AudioClip nextClip;
+		private int nextSourceIndex = 0;
+		private double nextClipOffset = 0;
+		private double pauseTime;
+#endif
 
 		public void Stop() {
 			this.midiSequencer.Stop(true);
 			this.isPaused = false;
 
 			this.slider.value = 0;
+#if UNITY_WEBGL
+			if (this.sources != null) {
+				foreach (AudioSource source in this.sources) {
+					source.Stop();
+				}
+			}
+			this.currentClip = null;
+			this.nextClip = null;
+			this.nextQueuedClip = null;
+			this.nextClipTime = -1;
+			this.nextQueuedClipTime = double.PositiveInfinity;
+			this.currentClipStartTime = -1;
+			this.currentClipStartPos = -1;
+			this.pauseTime = 0;
+#endif
 		}
 
 		private bool userInput = true;
 		private void Update() {
 			if (this.track >= 0) {
+#if !UNITY_WEBGL
 				int len = this.midiSequencer.EndSampleTime;
 				int pos = this.midiSequencer.SampleTime;
+#else
+				double len = this.midiSequencer.EndTime.TotalSeconds;
+				double blockTime = 0;
+				if (this.currentClipStartTime >= 0) {
+					if (this.pauseTime > 0) {
+						blockTime = this.pauseTime - this.currentClipStartTime;
+					} else {
+						blockTime = AudioSettings.dspTime - this.currentClipStartTime;
+					}
+				}
+				double pos = this.currentClipStartPos < 0 ? 0 : (this.currentClipStartPos + blockTime);
+#endif
 
 				if (this.midiSequencer.IsPlaying && !this.sliderMouseDown) {
 					this.userInput = false;
 					try {
+#if !UNITY_WEBGL
 						this.slider.value = ((float)pos / len);
+#else
+						this.slider.value = (float)(pos / len);
+#endif
 					} finally {
 						this.userInput = true;
 					}
 				}
 
+#if !UNITY_WEBGL
 				this.status.text = string.Format(this.statusFormat, this.midiSequencer.Time, this.midiSequencer.EndTime);
+#else
+				this.status.text = string.Format(this.statusFormat, TimeSpan.FromSeconds(pos), this.midiSequencer.EndTime);
+#endif
 				this.playIcon.gameObject.SetActive(!this.midiSequencer.IsPlaying || this.isPaused);
 				this.pauseIcon.gameObject.SetActive(this.midiSequencer.IsPlaying && !this.isPaused);
 			}
@@ -247,6 +371,53 @@ namespace MZZT.DarkForces.Showcase {
 			if (!PlayerInput.all[0].currentActionMap.FindAction("Click").IsPressed()) {
 				this.sliderMouseDown = false;
 			}
+
+#if UNITY_WEBGL
+			bool isPlaying = this.midiSequencer.IsPlaying && !this.isPaused;
+			if (!isPlaying) {
+				return;
+			}
+
+			if (this.nextQueuedClipTime == double.PositiveInfinity && (this.currentClip == null || AudioSettings.dspTime >= this.nextClipTime -
+				this.currentClip.length / 3)) {
+
+				this.nextQueuedClipTime = this.nextClipTime;
+				this.nextQueuedClip = this.nextClip;
+
+				AudioSource source = this.sources[this.nextSourceIndex];
+				this.nextSourceIndex = (this.nextSourceIndex + 1) % this.sources.Length;
+				if (AudioSettings.dspTime > this.nextClipTime) {
+					source.time = (float)(this.nextClipOffset + AudioSettings.dspTime - this.nextClipTime);
+					source.Play();
+				} else {
+					source.time = (float)this.nextClipOffset;
+					source.PlayScheduled(this.nextClipTime);
+				}
+
+#if UNITY_EDITOR
+				this.nextClipTime += this.nextClip.length / 4;
+#else
+				this.nextClipTime += this.nextClip.length / 2;
+#endif
+				this.nextClip = this.GenerateClip();
+			}
+
+			if (AudioSettings.dspTime >= this.nextQueuedClipTime) {
+				if (this.currentClip != null) {
+#if UNITY_EDITOR
+					this.currentClipStartPos += this.currentClip.length / 4;
+#else
+					this.currentClipStartPos += this.currentClip.length / 2;
+#endif
+				}
+				this.currentClipStartPos %= this.midiSequencer.EndTime.TotalSeconds;
+				this.currentClip = this.nextQueuedClip;
+				this.currentClipStartTime = this.nextQueuedClipTime - this.nextClipOffset;
+				this.nextQueuedClipTime = double.PositiveInfinity;
+				this.nextQueuedClip = null;
+				this.nextClipOffset = 0;
+			}
+#endif
 		}
 
 		private bool sliderMouseDown = false;
@@ -260,6 +431,13 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			this.midiSequencer.Time = this.midiSequencer.EndTime * value;
+#if UNITY_WEBGL
+			this.currentClipStartTime = AudioSettings.dspTime;
+			this.currentClipStartPos = (this.midiSequencer.EndTime * value).TotalSeconds;
+			this.nextClipTime = AudioSettings.dspTime;
+			this.nextClipOffset = 0;
+			this.nextClip = this.GenerateClip();
+#endif
 		}
 
 		public void OnRepeatChanged(bool value) {
@@ -285,7 +463,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.MID" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("MIDI Files", "*.MID"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -297,7 +478,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			Midi midi = await Midi.ReadAsync(path);
+			Midi midi = await DfFileManager.Instance.ReadAsync<Midi>(path);
 			if (this.Value.TrackData.Count == 0) {
 				this.Value.Format = midi.Format;
 				this.Value.Tempo = midi.Tempo;
@@ -335,7 +516,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.MID" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("MIDI File", "*.MID"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedPathMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -351,7 +535,7 @@ namespace MZZT.DarkForces.Showcase {
 			Midi midi = this.Value.ToMidi();
 			midi.Chunks.Clear();
 			try {
-				await midi.SaveAsync(path);
+				await DfFileManager.Instance.SaveAsync(midi, path);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving MIDI: {ex.Message}");
 			}
@@ -361,7 +545,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.MID" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("MIDI File", "*.MID"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedPathMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -382,7 +569,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 			midi.Chunks.Clear();
 			try {
-				await midi.SaveAsync(path);
+				await DfFileManager.Instance.SaveAsync(midi, path);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving MIDI: {ex.Message}");
 			}
@@ -409,19 +596,22 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
 			}
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await this.Value.SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await this.Value.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await this.Value.SaveAsync(stream);
+			}
 
 			this.ResetDirty();
 		}
@@ -434,7 +624,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}

@@ -951,6 +951,17 @@
                 },
                 {
                     "name": "",
+                    "id": "18d12964-9d48-4ed0-8588-f70990c14163",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "c6ea0aa1-dd45-48de-9a2a-1f84bbde2cc0",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
@@ -1029,6 +1040,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
+                    "action": "Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "549d92d5-ac97-49b7-801a-90b2ed2cac08",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
                     "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false

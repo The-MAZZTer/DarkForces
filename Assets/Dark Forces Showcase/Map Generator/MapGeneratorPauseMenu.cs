@@ -320,7 +320,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (levelIndex != LevelLoader.Instance.CurrentLevelIndex) {
 				await MapRenderer.Instance.LoadLevelAsync(levelIndex);
 
-				await LevelLoader.Instance.ShowWarningsAsync();
+				_ = LevelLoader.Instance.ShowWarningsAsync();
 
 				this.PopulateLayers();
 				regenerateMap = true;

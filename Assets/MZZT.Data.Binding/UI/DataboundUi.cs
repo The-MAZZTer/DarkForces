@@ -114,9 +114,7 @@ namespace MZZT.Data.Binding.UI {
 				}
 				return (T)Convert.ChangeType(ret, type);
 			}
-			set {
-				this.Databinder.Value = value;
-			}
+			set => this.Databinder.Value = value;
 		}
 
 		protected override bool CheckIsDirty() {

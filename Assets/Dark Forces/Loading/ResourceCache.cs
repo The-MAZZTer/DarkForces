@@ -129,9 +129,8 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename of the PLTT.</param>
 		/// <returns>The palette data.</returns>
 		public async Task<LandruPalette> GetPaletteAsync(string lfd, string filename) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			if (!this.plttCache.TryGetValue((lfd, filename), out LandruPalette pltt)) {
+			if (!this.plttCache.TryGetValue((lfd.ToUpper(), filename), out LandruPalette pltt)) {
 				try {
 					pltt = await FileLoader.Instance.LoadLfdFileAsync<LandruPalette>(lfd, filename);
 				} catch (Exception e) {
@@ -158,10 +157,9 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename to associate with the PLTT.</param>
 		/// <param name="pltt">The PLTT.</param>
 		public void AddPalette(string lfd, string filename, LandruPalette pltt) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
 			this.AddWarnings(Path.Combine(lfd, filename) + ".PLTT", pltt);
-			this.plttCache[(lfd, filename)] = pltt;
+			this.plttCache[(lfd.ToUpper(), filename)] = pltt;
 		}
 
 		private readonly Dictionary<LandruPalette, byte[]> importedPlttCache = new();
@@ -363,9 +361,8 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename of the DELT.</param>
 		/// <returns>The delt data.</returns>
 		public async Task<LandruDelt> GetDeltAsync(string lfd, string filename) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			if (!this.deltCache.TryGetValue((lfd, filename), out LandruDelt delt)) {
+			if (!this.deltCache.TryGetValue((lfd.ToUpper(), filename), out LandruDelt delt)) {
 				try {
 					delt = await FileLoader.Instance.LoadLfdFileAsync<LandruDelt>(lfd, filename);
 				} catch (Exception e) {
@@ -392,10 +389,9 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename to associate with the DELT.</param>
 		/// <param name="delt">The DELT.</param>
 		public void AddDelt(string lfd, string filename, LandruDelt delt) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
 			this.AddWarnings(Path.Combine(lfd, filename) + ".DELT", delt);
-			this.deltCache[(lfd, filename)] = delt;
+			this.deltCache[(lfd.ToUpper(), filename)] = delt;
 		}
 
 		private readonly Dictionary<(LandruPalette, LandruDelt), Texture2D> importedDeltCache = new();
@@ -537,9 +533,8 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename of the ANIM.</param>
 		/// <returns>The animation data.</returns>
 		public async Task<LandruAnimation> GetAnimationAsync(string lfd, string filename) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			if (!this.animCache.TryGetValue((lfd, filename), out LandruAnimation anim)) {
+			if (!this.animCache.TryGetValue((lfd.ToUpper(), filename), out LandruAnimation anim)) {
 				try {
 					anim = await FileLoader.Instance.LoadLfdFileAsync<LandruAnimation>(lfd, filename);
 				} catch (Exception e) {
@@ -566,10 +561,9 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename to associate with the ANIM.</param>
 		/// <param name="anim">The ANIM.</param>
 		public void AddAnimation(string lfd, string filename, LandruAnimation anim) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
 			this.AddWarnings(Path.Combine(lfd, filename) + ".ANI<", anim);
-			this.animCache[(lfd, filename)] = anim;
+			this.animCache[(lfd.ToUpper(), filename)] = anim;
 		}
 
 		private readonly Dictionary<string, DfFont> fntCache = new();
@@ -619,9 +613,8 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename of the FONT.</param>
 		/// <returns>The font data.</returns>
 		public async Task<LandruFont> GetFontAsync(string lfd, string filename) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			if (!this.fontCache.TryGetValue((lfd, filename), out LandruFont font)) {
+			if (!this.fontCache.TryGetValue((lfd.ToUpper(), filename), out LandruFont font)) {
 				try {
 					font = await FileLoader.Instance.LoadLfdFileAsync<LandruFont>(lfd, filename);
 				} catch (Exception e) {
@@ -648,10 +641,9 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename to associate with the FONT.</param>
 		/// <param name="font">The FONT.</param>
 		public void AddFont(string lfd, string filename, LandruFont font) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
 			this.AddWarnings(Path.Combine(lfd, filename) + ".FONT", font);
-			this.fontCache[(lfd, filename)] = font;
+			this.fontCache[(lfd.ToUpper(), filename)] = font;
 		}
 
 		/// <summary>
@@ -855,9 +847,8 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename of the VOIC.</param>
 		/// <returns>The voice audio file data.</returns>
 		public async Task<CreativeVoice> GetCreativeVoiceAsync(string lfd, string filename) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			if (!this.voicCache.TryGetValue((lfd, filename), out CreativeVoice voic)) {
+			if (!this.voicCache.TryGetValue((lfd.ToUpper(), filename), out CreativeVoice voic)) {
 				try {
 					voic = await FileLoader.Instance.LoadLfdFileAsync<CreativeVoice>(lfd, filename);
 				} catch (Exception e) {
@@ -884,10 +875,9 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename to associate with the VOIC.</param>
 		/// <param name="voic">The VOIC.</param>
 		public void AddCreativeVoice(string lfd, string filename, CreativeVoice voic) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
 			this.AddWarnings(Path.Combine(lfd, filename) + ".VOIC", voic);
-			this.voicCache[(lfd, filename)] = voic;
+			this.voicCache[(lfd.ToUpper(), filename)] = voic;
 		}
 
 		private readonly Dictionary<CreativeVoice, VocPlayer> importedVocCache = new();
@@ -974,26 +964,24 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename of the GMID.</param>
 		/// <returns>The general MIDI data.</returns>
 		public async Task<DfGeneralMidi> GetGeneralMidi(string lfd, string filename) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
-			if (!this.gmidCache.TryGetValue((lfd, filename), out DfGeneralMidi gmid)) {
+			if (!this.gmidCache.TryGetValue((lfd.ToUpper(), filename), out DfGeneralMidi gmid)) {
 				try {
 					gmid = await FileLoader.Instance.LoadLfdFileAsync<DfGeneralMidi>(lfd, filename);
 				} catch (Exception e) {
-					this.AddError(@$"{lfd}\{filename}.GMID", e);
+					this.AddError(@$"{lfd}{Path.DirectorySeparatorChar}{filename}.GMID", e);
 				}
-				this.AddWarnings(@$"{lfd}\{filename}.GMID", gmid);
+				this.AddWarnings(@$"{lfd}{Path.DirectorySeparatorChar}{filename}.GMID", gmid);
 
 				if (gmid == null) {
 					try {
 						gmid = await FileLoader.Instance.LoadLfdFileAsync<DfGeneralMidi>(lfd, "DEFAULT");
 					} catch (Exception e) {
-						this.AddError(@$"{lfd}\{filename}.GMID", e);
+						this.AddError(@$"{lfd}{Path.DirectorySeparatorChar}{filename}.GMID", e);
 					}
-					this.AddWarnings(@$"{lfd}\{filename}.GMID", gmid);
 				}
 
-				this.gmidCache[(lfd, filename)] = gmid;
+				this.AddGeneralMidi(lfd, filename, gmid);
 			}
 			return gmid;
 		}
@@ -1005,10 +993,9 @@ namespace MZZT.DarkForces {
 		/// <param name="filename">The filename to associate with the GMID.</param>
 		/// <param name="gmid">The GMID.</param>
 		public void AddGeneralMidi(string lfd, string filename, DfGeneralMidi gmid) {
-			lfd = lfd.ToUpper();
 			filename = filename.ToUpper();
 			this.AddWarnings(Path.Combine(lfd, filename) + ".GMID", gmid);
-			this.gmidCache[(lfd, filename)] = gmid;
+			this.gmidCache[(lfd.ToUpper(), filename)] = gmid;
 		}
 
 		/// <summary>

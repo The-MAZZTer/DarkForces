@@ -2,11 +2,10 @@
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
-using SkiaSharp;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -122,7 +121,67 @@ namespace MZZT.DarkForces.Showcase {
 				briefingText = await FileLoader.Instance.LoadLfdFileAsync<LandruDelt>(lfd, briefing.Level);
 			}
 
-			SKImageInfo info = new(320, 200);
+			Texture2D texture = new(320, 200, TextureFormat.RGBA32, false, true) {
+#if UNITY_EDITOR
+				alphaIsTransparency = true,
+#endif
+				filterMode = FilterMode.Point
+			};
+
+			byte[] raw = texture.GetRawTextureData();
+
+			byte[] palette = pltt.ToByteArray();
+
+			byte[] color = new byte[] { palette[0], palette[1], palette[2], 255 };
+			for (int y = 0; y < 200; y++) {
+				for (int x = 0; x < 320; x++) {
+					Buffer.BlockCopy(color, 0, raw, (y * 320 + x) * 4, 4);
+				}
+			}
+
+			LandruDelt background = uiElements?.Pages[0];
+			if (background != null) {
+				Texture2D backgroundTexture = background.ToTextureWithOffset(palette, true);
+				try {
+					byte[] backgroundRaw = backgroundTexture.GetRawTextureData();
+					for (int y = 0; y < backgroundTexture.height; y++) {
+						for (int x = 0; x < backgroundTexture.width; x++) {
+							if (backgroundRaw[(y * backgroundTexture.width + x) * 4 + 3] != 0) {
+								Buffer.BlockCopy(backgroundRaw, (y * backgroundTexture.width + x) * 4, raw, (y * 320 + x) * 4, 4);
+							}
+						}
+					}
+				} finally {
+					Destroy(backgroundTexture);
+				}
+			}
+
+			if (briefingText != null) {
+				int width = Math.Min(198, briefingText.Width);
+				int height = Math.Min(154, briefingText.Height);
+
+				Texture2D briefingTexture = briefingText.ToTexture(palette, true);
+				try {
+					byte[] briefingRaw = briefingTexture.GetRawTextureData();
+					for (int y = 36; y < 36 + height; y++) {
+						int srcY = y - 36 + briefingTexture.height - height;
+						for (int x = 110; x < 110 + width; x++) {
+							int srcX = x - 110;
+							if (briefingRaw[(srcY * briefingTexture.width + srcX) * 4 + 3] != 0) {
+								Buffer.BlockCopy(briefingRaw, (srcY * briefingTexture.width + srcX) * 4, raw, (y * 320 + x) * 4, 4);
+							} 
+						}
+					}
+				} finally {
+					Destroy(briefingTexture);
+				}
+			}
+
+			texture.LoadRawTextureData(raw);
+			texture.Apply(true, true);
+			return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+
+			/*SKImageInfo info = new(320, 200);
 			using SKSurface surface = SKSurface.Create(info);
 			SKCanvas canvas = surface.Canvas;
 
@@ -157,23 +216,26 @@ namespace MZZT.DarkForces.Showcase {
 
 			texture.LoadRawTextureData(pixels);
 			texture.Apply(true, true);
-			return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+			return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));*/
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
 			}
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await this.Value.SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await this.Value.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await this.Value.SaveAsync(stream);
+			}
 
 			this.ResetDirty();
 		}
@@ -186,7 +248,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}

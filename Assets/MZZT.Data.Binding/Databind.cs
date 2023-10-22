@@ -176,7 +176,7 @@ namespace MZZT.Data.Binding {
 							this.member = null;
 							member = this.Member;
 						}
-						
+
 						if (member is MethodInfo getMethod && this.setMethod == null) {
 							this.setMethod = objType.GetMethod(this.MemberName, new[] { getMethod.ReturnType }, new ParameterModifier[] { new ParameterModifier() });
 							Assert.IsNotNull(this.setMethod);

@@ -3,6 +3,7 @@ using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.Drawing;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.Collections;
 using System.IO;
@@ -12,7 +13,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Color = UnityEngine.Color;
-using File = System.IO.File;
 using Image = UnityEngine.UI.Image;
 
 namespace MZZT.DarkForces.Showcase {
@@ -115,7 +115,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (baseFile != null) {
 				string folder = Path.GetDirectoryName(baseFile);
 				string path = Path.Combine(folder, file);
-				return await DfFile.GetFileFromFolderOrContainerAsync<T>(path) ?? await ResourceCache.Instance.GetAsync<T>(folder, file);
+				return await DfFileManager.Instance.ReadAsync<T>(path) ?? await ResourceCache.Instance.GetAsync<T>(folder, file);
 			}
 
 			return await ResourceCache.Instance.GetAsync<T>(Path.GetDirectoryName(file), Path.GetFileName(file));
@@ -273,7 +273,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.ANIM", "*.ANM", "*.DELT", "*.DLT", "*.PNG"},
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Supported Files", "*.ANIM", "*.ANM", "*.DELT", "*.DLT", "*.PNG"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -284,13 +287,12 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			this.lastFolder = Path.GetDirectoryName(path);
-
+ 
 			string ext = Path.GetExtension(path).ToLower();
-
 			if (ext == ".anim" || ext == ".anm") {
 				LandruAnimation anim;
 				try {
-					anim = await DfFile.GetFileFromFolderOrContainerAsync<LandruAnimation>(path);
+					anim = await DfFileManager.Instance.ReadAsync<LandruAnimation>(path);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading AMIM: {ex.Message}");
 					return;
@@ -304,7 +306,7 @@ namespace MZZT.DarkForces.Showcase {
 			} else if (ext == ".delt" || ext == ".dlt") {
 				LandruDelt delt;
 				try {
-					delt = await DfFile.GetFileFromFolderOrContainerAsync<LandruDelt>(path);
+					delt = await DfFileManager.Instance.ReadAsync<LandruDelt>(path);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading DELT: {ex.Message}");
 					return;
@@ -318,7 +320,7 @@ namespace MZZT.DarkForces.Showcase {
 			} else {
 				Png png;
 				try {
-					using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 					png = new(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
@@ -380,11 +382,16 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.DELT", "*.DLT", "*.PNG" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Supported Files", "*.DELT", "*.DLT", "*.PNG"),
+					FileBrowser.FileType.Generate("Unmasked PNG", "*.PNG"),
+					FileBrowser.FileType.Generate("Landru DELT", "*.DELT", "*.DLT"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedPathMustExist = true,				
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Export to 8-bit DLTT or Unmasked PNG",
+				Title = "Export to 8-bit DELT or Unmasked PNG",
 				ValidateFileName = true
 			});
 			if (path == null) {
@@ -393,9 +400,14 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			if (Path.GetExtension(path).ToLower() != ".png") {
+			int filterIndex = FileBrowser.Instance.FilterIndex;
+			if (filterIndex < 1 || filterIndex > 2) {
+				filterIndex = (Path.GetExtension(path).ToLower() != ".png") ? 2 : 1;
+			}
+
+			if (filterIndex == 2) {
 				try {
-					await page.SaveAsync(path);
+					await DfFileManager.Instance.SaveAsync(page, path);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
 				}
@@ -409,7 +421,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				Png png = page.ToUnmaskedPng(bytePalette);
 				try {
-					using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+					using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
 					png.Write(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
@@ -421,7 +433,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.PLTT", "*.PLT" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Palette Files", "*.PLTT", "*.PLT"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Select",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -444,8 +459,8 @@ namespace MZZT.DarkForces.Showcase {
 				if (string.IsNullOrWhiteSpace(palette)) {
 					string folder = Path.GetDirectoryName(this.filePath);
 					string file = Path.GetFileNameWithoutExtension(this.filePath).ToLower();
-					if (File.Exists(folder)) {
-						await LandruFileDirectory.ReadAsync(folder, async x => {
+					if (FileManager.Instance.FileExists(folder)) {
+						await DfFileManager.Instance.ReadLandruFileDirectoryAsync(folder, async x => {
 							string name = x.Files.FirstOrDefault(x => x.name.ToLower() == file && x.type.ToLower() == "pltt").name;
 							if (name == null) {
 								name = x.Files.FirstOrDefault(x => x.type.ToLower() == "pltt").name;
@@ -454,20 +469,24 @@ namespace MZZT.DarkForces.Showcase {
 								pltt = await x.GetFileAsync<LandruPalette>(name);
 							}
 						});
-					} else if (Directory.Exists(folder)) {
-						if (File.Exists(Path.Combine(folder, file + ".PLTT"))) {
-							pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLTT"));
+					} else if (FileManager.Instance.FolderExists(folder)) {
+						if (FileManager.Instance.FileExists(Path.Combine(folder, file + ".PLTT"))) {
+							pltt = await DfFileManager.Instance.ReadAsync<LandruPalette>(Path.Combine(folder, file + ".PLTT"));
 						}
-						if (pltt == null && File.Exists(Path.Combine(folder, file + ".PLT"))) {
-							pltt = await LandruPalette.ReadAsync(Path.Combine(folder, file + ".PLT"));
+						if (pltt == null && FileManager.Instance.FileExists(Path.Combine(folder, file + ".PLT"))) {
+							pltt = await DfFileManager.Instance.ReadAsync<LandruPalette>(Path.Combine(folder, file + ".PLT"));
 						}
 						if (pltt == null) {
-							string path = Directory.EnumerateFiles(folder).FirstOrDefault(x => {
-								string ext = Path.GetExtension(x).ToLower();
-								return ext == ".pltt" || ext == ".plt";
-							});
+							string path = null;
+							await foreach (string searchFile in FileManager.Instance.FolderEnumerateFilesAsync(folder)) {
+								string ext = Path.GetExtension(searchFile).ToLower();
+								if (ext == ".pltt" || ext == ".plt") {
+									path = searchFile;
+									break;
+								}
+							}
 							if (path != null) {
-								pltt = await LandruPalette.ReadAsync(path);
+								pltt = await DfFileManager.Instance.ReadAsync<LandruPalette>(path);
 							}
 						}
 					}
@@ -512,32 +531,35 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
 			}
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await this.Value.SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await this.Value.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await this.Value.SaveAsync(stream);
+			}
 
 			this.ResetDirty();
 		}
 
 		public async void SaveAsAsync() {
-			string path = await ResourceEditors.Instance.PickSaveLocationAsync(this.filePath, new[] { "*.BM" });
+			string path = await ResourceEditors.Instance.PickSaveLocationAsync(this.filePath, new[] { "*.ANIM", "*.ANM" });
 			if (string.IsNullOrEmpty(path)) {
 				return;
 			}
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}
@@ -567,7 +589,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.DELT", "*.DLT", "*.PNG" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Supported Files", "*.DELT", "*.DLT", "*.PNG"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Import Mask",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -584,7 +609,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (ext == ".delt" || ext == ".dlt") {
 				LandruDelt delt;
 				try {
-					delt = await DfFile.GetFileFromFolderOrContainerAsync<LandruDelt>(path);
+					delt = await DfFileManager.Instance.ReadAsync<LandruDelt>(path);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading DELT: {ex.Message}");
 					return;
@@ -604,7 +629,7 @@ namespace MZZT.DarkForces.Showcase {
 			} else {
 				Png png;
 				try {
-					using FileStream stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 					png = new(stream);
 				} catch (Exception ex) {
 					await DfMessageBox.Instance.ShowAsync($"Error reading file: {ex.Message}");
@@ -642,7 +667,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PNG" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("PNG Mask", "*.PNG"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export Mask",
 				SelectedPathMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -657,7 +685,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			Png png = page.MaskToPng();
 			try {
-				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
+				using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
 				png.Write(stream);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");

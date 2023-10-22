@@ -1,4 +1,5 @@
 using MZZT.DarkForces.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -216,7 +217,7 @@ namespace MZZT.DarkForces.Showcase {
 
 						Randomizer.Instance.Settings = settings;
 
-						if (modPaths.Any(x => !File.Exists(x.Key))) {
+						if (modPaths.Any(x => !FileManager.Instance.FileExists(x.Key))) {
 							await DfMessageBox.Instance.ShowAsync(
 								"You loaded a randomized GOB as a mod. However the original mod files can no longer be loaded. The randomizer settings have been loaded; you can save a preset and return to the main menu to manually load the original mod files if you wish.");
 						} else {

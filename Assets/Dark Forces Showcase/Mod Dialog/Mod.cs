@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using MZZT.IO.FileProviders;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.background.SetActive(true);
 
 			while (this.Visible) {
-				await Task.Delay(1);
+				await Task.Yield();
 			}
 		}
 
@@ -32,7 +33,6 @@ namespace MZZT.DarkForces.Showcase {
 			string file = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*" },
 				SelectButtonText = "Add",
 				SelectedFileMustExist = true,
 				SelectedPathMustExist = true,
@@ -53,7 +53,7 @@ namespace MZZT.DarkForces.Showcase {
 			switch (Path.GetExtension(file).ToUpper()) {
 				case ".LFD":
 					if (FileLoader.Instance.DarkForcesFolder != null &&
-						File.Exists(Path.Combine(FileLoader.Instance.DarkForcesFolder, "LFD", Path.GetFileName(file).ToUpper()))) {
+						FileManager.Instance.FileExists(Path.Combine(FileLoader.Instance.DarkForcesFolder, "LFD", Path.GetFileName(file).ToUpper()))) {
 
 						modFile.Overrides = Path.GetFileName(file).ToUpper();
 					} else if (!this.list.Any(x => x.Overrides == "DFBRIEF.LFD")) {

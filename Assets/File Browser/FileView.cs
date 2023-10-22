@@ -1,7 +1,7 @@
-using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
+using MZZT.IO.FileProviders;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -10,140 +10,28 @@ using UnityEngine;
 
 namespace MZZT {
 	/// <summary>
-	/// Different types of file system items.
-	/// </summary>
-	public enum FileSystemItemTypes {
-		/// <summary>
-		/// The root (My Computer).
-		/// </summary>
-		Root,
-		/// <summary>
-		/// A file.
-		/// </summary>
-		File,
-		/// <summary>
-		/// A file inside of a GOB or LFD.
-		/// </summary>
-		FileContainee,
-		/// <summary>
-		/// A GOB or LFD which can be browsed inside.
-		/// </summary>
-		FileContainer,
-		/// <summary>
-		/// A folder.
-		/// </summary>
-		Folder
-	}
-
-	/// <summary>
-	/// The data about a file system item, sufficient to display an entry in the file browser.
-	/// </summary>
-	[Serializable]
-	public class FileSystemItem {
-		/// <summary>
-		/// Full path to the file or folder.
-		/// </summary>
-		public string FilePath { get; set; }
-		/// <summary>
-		/// The display name.
-		/// </summary>
-		public string DisplayName { get; set; }
-		/// <summary>
-		/// The type of the item.
-		/// </summary>
-		public FileSystemItemTypes Type { get; set; }
-		/// <summary>
-		/// If the file is inside a container, at what offset does it start.
-		/// </summary>
-		public long ContainerOffset { get; set; }
-		/// <summary>
-		/// The size of the file.
-		/// </summary>
-		public long Size { get; set; }
-
-		/// <summary>
-		/// Convert the size to a user readable string.
-		/// </summary>
-		public string DisplaySize {
-			get {
-				if (this.Type == FileSystemItemTypes.Root || this.Type == FileSystemItemTypes.Folder) {
-					return "";
-				}
-
-				string prefix = "BKMGTPEZY??????????????????????";
-				float size = this.Size;
-				int pos = 0;
-				while (size >= 1000) {
-					size /= 1024;
-					pos++;
-				}
-				if (pos == 0) {
-					return $"{size:0} bytes";
-				}
-				return $"{size:0.##} {prefix[pos]}B";
-			}
-		}
-
-		/// <summary>
-		/// The material icon glyph to use for the item.
-		/// </summary>
-		public string IconGlyph {
-			get {
-				// Unity doesn't support ligatures so we need to use the code point.
-				switch (this.Type) {
-					case FileSystemItemTypes.Root:
-						return "\ue30a";
-					case FileSystemItemTypes.Folder:
-						if (Path.GetDirectoryName(this.FilePath) == null) {
-							return "\ue1db";
-						} else {
-							return "\ue2c7";
-						}
-					case FileSystemItemTypes.FileContainer:
-						return "\ueb2c";
-					case FileSystemItemTypes.FileContainee:
-					case FileSystemItemTypes.File:
-					default:
-						return "\ue24d";
-				}
-			}
-		}
-	}
-
-	/// <summary>
 	/// A container representing a folder, which will display a list of files.
 	/// </summary>
-	public class FileView : DataboundList<FileSystemItem> {
+	public class FileView : DataboundList<IVirtualItem> {
 		[Header("File View"), SerializeField]
-		private FileSystemItem container;
-		/// <summary>
-		/// The item representing the container this FileView displays the items of.
-		/// </summary>
-		public FileSystemItem Container { get => this.container ?? (FileSystemItem)this.ParentValue; set => this.container = value; }
-		[SerializeField]
 		private string[] fileSearchPatterns = Array.Empty<string>();
 		/// <summary>
 		/// Filters for files to display (if empty, no files are displayed).
 		/// </summary>
 		public string[] FileSearchPatterns { get => this.fileSearchPatterns; set => this.fileSearchPatterns = value; }
 		[SerializeField]
-		private bool allowNavigateGob = true;
-		/// <summary>
-		/// Allow clicking on GOB files to navigate into them.
-		/// </summary>
-		public bool AllowNavigateGob { get => this.allowNavigateGob; set => this.allowNavigateGob = value; }
-		[SerializeField]
-		private bool allowNavigateLfd = true;
-		/// <summary>
-		/// Allow clicking on LFD files to navigate into them.
-		/// </summary>
-		public bool AllowNavigateLfd { get => this.allowNavigateLfd; set => this.allowNavigateLfd = value; }
-		[SerializeField]
 		private GameObject emptyMessageContainer = null;
 		[SerializeField]
 		private TMP_Text emptyMessageText = null;
 		[SerializeField]
 		private GameObject headerSpacer = null;
+
+		public bool ShowContainerAsSingleItem { get; set; }
+		private IVirtualFolder container;
+		/// <summary>
+		/// The item representing the container this FileView displays the items of.
+		/// </summary>
+		public IVirtualFolder Container { get => this.container ?? (IVirtualFolder)this.ParentValue; set => this.container = value; }
 
 		/// <summary>
 		/// Refresh the list of files displayed.
@@ -155,149 +43,41 @@ namespace MZZT {
 
 			this.Clear();
 
-			string[] fileSearchPatterns;
-			if (this.fileSearchPatterns == null || this.fileSearchPatterns.Length == 0) {
-				fileSearchPatterns = Array.Empty<string>();
-			} else {
-				fileSearchPatterns = this.fileSearchPatterns;
-			}
+			if (!this.ShowContainerAsSingleItem) {
+				Regex[] fileSearchPatterns;
+				if (this.fileSearchPatterns == null || this.fileSearchPatterns.Length == 0) {
+					fileSearchPatterns = Array.Empty<Regex>();
+				} else {
+					fileSearchPatterns = this.fileSearchPatterns.Select(x => new Regex("^" + Regex.Escape(x).Replace("\\*", ".*").Replace("\\?", ".") + "$", RegexOptions.IgnoreCase)).ToArray();
+				}
 
-			// Get the children of the current container.
-			FileSystemItem[] children;
-			switch (this.container.Type) {
-				case FileSystemItemTypes.Root: {
-					children = DriveInfo.GetDrives()
-						.Select(x => {
-							long size = 0;
-							// The label is the friendly name of the drive in .NET, but Mono just has the drive letter!
-							/*string label = x.Name;
-							try {
-								label = x.VolumeLabel;
-							} catch (UnauthorizedAccessException) {
-							} catch (IOException) {
-							}*/
-							try {
-								size = x.TotalSize;
-							} catch (UnauthorizedAccessException) {
-							} catch (IOException) {
-							}
-							return new FileSystemItem() {
-								FilePath = x.Name,
-								DisplayName = x.Name, //$"{label} ({x.Name})",
-								Type = FileSystemItemTypes.Folder,
-								Size = size
-							};
-						})
-						.OrderBy(x => x.FilePath.ToUpper())
-						.ToArray();
-					if (children.Length == 0) {
-						this.ShowError("No items found.");
-					}
-				} break;
-				case FileSystemItemTypes.Folder: {
-					try {
-						children = Directory.EnumerateDirectories(this.container.FilePath)
-							.Select(x => new FileSystemItem() {
-								FilePath = x,
-								DisplayName = Path.GetFileName(x),
-								Type = FileSystemItemTypes.Folder
-							})
-							.OrderBy(x => x.DisplayName.ToUpper())
-							.Concat(
-								fileSearchPatterns
-								.SelectMany(x => Directory.EnumerateFiles(this.container.FilePath, x))
-								.Distinct()
-								.Select(x => {
-									string ext = Path.GetExtension(x).ToUpper();
-									return new FileSystemItem() {
-										FilePath = x,
-										DisplayName = Path.GetFileName(x),
-										Type = ((this.allowNavigateGob && ext == ".GOB") ||
-											(this.allowNavigateLfd && ext == ".LFD")) ?
-											FileSystemItemTypes.FileContainer : FileSystemItemTypes.File,
-										Size = new FileInfo(x).Length
-									};
-								})
-								.OrderBy(x => Path.GetExtension(x.FilePath).ToUpper())
-								.ThenBy(x => x.DisplayName.ToUpper())
-							).ToArray();
-						if (children.Length == 0) {
-							this.ShowError("No items found.");
+				// Get the children of the current container.
+				List<IVirtualItem> items = new();
+				await foreach (IVirtualItem item in this.container.GetChildrenAsync()) {
+					if (item is IVirtualFile file) {
+						if (fileSearchPatterns.Length == 0 || !fileSearchPatterns.Any(x => x.IsMatch(item.Name))) {
+							continue;
 						}
-					} catch (IOException e) {
-						children = Array.Empty<FileSystemItem>();
-						this.ShowError(e.Message);
-					} catch (UnauthorizedAccessException e) {
-						children = Array.Empty<FileSystemItem>();
-						this.ShowError(e.Message);
 					}
-				} break;
-				case FileSystemItemTypes.FileContainer: {
-					string ext = Path.GetExtension(this.container.FilePath).ToUpper();
-					Regex patterns = new("^(" + string.Join("|", fileSearchPatterns
-						.Select(x => string.Join("", x.Select(x => x switch {
-							'*' => ".*",
-							'?' => ".",
-							_ => Regex.Escape(x.ToString())
-						})))) + ")$", RegexOptions.IgnoreCase);
-					switch (ext) {
-						case ".GOB": {
-							if (!this.allowNavigateGob) {
-								children = Array.Empty<FileSystemItem>();
-								this.ShowError("Invalid location.");
-								break;
-							}
 
-							DfGobContainer gob = await DfGobContainer.ReadAsync(this.container.FilePath, false);
-							children = gob.Files
-								.Where(x => patterns.IsMatch(x.name))
-								.OrderBy(x => Path.GetExtension(x.name).ToUpper())
-								.ThenBy(x => x.name.ToUpper())
-								.Select(x => new FileSystemItem() {
-									FilePath = $"{this.container.FilePath}{Path.DirectorySeparatorChar}{x.name}",
-									DisplayName = x.name,
-									Type = FileSystemItemTypes.FileContainee,
-									ContainerOffset = x.offset,
-									Size = x.size
-								})
-								.ToArray();
-						} break;
-						case ".LFD": {
-							if (!this.allowNavigateLfd) {
-								children = Array.Empty<FileSystemItem>();
-								this.ShowError("Invalid location.");
-								break;
-							}
-
-							LandruFileDirectory lfd = await LandruFileDirectory.ReadAsync(this.container.FilePath);
-							children = lfd.Files
-								.Where(x => patterns.IsMatch($"{x.name}.{x.type}"))
-								.OrderBy(x => x.type.ToUpper())
-								.ThenBy(x => x.name.ToUpper())
-								.Select(x => new FileSystemItem() {
-									FilePath = $"{this.container.FilePath}{Path.DirectorySeparatorChar}{x.name}.{x.type}",
-									DisplayName = $"{x.name}.{x.type}",
-									Type = FileSystemItemTypes.FileContainee,
-									ContainerOffset = x.offset,
-									Size = x.size
-								})
-								.ToArray();
-						} break;
-						default: {
-							this.ShowError("Invalid location.");
-						} return;
+					items.Add(item);
+				}
+				items.Sort((a, b) => {
+					if (a is IVirtualFolder && b is not IVirtualFolder) {
+						return -1;
+					} else if (b is IVirtualFolder && a is not IVirtualFolder) {
+						return 1;
 					}
-				} break;
-				default: {
-					this.ShowError("Invalid location.");
-				} return;
+					return string.Compare(a.Name, b.Name);
+				});
+				this.AddRange(items);
+
+				if (items.Count == 0) {
+					this.ShowError("No items found.");
+				}
+			} else {
+				this.Add(this.container);
 			}
-
-			/*foreach (FileSystemItem item in children) {
-				this.Add(item);
-				await Task.Delay(1);
-			}*/
-			this.AddRange(children);
 
 			Canvas.ForceUpdateCanvases();
 

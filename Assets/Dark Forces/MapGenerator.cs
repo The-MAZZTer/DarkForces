@@ -1,11 +1,24 @@
 using MZZT.DarkForces.FileFormats;
+#if !SKIASHARP
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Memory;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+#else
 using SkiaSharp;
+#endif
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UnityEditor;
 using UnityEngine;
 using static MZZT.DarkForces.FileFormats.DfLevel;
+using Color = UnityEngine.Color;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -506,6 +519,7 @@ namespace MZZT.DarkForces {
 		public Texture2D GenerateTexture(DfLevel level, DfLevelInformation inf) {
 			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
 
+#if SKIASHARP
 			// Create the SkiaSharp image.
 			SKImageInfo info = new(viewport.x, viewport.y);
 			using SKSurface surface = SKSurface.Create(info);
@@ -550,6 +564,31 @@ namespace MZZT.DarkForces {
 			texture.LoadRawTextureData(pixels);
 			texture.Apply(true, true);
 			return texture;
+#else
+			using Image<Rgba32> image = new(viewport.x, viewport.y);
+			image.Mutate(x => {
+				x.SetGraphicsOptions(new GraphicsOptions() {
+					AlphaCompositionMode = PixelAlphaCompositionMode.SrcOver,
+					Antialias = true
+				});
+
+				foreach (Line line in lines) {
+					SolidPen pen = new(new PenOptions(line.Properties.Color.ToImageSharp(), line.Properties.Width) {
+						EndCapStyle = EndCapStyle.Round,
+						JointStyle = JointStyle.Round
+					});
+
+					x.DrawLine(pen, new PointF(
+						line.LeftVertex.x,
+						image.Height - line.LeftVertex.y
+					), new PointF(
+						line.RightVertex.x,
+						image.Height - line.RightVertex.y
+					));
+				}
+			});
+			return image.ToTexture();
+#endif
 		}
 
 		/// <summary>
@@ -559,16 +598,13 @@ namespace MZZT.DarkForces {
 		/// <param name="inf">The level information.</param>
 		/// <returns>The PNG data.</returns>
 #if SKIASHARP
-		public void GeneratePng(DfLevel level, DfLevelInformation inf) {
-			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
-
-
-			
-		}
-#else
 		public SKData GeneratePng(DfLevel level, DfLevelInformation inf) {
+#else
+		public Image GeneratePng(DfLevel level, DfLevelInformation inf) {
+#endif
 			(Line[] lines, Vector2Int viewport) = this.GenerateLinesAndViewport(level, inf);
 
+#if SKIASHARP
 			// Create the SkiaSharp image.
 			SKImageInfo info = new(viewport.x, viewport.y);
 			using SKSurface surface = SKSurface.Create(info);
@@ -598,7 +634,31 @@ namespace MZZT.DarkForces {
 			using SKPixmap pixmap = surface.PeekPixels();
 
 			return pixmap.Encode(SKEncodedImageFormat.Png, 100);
-		}
+#else
+			Image<Rgba32> image = new(viewport.x, viewport.y);
+			image.Mutate(x => {
+				x.SetGraphicsOptions(new GraphicsOptions() {
+					AlphaCompositionMode = PixelAlphaCompositionMode.SrcOver,
+					Antialias = true
+				});
+
+				foreach (Line line in lines) {
+					SolidPen pen = new(new PenOptions(line.Properties.Color.ToImageSharp(), line.Properties.Width) {
+						EndCapStyle = EndCapStyle.Round,
+						JointStyle = JointStyle.Round
+					});
+
+					x.DrawLine(pen, new PointF(
+						line.LeftVertex.x,
+						image.Height - line.LeftVertex.y
+					), new PointF(
+						line.RightVertex.x,
+						image.Height - line.RightVertex.y
+					));
+				}
+			});
+			return image;
 #endif
+		}
 	}
 }

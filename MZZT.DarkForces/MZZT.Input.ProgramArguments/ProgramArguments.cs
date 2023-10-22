@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 namespace MZZT.Input {
 	public static class ProgramArguments {
 		public static string AppName { get; set; }
+		public static IProgramArgumentsParser Parser { get; set; }
 
 		public static object Inject<T>() {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
@@ -41,199 +42,76 @@ namespace MZZT.Input {
 			return obj;
 		}
 
-		private static readonly Regex numberRegex = new Regex(@"^\d+", RegexOptions.Compiled);
-
 		public static bool Inject(Type type, object obj) {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			Parser = Parser ?? new ProgramCommandLineParser();
+
 			(MemberInfo member, ProgramArgumentAttribute attribute)[] members = type.GetMembers()
 				.Select(x => (x, x.GetCustomAttribute<ProgramArgumentAttribute>()))
 				.Where(x => x.Item2 != null)
 				.ToArray();
-			Dictionary<string, (MemberInfo member, ProgramSwitchAttribute attribute)> longToMember = members
-				.Where(x => (x.attribute is ProgramSwitchAttribute a) && (a.LongNames?.Length ?? 0) > 0)
-				.SelectMany(x => ((ProgramSwitchAttribute)x.attribute).LongNames
-					.Select(y => (y, x.member, (ProgramSwitchAttribute)x.attribute)))
-				.ToDictionary(x => x.y, x => (x.member, x.Item3));
-			Dictionary<char, (MemberInfo member, ProgramSwitchAttribute attribute)> shortToMember = members
-				.Where(x => (x.attribute is ProgramSwitchAttribute a) && a.ShortFlag != default)
-				.ToDictionary(x => ((ProgramSwitchAttribute)x.attribute).ShortFlag, x => (x.member, (ProgramSwitchAttribute)x.attribute));
-			ProgramHelpInfoAttribute info = type.GetCustomAttribute<ProgramHelpInfoAttribute>();
-			Queue<(MemberInfo member, ProgramArgumentAttribute attribute)> nonSwitches =
-				new Queue<(MemberInfo member, ProgramArgumentAttribute attribute)>(members.Where(x => !(x.attribute is ProgramSwitchAttribute)));
-			
-			Dictionary<ProgramArgumentAttribute, MemberInfo> required = members.Where(x => x.attribute.Required).ToDictionary(x => x.attribute, x => x.member);
 
-			string[] args = Environment.GetCommandLineArgs().Skip(1).ToArray();
-
-			Dictionary<MemberInfo, object> pendingSets = new Dictionary<MemberInfo, object>();
-
-			List<object> pendingExtras = new List<object>();
-
-			bool ignoreOthers = false;
-			bool matchSwitches = true;
+			Dictionary<ProgramArgumentAttribute, object> parsedArgs = null;
 			string parseError = null;
-			for (int i = 0; i < args.Length; i++) {
-				string arg = args[i];
-				if (matchSwitches && arg.StartsWith("--")) {
-					if (arg == "--") {
-						matchSwitches = false;
-						continue;
-					}
+			try {
+				parsedArgs = Parser.Parse(members.ToDictionary(x => x.attribute, x => {
+					ProgramArgumentValueTypes type;
+					Type valueType = GetArgType(x.member);
+					if (valueType == null || typeof(bool).Equals(valueType)) {
+						type = ProgramArgumentValueTypes.None;
+					} else if (
+						typeof(byte).Equals(valueType) ||
+						typeof(sbyte).Equals(valueType) ||
+						typeof(short).Equals(valueType) ||
+						typeof(ushort).Equals(valueType) ||
+						typeof(int).Equals(valueType) ||
+						typeof(uint).Equals(valueType) ||
+						typeof(long).Equals(valueType) ||
+						typeof(ulong).Equals(valueType)) {
 
-					string name = arg.Substring(2);
-					string value = null;
-					int index = name.IndexOf('=');
-					if (index >= 0) {
-						value = name.Substring(index + 1);
-						if (value.StartsWith("\"")) {
-							value = value.Substring(1);
-							if (value.EndsWith("\"")) {
-								value = value.Substring(0, value.Length - 1);
-							}
-						}
-						name = name.Substring(0, index);
+						type = ProgramArgumentValueTypes.Integer;
+					} else {
+						type = ProgramArgumentValueTypes.Other;
 					}
+					return type;
+				}));
+			} catch (Exception ex) {
+				parseError = ex.Message;
+			}
 
-					if (!longToMember.TryGetValue(name, out (MemberInfo member, ProgramSwitchAttribute attribute) tuple)) {
-						parseError = $"Unknown argument \"{name}\".";
-						break;
-					}
+			ProgramHelpInfoAttribute info = type.GetCustomAttribute<ProgramHelpInfoAttribute>();
 
-					(MemberInfo member, ProgramSwitchAttribute attribute) = tuple;
-					
+			Dictionary<ProgramArgumentAttribute, MemberInfo> all = members.ToDictionary(x => x.attribute, x => x.member);
+			Dictionary<ProgramArgumentAttribute, MemberInfo> required = all.Where(x => x.Key.Required).ToDictionary(x => x.Key, x => x.Value);
+
+			Dictionary<MemberInfo, object> pendingSets = new();
+			if (parsedArgs != null) {
+				foreach ((ProgramArgumentAttribute attribute, object value) in parsedArgs) {
+					MemberInfo member = all[attribute];
+
 					Type valueType = GetArgType(member);
-					if (valueType != null && !typeof(bool).Equals(valueType) && index < 0) {
-						if (i + 1 < args.Length) {
-							value = args[++i];
-						} else {
-							parseError = $"Missing value for argument \"{name}\".";
-							break;
-						}
-					}
-
 					object parsedValue;
 					if (value == null && typeof(bool).Equals(valueType)) {
 						parsedValue = true;
+					} else if (typeof(IEnumerable).IsAssignableFrom(valueType) && (valueType.IsGenericType || valueType.IsArray)) {
+						Type elementType = valueType.IsGenericType ? valueType.GetGenericArguments()[0] : valueType.GetElementType();
+
+						Array extras = Array.CreateInstance(elementType, ((string[])value).Length);
+						foreach ((string extra, int i) in ((string[])value).Select((x, i) => (x, i))) {
+							extras.SetValue(ConvertArgType(extra, elementType), i);
+						}
+						parsedValue = extras;
 					} else {
-						parsedValue = ConvertArgType(value, valueType);
+						parsedValue = ConvertArgType((string)value, valueType);
 					}
 
-					if (attribute.IgnoreOtherArgs) {
-						ignoreOthers = true;
-						pendingSets.Clear();
-						pendingSets[member] = parsedValue;
-						break;
-					}
+					required.Remove(attribute);
 
 					pendingSets[member] = parsedValue;
-					required.Remove(attribute);
-				} else if (matchSwitches && arg.StartsWith("-") && arg.Length > 1) {
-					for (int j = 1; j < arg.Length; j++) {
-						char key = arg[j];
-
-						if (!shortToMember.TryGetValue(key, out (MemberInfo member, ProgramSwitchAttribute attribute) tuple)) {
-							parseError = $"Unknown argument \"{key}\".";
-							break;
-						}
-
-						(MemberInfo member, ProgramSwitchAttribute attribute) = tuple;
-
-						Type valueType = GetArgType(member);
-						string value = null;
-						if (valueType != null && !typeof(bool).Equals(valueType)) {
-							if (typeof(byte).Equals(valueType) ||
-								typeof(sbyte).Equals(valueType) ||
-								typeof(short).Equals(valueType) ||
-								typeof(ushort).Equals(valueType) ||
-								typeof(int).Equals(valueType) ||
-								typeof(uint).Equals(valueType) ||
-								typeof(long).Equals(valueType) ||
-								typeof(ulong).Equals(valueType)) {
-
-								Match match = numberRegex.Match(arg.Substring(j + 1));
-								if (match.Success) {
-									j += match.Length;
-									value = match.Value;
-								}
-							}
-
-							if (value == null) {
-								if (i + 1 < args.Length) {
-									value = args[++i];
-								} else {
-									parseError = $"Missing value for argument \"{key}\".";
-									break;
-								}
-							}
-						}
-
-						object parsedValue = null;
-						if (value == null && typeof(bool).Equals(valueType)) {
-							parsedValue = true;
-						} else if (valueType != null) {
-							parsedValue = ConvertArgType(value, valueType);
-						}
-
-						if (attribute.IgnoreOtherArgs) {
-							ignoreOthers = true;
-							pendingSets.Clear();
-							pendingSets[member] = parsedValue;
-							break;
-						}
-
-						pendingSets[member] = parsedValue;
-						required.Remove(attribute);
-					}
-
-					if (parseError != null || ignoreOthers) {
-						break;
-					}
-				} else {
-					if (nonSwitches.Count == 0) {
-						parseError = $"Unknown argument \"{arg}\".";
-						break;
-					}
-
-					(MemberInfo member, ProgramArgumentAttribute attribute) = nonSwitches.Peek();
-
-					Type valueType = GetArgType(member);
-
-					object parsedValue;
-					if (nonSwitches.Count == 1) {
-						Type nonSwitchValueType = GetArgType(member);
-						if (typeof(IEnumerable).IsAssignableFrom(nonSwitchValueType) && (nonSwitchValueType.IsGenericType || nonSwitchValueType.IsArray)) {
-							Type elementType = nonSwitchValueType.IsGenericType ? nonSwitchValueType.GetGenericArguments()[0] : nonSwitchValueType.GetElementType();
-							parsedValue = ConvertArgType(arg, elementType);
-
-							pendingExtras.Add(parsedValue);
-							continue;
-						}
-					}
-
-					parsedValue = ConvertArgType(arg, valueType);
-
-					nonSwitches.Dequeue();
-
-					pendingSets[member] = parsedValue;
-					required.Remove(attribute);
 				}
 			}
 
-			if (parseError == null && pendingExtras.Count > 0) {
-				(MemberInfo member, ProgramArgumentAttribute attribute) = nonSwitches.Dequeue();
-
-				Type nonSwitchValueType = GetArgType(member);
-				Type elementType = nonSwitchValueType.IsGenericType ? nonSwitchValueType.GetGenericArguments()[0] : nonSwitchValueType.GetElementType();
-
-				Array extras = Array.CreateInstance(elementType, pendingExtras.Count);
-				foreach ((object extra, int i) in pendingExtras.Select((x, i) => (x, i))) {
-					extras.SetValue(extra, i);
-				}
-
-				pendingSets[member] = extras;
-				required.Remove(attribute);
-			}
-
+			bool ignoreOthers = parsedArgs?.Keys.OfType<ProgramSwitchAttribute>().Any(x => x.IgnoreOtherArgs) ?? false;
 			if (parseError == null && !ignoreOthers && required.Count > 0) {
 				(ProgramArgumentAttribute attribute, MemberInfo member) = required.First();
 				string name;
@@ -391,7 +269,7 @@ namespace MZZT.Input {
 		private static string WrapText(int startX, int width, int leftMargin, string text) {
 			int remaining;
 			string[] lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-			StringBuilder display = new StringBuilder(width * lines.Length);
+			StringBuilder display = new(width * lines.Length);
 			Regex getChunk;
 			foreach (string line in lines) {
 				string remainingLine = line;
@@ -438,14 +316,14 @@ namespace MZZT.Input {
 			(MemberInfo member, ProgramArgumentAttribute attribute)[] extras = members
 				.Where(x => !(x.attribute is ProgramSwitchAttribute))
 				.ToArray();
-			StringBuilder str = new StringBuilder(width);
+			StringBuilder str = new(width);
 			str.Append($"Usage: {AppName}{(members.Length > 0 ? " [OPTIONS]" : "")}");
 			if (extras.Any()) {
 				str.Append(' ');
 				str.Append(string.Join(" ", extras.Select(x => $"{(x.attribute.Required ? '{' : '[')}{GetArgName(x.attribute, x.member).ToUpper()}{(x.attribute.Required ? '}' : ']')}")));
 			}
 
-			StringBuilder output = new StringBuilder();
+			StringBuilder output = new();
 			output.Append(WrapText(0, width, 0, str.ToString()));
 
 			if (info?.ProgramDescription != null) {
@@ -469,7 +347,7 @@ namespace MZZT.Input {
 					output.Append(WrapText(0, width, 0, attribute.PrependedGroupName));
 				}
 
-				StringBuilder display = new StringBuilder("  ", width);
+				StringBuilder display = new("  ", width);
 				if (attribute is ProgramSwitchAttribute switchAttirbute) {
 					if (switchAttirbute.ShortFlag > 0) {
 						display.Append($"-{switchAttirbute.ShortFlag}");

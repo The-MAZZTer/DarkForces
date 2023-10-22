@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Color = UnityEngine.Color;
 
 namespace MZZT.DarkForces.Showcase {
@@ -33,14 +34,14 @@ namespace MZZT.DarkForces.Showcase {
 		public bool ConvertFntFontToCharacterImages { get; set; } = false;
 
 		public string BaseOutputFolder { get; set; } = null;
-		public string BaseOutputFormat { get; set; } = @"{output}\{inputpath}\{file}";
+		public string BaseOutputFormat { get; set; } = $@"{{output}}{Path.DirectorySeparatorChar}{{inputpath}}{Path.DirectorySeparatorChar}{{file}}";
 		public bool PreferThreeCharacterExtensions { get; set; } = false;
 		public string ConvertedImageFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}{lightlevel}.{outputext}";
 		public string ConvertedBmFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}{lightlevel}-{index}.{outputext}";
-		public string ConvertedAnimFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}\{index}.{outputext}";
-		public string ConvertedWaxFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}{lightlevel}\{wax}.{sequence}.{frame}.{outputext}";
+		public string ConvertedAnimFilenameFormat { get; set; } = $@"{{inputname}}.{{inputext}}-{{palette}}{Path.DirectorySeparatorChar}{{index}}.{{outputext}}";
+		public string ConvertedWaxFilenameFormat { get; set; } = $@"{{inputname}}.{{inputext}}-{{palette}}{{lightlevel}}{Path.DirectorySeparatorChar}{{wax}}.{{sequence}}.{{frame}}.{{outputext}}";
 		public string ConvertedPalPlttFilenameFormat { get; set; } = @"{inputname}.{inputext}.{format}{lightlevel}.{outputext}";
-		public string ConvertedFntFontFilenameFormat { get; set; } = @"{inputname}.{inputext}-{palette}{lightlevel}\{character}.{outputext}";
+		public string ConvertedFntFontFilenameFormat { get; set; } = $@"{{inputname}}.{{inputext}}-{{palette}}{{lightlevel}}{Path.DirectorySeparatorChar}{{character}}.{{outputext}}";
 		public string ConvertedVocFilenameFormat { get; set; } = @"{inputname}{index}.{outputext}";
 		public string MiscFilenameFormat { get; set; } = @"{inputname}.{outputext}";
 	}

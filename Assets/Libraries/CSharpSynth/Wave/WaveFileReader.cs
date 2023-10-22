@@ -10,7 +10,7 @@ namespace CSharpSynth.Wave {
     //--Public Methods
     public WaveFileReader(string filename) {
       //UnitySynth
-      //if (Path.GetExtension(filename).ToLower() != ".wav" || File.Exists(filename) == false)
+      //if (Path.GetExtension(filename).ToLower() != ".wav" || FileManager.Instance.FileExists(filename) == false)
       //    throw new IOException("Invalid wave file!");
       //BR = new System.IO.BinaryReader(System.IO.File.OpenRead(filename));
 

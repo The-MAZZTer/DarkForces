@@ -1,0 +1,3 @@
+<input #files type="file" webkitdirectory directory multiple (change)="null" />
+<canvas #canvas id="unity-canvas" tabindex="-1"></canvas>
+<button *ngIf="downloadButtonVisible" mat-mini-fab color="primary" matTooltip="Downloads" matTooltipPosition="after" (click)="toggleDownloadDialog()"><mat-icon>download</mat-icon></button>

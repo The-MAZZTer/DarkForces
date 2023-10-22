@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -65,7 +64,7 @@ namespace MZZT.DarkForces.Showcase {
 			string[] files;
 			foreach (string gob in FileLoader.Instance.Gobs.OrderBy(x => x)) {
 				files = FileLoader.Instance.GetFilesProvidedByGob(gob).OrderBy(x => x).ToArray();
-				ResourceListContainer item = new(new ResourceEditorResource(gob, async () => await DfGobContainer.ReadAsync(gob, false), true));
+				ResourceListContainer item = new(new ResourceEditorResource(gob, async () => await DfFileManager.Instance.ReadAsync<DfGobContainer>(gob), true));
 				item.Resources.AddRange(files.Select(x => new ResourceEditorResource(Path.Combine(gob, x), async () => await FileLoader.Instance.LoadGobFileAsync(x), true)));
 				this.list.Add(item);
 			}
@@ -82,7 +81,7 @@ namespace MZZT.DarkForces.Showcase {
 					return;
 				}
 
-				ResourceListContainer item = new(new ResourceEditorResource(lfd, async () => await LandruFileDirectory.ReadAsync(lfd), true));
+				ResourceListContainer item = new(new ResourceEditorResource(lfd, async () => await DfFileManager.Instance.ReadAsync<LandruFileDirectory>(lfd), true));
 				item.Resources.AddRange(files.Select(x => new ResourceEditorResource(Path.Combine(lfd, x), async () => {
 					string[] file = x.Split('.');
 					return await FileLoader.Instance.LoadLfdFileAsync(Path.GetFileName(lfd), file[0], file[1]);
@@ -106,11 +105,10 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private GameObject stopSearchGlyph;
 
-		private const int SEARCH_TIMEOUT_MS = 500;
+		private const float SEARCH_TIMEOUT = 0.5f;
 
-		private CancellationTokenSource searchTimer;
-		public async void OnSearchFieldTextChangedAsync(string value) {
-			this.searchTimer?.Cancel();
+		public void OnSearchFieldTextChanged(string value) {
+			this.autoSearch = 0;
 
 			if (string.IsNullOrWhiteSpace(value)) {
 				this.searchResults.gameObject.SetActive(false);
@@ -123,19 +121,19 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			this.searchTimer = new CancellationTokenSource();
-			try {
-				await Task.Delay(SEARCH_TIMEOUT_MS, this.searchTimer.Token);
-			} catch (OperationCanceledException) {
-				return;
-			}
+			this.autoSearch = Time.time + SEARCH_TIMEOUT;
+		}
 
-			this.Search();
+		private float autoSearch = 0;
+		private void Update() {
+			if (this.autoSearch > 0 && this.autoSearch < Time.time) {
+				this.autoSearch = 0;
+				this.Search();
+			}
 		}
 
 		public void OnSearchButtonClicked() {
-			this.searchTimer?.Cancel();
-			this.searchTimer = null;
+			this.autoSearch = 0;
 
 			if (this.stopSearchGlyph.activeSelf) {
 				this.searchField.text = "";
@@ -146,6 +144,11 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private void Search() {
+			string value = this.searchField.text;
+			if (string.IsNullOrEmpty(value)) {
+				return;
+			}
+
 			this.searchResults.Clear();
 
 			this.searchGlyph.SetActive(false);
@@ -154,12 +157,11 @@ namespace MZZT.DarkForces.Showcase {
 			this.list.gameObject.SetActive(false);
 			this.searchResults.gameObject.SetActive(true);
 
-			string value = this.searchField.text;
 			List<ResourceEditorResource> results = new();
 
 			this.searchResults.AddRange(this.list
 				.SelectMany(x => x.Resources.Prepend(x.Resource)/*.Select(y => (x, y))*/)
-				.Where(x => x?.Name.Contains(value, StringComparison.CurrentCultureIgnoreCase) ?? false)
+				.Where(x => x?.Name.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false)
 				/*.Select(x => new ResourceEditorResource(x.y.Path, x.y.GetFileAsync, x.y.PartOfCurrentMod) {
 					Name = x.y == x.x.Resource ? x.y.Name : $"{x.x.Name}{Path.DirectorySeparatorChar}{x.y.Name}"
 				})*/);

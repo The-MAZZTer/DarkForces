@@ -1,6 +1,7 @@
 using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -48,8 +49,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.Value = (DfGobContainer)file;
 
 			// Clear any data backing the file since we don't need it.
-			// TODO shouldn't directly call .Dispose() for this, move the functionality into a separate named function.
-			this.Value.Dispose();
+			this.Value.ClearCachedData();
 
 			this.PopulateList();
 
@@ -71,7 +71,6 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.*" },
 				SelectButtonText = "Add",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -83,7 +82,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			long size = new FileInfo(path).Length;
+			long size = await FileManager.Instance.GetSizeAsync(path);
 			if (size > uint.MaxValue) {
 				await DfMessageBox.Instance.ShowAsync("File is too big to add to a GOB.");
 				return;
@@ -101,7 +100,7 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
@@ -110,20 +109,24 @@ namespace MZZT.DarkForces.Showcase {
 			DfGobContainer newGob = new();
 			byte[] buffer = new byte[this.list.Select(x => x.Size).Max()];
 			foreach (FileLocationInfo info in this.list.Value) {
-				using FileStream addStream = new(info.SourceFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+				using Stream addStream = await FileManager.Instance.NewFileStreamAsync(info.SourceFile, FileMode.Open, FileAccess.Read, FileShare.Read);
 				addStream.Seek(info.SourceOffset, SeekOrigin.Begin);
 				await addStream.ReadAsync(buffer, 0, (int)info.Size);
 				using MemoryStream addMem = new(buffer, 0, (int)info.Size);
 				await newGob.AddFileAsync(info.Name, addMem);
 			}
 			buffer = null;
-			
-			using MemoryStream mem = new();
-			await newGob.SaveAsync(mem);
 
-			mem.Position = 0;
-			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await newGob.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await newGob.SaveAsync(stream);
+			}
 
 			this.Value = newGob;
 
@@ -142,7 +145,7 @@ namespace MZZT.DarkForces.Showcase {
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}
@@ -153,10 +156,15 @@ namespace MZZT.DarkForces.Showcase {
 		public async Task ExportAsync(FileLocationInfo info) {
 			string sourcePath = info.ResourcePath;
 
+			string ext = Path.GetExtension(info.Name).TrimStart('.');
+
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { $"*{Path.GetExtension(info.Name)}" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate($"{ext} File", $"*.{ext}"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedPathMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -169,9 +177,9 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			Raw file = await DfFile.GetFileFromFolderOrContainerAsync<Raw>(sourcePath);
+			Raw file = await DfFileManager.Instance.ReadAsync<Raw>(sourcePath);
 			try {
-				await file.SaveAsync(path);
+				await DfFileManager.Instance.SaveAsync(file, path);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving file: {ex.Message}");
 			}

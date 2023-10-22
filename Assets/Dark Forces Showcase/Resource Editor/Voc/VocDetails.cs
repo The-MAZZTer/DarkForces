@@ -1,13 +1,13 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using File = System.IO.File;
 
 namespace MZZT.DarkForces.Showcase {
 	public class VocDetails : MonoBehaviour {
@@ -186,7 +186,10 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new string[] { "*.VOC", "*.VOIC", "*.WAV" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("Supported Files", "*.VOC", "*.VOIC", "*.WAV"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Import",
 				SelectedFileMustExist = true,
 				SelectedPathMustExist = true,
@@ -208,16 +211,16 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			IFile file = null;
-			if (Directory.Exists(this.lastFolder)) {
+			if (FileManager.Instance.FolderExists(this.lastFolder)) {
 				if (isVoc) {
-					file = await CreativeVoice.ReadAsync(path);
+					file = await DfFileManager.Instance.ReadAsync<CreativeVoice>(path);
 				} else  {
-					file = await Wave.ReadAsync(path);
+					file = await DfFileManager.Instance.ReadAsync<Wave>(path);
 				}
-			} else if (File.Exists(this.lastFolder)) {
+			} else if (FileManager.Instance.FileExists(this.lastFolder)) {
 				switch (Path.GetExtension(this.lastFolder).ToLower()) {
 					case ".gob":
-						using (FileStream gobStream = new(this.lastFolder, FileMode.Open, FileAccess.Read, FileShare.None)) {
+						using (Stream gobStream = await FileManager.Instance.NewFileStreamAsync(this.lastFolder, FileMode.Open, FileAccess.Read, FileShare.None)) {
 							DfGobContainer gob = await DfGobContainer.ReadAsync(gobStream, false);
 							if (isVoc) {
 								file = await gob.GetFileAsync<CreativeVoice>(Path.GetFileName(path), gobStream);
@@ -227,7 +230,7 @@ namespace MZZT.DarkForces.Showcase {
 						}
 						break;
 					case ".lfd":
-						await LandruFileDirectory.ReadAsync(this.lastFolder, async x => {
+						await DfFileManager.Instance.ReadLandruFileDirectoryAsync(this.lastFolder, async x => {
 							if (isVoc) {
 								file = await x.GetFileAsync<CreativeVoice>(Path.GetFileNameWithoutExtension(path));
 							} else if (isWav) {
@@ -393,7 +396,10 @@ namespace MZZT.DarkForces.Showcase {
 		private string lastFolder2;
 		public async void ExportAsync() {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
-				FileSearchPatterns = new string[] { "*.WAV" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("WAVE File", "*.WAV"),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Export",
 				SelectedFileMustExist = false,
 				SelectedPathMustExist = true,
@@ -408,12 +414,15 @@ namespace MZZT.DarkForces.Showcase {
 			this.lastFolder2 = Path.GetDirectoryName(path);
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await this.BlockValue.ToWave().SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await this.BlockValue.ToWave().SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await this.BlockValue.ToWave().SaveAsync(stream);
+			}
 		}
 
 		public void Delete() {

@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Select Files</h1>
+<div mat-dialog-content>
+  <p>The web version of Dark Forces Showcase requires you to provide Dark Forces game files, and any other files you wish to use with Dark Forces Showcase.</p>
+  <p>The folder you select will be shared with this web application.</p>
+  <p>Your files will not be shared outside of your PC.</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" cdkFocusInitial (click)="selectFolder()"><mat-icon>folder</mat-icon> Select Folder</button>	
+  <span class="spacer">{{files.files?.length}} file{{files.files?.length != 1 ? 's' : ''}} selected.</span>
+  <button mat-raised-button color="primary" (click)="showReleaseNotes()"><mat-icon>description</mat-icon> View Release Notes</button>
+  <button mat-raised-button color="accent" [mat-dialog-close] [disabled]="!files.files || files.files.length == 0"><mat-icon>rocket_launch</mat-icon> Start Dark Forces Showcase</button>
+</div>

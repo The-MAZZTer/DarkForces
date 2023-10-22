@@ -16301,7 +16301,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1152322730}
         m_TargetAssemblyTypeName: MZZT.DarkForces.Showcase.ResourceList, Assembly-CSharp
-        m_MethodName: OnSearchFieldTextChangedAsync
+        m_MethodName: OnSearchFieldTextChanged
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

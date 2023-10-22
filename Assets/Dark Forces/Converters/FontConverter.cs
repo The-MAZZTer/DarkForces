@@ -8,8 +8,8 @@ using System.Collections;
 
 namespace MZZT.DarkForces.Converters {
 	public static class FontConverter {
-		public static Texture2D ToTexture(this LandruFont font, UnityEngine.Color color, bool keepTextureReadable = false) {
-			int width = font.Characters.Sum(x => x.Width);
+		public static Texture2D ToTexture(this LandruFont font, Color color, bool keepTextureReadable = false) {
+			int width = font.Characters.Sum(x => x.Width + 1) - 1;
 			int height = font.Height;
 
 			byte[] buffer = new byte[width * height * 4];
@@ -32,7 +32,7 @@ namespace MZZT.DarkForces.Converters {
 						}
 					}
 				}
-				offset += c.Width;
+				offset += c.Width + 1;
 			}
 
 			Texture2D texture = new(width, height, TextureFormat.RGBA32, false, true) {
@@ -46,7 +46,7 @@ namespace MZZT.DarkForces.Converters {
 			return texture;
 		}
 
-		public static Texture2D ToTexture(this LandruFont.Character c, LandruFont font, UnityEngine.Color color, bool keepTextureReadable = false) {
+		public static Texture2D ToTexture(this LandruFont.Character c, LandruFont font, Color color, bool keepTextureReadable = false) {
 			int width = c.Width;
 			int height = font.Height;
 
@@ -80,7 +80,7 @@ namespace MZZT.DarkForces.Converters {
 			return texture;
 		}
 
-		public static Png ToPng(this LandruFont font, UnityEngine.Color color) {
+		public static Png ToPng(this LandruFont font, Color color) {
 			Png png = new(font.Characters.Sum(x => x.Width + 1) - 1, font.Height, PNG_COLOR_TYPE.PALETTE) {
 				Palette = new System.Drawing.Color[] {
 					System.Drawing.Color.Transparent,
@@ -91,8 +91,10 @@ namespace MZZT.DarkForces.Converters {
 			int pos = 0;
 			foreach (LandruFont.Character c in font.Characters) {
 				for (int y = 0; y < font.Height; y++) {
-					for (int x = 0; x < c.Width; x ++) {
-						png.Data[y][pos + x] = c.Pixels[(font.Height - y - 1) * c.Width + x] ? (byte)1 : (byte)1;
+					int stride = y * Mathf.CeilToInt(c.Width / 8f) * 8;
+					for (int x = 0; x < c.Width; x++) {
+						int part = x % 8;
+						png.Data[y][pos + x] = c.Pixels[stride + x - part + (7 - part)] ? (byte)1 : (byte)0;
 					}
 				}
 				pos += c.Width + 1;
@@ -109,8 +111,10 @@ namespace MZZT.DarkForces.Converters {
 			};
 
 			for (int y = 0; y < height; y++) {
+				int stride = y * Mathf.CeilToInt(c.Width / 8f) * 8;
 				for (int x = 0; x < c.Width; x++) {
-					png.Data[y][x] = c.Pixels[(height - y - 1) * c.Width + x] ? (byte)1 : (byte)0;
+					int part = x % 8;
+					png.Data[y][x] = c.Pixels[stride + x - part + (7 - part)] ? (byte)1 : (byte)0;
 				}
 			}
 			return png;
@@ -121,14 +125,17 @@ namespace MZZT.DarkForces.Converters {
 				return null;
 			}
 
+			int byteWidth = Mathf.CeilToInt(png.Width / 8f) * 8;
 			LandruFont.Character c = new() {
-				Width = (byte)png.Width ,
-				Pixels = new BitArray((int)png.Width * height),
+				Width = (byte)png.Width,
+				Pixels = new BitArray(byteWidth * height) 
 			};
 
 			for (int y = 0; y < height && y < png.Height; y++) {
+				int stride = y * Mathf.CeilToInt(c.Width / 8f) * 8;
 				for (int x = 0; x < c.Width; x++) {
-					c.Pixels[y * (int)png.Width + x] = png.Data[height - y - 1][x] > 0;
+					int part = x % 8;
+					c.Pixels[stride + x - part + (7 - part)] = png.Data[y][x] > 0;
 				}
 			}
 			return c;

@@ -1,6 +1,7 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using File = System.IO.File;
 
 namespace MZZT.DarkForces.Showcase {
 	public class ResourceEditors : Singleton<ResourceEditors> {
@@ -88,7 +88,7 @@ namespace MZZT.DarkForces.Showcase {
 						}
 #endif
 
-						await Task.Delay(25);
+						await Task.Yield();
 					}
 
 					if (!this.dirtyDiscard) {
@@ -226,12 +226,12 @@ namespace MZZT.DarkForces.Showcase {
 			string filename = "file";
 			if (!string.IsNullOrEmpty(path)) {
 				filename = Path.GetFileName(path);
-				if (File.Exists(path)) {
+				if (FileManager.Instance.FileExists(path)) {
 					startFile = path;
 				} else {
 					while (!string.IsNullOrEmpty(path)) {
 						path = Path.GetDirectoryName(path);
-						if (Directory.Exists(path)) {
+						if (FileManager.Instance.FolderExists(path)) {
 							startPath = path;
 							break;
 						}
@@ -242,7 +242,10 @@ namespace MZZT.DarkForces.Showcase {
 			return await FileBrowser.Instance.ShowAsync(new() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = patterns,
+				Filters = new[] {
+					FileBrowser.FileType.Generate($"{Path.GetExtension(patterns[0]).TrimStart('.')} Files", patterns),
+					FileBrowser.FileType.AllFiles
+				},
 				SelectButtonText = "Save",
 				SelectedFileMustExist = false,
 				SelectedPathMustExist = true,
@@ -251,7 +254,7 @@ namespace MZZT.DarkForces.Showcase {
 				StartSelectedFile = startFile,
 				Title = $"Save {filename}",
 				ValidateFileName = true
-			});
+			});;
 		}
 
 		private string lastFolder;
@@ -259,7 +262,6 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*.*" },
 				SelectButtonText = "Open",
 				SelectedFileMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -281,7 +283,7 @@ namespace MZZT.DarkForces.Showcase {
 			// TODO add to resource list?
 
 			ResourceEditorTab newTab = new(new ResourceEditorResource(path, async () => {
-				return await DfFile.GetFileFromFolderOrContainerAsync(path);
+				return await DfFileManager.Instance.ReadAsync(path);
 			}, false));
 			this.tabs.Add(newTab);
 

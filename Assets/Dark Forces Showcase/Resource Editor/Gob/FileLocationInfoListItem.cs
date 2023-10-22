@@ -1,4 +1,3 @@
-using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 
 namespace MZZT.DarkForces.Showcase {
@@ -19,7 +18,7 @@ namespace MZZT.DarkForces.Showcase {
 
 		public void Open() {
 			string path = this.Value.ResourcePath;
-			ResourceEditorResource resource = ResourceEditors.Instance.FindResource(path) ?? new ResourceEditorResource(path, async () => await DfFile.GetFileFromFolderOrContainerAsync(path), false);
+			ResourceEditorResource resource = ResourceEditors.Instance.FindResource(path) ?? new ResourceEditorResource(path, async () => await DfFileManager.Instance.ReadAsync(path), false);
 			ResourceEditors.Instance.OpenResource(resource);
 		}
 	}

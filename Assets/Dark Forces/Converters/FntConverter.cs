@@ -8,7 +8,7 @@ using UnityEngine;
 namespace MZZT.DarkForces.Converters {
 	public static class FntConverter {
 		public static Texture2D ToTexture(this DfFont fnt, byte[] palette, bool keepTextureReadable = false) {
-			int width = fnt.Characters.Sum(x => x.Width);
+			int width = fnt.Characters.Sum(x => x.Width + fnt.Spacing) - fnt.Spacing;
 			int height = fnt.Height;
 
 			byte[] buffer = new byte[width * height * 4];
@@ -19,7 +19,7 @@ namespace MZZT.DarkForces.Converters {
 						Buffer.BlockCopy(palette, c.Data[x * height + y] * 4, buffer, (y * width + x + offset) * 4, 4);
 					}
 				}
-				offset += c.Width;
+				offset += c.Width + fnt.Spacing;
 			}
 
 			Texture2D texture = new(width, height, TextureFormat.RGBA32, false, true) {
@@ -89,8 +89,8 @@ namespace MZZT.DarkForces.Converters {
 			}
 		}
 
-		public static Png ToPng(this DfFont font, byte[] pal) {
-			Png png = new(font.Characters.Sum(x => x.Width), font.Height, PNG_COLOR_TYPE.PALETTE) {
+		public static Png ToPng(this DfFont fnt, byte[] pal) {
+			Png png = new(fnt.Characters.Sum(x => x.Width + fnt.Spacing) - fnt.Spacing, fnt.Height, PNG_COLOR_TYPE.PALETTE) {
 				Palette = new System.Drawing.Color[256]
 			};
 			for (int i = 0; i < 256; i++) {
@@ -98,19 +98,19 @@ namespace MZZT.DarkForces.Converters {
 			}
 
 			int pos = 0;
-			foreach (DfFont.Character c in font.Characters) {
-				for (int y = 0; y < font.Height; y++) {
+			foreach (DfFont.Character c in fnt.Characters) {
+				for (int y = 0; y < fnt.Height; y++) {
 					for (int x = 0; x < c.Width; x++) {
-						png.Data[font.Height - y - 1][x + pos] = c.Data[x * font.Height + y];
+						png.Data[fnt.Height - y - 1][x + pos] = c.Data[x * fnt.Height + y];
 					}
 				}
-				pos += c.Width;
+				pos += c.Width + fnt.Spacing;
 			}
 			return png;
 		}
 
-		public static Png ToPng(this DfFont font, DfPalette pal, bool forceTransparent) =>
-			font.ToPng(pal.ToByteArray(forceTransparent));
+		public static Png ToPng(this DfFont fnt, DfPalette pal, bool forceTransparent) =>
+			fnt.ToPng(pal.ToByteArray(forceTransparent));
 
 		public static Png ToPng(this DfFont.Character c, int height, byte[] pal) {
 			int width = c.Width;
@@ -145,7 +145,7 @@ namespace MZZT.DarkForces.Converters {
 
 			for (int y = 0; y < height && y < png.Height; y++) {
 				for (int x = 0; x < c.Width; x++) {
-					c.Data[x * height + y] = png.Data[png.Height - y - 1][x];
+					c.Data[x * height + (height - y - 1)] = png.Data[y][x];
 				}
 			}
 			return c;

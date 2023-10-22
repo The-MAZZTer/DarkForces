@@ -211,7 +211,7 @@ namespace MZZT.DarkForces.FileFormats {
 							if (text != null) {
 								this.IncrementCurrentLine();
 							}
-							List<string> lines = new List<string>();
+							List<string> lines = new();
 							while (text != null && text.Trim().ToUpper() != "SEQEND") {
 								lines.Add(text);
 								text = (await reader.ReadLineAsync())?.TrimEnd();

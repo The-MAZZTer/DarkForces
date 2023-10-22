@@ -3,6 +3,7 @@ using MZZT.DarkForces.FileFormats;
 using MZZT.Data.Binding;
 using MZZT.Drawing;
 using MZZT.FileFormats;
+using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,8 +18,6 @@ namespace MZZT.DarkForces.Showcase {
 		private PaletteList colors;
 		[SerializeField]
 		private Databind details;
-		[SerializeField]
-		private GameObject dropdown;
 		[SerializeField]
 		private Slider r;
 		[SerializeField]
@@ -159,11 +158,16 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private string lastFolder;
-		public async void ExportToPngAsync() {
+		public async void ExportAsync() {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = false,
 				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PNG" },
+				Filters = new[] {
+					FileBrowser.FileType.Generate("PNG Image", "*.PNG"),
+					FileBrowser.FileType.Generate("JASC PAL", "*.PAL"),
+					FileBrowser.FileType.Generate("RGB PAL", "*.PAL"),
+					FileBrowser.FileType.Generate("RGBA PAL", "*.PAL")
+				},
 				SelectButtonText = "Export",
 				SelectedPathMustExist = true,
 				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
@@ -175,89 +179,46 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			Png png = this.Value.ToPng();
-			try {
-				using FileStream stream = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-				png.Write(stream);
-			} catch (Exception ex) {
-				await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
+			int filterIndex = FileBrowser.Instance.FilterIndex;
+			using Stream output = await FileManager.Instance.NewFileStreamAsync(path, FileMode.Create, FileAccess.Write, FileShare.None);
+			switch (filterIndex) {
+				case 0:
+					Png png = this.Value.ToPng();
+					try {
+						png.Write(output);
+					} catch (Exception ex) {
+						await DfMessageBox.Instance.ShowAsync($"Error saving image: {ex.Message}");
+					}
+					break;
+				case 1:
+					await this.Value.WriteJascPalAsync(output);
+					break;
+				case 2:
+					await this.Value.WriteRgbPalAsync(output);
+					break;
+				case 3:
+					await this.Value.WriteRgbaPalAsync(output);
+					break;
 			}
-		}
-
-		public async void ExportToJascPalAsync() {
-			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
-				AllowNavigateGob = false,
-				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PAL" },
-				SelectButtonText = "Export",
-				SelectedPathMustExist = true,
-				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Export to JASC PAL"
-			});
-			if (path == null) {
-				return;
-			}
-
-			this.lastFolder = Path.GetDirectoryName(path);
-
-			using FileStream output = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			await this.Value.WriteJascPalAsync(output);
-		}
-
-		public async void ExportToRgbPalAsync() {
-			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
-				AllowNavigateGob = false,
-				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PAL" },
-				SelectButtonText = "Export",
-				SelectedPathMustExist = true,
-				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Export to 24-bit PAL"
-			});
-			if (path == null) {
-				return;
-			}
-
-			this.lastFolder = Path.GetDirectoryName(path);
-
-			using FileStream output = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			await this.Value.WriteRgbPalAsync(output);
-		}
-
-		public async void ExportToRgbaPalAsync() {
-			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
-				AllowNavigateGob = false,
-				AllowNavigateLfd = false,
-				FileSearchPatterns = new[] { "*.PAL" },
-				SelectButtonText = "Export",
-				SelectedPathMustExist = true,
-				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
-				Title = "Export to 32-bit PAL"
-			});
-			if (path == null) {
-				return;
-			}
-
-			this.lastFolder = Path.GetDirectoryName(path);
-
-			using FileStream output = new(path, FileMode.Create, FileAccess.Write, FileShare.None);
-			await this.Value.WriteRgbaPalAsync(output);
 		}
 
 		public async void SaveAsync() {
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				this.SaveAsAsync();
 				return;
 			}
 
 			// Writing to the stream is loads faster than to the file. Not sure why. Unity thing probably, doesn't happen on .NET 6.
-			using MemoryStream mem = new();
-			await this.Value.SaveAsync(mem);
-
-			mem.Position = 0;
-			using FileStream stream = new(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-			await mem.CopyToAsync(stream);
+			using Stream stream = await FileManager.Instance.NewFileStreamAsync(this.filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			if (stream is FileStream) {
+				using MemoryStream mem = new();
+				await this.Value.SaveAsync(mem);
+				mem.Position = 0;
+				await mem.CopyToAsync(stream);
+			} else {
+				await this.Value.SaveAsync(stream);
+			}
 
 			this.ResetDirty();
 		}
@@ -270,25 +231,12 @@ namespace MZZT.DarkForces.Showcase {
 			this.filePath = path;
 			this.TabNameChanged?.Invoke(this, new EventArgs());
 
-			bool canSave = Directory.Exists(Path.GetDirectoryName(this.filePath));
+			bool canSave = FileManager.Instance.FolderExists(Path.GetDirectoryName(this.filePath));
 			if (!canSave) {
 				return;
 			}
 
 			this.SaveAsync();
-		}
-
-		private bool closeNext;
-		private void Update() {
-			if (PlayerInput.all[0].currentActionMap.FindAction("Click").WasReleasedThisFrame()) {
-				if (this.closeNext) {
-					this.dropdown.SetActive(false);
-					this.closeNext = false;
-				}
-				if (this.dropdown.activeInHierarchy) {
-					this.closeNext = true;
-				}
-			}
 		}
 	}
 }

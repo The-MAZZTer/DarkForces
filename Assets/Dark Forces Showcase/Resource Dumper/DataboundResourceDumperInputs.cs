@@ -12,7 +12,6 @@ namespace MZZT.DarkForces.Showcase {
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
 				AllowNavigateGob = true,
 				AllowNavigateLfd = true,
-				FileSearchPatterns = new[] { "*" },
 				SelectButtonText = "Add",
 				SelectedFileMustExist = true,
 				SelectedPathMustExist = true,
@@ -32,7 +31,8 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
-				FileSearchPatterns = new[] { "*.GOB", "*.LFD" },
+				AllowNavigateGob = true,
+				AllowNavigateLfd = true,
 				SelectButtonText = "Add",
 				SelectedFileMustExist = true,
 				SelectedPathMustExist = true,

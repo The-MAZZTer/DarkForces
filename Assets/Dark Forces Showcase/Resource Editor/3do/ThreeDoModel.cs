@@ -23,7 +23,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (baseFile != null) {
 				string folder = Path.GetDirectoryName(baseFile);
 				string path = Path.Combine(folder, file);
-				return await DfFile.GetFileFromFolderOrContainerAsync<T>(path) ?? await ResourceCache.Instance.GetAsync<T>(file);
+				return await DfFileManager.Instance.ReadAsync<T>(path) ?? await ResourceCache.Instance.GetAsync<T>(file);
 			}
 
 			return await ResourceCache.Instance.GetAsync<T>(file);

@@ -135,7 +135,7 @@ namespace MZZT.DarkForces.Showcase {
 				}
 #endif
 
-				await Task.Delay(25);
+				await Task.Yield();
 			}
 		}
 	}
