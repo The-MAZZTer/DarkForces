@@ -4,30 +4,40 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace MZZT.IO.FileProviders {
 	public class FileManager : Singleton<FileManager> {
+		private IFileSystemProvider provider;
+		public IFileSystemProvider Provider {
+			get {
+				if (this.provider == null) {
 #if UNITY_WEBGL && !UNITY_EDITOR
-		private IFileSystemProvider provider = new WebFileSystemProvider();
+					this.provider = new WebFileSystemProvider();
 #else
-		private IFileSystemProvider provider = new PhysicalFileSystemProvider();
+					this.provider = new PhysicalFileSystemProvider();
 #endif
+				}
+				return this.provider;
+			}
+			set {
+				if (this.provider != null) {
+					throw new InvalidOperationException();
+				}
+				this.provider = value;
+			}
+		}
 
 		public IVirtualItem GetRoot(VirtualItemTransformHandler transforms = null) {
-			FileSystemProviderItemInfo item = this.provider.GetByPath(string.Empty);
-			IVirtualItem ret = transforms?.PerformTransform(this.provider, item);
+			FileSystemProviderItemInfo item = this.Provider.GetByPath(string.Empty);
+			IVirtualItem ret = transforms?.PerformTransform(this.Provider, item);
 			if (ret != null) {
 				return ret;
 			}
-			switch (item.Type) {
-				case FileSystemProviderItemTypes.Folder:
-					return new VirtualFolder(this.provider, item, transforms);
-				case FileSystemProviderItemTypes.File:
-					return new VirtualFile(this.provider, item, transforms);
-				default:
-					throw new DirectoryNotFoundException("Can't find root folder!");
-			}
+			return item.Type switch {
+				FileSystemProviderItemTypes.Folder => new VirtualFolder(this.Provider, item, transforms),
+				FileSystemProviderItemTypes.File => new VirtualFile(this.Provider, item, transforms),
+				_ => throw new DirectoryNotFoundException("Can't find root folder!"),
+			};
 		}
 
 		public async IAsyncEnumerable<IVirtualItem> GetHierarchyByPathAsync(string path, VirtualItemTransformHandler transforms = null) {
@@ -59,22 +69,32 @@ namespace MZZT.IO.FileProviders {
 
 			foreach (string segment in path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)) {
 				if (current is IVirtualFolder folder) {
-					current = null;
-
-					IVirtualItem child = await folder.GetChildAsync(segment);
-					if (child != null) {
-						current = child;
-					} else {
-						return null;
+					current = await folder.GetChildAsync(segment);
+					if (current == null) {
+						break;
 					}
 				} else {
-					return null;
+					current = null;
+					break;
 				}
+			}
+
+			if (current == null) {
+				FileSystemProviderItemInfo item = this.Provider.GetByPath(path);
+				IVirtualItem ret = transforms?.PerformTransform(this.Provider, item);
+				if (ret != null) {
+					return ret;
+				}
+				return item.Type switch {
+					FileSystemProviderItemTypes.Folder => new VirtualFolder(this.Provider, item, transforms),
+					FileSystemProviderItemTypes.File => new VirtualFile(this.Provider, item, transforms),
+					_ => null
+				};
 			}
 			return current;
 		}
 
-		public FileSystemProviderItemTypes Exists(string path) => this.provider.Exists(path);
+		public FileSystemProviderItemTypes Exists(string path) => this.Provider.Exists(path);
 		public bool FileExists(string path) => this.Exists(path) == FileSystemProviderItemTypes.File;
 		public bool FolderExists(string path) => this.Exists(path) == FileSystemProviderItemTypes.Folder;
 
@@ -114,7 +134,7 @@ namespace MZZT.IO.FileProviders {
 			return current;
 		}
 
-		public void Show(string path) => this.provider.ShowInFileManager(path);
+		public void Show(string path) => this.Provider.ShowInFileManager(path);
 
 		public async Task<Stream> NewFileStreamAsync(string path, FileMode mode, FileAccess access, FileShare share) {
 			IVirtualItem item = await this.GetByPathAsync(path);
@@ -136,6 +156,6 @@ namespace MZZT.IO.FileProviders {
 		}
 
 		public async Task<long> GetSizeAsync(string path) =>
-			(await this.GetByPathAsync(path))?.Size ?? throw new FileNotFoundException();
+			(await this.GetByPathAsync(path))?.Size ?? 0;
 	}
 }

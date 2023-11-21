@@ -26,19 +26,26 @@ namespace MZZT.DarkForces {
 				FRAME_SCALE
 			);
 
-			DfFrame fme = await ResourceCache.Instance.GetFrameAsync(obj.FileName);
+			ResourceCache cache = ResourceCache.Instance;
+			DfFrame fme = await cache.GetFrameAsync(obj.FileName);
 			if (fme == null) {
 				return;
 			}
 
-			Sprite sprite = ResourceCache.Instance.ImportFrame(LevelLoader.Instance.Palette,
-				lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, fme, lightLevel);
+			LevelLoader levelLoader = LevelLoader.Instance;
+			Sprite sprite = cache.ImportFrame(levelLoader.Palette,
+				lightLevel >= 31 ? null : levelLoader.ColorMap, fme, lightLevel);
 
 			SpriteRenderer renderer = this.gameObject.AddComponent<SpriteRenderer>();
 			renderer.color = Color.white;
 			renderer.drawMode = SpriteDrawMode.Simple;
 			//renderer.flipX = fme.Flip;
 			renderer.sprite = sprite;
+
+			CapsuleCollider collider = this.gameObject.AddComponent<CapsuleCollider>();
+			collider.height = renderer.bounds.size.y;
+			collider.radius = Mathf.Max(renderer.bounds.size.x, renderer.bounds.size.z) / 4;
+			collider.center = this.transform.InverseTransformPoint(renderer.bounds.center);
 		}
 
 		private void Update() {

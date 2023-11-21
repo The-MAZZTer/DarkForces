@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MZZT.DarkForces.FileFormats\MZZT.DarkForces.FileFormats.csproj" />
     <ProjectReference Include="..\MZZT.FileFormats.Audio\MZZT.FileFormats.Audio.csproj" />
   </ItemGroup>

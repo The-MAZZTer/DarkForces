@@ -10,7 +10,7 @@ namespace MZZT.DarkForces.Showcase {
 		public static string StartLevel { get; set; }
 
 		private async void Start() {
-			// This is here in case you run directly from the LevelExplorer sccene instead of the menu.
+			// This is here in case you run directly from the LevelExplorer scene instead of the menu.
 			if (!FileLoader.Instance.Gobs.Any()) {
 				await FileLoader.Instance.LoadStandardFilesAsync();
 			}
@@ -76,6 +76,10 @@ namespace MZZT.DarkForces.Showcase {
 					}
 				}
 			}
+
+			Vector3 position = ObjectRenderer.Eye != null ? ObjectRenderer.Eye.transform.position : Vector3.zero;
+			Quaternion rotation = ObjectRenderer.Eye != null ? ObjectRenderer.Eye.transform.rotation : Quaternion.LookRotation(Vector3.forward, Vector3.up);
+			Camera.main.transform.SetPositionAndRotation(position - ObjectGenerator.KYLE_EYE_POSITION * LevelGeometryGenerator.GEOMETRY_SCALE, rotation);
 
 			await LevelLoader.Instance.ShowWarningsAsync();
 

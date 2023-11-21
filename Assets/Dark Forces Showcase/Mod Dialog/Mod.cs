@@ -111,7 +111,5 @@ namespace MZZT.DarkForces.Showcase {
 			}
 			this.oldList = this.list.ToArray();
 		}
-
-		public string Gob => this.List.FirstOrDefault(x => Path.GetExtension(x.FilePath).ToUpper() == ".GOB")?.FilePath;
 	}
 }

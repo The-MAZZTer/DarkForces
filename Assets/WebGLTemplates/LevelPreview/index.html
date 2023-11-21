@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Level Preview Sample</title>
+		<script type="text/javascript" src="Build/{{{ LOADER_FILENAME }}}"></script>
+		<script type="text/javascript" src="levelPreview.js"></script>
+		<script type="text/javascript">
+			var unityData = {
+				dataUrl: "Build/{{{ DATA_FILENAME }}}",
+				frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_THREADS
+				workerUrl: "Build/{{{ WORKER_FILENAME }}}",
+#endif
+#if USE_WASM
+				codeUrl: "Build/{{{ CODE_FILENAME }}}",
+#endif
+#if MEMORY_FILENAME
+				memoryUrl: "Build/{{{ MEMORY_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+				symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
+#endif
+				streamingAssetsUrl: "StreamingAssets",
+				companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+				productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+				productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+				// matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+				// devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+			};
+
+			window.onload = async () => {
+				window.testLevel = {
+					LevelFile: "SECBASE",
+					PaletteFile: "SECBASE.PAL",
+					MusicFile: "STALK-01.GMD",
+					ParallaxX: 1024,
+					ParallaxY: 1024,
+					Sectors: [{
+						LightLevel: 31,
+						Floor: {
+							TextureFile: "DEFAULT.BM",
+							TextureOffsetX: 0,
+							TextureOffsetY: 0,
+							TextureUnknown: 0,
+							Y: 0
+						},
+						Ceiling: {
+							TextureFile: "DEFAULT.BM",
+							TextureOffsetX: 0,
+							TextureOffsetY: 0,
+							TextureUnknown: 0,
+							Y: -64
+						},
+						AltY: 0,
+						Flags: 1,
+						UnusedFlags2: 0,
+						AltLightLevel: 31,
+						Layer: 0,
+						Walls: [{
+							LeftVertexX: -32,
+							LeftVertexZ: 32,
+							RightVertexX: 32,
+							RightVertexZ: 32,
+							MainTexture: {
+								TextureFile: "DEFAULT.BM",
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							TopEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							BottomEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							SignTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							AdjoinedSector: -1,
+							AdjoinedWall: -1,
+							TextureAndMapFlags: 0,
+							UnusedFlags2: 0,
+							AdjoinFlags: 0,
+							LightLevel: 0
+						}, {
+							LeftVertexX: 32,
+							LeftVertexZ: 32,
+							RightVertexX: 32,
+							RightVertexZ: -32,
+							MainTexture: {
+								TextureFile: "DEFAULT.BM",
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							TopEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							BottomEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							SignTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							AdjoinedSector: -1,
+							AdjoinedWall: -1,
+							TextureAndMapFlags: 0,
+							UnusedFlags2: 0,
+							AdjoinFlags: 0,
+							LightLevel: 0
+						}, {
+							LeftVertexX: 32,
+							LeftVertexZ: -32,
+							RightVertexX: -32,
+							RightVertexZ: -32,
+							MainTexture: {
+								TextureFile: "DEFAULT.BM",
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							TopEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							BottomEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							SignTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							AdjoinedSector: -1,
+							AdjoinedWall: -1,
+							TextureAndMapFlags: 0,
+							UnusedFlags2: 0,
+							AdjoinFlags: 0,
+							LightLevel: 0
+						}, {
+							LeftVertexX: -32,
+							LeftVertexZ: -32,
+							RightVertexX: -32,
+							RightVertexZ: 32,
+							MainTexture: {
+								TextureFile: "DEFAULT.BM",
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							TopEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							BottomEdgeTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							SignTexture: {
+								TextureFile: null,
+								TextureOffsetX: 0,
+								TextureOffsetY: 0,
+								TextureUnknown: 0
+							},
+							AdjoinedSector: -1,
+							AdjoinedWall: -1,
+							TextureAndMapFlags: 0,
+							UnusedFlags2: 0,
+							AdjoinFlags: 0,
+							LightLevel: 0
+						}]
+					}]
+				};
+
+				window.reloadSectorExample = () => {
+					var x1 = Math.random() * 16 + 16;
+					var z1 = Math.random() * 16 + 16;
+					var x2 = Math.random() * 16 + 16;
+					var z2 = Math.random() * 16 + 16;
+					var x3 = Math.random() * 16 + 16;
+					var z3 = Math.random() * 16 + 16;
+					var x4 = Math.random() * 16 + 16;
+					var z4 = Math.random() * 16 + 16;
+
+					window.testLevel.Sectors[0].Walls[0].LeftVertexX = -x1;
+					window.testLevel.Sectors[0].Walls[0].LeftVertexZ = z1;
+					window.testLevel.Sectors[0].Walls[0].RightVertexX = x2;
+					window.testLevel.Sectors[0].Walls[0].RightVertexZ = z2;
+					window.testLevel.Sectors[0].Walls[1].LeftVertexX = x2;
+					window.testLevel.Sectors[0].Walls[1].LeftVertexZ = z2;
+					window.testLevel.Sectors[0].Walls[1].RightVertexX = x3;
+					window.testLevel.Sectors[0].Walls[1].RightVertexZ = -z3;
+					window.testLevel.Sectors[0].Walls[2].LeftVertexX = x3;
+					window.testLevel.Sectors[0].Walls[2].LeftVertexZ = -z3;
+					window.testLevel.Sectors[0].Walls[2].RightVertexX = -x4;
+					window.testLevel.Sectors[0].Walls[2].RightVertexZ = -z4;
+					window.testLevel.Sectors[0].Walls[3].LeftVertexX = -x4;
+					window.testLevel.Sectors[0].Walls[3].LeftVertexZ = -z4;
+					window.testLevel.Sectors[0].Walls[3].RightVertexX = -x1;
+					window.testLevel.Sectors[0].Walls[3].RightVertexZ = z1;
+
+					window.preview.reloadSector(0, window.testLevel.Sectors[0]);
+				};
+
+				window.setSectorExample = () => {
+					var light = Math.floor(Math.random() * 32);
+
+					window.testLevel.Sectors[0].LightLevel = light;
+
+					window.preview.setSector(0, window.testLevel.Sectors[0]);
+				};
+
+				window.moveSectorExample = () => {
+					var x = Math.random() * 128 - 64;
+					var y = Math.random() * 128 - 64;
+					var z = Math.random() * 128 - 64;
+
+					window.preview.moveSector(0, x, y, z);
+				};
+
+				window.setSectorFloorExample = () => {
+					window.testLevel.Sectors[0].Floor.Y += Math.random() * 64;
+
+					window.preview.setSectorFloor(0, window.testLevel.Sectors[0].Floor);
+				};
+
+				window.setSectorCeilingExample = () => {
+					window.testLevel.Sectors[0].Ceiling.Y -= Math.random() * 64;
+
+					window.preview.setSectorCeiling(0, window.testLevel.Sectors[0].Ceiling);
+				};
+
+				window.reloadWallExample = () => {
+					var x1 = Math.random() * 16 + 16;
+					var z1 = Math.random() * 16 + 16;
+					var x2 = Math.random() * 16 + 16;
+					var z2 = Math.random() * 16 + 16;
+
+					window.testLevel.Sectors[0].Walls[0].LeftVertexX = -x1;
+					window.testLevel.Sectors[0].Walls[0].LeftVertexZ = z1;
+					window.testLevel.Sectors[0].Walls[0].RightVertexX = x2;
+					window.testLevel.Sectors[0].Walls[0].RightVertexZ = z2;
+					window.testLevel.Sectors[0].Walls[1].LeftVertexX = x2;
+					window.testLevel.Sectors[0].Walls[1].LeftVertexZ = z2;
+					window.testLevel.Sectors[0].Walls[3].RightVertexX = -x1;
+					window.testLevel.Sectors[0].Walls[3].RightVertexZ = z1;
+
+					var light = Math.floor(Math.random() * 32);
+
+					window.testLevel.Sectors[0].Walls[0].LightLevel = light;
+
+					window.preview.reloadWall(0, 0, window.testLevel.Sectors[0].Walls[0]);
+				};
+
+				window.insertWallExample = () => {
+					window.testLevel.Sectors[0].Walls[0].LeftVertexX = 0;
+					window.testLevel.Sectors[0].Walls[0].LeftVertexZ = 0;
+					window.testLevel.Sectors[0].Walls[4] = {
+						LeftVertexX: window.testLevel.Sectors[0].Walls[3].RightVertexX,
+						LeftVertexZ: window.testLevel.Sectors[0].Walls[3].RightVertexZ,
+						RightVertexX: 0,
+						RightVertexZ: 0,
+						MainTexture: {
+							TextureFile: "DEFAULT.BM",
+							TextureOffsetX: 0,
+							TextureOffsetY: 0,
+							TextureUnknown: 0
+						},
+						TopEdgeTexture: {
+							TextureFile: null,
+							TextureOffsetX: 0,
+							TextureOffsetY: 0,
+							TextureUnknown: 0
+						},
+						BottomEdgeTexture: {
+							TextureFile: null,
+							TextureOffsetX: 0,
+							TextureOffsetY: 0,
+							TextureUnknown: 0
+						},
+						SignTexture: {
+							TextureFile: null,
+							TextureOffsetX: 0,
+							TextureOffsetY: 0,
+							TextureUnknown: 0
+						},
+						AdjoinedSector: -1,
+						AdjoinedWall: -1,
+						TextureAndMapFlags: 0,
+						UnusedFlags2: 0,
+						AdjoinFlags: 0,
+						LightLevel: 0
+					};
+
+					window.preview.insertWall(0, 4, window.testLevel.Sectors[0].Walls[4]);
+				};
+
+				window.setVertexExample = () => {
+					var x = Math.random() * 16 + 16;
+					var z = Math.random() * 16 + 16;
+
+					var sector = window.testLevel.Sectors[0];
+					sector.Walls[0].LeftVertexX = -x;
+					sector.Walls[0].LeftVertexZ = z;
+					sector.Walls[sector.Walls.length - 1].RightVertexX = -x;
+					sector.Walls[sector.Walls.length - 1].RightVertexZ = z;
+
+					window.preview.setVertex(0, 0, false, -x, z);
+				};
+
+				window.reloadLevelObjectsExample = () => {
+					var objects = [{
+						Type: 0,
+						PositionX: 0,
+						PositionY: 0,
+						PositionZ: 0,
+						Pitch: 0,
+						Yaw: 0,
+						Roll: 0,
+						Difficulty: 0,
+						Logic: "LOGIC: PLAYER\r\nEYE: TRUE"
+					}, {
+						Type: 2,
+						FileName: "STORMFIN.WAX",
+						PositionX: -8,
+						PositionY: 0,
+						PositionZ: -8,
+						Pitch: 0,
+						Yaw: 0,
+						Roll: 0,
+						Difficulty: 0,
+						Logic: "TYPE: TROOP"
+					}, {
+						Type: 3,
+						FileName: "IENERGY.FME",
+						PositionX: 8,
+						PositionY: 0,
+						PositionZ: -8,
+						Pitch: 0,
+						Yaw: 0,
+						Roll: 0,
+						Difficulty: 0,
+						Logic: "LOGIC: ITEM ENERGY"
+					}, {
+						Type: 4,
+						FileName: "KYL3DO.3DO",
+						PositionX: 0,
+						PositionY: -32,
+						PositionZ: 0,
+						Pitch: 0,
+						Yaw: 0,
+						Roll: 0,
+						Difficulty: 0,
+						Logic: ""
+					}];
+
+					window.preview.reloadLevelObjects(objects);
+				};
+
+				window.setObjectExample = () => {
+					var object = {
+						Type: 2,
+						FileName: "IDPLANS.WAX",
+						PositionX: 8,
+						PositionY: 0,
+						PositionZ: 8,
+						Pitch: 0,
+						Yaw: 0,
+						Roll: 0,
+						Difficulty: 0,
+						Logic: "LOGIC: PLANS"
+					};
+
+					window.preview.setObject(4, object);
+				};
+
+				window.preview = new LevelPreview();
+				window.preview.onLevelListLoaded = (levels) => {
+					var ul = document.getElementById("levels");
+					ul.innerHTML = "";
+
+					var i = 0;
+					for (var level of levels) {
+						var li = document.createElement("li");
+
+						var button = document.createElement("button");
+						button.textContent = level.DisplayName;
+						button.i = i;
+						button.onclick = async function() {
+							await window.preview.loadLevel(this.i);
+						};
+						li.appendChild(button);
+						ul.appendChild(li);
+
+						i++;
+					}
+				};
+
+				var currentLayer = null;
+
+				window.preview.onLevelLoaded = (layers) => {
+					var ul = document.getElementById("layers");
+					ul.innerHTML = "";
+
+					var li = document.createElement("li");
+
+					var label = document.createElement("label")
+
+					var input = document.createElement("input");
+					input.type = "radio";
+					input.name = "layers";
+					input.value = null;
+					input.checked =  currentLayer === null;
+					input.onchange = function() {
+						if (!this.checked) {
+							return;
+						}
+
+						currentLayer = null;
+						window.preview.setVisibleLayer(null);
+					};
+
+					label.appendChild(input);
+
+					label.appendChild(document.createTextNode(" All"));
+
+					li.appendChild(label);
+					ul.appendChild(li);
+
+					for (var layer of layers) {
+						var li = document.createElement("li");
+
+						var label = document.createElement("label");
+
+						var input = document.createElement("input");
+						input.type = "radio";
+						input.name = "layers";
+						input.value = layer;
+						input.layer = layer;
+						input.checked = currentLayer === input.layer;
+						input.onchange = function() {
+							if (!this.checked) {
+								return;
+							}
+
+							currentLayer = this.layer;
+							window.preview.setVisibleLayer(this.layer);
+						};
+
+						label.appendChild(input);
+
+						label.appendChild(document.createTextNode(" " + layer));
+
+						li.appendChild(label);
+						ul.appendChild(li);
+					}
+				};
+
+				window.preview.onFloorClicked = index => {
+					document.getElementsByTagName("footer")[0].textContent = `Sector ${index} floor clicked.`;
+				};
+
+				window.preview.onCeilingClicked = index => {
+					document.getElementsByTagName("footer")[0].textContent = `Sector ${index} ceiling clicked.`;
+				};
+
+				window.preview.onWallClicked = (sectorIndex, wallIndex) => {
+					document.getElementsByTagName("footer")[0].textContent = `Sector ${sectorIndex} wall ${wallIndex} clicked.`;
+				};
+
+				window.preview.onObjectClicked = index => {
+					document.getElementsByTagName("footer")[0].textContent = `Object ${index} clicked.`;
+				};
+
+				window.preview.onReady = async () => {
+					await window.preview.reloadDataFiles();
+					await window.preview.loadLevelList();
+					await window.preview.loadLevel(0);
+				};
+
+				await window.preview.createUnityInstanceAsync(unityData, document.getElementById("unity-canvas"));
+			};
+  	</script>
+		<style type="text/css">
+			html {
+				padding: 0;
+				margin: 0;
+				width: 100%;
+				height: 100%;
+			}
+			body {
+				padding: 0;
+				margin: 0;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: row;
+			}
+			aside {
+				flex: 0 0 350px;
+				box-sizing: border-box;
+				padding: 5px;
+				height: 100%;
+				overflow: auto;
+			}
+			canvas {
+				flex: 1 1 0;
+				width: 0 !important;
+				height: 100% !important;
+			}
+			footer {
+				position: fixed;
+				left: 0;
+				bottom: 0;
+
+				background-color: white;
+				color: black;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="unity-canvas" tabindex="-1"></canvas>
+
+		<aside>
+			<p><button onclick="window.preview.quit();">Quit</button></p>
+	
+			<h1>Levels</h1>
+
+			<ul id="levels"></ul>
+
+			<h1>Layers</h1>
+
+			<ul id="layers"></ul>
+
+			<h1>Settings - Appearance</h1>
+	
+			<p><button onclick="window.preview.setBackground(1, 1, 1);">Set background to white (default)</button></p>
+	
+			<p><button onclick="window.preview.setBackground(0, 0, 0);">Set background to black</button></p>
+	
+			<p><button onclick="window.preview.setBackground(Math.random(), Math.random(), Math.random());">Set background to random color</button></p>
+	
+			<p><button onclick="window.preview.setShowWaitBitmap(false)">Don't show WAIT.BM during loading (default)</button></p>
+	
+			<p><button onclick="window.preview.setShowWaitBitmap(true)">Show WAIT.BM during loading</button></p>
+	
+			<h1>Settings - Geometry</h1>
+
+			<p><button onclick="window.preview.setExtendSkyPit(0)">Don't extrude skies/pits (default)</button></p>
+	
+			<p><button onclick="window.preview.setExtendSkyPit(100)">Extride skies/pits 100 DFUs</button></p>
+
+			<h1>Settings - Objects</h1>
+
+			<p><button onclick="window.preview.setShowSprites(false)">Hide sprites</button></p>
+
+			<p><button onclick="window.preview.setShowSprites(true)">Show sprites (default)</button></p>
+
+			<p><button onclick="window.preview.setShow3dos(false)">Hide 3DOs</button></p>
+
+			<p><button onclick="window.preview.setShow3dos(true)">Show 3DOs (default)</button></p>
+
+			<p><button onclick="window.preview.setDifficulty(1)">Difficulty: Easy</button></p>
+
+			<p><button onclick="window.preview.setDifficulty(2)">Difficulty: Medium</button></p>
+
+			<p><button onclick="window.preview.setDifficulty(3)">Difficulty: Hard</button></p>
+
+			<p><button onclick="window.preview.setDifficulty(4)">Show all objects regardless of difficulty (default)</button></p>
+
+			<p><button onclick="window.preview.setAnimateVues(false)">Don't autoplay VUEs (default)</button></p>
+
+			<p><button onclick="window.preview.setAnimateVues(true)">Autoplay VUEs</button></p>
+
+			<p><button onclick="window.preview.setAnimate3doUpdates(false)">Don't animate 3DOs with UPDATE logic</button></p>
+
+			<p><button onclick="window.preview.setAnimate3doUpdates(true)">Animate 3DOs with UPDATE logic (default)</button></p>
+			
+			<h1>Settings - Lighting</h1>
+
+			<p><button onclick="window.preview.setFullBrightLighting(false)">Show light levels (default)</button></p>
+
+			<p><button onclick="window.preview.setFullBrightLighting(true)">Full bright mode</button></p>
+
+			<p><button onclick="window.preview.setBypassColormapDithering(false)">8-bit in-game color map</button></p>
+
+			<p><button onclick="window.preview.setBypassColormapDithering(true)">24-bit auto-generated color map (default)</button></p>
+
+			<h1>Settings - Music</h1>
+
+			<p><button onclick="window.preview.setPlayMusic(false)">Music off (default)</button></p>
+
+			<p><button onclick="window.preview.setPlayMusic(true)">Music on</button></p>
+			
+			<p><button onclick="window.preview.setPlayFightTrack(false)">Stalk track (default)</button></p>
+
+			<p><button onclick="window.preview.setPlayFightTrack(true)">Fight track</button></p>
+
+			<p><button onclick="window.preview.setVolume(0.5)">Half volume</button></p>
+
+			<p><button onclick="window.preview.setVolume(1)">Max volume (default)</button></p>
+
+			<h1>Settings - Camera</h1>
+
+			<p><button onclick="window.preview.setLookSensitivity(0.25, 0.25)">Reset look/rotate sensitivity (default)</button></p>
+
+			<p><button onclick="window.preview.setLookSensitivity(0.125, 0.125)">Half look/rotate sensitivity</button></p>
+
+			<p><button onclick="window.preview.setLookSensitivity(0.5, 0.5)">Double look/rotate sensitivity</button></p>
+
+			<p><button onclick="window.preview.setInvertYLook(false)">Uninvert Y Look (default)</button></p>
+
+			<p><button onclick="window.preview.setInvertYLook(true)">Invert Y Look</button></p>
+
+			<p><button onclick="window.preview.setMoveSensitivity(1, 1, 1)">Reset move speed (default)</button></p>
+
+			<p><button onclick="window.preview.setMoveSensitivity(0.5, 0.5, 0.5)">Half move speed</button></p>
+
+			<p><button onclick="window.preview.setMoveSensitivity(2, 2, 2)">Double move speed</button></p>
+
+			<p><button onclick="window.preview.setYawLimits(-89.999, 89.999)">Minimal yaw limit (default)</button></p>
+
+			<p><button onclick="window.preview.setYawLimits(-30, 30)">60 degree yaw limit</button></p>
+
+			<p><button onclick="window.preview.setRunMultiplier(2)">Double move speed when holding shift (default)</button></p>
+
+			<p><button onclick="window.preview.setRunMultiplier(4)">Quadruple move speed when holding shift</button></p>
+
+			<p><button onclick="window.preview.setZoomSensitivity(-0.01)">Reset zoom sensitivity (default)</button></p>
+
+			<p><button onclick="window.preview.setZoomSensitivity(-0.001)">Fine-grained zoom sensitivity</button></p>
+
+			<p><button onclick="window.preview.setUseOrbitCamera(true)">Use orbit controls (default)</button></p>
+
+			<p><button onclick="window.preview.setUseMouseCapture(false); window.preview.setUseOrbitCamera(false)">Use FPS controls without mouse capture</button></p>
+
+			<p><button onclick="window.preview.setUseMouseCapture(true); window.preview.setUseOrbitCamera(false)">Use FPS controls with mouse capture</button></p>
+
+			<h1>Level</h1>
+	
+			<p><button onclick="window.preview.reloadLevelInPlace();">Reload level</button></p>
+			
+			<p><button onclick="window.preview.initEmptyLevel('SECBASE', 0, 'SECBASE');">Init empty level</button></p>
+
+			<h1>Geometry</h1>
+
+			<p>Use the first button then mess with the others for examples.</p>
+
+			<p><button onclick="window.preview.reloadLevelGeometry(window.testLevel)">Inject level geometry</button></p>
+
+			<p><button onclick="window.preview.setLevelMetadata('SECBASE', 'STALK-01.GMD', 'SECBASE.PAL', 1024, 1024)">Force SECBASE.PAL and normal parallax</button></p>
+
+			<p><button onclick="window.preview.setLevelMetadata('SECBASE', 'STALK-01.GMD', 'SECBASE.PAL', 2048, 2048)">Force SECBASE.PAL and double parallax speed</button></p>
+
+			<p><button onclick="window.reloadSectorExample();">Replace sector 0</button></p>
+
+			<p><button onclick="window.setSectorExample();">Randomize sector 0 light level</button></p>
+
+			<p><button onclick="window.moveSectorExample();">Move sector 0</button></p>
+
+			<p><button onclick="window.preview.deleteSector(0);">Delete sector 0</button></p>
+
+			<p><button onclick="window.setSectorFloorExample();">Replace sector 0 floor</button></p>
+
+			<p><button onclick="window.setSectorCeilingExample();">Replace sector 0 ceiling</button></p>
+
+			<p><button onclick="window.reloadWallExample();">Replace sector 0 wall 0</button></p>
+
+			<p><button onclick="window.insertWallExample();">Insert wall 4</button></p>
+
+			<p><button onclick="window.preview.deleteWall(0, 4);">Delete wall 4</button></p>
+
+			<p><button onclick="window.setVertexExample();">Move sector 0 vertex 0</button></p>
+
+			<h1>Objects</h1>
+
+			<p>Use the first button then mess with the others for examples.</p>
+
+			<p><button onclick="window.reloadLevelObjectsExample();">Inject objects</button></p>
+
+			<p><button onclick="window.setObjectExample();">Set object 4</button></p>
+
+			<p><button onclick="window.preview.deleteObject(4);">Delete object 4</button></p>
+
+			<h1>Camera</h1>
+
+			<p><button onclick="window.preview.resetCamera();">Reset camera</button></p>
+
+			<p><button onclick="window.preview.moveCamera(0, 0, 0);">Move camera to origin</button></p>
+
+			<p><button onclick="window.preview.rotateCameraEuler(0, 0, 0);">Rotate camera to point forward</button></p>
+
+			<p><button onclick="window.preview.moveAndRotateCameraEuler(0, 0, 0, 0, 0, 0);">Move and rotate camera to origin</button></p>
+
+			<p><button onclick="window.preview.pointCameraAt(0, 0, 0);">Point camera at origin</button></p>
+
+			<p><button onclick="window.preview.captureMouse();">Capture mouse</button></p>
+		</aside>
+
+		<footer></footer>
+  </body>
+</html>

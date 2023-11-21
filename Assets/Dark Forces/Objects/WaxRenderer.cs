@@ -21,7 +21,8 @@ namespace MZZT.DarkForces {
 				lightLevel = 31;
 			}
 
-			DfWax wax = await ResourceCache.Instance.GetWaxAsync(obj.FileName);
+			ResourceCache cache = ResourceCache.Instance;
+			DfWax wax = await cache.GetWaxAsync(obj.FileName);
 			if (wax == null) {
 				return;
 			}
@@ -39,14 +40,18 @@ namespace MZZT.DarkForces {
 
 			this.frames = wax.Waxes[0].Sequences.Select(x => x.Frames[0]).ToArray();
 
-			this.sprites = this.frames.Select(x => ResourceCache.Instance.ImportFrame(LevelLoader.Instance.Palette,
-				lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, x, lightLevel)).ToArray();
+			this.RefreshSprites();
 
 			SpriteRenderer renderer = this.gameObject.AddComponent<SpriteRenderer>();
 			renderer.color = Color.white;
 			renderer.drawMode = SpriteDrawMode.Simple;
 
 			this.UpdateSprite();
+
+			CapsuleCollider collider = this.gameObject.AddComponent<CapsuleCollider>();
+			collider.height = renderer.bounds.size.y;
+			collider.radius = Mathf.Max(renderer.bounds.size.x, renderer.bounds.size.z) / 4;
+			collider.center = this.transform.InverseTransformPoint(renderer.bounds.center);
 		}
 
 		private void UpdateSprite() {
@@ -66,6 +71,20 @@ namespace MZZT.DarkForces {
 
 		private DfFrame[] frames;
 		private Sprite[] sprites;
+
+		public void RefreshSprites() {
+			int lightLevel;
+			if (this.CurrentSector != null) {
+				lightLevel = this.CurrentSector.Sector.LightLevel;
+			} else {
+				lightLevel = 31;
+			}
+
+			ResourceCache cache = ResourceCache.Instance;
+			LevelLoader levelLoader = LevelLoader.Instance;
+			this.sprites = this.frames.Select(x => cache.ImportFrame(levelLoader.Palette,
+				lightLevel >= 31 ? null : levelLoader.ColorMap, x, lightLevel)).ToArray();
+		}
 
 		private void Update() {
 			if (this.frames == null) {

@@ -1,10 +1,12 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using MZZT.DarkForces.Showcase;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -67,7 +69,7 @@ namespace MZZT.DarkForces {
 
 			if (addHiddenLevels) {
 				// Find the GOB file with the levels.
-				string path = Mod.Instance.Gob ?? Path.Combine(FileLoader.Instance.DarkForcesFolder, "DARK.GOB");
+				string path = FileLoader.Instance.ModGob ?? Path.Combine(FileLoader.Instance.DarkForcesFolder, "DARK.GOB");
 				// Find any .LEV files in that GOB.
 				string[] levels = FileLoader.Instance.FindGobFiles("*.LEV", path).Select(x => x.ToUpper()).ToArray();
 				// Exclude any files in the level list.
@@ -90,7 +92,11 @@ namespace MZZT.DarkForces {
 
 			await PauseMenu.Instance.BeginLoadingAsync();
 
-			string levelName = this.CurrentLevelName;
+			string levelName = this.Level.PaletteFile;
+			int index = levelName.LastIndexOf('.');
+			if (index >= 0) {
+				levelName = levelName.Substring(0, index);
+			}
 
 			this.ColorMap = await ResourceCache.Instance.GetColormapAsync($"{levelName}.CMP");
 
@@ -132,6 +138,7 @@ namespace MZZT.DarkForces {
 			} catch (Exception e) {
 				ResourceCache.Instance.AddError($"{levelFile}.LEV", e);
 			}
+
 			if (this.Level != null) {
 				ResourceCache.Instance.AddWarnings($"{levelFile}.LEV", this.Level);
 
@@ -141,6 +148,19 @@ namespace MZZT.DarkForces {
 			}
 
 			PauseMenu.Instance.EndLoading();
+		}
+
+		public void LoadLevel(DfLevel level) {
+			if (Parallaxer.Instance != null) {
+				Parallaxer.Instance.Reset();
+			}
+
+			this.currentLevel = -1;
+
+			this.Level = level;
+			if (Parallaxer.Instance != null) {
+				Parallaxer.Instance.Parallax = this.Level.Parallax.ToUnity();
+			}
 		}
 
 		/// <summary>
@@ -188,6 +208,10 @@ namespace MZZT.DarkForces {
 			}
 
 			PauseMenu.Instance.EndLoading();
+		}
+
+		public void LoadObjects(DfLevelObjects obj) {
+			this.Objects = obj;
 		}
 
 		/// <summary>

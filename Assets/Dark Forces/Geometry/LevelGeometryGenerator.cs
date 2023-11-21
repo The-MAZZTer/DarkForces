@@ -53,7 +53,7 @@ namespace MZZT.DarkForces {
 
 			foreach ((Sector sectorInfo, int i) in LevelLoader.Instance.Level.Sectors.Select((x, i) => (x, i))) {
 				GameObject sector = new() {
-					name = sectorInfo.Name ?? LevelLoader.Instance.Level.Sectors.IndexOf(sectorInfo).ToString(),
+					name = sectorInfo.Name ?? i.ToString(),
 					layer = LayerMask.NameToLayer("Geometry")
 				};
 				sector.transform.SetParent(this.transform);
@@ -68,6 +68,31 @@ namespace MZZT.DarkForces {
 
 			watch.Stop();
 			Debug.Log($"Level geometry generated in {watch.Elapsed}!");
+		}
+
+		public async Task<SectorRenderer> RefreshSectorAsync(int sectorIndex, Sector sectorInfo) {
+			if (this.transform.childCount > sectorIndex) {
+				this.DeleteSector(sectorIndex);
+			}
+
+			GameObject sector = new() {
+				name = sectorInfo.Name ?? LevelLoader.Instance.Level.Sectors.IndexOf(sectorInfo).ToString(),
+				layer = LayerMask.NameToLayer("Geometry")
+			};
+			sector.transform.SetParent(this.transform);
+			sector.transform.SetSiblingIndex(sectorIndex);
+
+			SectorRenderer renderer = sector.AddComponent<SectorRenderer>();
+			await renderer.RenderAsync(sectorInfo);
+
+			if (!this.showAllLayers) {
+				sector.SetActive(this.layer == sectorInfo.Layer);
+			}
+			return renderer;
+		}
+
+		public void DeleteSector(int sectorIndex) {
+			DestroyImmediate(this.transform.GetChild(sectorIndex).gameObject);
 		}
 
 		/// <summary>

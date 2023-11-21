@@ -6,6 +6,7 @@ using MZZT.DarkForces.Showcase;
 using MZZT.Extensions;
 using MZZT.FileFormats;
 using MZZT.IO.FileProviders;
+using MZZT.IO.FileSystemProviders;
 #if UNITY_WEBGL && !UNITY_EDITOR
 using MZZT.IO.FileSystemProviders;
 #endif
@@ -14,11 +15,13 @@ using MZZT.Steam;
 #endif
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -28,7 +31,7 @@ namespace MZZT.DarkForces {
 		/// <summary>
 		/// The standard files which should be searched for GOB data files.
 		/// </summary>
-		public static readonly string[] DARK_FORCES_STANDARD_DATA_FILES = new[] {
+		public static string[] DarkForcesDataFiles { get; set; } = new[] {
 			@"DARK.GOB",
 			@"SOUNDS.GOB",
 			@"SPRITES.GOB",
@@ -41,7 +44,7 @@ namespace MZZT.DarkForces {
 			public long Offset;
 			public long Length;
 		}
-
+		
 		private struct LfdInfo {
 			public string LfdPath;
 			public Dictionary<string, ResourceLocation> Files;
@@ -487,14 +490,16 @@ namespace MZZT.DarkForces {
 		/// Read standard GOB file directory information and cache it.
 		/// </summary>
 		public async Task LoadStandardFilesAsync() {
-#if UNITY_WEBGL && !UNITY_EDITOR
-			while (!WebFileSystemProviderBrowserCallback.Instance.BrowserFilesUploaded) {
-				await Task.Delay(25);
+#if UNITY_WEBGL && !UNITY_EDITOR 
+			if (FileManager.Instance.Provider is WebFileSystemProvider) {
+				while (!WebFileSystemProviderBrowserCallback.Instance.BrowserFilesUploaded) {
+					await Task.Delay(25);
+				}
 			}
 #endif
 
-			foreach (string name in DARK_FORCES_STANDARD_DATA_FILES) {
-				await this.AddGobFileAsync(Path.Combine(this.DarkForcesFolder, name));
+			foreach (string name in DarkForcesDataFiles) {
+				await this.AddGobFileAsync(name);
 			}
 
 			await foreach (string lfd in FileManager.Instance.FolderEnumerateFilesAsync(Path.Combine(this.DarkForcesFolder, "LFD"), "*.LFD", SearchOption.TopDirectoryOnly)) {
@@ -526,5 +531,7 @@ namespace MZZT.DarkForces {
 			})) + "$", RegexOptions.IgnoreCase);
 			return files.SelectMany(x => x).Where(x => patterns.IsMatch(x)).Distinct();
 		}
+
+		public string ModGob => this.gobFiles.Keys.Except(DarkForcesDataFiles.Select(x => Path.Combine(this.DarkForcesFolder, x))).FirstOrDefault(x => Path.GetExtension(x).ToUpper() == ".GOB");
 	}
 }

@@ -10,6 +10,8 @@ namespace MZZT.DarkForces {
 	/// Base class for rendering an object in Unity.
 	/// </summary>
 	public class ObjectRenderer : MonoBehaviour {
+		public static ObjectRenderer Eye { get; private set; }
+
 		/// <summary>
 		/// The object we're rendering.
 		/// </summary>
@@ -29,10 +31,11 @@ namespace MZZT.DarkForces {
 
 			this.gameObject.name = string.IsNullOrEmpty(obj.FileName) ? obj.Type.ToString() : $"{obj.Type} - {obj.FileName}";
 
+			const float geometryScale = LevelGeometryGenerator.GEOMETRY_SCALE;
 			Vector3 position = new(
-				obj.Position.X * LevelGeometryGenerator.GEOMETRY_SCALE,
-				-obj.Position.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
-				obj.Position.Z * LevelGeometryGenerator.GEOMETRY_SCALE
+				obj.Position.X * geometryScale,
+				-obj.Position.Y * geometryScale,
+				obj.Position.Z * geometryScale
 			);
 			Vector3 euler = obj.EulerAngles.ToUnity();
 			euler = new Vector3(-euler.x, euler.y, euler.z);
@@ -48,14 +51,15 @@ namespace MZZT.DarkForces {
 
 			// Look down and then up and try to find a sector floor/ceiling. Then verify we're in the proper Y range.
 			SectorRenderer sector = null;
-			if (Physics.Raycast(new Ray(position, Vector3.down), out RaycastHit hit, float.PositiveInfinity, LayerMask.GetMask("Geometry"))) {
+			int layer = LayerMask.GetMask("Geometry");
+			if (Physics.Raycast(new Ray(position, Vector3.down), out RaycastHit hit, float.PositiveInfinity, layer)) {
 				sector = hit.collider.GetComponentInParent<SectorRenderer>();
 				if (obj.Position.Y > sector.Sector.Floor.Y || obj.Position.Y < sector.Sector.Ceiling.Y) {
 					sector = null;
 				}
 			}
 			if (sector == null) {
-				if (Physics.Raycast(new Ray(position, Vector3.up), out hit, float.PositiveInfinity, LayerMask.GetMask("Geometry"))) {
+				if (Physics.Raycast(new Ray(position, Vector3.up), out hit, float.PositiveInfinity, layer)) {
 					sector = hit.collider.GetComponentInParent<SectorRenderer>();
 					if (obj.Position.Y > sector.Sector.Floor.Y || obj.Position.Y < sector.Sector.Ceiling.Y) {
 						sector = null;
@@ -85,9 +89,9 @@ namespace MZZT.DarkForces {
 			}
 			if (radius > 0 && height != 0) {
 				CapsuleCollider collider = this.gameObject.AddComponent<CapsuleCollider>();
-				collider.center = new Vector3(0, -height / 2 * LevelGeometryGenerator.GEOMETRY_SCALE, 0);
-				collider.height = Mathf.Abs(height * LevelGeometryGenerator.GEOMETRY_SCALE);
-				collider.radius = radius * LevelGeometryGenerator.GEOMETRY_SCALE;
+				collider.center = new Vector3(0, -height / 2 * geometryScale, 0);
+				collider.height = Mathf.Abs(height * geometryScale);
+				collider.radius = radius * geometryScale;
 			}
 
 			bool eye = false;
@@ -95,12 +99,18 @@ namespace MZZT.DarkForces {
 				bool.TryParse(strEye[0], out eye);
 			}
 			if (eye) {
-				Camera.main.transform.SetPositionAndRotation(position - ObjectGenerator.KYLE_EYE_POSITION * LevelGeometryGenerator.GEOMETRY_SCALE, rotation);
+				Eye = this;
 			}
 
 			this.gameObject.transform.SetPositionAndRotation(position, rotation);
 
 			return Task.CompletedTask;
+		}
+
+		private void OnDestroy() {
+			if (Eye == this) {
+				Eye = null;
+			}
 		}
 	}
 }

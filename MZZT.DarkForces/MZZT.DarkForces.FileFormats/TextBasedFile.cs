@@ -1,6 +1,7 @@
 ﻿using MZZT.FileFormats;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace MZZT.DarkForces.FileFormats {
 				string[] tokens = expectedFirstTokens.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
 				// Ensure the first few tokens match.
-				if (ret.Count == 0) {
+				if (ret.Count < tokens.Length) {
 					throw new FormatException($"Expected \"{expectedFirstTokens}\", but reached end of stream!");
 				}
 				if (!ret.Take(tokens.Length).SequenceEqual(tokens)) {
@@ -128,8 +129,8 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 
 			// Read a line that's not empty or has an end-of-file marker in it.
-			string line = await this.ReadLineAsync(reader);
-			while (line != null && line.Trim() != "\x1A" && line.Trim() == "") {
+			string line;
+			do {
 				line = await this.ReadLineAsync(reader);
 
 				// If we find an end-of-file marker remember it.
@@ -138,9 +139,9 @@ namespace MZZT.DarkForces.FileFormats {
 					this.eof = true;
 					line = line.Substring(0, index);
 				}
-			}
+			} while (!this.eof && line != null && line.Trim() == string.Empty);
 
-			if (line == null || line.Trim() == "\x1A" || line.Trim() == "") {
+			if (string.IsNullOrWhiteSpace(line)) {
 				return null;
 			}
 
@@ -194,10 +195,10 @@ namespace MZZT.DarkForces.FileFormats {
 				} else if (line.Length <= index + 1) {
 					// // and /* are two characters so if there's only one character it can't be a comment.
 					return line;
-				} else if (line.Substring(index, 2) == "//") {
+				} else if (line[index + 1] == '/') {
 					// Remove anything from the // after.
 					return line.Substring(0, index);
-				} else if (line.Substring(index, 2) == "/*") {
+				} else if (line[index + 1] == '*') {
 					// Find the end of the /* */ comment. If we can't, it's multiline so remember that.
 					end = line.IndexOf("*/", index + 2);
 					if (end < 0) {

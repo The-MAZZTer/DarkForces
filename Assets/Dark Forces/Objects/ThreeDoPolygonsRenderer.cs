@@ -48,10 +48,12 @@ namespace MZZT.DarkForces {
 			}
 
 			byte[] palette;
+			ResourceCache cache = ResourceCache.Instance;
+			LevelLoader levelLoader = LevelLoader.Instance;
 			if (lightLevel == 31) {
-				palette = ResourceCache.Instance.ImportPalette(LevelLoader.Instance.Palette, true);
+				palette = cache.ImportPalette(levelLoader.Palette, true);
 			} else {
-				palette = ResourceCache.Instance.ImportColormap(LevelLoader.Instance.Palette, LevelLoader.Instance.ColorMap,
+				palette = cache.ImportColormap(levelLoader.Palette, levelLoader.ColorMap,
 					lightLevel, true);
 			}
 
@@ -66,16 +68,17 @@ namespace MZZT.DarkForces {
 			if (mode == ShadingModes.Vertex) {
 				// Create particles for the vertices.
 				ParticleSystemRenderer renderer = this.GetComponent<ParticleSystemRenderer>();
-				renderer.sharedMaterial = new Material(ResourceCache.Instance.ColorShader) {
+				renderer.sharedMaterial = new Material(cache.ColorShader) {
 					color = color
 				};
 
 				ParticleSystem particles = this.GetComponent<ParticleSystem>();
+				const float geometryScale = LevelGeometryGenerator.GEOMETRY_SCALE;
 				particles.SetParticles(polygons.SelectMany(x => x.Vertices.Select(x => new Particle() {
 					position = new Vector3(
-						x.X * LevelGeometryGenerator.GEOMETRY_SCALE,
-						-x.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
-						x.Z * LevelGeometryGenerator.GEOMETRY_SCALE
+						x.X * geometryScale,
+						-x.Y * geometryScale,
+						x.Z * geometryScale
 					),
 					startSize = THREEDO_VERTEX_SCALE
 				})).Distinct().ToArray());
@@ -83,37 +86,37 @@ namespace MZZT.DarkForces {
 				Material material = null;
 				switch (mode) {
 					case ShadingModes.Flat:
-						material = new Material(ResourceCache.Instance.ColorShader) {
+						material = new Material(cache.ColorShader) {
 							color = color
 						};
 						break;
 					case ShadingModes.Gouraud:
 						// TODO not sure how this is supposed to look?
-						material = new Material(ResourceCache.Instance.ColorShader) {
+						material = new Material(cache.ColorShader) {
 							color = color
 						};
 						break;
 					case ShadingModes.GourTex:
 						// TODO not sure how this is supposed to look?
 						if (!string.IsNullOrEmpty(obj.TextureFile)) {
-							DfBitmap bm = await ResourceCache.Instance.GetBitmapAsync(obj.TextureFile);
+							DfBitmap bm = await cache.GetBitmapAsync(obj.TextureFile);
 							if (bm != null) {
-								material = ResourceCache.Instance.GetMaterial(
-									ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-										lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, lightLevel),
-									ResourceCache.Instance.SimpleShader);
+								material = cache.GetMaterial(
+									cache.ImportBitmap(bm.Pages[0], levelLoader.Palette,
+										lightLevel >= 31 ? null : levelLoader.ColorMap, lightLevel),
+									cache.SimpleShader);
 							}
 						}
 						break;
 					case ShadingModes.Plane:
 					case ShadingModes.Texture: 
   					if (!string.IsNullOrEmpty(obj.TextureFile)) {
-							DfBitmap bm = await ResourceCache.Instance.GetBitmapAsync(obj.TextureFile);
+							DfBitmap bm = await cache.GetBitmapAsync(obj.TextureFile);
 							if (bm != null) {
-								material = ResourceCache.Instance.GetMaterial(
-									ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-										lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, lightLevel),
-									ResourceCache.Instance.SimpleShader);
+								material = cache.GetMaterial(
+									cache.ImportBitmap(bm.Pages[0], levelLoader.Palette,
+										lightLevel >= 31 ? null : levelLoader.ColorMap, lightLevel),
+									cache.SimpleShader);
 							}
 						}
 						break;
@@ -134,10 +137,11 @@ namespace MZZT.DarkForces {
 			this.Polygons = polygons;
 
 			ShadingModes mode = polygons[0].ShadingMode;
+			const float geometryScale = LevelGeometryGenerator.GEOMETRY_SCALE;
 			Vector3[] vertices = polygons.SelectMany(x => x.Vertices.Select(x => new Vector3(
-				x.X * LevelGeometryGenerator.GEOMETRY_SCALE,
-				-x.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
-				x.Z * LevelGeometryGenerator.GEOMETRY_SCALE
+				x.X * geometryScale,
+				-x.Y * geometryScale,
+				x.Z * geometryScale
 			))).ToArray();
 
 			if (mode == ShadingModes.Vertex) {
@@ -260,6 +264,8 @@ namespace MZZT.DarkForces {
 				filter.sharedMesh = mesh;
 
 				this.gameObject.AddComponent<MeshRenderer>();
+
+				this.gameObject.AddComponent<MeshCollider>();
 			}
 		}
 
@@ -267,11 +273,12 @@ namespace MZZT.DarkForces {
 			if (this.TryGetComponent<ParticleSystem>(out var particles)) {
 				// Local particle simulation space broken in latest Unity...
 				// Force redraw particles every frame otherwise rotation doesn't affect them.
+				const float geometryScale = LevelGeometryGenerator.GEOMETRY_SCALE;
 				particles.SetParticles(this.Polygons.SelectMany(x => x.Vertices.Select(x => new Particle() {
 					position = new Vector3(
-						x.X * LevelGeometryGenerator.GEOMETRY_SCALE,
-						-x.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
-						x.Z * LevelGeometryGenerator.GEOMETRY_SCALE
+						x.X * geometryScale,
+						-x.Y * geometryScale,
+						x.Z * geometryScale
 					),
 					startSize = THREEDO_VERTEX_SCALE
 				})).Distinct().ToArray());

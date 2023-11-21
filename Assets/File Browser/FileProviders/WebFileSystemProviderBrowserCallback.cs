@@ -1,5 +1,4 @@
-﻿//#if UNITY_WEBGL
-using System;
+﻿using MZZT.IO.FileProviders;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -40,8 +39,8 @@ namespace MZZT.IO.FileSystemProviders {
 			using (MemoryStream mem = new(Encoding.UTF8.GetBytes(json))) {
 				files = (WebFileUpload[])serializer.ReadObject(mem);
 			}
-
-			WebFileSystemProvider.Instance.OnBrowserUploadedFiles(files);
+						
+			((WebFileSystemProvider)FileManager.Instance.Provider).OnBrowserUploadedFiles(files);
 
 			this.BrowserFilesUploaded = true;
 		}
@@ -53,4 +52,3 @@ namespace MZZT.IO.FileSystemProviders {
 			await WebFileSystemProvider.Instance.OnBrowserDownloadFileAsync(path.Replace('/', Path.DirectorySeparatorChar));
 	}
 }
-//#endif

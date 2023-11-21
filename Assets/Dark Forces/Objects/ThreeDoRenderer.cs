@@ -25,6 +25,7 @@ namespace MZZT.DarkForces {
 			this.gameObject.name = threeDo.Name;
 
 			int vertexColor = threeDo.Objects.SelectMany(x => x.Polygons).FirstOrDefault(x => x.ShadingMode == ShadingModes.Vertex)?.Color ?? -1;
+			List<ThreeDoPolygonRenderer> polygons = new();
 			foreach (Df3dObject.Object obj in threeDo.Objects) {
 				foreach (IGrouping<(byte color, ShadingModes mode), Polygon> group in obj.Polygons.GroupBy(x => {
 					byte color = x.Color;
@@ -53,9 +54,14 @@ namespace MZZT.DarkForces {
 
 					ThreeDoPolygonRenderer renderer = polygonGo.AddComponent<ThreeDoPolygonRenderer>();
 					renderer.Render(obj, group.ToArray());
+					polygons.Add(renderer);
 				}
 			}
+			this.polygons = polygons.ToArray();
 		}
+
+		[SerializeField]
+		private ThreeDoPolygonRenderer[] polygons;
 
 		public override async Task RenderAsync(DfLevelObjects.Object obj) {
 			await base.RenderAsync(obj);
@@ -69,7 +75,7 @@ namespace MZZT.DarkForces {
 
 			Df3dObject threeDo = await ResourceCache.Instance.Get3dObjectAsync(obj.FileName);
 			if (threeDo != null) {
-				Queue<ThreeDoPolygonRenderer> renderers = new(this.GetComponentsInChildren<ThreeDoPolygonRenderer>(true));
+				Queue<ThreeDoPolygonRenderer> renderers = new(this.polygons);
 				int vertexColor = threeDo.Objects.SelectMany(x => x.Polygons).FirstOrDefault(x => x.ShadingMode == ShadingModes.Vertex)?.Color ?? -1;
 				foreach (Df3dObject.Object obj2 in threeDo.Objects) {
 					// Recreate the polygon groups from the last function.
@@ -118,6 +124,7 @@ namespace MZZT.DarkForces {
 			if (!logic.TryGetValue("LOGIC", out string[] logicType)) {
 				return;
 			}
+			ResourceCache cache = ResourceCache.Instance;
 			switch (logicType.FirstOrDefault()?.ToUpper()) {
 				// Update will rotate the object.
 				case "UPDATE":
@@ -157,10 +164,10 @@ namespace MZZT.DarkForces {
 						frameRate = VUE_DEFAULT_FRAMERATE;
 					}
 
-					AutodeskVue vue = await ResourceCache.Instance.GetVueAsync(strVue[0]);
+					AutodeskVue vue = await cache.GetVueAsync(strVue[0]);
 					AutodeskVue vue2 = null;
 					if (strVue2 != null) {
-						vue2 = await ResourceCache.Instance.GetVueAsync(strVue2[0]);
+						vue2 = await cache.GetVueAsync(strVue2[0]);
 					}
 
 					if (vue == null) {
@@ -177,7 +184,7 @@ namespace MZZT.DarkForces {
 						vueObject = vue.Vues.FirstOrDefault()?.Objects.FirstOrDefault(x => x.Key.ToUpper() == strVue[1].ToUpper()).Value;
 					}
 					if (vueObject == null) {
-						ResourceCache.Instance.AddWarning(strVue[0], "Couldn't load any usable animations.");
+						cache.AddWarning(strVue[0], "Couldn't load any usable animations.");
 					}
 
 					VueObject vueObject2 = null;
@@ -188,17 +195,17 @@ namespace MZZT.DarkForces {
 							vueObject2 = vue2.Vues.FirstOrDefault()?.Objects.FirstOrDefault(x => x.Key.ToUpper() == strVue[1].ToUpper()).Value;
 						}
 						if (vueObject2 == null) {
-							ResourceCache.Instance.AddWarning(strVue2[0], "Couldn't load any usable animations.");
+							cache.AddWarning(strVue2[0], "Couldn't load any usable animations.");
 						}
 					}
 
 					AnimationClip clip = null;
 					if (vueObject != null) {
-						clip = ResourceCache.Instance.ImportVue(vueObject);
+						clip = cache.ImportVue(vueObject);
 					}
 					AnimationClip clip2 = null;
 					if (vueObject2 != null) {
-						clip2 = ResourceCache.Instance.ImportVue(vueObject2);
+						clip2 = cache.ImportVue(vueObject2);
 					}
 
 					if (clip == null && clip2 == null) {
@@ -225,9 +232,15 @@ namespace MZZT.DarkForces {
 		private bool twoVues = false;
 		private void Update() {
 			Animation animation = this.GetComponent<Animation>();
-			if (ObjectGenerator.Instance.Animate3dos) {
+			ObjectGenerator generator = ObjectGenerator.Instance;
+			if (generator.Animate3doUpdates) {
 				this.transform.Rotate(ROTATION_SCALE * Time.deltaTime * this.rotationSpeed, Space.World);
-
+			} else {
+				Vector3 euler = this.Object.EulerAngles.ToUnity();
+				euler = new Vector3(-euler.x, euler.y, euler.z);
+				this.transform.rotation = Quaternion.Euler(euler);
+			}
+			if (generator.AnimateVues) {
 				if (animation != null && !animation.isPlaying) {
 					animation.PlayQueued("VUE").speed = this.animationSpeed;
 					if (this.twoVues) {
@@ -238,10 +251,6 @@ namespace MZZT.DarkForces {
 				if (animation != null && animation.isPlaying) {
 					animation.Stop();
 				}
-
-				Vector3 euler = this.Object.EulerAngles.ToUnity();
-				euler = new Vector3(-euler.x, euler.y, euler.z);
-				this.transform.rotation = Quaternion.Euler(euler);
 			}
 		}
 	}

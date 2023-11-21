@@ -176,19 +176,19 @@ namespace MZZT.DarkForces.FileFormats {
 			/// </summary>
 			WallMorphsWithElevator = 0x20,
 			/// <summary>
-			/// Elevtors which scroll textures affect top edge texture.
+			/// Elevators which scroll textures affect top edge texture.
 			/// </summary>
 			ElevatorScrollsTopEdgeTexture = 0x40,
 			/// <summary>
-			/// Elevtors which scroll textures affect main texture.
+			/// Elevators which scroll textures affect main texture.
 			/// </summary>
 			ElevatorScrollsMainTexture = 0x80,
 			/// <summary>
-			/// Elevtors which scroll textures affect bottom edge texture.
+			/// Elevators which scroll textures affect bottom edge texture.
 			/// </summary>
 			ElevatorScrollsBottomEdgeTexture = 0x100,
 			/// <summary>
-			/// Elevtors which scroll textures affect sign texture.
+			/// Elevators which scroll textures affect sign texture.
 			/// </summary>
 			ElevatorScrollsSignTexture = 0x200,
 			/// <summary>
@@ -268,7 +268,7 @@ namespace MZZT.DarkForces.FileFormats {
 			}
 
 			/// <summary>
-			/// The sector the wall beongs to.
+			/// The sector the wall belongs to.
 			/// </summary>
 			public Sector Sector { get; }
 
@@ -309,7 +309,7 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// Unknown flags.
 			/// </summary>
-			public int UnusuedFlags2 { get; set; }
+			public int UnusedFlags2 { get; set; }
 			/// <summary>
 			/// Flags relating to adjoins.
 			/// </summary>
@@ -331,7 +331,7 @@ namespace MZZT.DarkForces.FileFormats {
 					SignTexture = this.SignTexture.Clone(),
 					TextureAndMapFlags = this.TextureAndMapFlags,
 					TopEdgeTexture = this.TopEdgeTexture.Clone(),
-					UnusuedFlags2 = this.UnusuedFlags2
+					UnusedFlags2 = this.UnusedFlags2
 				};
 				wallClones[this] = clone;
 
@@ -384,7 +384,7 @@ namespace MZZT.DarkForces.FileFormats {
 			/// <summary>
 			/// Unknown.
 			/// </summary>
-			public int UnusuedFlags2 { get; set; }
+			public int UnusedFlags2 { get; set; }
 			/// <summary>
 			/// An alternate light level which can be switched to.
 			/// </summary>
@@ -411,7 +411,7 @@ namespace MZZT.DarkForces.FileFormats {
 					Layer = this.Layer,
 					LightLevel = this.LightLevel,
 					Name = this.Name,
-					UnusuedFlags2 = this.UnusuedFlags2
+					UnusedFlags2 = this.UnusedFlags2
 				};
 				clone.Walls.AddRange(this.Walls.Select(x => x.Clone(clone, wallClones, vertexClones)));
 				return clone;
@@ -616,7 +616,7 @@ namespace MZZT.DarkForces.FileFormats {
 										break;
 									}
 									sector.Flags = (SectorFlags)flags1;
-									sector.UnusuedFlags2 = flags2;
+									sector.UnusedFlags2 = flags2;
 									sector.AltLightLevel = flags3;
 								} break;
 								case "LAYER": {
@@ -736,7 +736,7 @@ namespace MZZT.DarkForces.FileFormats {
 											LeftVertex = vertices[leftVertex],
 											RightVertex = vertices[rightVertex],
 											TextureAndMapFlags = (WallTextureAndMapFlags)flags1,
-											UnusuedFlags2 = flags2,
+											UnusedFlags2 = flags2,
 											AdjoinFlags = (WallAdjoinFlags)flags3,
 											LightLevel = unchecked((short)light)
 										};
@@ -848,7 +848,7 @@ namespace MZZT.DarkForces.FileFormats {
 				await this.WriteLineAsync(writer, $"CEILING TEXTURE {(sector.Ceiling.TextureFile != null ? Array.IndexOf(textures, sector.Ceiling.TextureFile) : -1)} {sector.Ceiling.TextureOffset.X:0.00} {sector.Ceiling.TextureOffset.Y:0.00} {sector.Ceiling.TextureUnknown}");
 				await this.WriteLineAsync(writer, $"CEILING ALTITUDE {sector.Ceiling.Y:0.00}");
 				await this.WriteLineAsync(writer, $"SECOND ALTITUDE {sector.AltY:0.00}");
-				await this.WriteLineAsync(writer, $"FLAGS {(int)sector.Flags} {sector.UnusuedFlags2} {sector.AltLightLevel}");
+				await this.WriteLineAsync(writer, $"FLAGS {(int)sector.Flags} {sector.UnusedFlags2} {sector.AltLightLevel}");
 				await this.WriteLineAsync(writer, $"LAYER {sector.Layer}");
 
 				Vertex[] vertices = sector.Walls.SelectMany(x => new[] { x.LeftVertex, x.RightVertex }).Distinct().ToArray();
@@ -860,7 +860,7 @@ namespace MZZT.DarkForces.FileFormats {
 				await this.WriteLineAsync(writer, $"WALLS {sector.Walls.Count}");
 				foreach (Wall wall in sector.Walls) {
 					int adjoinedSector = wall.Adjoined != null ? this.Sectors.IndexOf(wallSectors[wall.Adjoined]) : -1;
-					await this.WriteLineAsync(writer, $"WALL LEFT: {Array.IndexOf(vertices, wall.LeftVertex)} RIGHT: {Array.IndexOf(vertices, wall.RightVertex)} MID: {(wall.MainTexture.TextureFile != null ? Array.IndexOf(textures, wall.MainTexture.TextureFile) : -1)} {wall.MainTexture.TextureOffset.X:0.00} {wall.MainTexture.TextureOffset.Y:0.00} {wall.MainTexture.TextureUnknown} TOP: {(wall.TopEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.TopEdgeTexture.TextureFile) : -1)} {wall.TopEdgeTexture.TextureOffset.X:0.00} {wall.TopEdgeTexture.TextureOffset.Y:0.00} {wall.TopEdgeTexture.TextureUnknown} BOT: {(wall.BottomEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.BottomEdgeTexture.TextureFile) : -1)} {wall.BottomEdgeTexture.TextureOffset.X:0.00} {wall.BottomEdgeTexture.TextureOffset.Y:0.00} {wall.BottomEdgeTexture.TextureUnknown} SIGN: {(wall.SignTexture.TextureFile != null ? Array.IndexOf(textures, wall.SignTexture.TextureFile) : -1)} {wall.SignTexture.TextureOffset.X:0.00} {wall.SignTexture.TextureOffset.Y:0.00} ADJOIN: {adjoinedSector} MIRROR: {(wall.Adjoined != null ? wallSectors[wall.Adjoined].Walls.IndexOf(wall.Adjoined) : -1)} WALK: {adjoinedSector} FLAGS: {(int)wall.TextureAndMapFlags} {wall.UnusuedFlags2} {(int)wall.AdjoinFlags} LIGHT: {unchecked((ushort)wall.LightLevel)}");
+					await this.WriteLineAsync(writer, $"WALL LEFT: {Array.IndexOf(vertices, wall.LeftVertex)} RIGHT: {Array.IndexOf(vertices, wall.RightVertex)} MID: {(wall.MainTexture.TextureFile != null ? Array.IndexOf(textures, wall.MainTexture.TextureFile) : -1)} {wall.MainTexture.TextureOffset.X:0.00} {wall.MainTexture.TextureOffset.Y:0.00} {wall.MainTexture.TextureUnknown} TOP: {(wall.TopEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.TopEdgeTexture.TextureFile) : -1)} {wall.TopEdgeTexture.TextureOffset.X:0.00} {wall.TopEdgeTexture.TextureOffset.Y:0.00} {wall.TopEdgeTexture.TextureUnknown} BOT: {(wall.BottomEdgeTexture.TextureFile != null ? Array.IndexOf(textures, wall.BottomEdgeTexture.TextureFile) : -1)} {wall.BottomEdgeTexture.TextureOffset.X:0.00} {wall.BottomEdgeTexture.TextureOffset.Y:0.00} {wall.BottomEdgeTexture.TextureUnknown} SIGN: {(wall.SignTexture.TextureFile != null ? Array.IndexOf(textures, wall.SignTexture.TextureFile) : -1)} {wall.SignTexture.TextureOffset.X:0.00} {wall.SignTexture.TextureOffset.Y:0.00} ADJOIN: {adjoinedSector} MIRROR: {(wall.Adjoined != null ? wallSectors[wall.Adjoined].Walls.IndexOf(wall.Adjoined) : -1)} WALK: {adjoinedSector} FLAGS: {(int)wall.TextureAndMapFlags} {wall.UnusedFlags2} {(int)wall.AdjoinFlags} LIGHT: {unchecked((ushort)wall.LightLevel)}");
 				}
 			}
 		}

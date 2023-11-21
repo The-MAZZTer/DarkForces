@@ -3,9 +3,7 @@ using CSharpSynth.Synthesis;
 using MZZT.DarkForces.FileFormats;
 using MZZT.FileFormats.Audio;
 using System;
-#if !UNITY_WEBGL
-using System;
-#else
+#if UNITY_WEBGL
 using System.Diagnostics;
 #endif
 using System.IO;
@@ -75,6 +73,7 @@ namespace MZZT.DarkForces {
 				source.spatialize = false;
 				source.volume = this.GetComponent<AudioSource>().volume;
 				source.clip = AudioClip.Create(x.ToString(), this.sampleBuffer.Length, 2, 44100, false);
+				source.mute = this.GetComponent<AudioSource>().mute;
 				return source;
 			}).ToArray();
 #endif

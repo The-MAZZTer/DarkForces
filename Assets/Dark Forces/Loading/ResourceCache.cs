@@ -11,12 +11,12 @@ using static MZZT.DarkForces.FileFormats.AutodeskVue;
 
 namespace MZZT.DarkForces {
 	/// <summary>
-	/// This class caches loaded file data (so it can be retrieved insted of being loaded from scratch again).
+	/// This class caches loaded file data (so it can be retrieved instead of being loaded from scratch again).
 	/// It also handles importing data into formats Unity can use.
 	/// </summary>
 	public class ResourceCache : Singleton<ResourceCache> {
 		/// <summary>
-		/// Whether or not file load warnings will be tracked. Fatal erorrs always are.
+		/// Whether or not file load warnings will be tracked. Fatal errors always are.
 		/// </summary>
 		public bool ShowWarnings { get; set; } = true;
 
@@ -1110,9 +1110,17 @@ namespace MZZT.DarkForces {
 			}
 
 			count = 0;
-			foreach (SpriteRenderer renderer in SceneManager.GetActiveScene()
-				.GetRootGameObjects().SelectMany(x => x.GetComponentsInChildren<SpriteRenderer>(true))) {
+			foreach (WaxRenderer renderer in SceneManager.GetActiveScene()
+				.GetRootGameObjects().SelectMany(x => x.GetComponentsInChildren<WaxRenderer>(true))) {
 
+				renderer.RefreshSprites();
+				count++;
+			}
+
+			foreach (FrameRenderer frameRenderer in SceneManager.GetActiveScene()
+				.GetRootGameObjects().SelectMany(x => x.GetComponentsInChildren<FrameRenderer>(true))) {
+
+				SpriteRenderer renderer = frameRenderer.GetComponent<SpriteRenderer>();
 				if (renderer.sprite == null) {
 					continue;
 				}

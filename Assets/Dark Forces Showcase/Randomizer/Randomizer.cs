@@ -42,7 +42,7 @@ namespace MZZT.DarkForces.Showcase {
 			await LevelLoader.Instance.LoadLevelListAsync(true);
 			this.cutscenes = await FileLoader.Instance.LoadGobFileAsync<DfCutsceneList>("CUTSCENE.LST");
 
-			await LevelLoader.Instance.ShowWarningsAsync(Mod.Instance.Gob ?? "DARK.GOB");
+			await LevelLoader.Instance.ShowWarningsAsync(FileLoader.Instance.ModGob ?? "DARK.GOB");
 
 			PauseMenu.Instance.EndLoading();
 		}
@@ -3082,7 +3082,7 @@ namespace MZZT.DarkForces.Showcase {
 				path = null;
 			}
 
-			await LevelLoader.Instance.ShowWarningsAsync(Mod.Instance.Gob ?? "DARK.GOB");
+			await LevelLoader.Instance.ShowWarningsAsync(FileLoader.Instance.ModGob ?? "DARK.GOB");
 
 			PauseMenu.Instance.EndLoading();
 

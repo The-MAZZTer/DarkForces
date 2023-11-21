@@ -9,7 +9,7 @@ using Debug = UnityEngine.Debug;
 
 namespace MZZT.DarkForces {
 	/// <summary>
-	/// Generate all the Unoty objects for all the Dark Forces level objects.
+	/// Generate all the Unity objects for all the Dark Forces level objects.
 	/// </summary>
 	public class ObjectGenerator : Singleton<ObjectGenerator> {
 		/// <summary>
@@ -59,13 +59,23 @@ namespace MZZT.DarkForces {
 		}
 
 		[SerializeField]
-		private bool animate3dos = true;
+		private bool animateVues = true;
 		/// <summary>
 		/// Whether or not to forcibly play VUEs on a loop (for showcase)..
 		/// </summary>
-		public bool Animate3dos {
-			get => this.animate3dos;
-			set => this.animate3dos = value;
+		public bool AnimateVues {
+			get => this.animateVues;
+			set => this.animateVues = value;
+		}
+
+		[SerializeField]
+		private bool animate3doUpdates = true;
+		/// <summary>
+		/// Whether or not to animate 3DO UPDATGE logic.
+		/// </summary>
+		public bool Animate3doUpdates {
+			get => this.animate3doUpdates;
+			set => this.animate3doUpdates = value;
 		}
 
 		/// <summary>
@@ -84,20 +94,20 @@ namespace MZZT.DarkForces {
 			Difficulties.None => new HashSet<DfLevelObjects.Difficulties>() {
 			},
 			Difficulties.Easy => new HashSet<DfLevelObjects.Difficulties>() {
-					DfLevelObjects.Difficulties.Easy,
-					DfLevelObjects.Difficulties.EasyMedium,
-					DfLevelObjects.Difficulties.EasyMediumHard
-				},
+				DfLevelObjects.Difficulties.Easy,
+				DfLevelObjects.Difficulties.EasyMedium,
+				DfLevelObjects.Difficulties.EasyMediumHard
+			},
 			Difficulties.Medium => new HashSet<DfLevelObjects.Difficulties>() {
-					DfLevelObjects.Difficulties.EasyMedium,
-					DfLevelObjects.Difficulties.EasyMediumHard,
-					DfLevelObjects.Difficulties.MediumHard
-				},
+				DfLevelObjects.Difficulties.EasyMedium,
+				DfLevelObjects.Difficulties.EasyMediumHard,
+				DfLevelObjects.Difficulties.MediumHard
+			},
 			Difficulties.Hard => new HashSet<DfLevelObjects.Difficulties>() {
-					DfLevelObjects.Difficulties.EasyMediumHard,
-					DfLevelObjects.Difficulties.MediumHard,
-					DfLevelObjects.Difficulties.Hard
-				},
+				DfLevelObjects.Difficulties.EasyMediumHard,
+				DfLevelObjects.Difficulties.MediumHard,
+				DfLevelObjects.Difficulties.Hard
+			},
 			_ => new HashSet<DfLevelObjects.Difficulties>(
 				Enum.GetValues(typeof(DfLevelObjects.Difficulties)).Cast<DfLevelObjects.Difficulties>()
 			)
@@ -113,9 +123,13 @@ namespace MZZT.DarkForces {
 
 			Stopwatch watch = new();
 			watch.Start();
+
+			ResourceCache cache = ResourceCache.Instance;
+			int layer = LayerMask.NameToLayer("Objects");
+
 			foreach (DfLevelObjects.Object obj in LevelLoader.Instance.Objects.Objects) {
 				GameObject go;
-				ObjectRenderer renderer;
+				ObjectRenderer renderer = null;
 				switch (obj.Type) {
 					// TODO default colliders when no custom ones specified
 					// Do most objects even use cylinders? Some objects on DF's LACDS map show up as triangles.
@@ -123,42 +137,106 @@ namespace MZZT.DarkForces {
 					// Sounds like the default size is based on the sprite size.
 					case DfLevelObjects.ObjectTypes.Frame:
 						go = new GameObject() {
-							layer = LayerMask.NameToLayer("Objects")
+							layer = layer
 						};
 						renderer = go.AddComponent<FrameRenderer>();
 						break;
 					case DfLevelObjects.ObjectTypes.Sprite:
 						go = new GameObject() {
-							layer = LayerMask.NameToLayer("Objects")
+							layer = layer
 						};
 						renderer = go.AddComponent<WaxRenderer>();
 						break;
 					case DfLevelObjects.ObjectTypes.ThreeD:
-						Df3dObject threeDo = await ResourceCache.Instance.Get3dObjectAsync(obj.FileName);
+						Df3dObject threeDo = await cache.Get3dObjectAsync(obj.FileName);
 						if (threeDo == null) {
-							continue;
+							go = new GameObject() {
+								layer = layer
+							};
+						} else {
+							go = cache.Import3dObject(threeDo);
+							go = Instantiate(go);
+							go.layer = layer;
+							renderer = go.GetComponent<ThreeDoRenderer>();
 						}
-
-						go = ResourceCache.Instance.Import3dObject(threeDo);
-						go = Instantiate(go);
-						go.layer = LayerMask.NameToLayer("Objects");
-						renderer = go.GetComponent<ThreeDoRenderer>();
 						break;
 					default:
 						go = new GameObject() {
-							layer = LayerMask.NameToLayer("Objects")
+							layer = layer
 						};
 						renderer = go.AddComponent<ObjectRenderer>();
 						break;
 				}
 
-				await renderer.RenderAsync(obj);
-				this.SetVisible(renderer, allowedDifficulties);
+				if (renderer != null) {
+					await renderer.RenderAsync(obj);
+					this.SetVisible(renderer, allowedDifficulties);
+				}
 				go.transform.SetParent(this.transform, true);
 			}
 
 			watch.Stop();
 			Debug.Log($"Objects generated in {watch.Elapsed}!");
+		}
+
+		public void DeleteObject(int objectIndex) {
+			DestroyImmediate(this.transform.GetChild(objectIndex).gameObject);
+		}
+
+		public async Task<ObjectRenderer> RefreshObjectAsync(int objectIndex, DfLevelObjects.Object obj) {
+			if (this.transform.childCount > objectIndex) {
+				this.DeleteObject(objectIndex);
+			}
+
+			HashSet<DfLevelObjects.Difficulties> allowedDifficulties = this.TranslateDifficulty();
+
+			GameObject go;
+			ObjectRenderer renderer = null;
+			switch (obj.Type) {
+				// TODO default colliders when no custom ones specified
+				// Do most objects even use cylinders? Some objects on DF's LACDS map show up as triangles.
+				// Maybe the C in CDS stands for collider.
+				// Sounds like the default size is based on the sprite size.
+				case DfLevelObjects.ObjectTypes.Frame:
+					go = new GameObject() {
+						layer = LayerMask.NameToLayer("Objects")
+					};
+					renderer = go.AddComponent<FrameRenderer>();
+					break;
+				case DfLevelObjects.ObjectTypes.Sprite:
+					go = new GameObject() {
+						layer = LayerMask.NameToLayer("Objects")
+					};
+					renderer = go.AddComponent<WaxRenderer>();
+					break;
+				case DfLevelObjects.ObjectTypes.ThreeD:
+					Df3dObject threeDo = await ResourceCache.Instance.Get3dObjectAsync(obj.FileName);
+					if (threeDo == null) {
+						go = new GameObject() {
+							layer = LayerMask.NameToLayer("Objects")
+						};
+					} else {
+						go = ResourceCache.Instance.Import3dObject(threeDo);
+						go = Instantiate(go);
+						go.layer = LayerMask.NameToLayer("Objects");
+						renderer = go.GetComponent<ThreeDoRenderer>();
+					}
+					break;
+				default:
+					go = new GameObject() {
+						layer = LayerMask.NameToLayer("Objects")
+					};
+					renderer = go.AddComponent<ObjectRenderer>();
+					break;
+			}
+
+			if (renderer != null) {
+				await renderer.RenderAsync(obj);
+				this.SetVisible(renderer, allowedDifficulties);
+			}
+			go.transform.SetParent(this.transform, true);
+			go.transform.SetSiblingIndex(objectIndex);
+			return renderer;
 		}
 
 		private void SetVisible(ObjectRenderer renderer, HashSet<DfLevelObjects.Difficulties> allowedDifficulties) {
@@ -178,15 +256,16 @@ namespace MZZT.DarkForces {
 			}
 
 			SectorRenderer sector = renderer.CurrentSector;
-			bool sectorVisible = LevelGeometryGenerator.Instance.ShowAllLayers || (sector != null &&
-				sector.Sector.Layer == LevelGeometryGenerator.Instance.Layer);
+			LevelGeometryGenerator geometry = LevelGeometryGenerator.Instance;
+			bool sectorVisible = geometry.ShowAllLayers || (sector != null &&
+				sector.Sector.Layer == geometry.Layer);
 			renderer.gameObject.SetActive(sectorVisible);
 		}
 
 		/// <summary>
-		/// Change objects visiblitiy based on difficulty and other flags.
+		/// Change objects visibility based on difficulty and other flags.
 		/// </summary>
-		public void RefreshVisiblity() {
+		public void RefreshVisibility() {
 			HashSet<DfLevelObjects.Difficulties> allowedDifficulties = this.TranslateDifficulty();
 			
 			foreach (ObjectRenderer renderer in this.GetComponentsInChildren<ObjectRenderer>(true)) {

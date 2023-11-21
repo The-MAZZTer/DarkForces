@@ -149,6 +149,10 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private async void Start() {
+#if UNITY_WEBGL
+			WebGLInput.captureAllKeyboardInput = false;
+#endif
+
 #if UNITY_WEBGL && !UNITY_EDITOR
 			this.closeContainer.SetActive(false);
 #endif
@@ -223,6 +227,10 @@ namespace MZZT.DarkForces.Showcase {
 					Name = "Resource Editor",
 					SceneName = "ResourceEditor",
 					Description = "View and edit almost every type of resource in Dark Forces. Export and import to/from modern file formats."
+				},
+				new Showcase() {
+					Name = "Level Preview",
+					Description = "A separate tool which repackages the Level Explorer along with an API to allow embedding in websites or desktop applications.\n\nSee https://github.com/The-MAZZTer/DarkForces for the download and details."
 				},
 				new Showcase(),
 				new Showcase() {
@@ -350,7 +358,7 @@ namespace MZZT.DarkForces.Showcase {
 				return;
 			}
 
-			string path = Mod.Instance.Gob;
+			string path = FileLoader.Instance.ModGob;
 			if (path != null) {
 				string text = null;
 				try {

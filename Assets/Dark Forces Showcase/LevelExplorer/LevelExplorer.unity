@@ -973,6 +973,7 @@ MonoBehaviour:
   loading: {fileID: 1710989192}
   uiMap: UI
   actionMap: LevelExplorer
+  enableLoadingScreen: 1
   levelSelection: {fileID: 1295268753}
   difficultySelection: {fileID: 83442291}
   showSprites: {fileID: 1757881998}
@@ -7886,6 +7887,7 @@ MonoBehaviour:
   upDownSensitivity: 1
   yAngleClamp: {x: -89.999, y: 89.999}
   invertY: 0
+  holdButtonToLook: 0
 --- !u!136 &843095482
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9145,6 +9147,30 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: d8c11659-cc6f-4ca8-8097-66ab1c65f550
     m_ActionName: MapGenerator/Alt Fire[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 843095481}
+        m_TargetAssemblyTypeName: MZZT.FpsCameraControl, Assembly-CSharp
+        m_MethodName: OnHoldingToLook
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 7d0f5cd8-593a-415f-8e10-e7e88743f4cf
+    m_ActionName: LevelExplorer/Rotate[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7ae68097-554d-4cd9-ad15-5cbb1d5ebae9
+    m_ActionName: LevelExplorer/Zoom[/Mouse/scroll/y]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 16a4accf-9c22-4a3b-8263-bbf219d9444b
+    m_ActionName: LevelExplorer/Drag[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: LevelExplorer
@@ -10037,7 +10063,8 @@ MonoBehaviour:
   difficulty: 4
   showSprites: 1
   show3dos: 1
-  animate3dos: 1
+  animateVues: 1
+  animate3doUpdates: 1
 --- !u!4 &1199078667
 Transform:
   m_ObjectHideFlags: 0
@@ -13576,7 +13603,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1710989191
 RectTransform:
   m_ObjectHideFlags: 0

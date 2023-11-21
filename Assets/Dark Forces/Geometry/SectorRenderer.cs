@@ -20,8 +20,6 @@ namespace MZZT.DarkForces {
 		public async Task RenderAsync(Sector sector) {
 			this.Sector = sector;
 
-			this.gameObject.name = sector.Name ?? LevelLoader.Instance.Level.Sectors.IndexOf(sector).ToString();
-
 			this.transform.position = new Vector3(0, -sector.Floor.Y * LevelGeometryGenerator.GEOMETRY_SCALE, 0);
 
 			FloorCeilingRenderer floorCeiling = this.gameObject.AddComponent<FloorCeilingRenderer>();

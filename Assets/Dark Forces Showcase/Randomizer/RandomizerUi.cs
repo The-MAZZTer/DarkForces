@@ -172,7 +172,7 @@ namespace MZZT.DarkForces.Showcase {
 			if (!Mod.Instance.List.Any()) {
 				text = "Dark Forces";
 			} else {
-				string path = Mod.Instance.Gob;
+				string path = FileLoader.Instance.ModGob;
 				text = Path.GetFileName(path);
 				if (path != null) {
 					try {

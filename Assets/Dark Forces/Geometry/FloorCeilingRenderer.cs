@@ -13,6 +13,8 @@ namespace MZZT.DarkForces {
 	/// Creates the geometry for floors and ceilings.
 	/// </summary>
 	public class FloorCeilingRenderer : MonoBehaviour {
+		public static float SkyPitExtend = 100;
+
 		// Based off of sample code from https://www.habrador.com/tutorials/math/5-line-line-intersection/
 		private static bool IsIntersecting(Vector2 l1_start, Vector2 l1_end, Vector2 l2_start, Vector2 l2_end) {
 			//Direction of the lines
@@ -855,12 +857,23 @@ namespace MZZT.DarkForces {
 
 			return tris.ToArray();
 		}*/
+		
+		public GameObject[] FloorObjects { get; private set; }
+		public GameObject[] CeilingObjects { get; private set; }
 
 		/// <summary>
 		/// Creates floor and ceiling geometry for a sector.
 		/// </summary>
 		/// <param name="sector">The sector</param>
 		public async Task RenderAsync(Sector sector) {
+			if (this.FloorObjects != null) {
+				foreach (GameObject old in this.FloorObjects.Concat(this.CeilingObjects)) {
+					DestroyImmediate(old);
+				}
+			}
+			this.FloorObjects = Array.Empty<GameObject>();
+			this.CeilingObjects = Array.Empty<GameObject>();
+
 			int[] tris = SplitIntoFloorTris(sector);
 
 			// Figure out which vertices are used and renumber only using the used ones.
@@ -869,11 +882,13 @@ namespace MZZT.DarkForces {
 			tris = tris.Select(x => Array.IndexOf(used, x)).ToArray();
 
 			foreach (HorizontalSurface surface in new[] { sector.Floor, sector.Ceiling }) {
+				List<GameObject> objs = new();
 				DfBitmap bm = null;
+				ResourceCache cache = ResourceCache.Instance;
 				if (!string.IsNullOrEmpty(surface.TextureFile)) {
-					bm = await ResourceCache.Instance.GetBitmapAsync(surface.TextureFile);
+					bm = await cache.GetBitmapAsync(surface.TextureFile);
 				} else {
-					bm = await ResourceCache.Instance.GetBitmapAsync("DEFAULT.BM");
+					bm = await cache.GetBitmapAsync("DEFAULT.BM");
 				}
 
 				Shader shader;
@@ -883,53 +898,57 @@ namespace MZZT.DarkForces {
 				bool adjoinAdjacentPlanes;
 				int lightLevel;
 				if (surface == sector.Ceiling && (sector.Flags & SectorFlags.CeilingIsSky) > 0) {
-					shader = ResourceCache.Instance.PlaneShader;
+					shader = cache.PlaneShader;
 					// DF places the actual collider 100 units out for sky/pit.
-					y += 100;
+					y += SkyPitExtend;
 					isPlane = true;
 					adjoinAdjacentPlanes = sector.Flags.HasFlag(SectorFlags.AdjoinAdjacentSkies);
 					lightLevel = 31;
 				} else if (surface == sector.Floor && (sector.Flags & SectorFlags.FloorIsPit) > 0) {
-					shader = ResourceCache.Instance.PlaneShader;
-					y -= 100;
+					shader = cache.PlaneShader;
+					y -= SkyPitExtend;
 					isPlane = true;
 					adjoinAdjacentPlanes = sector.Flags.HasFlag(SectorFlags.AdjoinAdjacentPits);
 					lightLevel = 31;
 				} else {
-					shader = ResourceCache.Instance.SimpleShader;
+					shader = cache.SimpleShader;
 					isPlane = false;
 					adjoinAdjacentPlanes = false;
 					lightLevel = sector.LightLevel;
 				}
 
-				Material material = bm != null ? ResourceCache.Instance.GetMaterial(
-					ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-						lightLevel >= 31 ? null : LevelLoader.Instance.ColorMap, lightLevel),
+				LevelLoader levelLoader = LevelLoader.Instance;
+				Material material = bm != null ? cache.GetMaterial(
+					cache.ImportBitmap(bm.Pages[0], levelLoader.Palette,
+						lightLevel >= 31 ? null : levelLoader.ColorMap, lightLevel),
 					shader) : null;
 				if (isPlane && material != null) {
 					// Ensure parallaxing is done on sky/pit.
 					Parallaxer.Instance.AddMaterial(material);
 				}
 
+				const float geometryScale = LevelGeometryGenerator.GEOMETRY_SCALE;
 				// Determine vertices for mesh. Mesh should be positioned at world coordinates 0, <floor/ceiling level>, 0
 				// So the local coordinates of vertices are actual X, 0, actual Z.
 				Vector3[] vertices = used.Select(x => sector.Walls[x].LeftVertex)
-					.Select(x => new Vector3(
-						x.Position.X * LevelGeometryGenerator.GEOMETRY_SCALE,
-						0,
-						x.Position.Y * LevelGeometryGenerator.GEOMETRY_SCALE)
-					).ToArray();
+					.Select(x => {
+						return new Vector3(
+							x.Position.X * geometryScale,
+							0,
+							x.Position.Y * geometryScale);
+					}).ToArray();
 
 				GameObject obj = new() {
 					name = surface == sector.Ceiling ? "Ceiling" : "Floor",
 					layer = LayerMask.NameToLayer("Geometry")
 				};
+				objs.Add(obj);
 
 				obj.transform.SetParent(this.transform, false);
 
 				obj.transform.position = new Vector3(
 					0,
-					y * LevelGeometryGenerator.GEOMETRY_SCALE,
+					y * geometryScale,
 					0
 				);
 
@@ -947,13 +966,14 @@ namespace MZZT.DarkForces {
 					if (textureSize.y != 64) {
 						textureSize.x *= textureSize.y / 64; // TODO what is this logic really?
 					}
+					const float textureScale = LevelGeometryGenerator.TEXTURE_SCALE;
 					Vector2 offset = new(
-						surface.TextureOffset.X / textureSize.x / LevelGeometryGenerator.TEXTURE_SCALE,
-						surface.TextureOffset.Y / textureSize.y / LevelGeometryGenerator.TEXTURE_SCALE
+						surface.TextureOffset.X / textureSize.x / textureScale,
+						surface.TextureOffset.Y / textureSize.y / textureScale
 					);
 					mesh.uv = vertices.Select(x => new Vector2(
-						offset.x - x.x / LevelGeometryGenerator.GEOMETRY_SCALE / LevelGeometryGenerator.TEXTURE_SCALE / textureSize.x,
-						-offset.y + x.z / LevelGeometryGenerator.GEOMETRY_SCALE / LevelGeometryGenerator.TEXTURE_SCALE / textureSize.y
+						offset.x - x.x / geometryScale / textureScale / textureSize.x,
+						-offset.y + x.z / geometryScale / textureScale / textureSize.y
 					)).ToArray();
 				}
 
@@ -974,10 +994,10 @@ namespace MZZT.DarkForces {
 						float minY = surface.Y;
 						if (wall.Adjoined != null && adjoinAdjacentPlanes) {
 							if (surface == sector.Ceiling && wall.Adjoined.Sector.Flags.HasFlag(SectorFlags.CeilingIsSky)) {
-								minY = wall.Adjoined.Sector.Ceiling.Y - 100;
+								minY = wall.Adjoined.Sector.Ceiling.Y - SkyPitExtend;
 							}
 							if (surface == sector.Floor && wall.Adjoined.Sector.Flags.HasFlag(SectorFlags.FloorIsPit)) {
-								minY = wall.Adjoined.Sector.Floor.Y + 100;
+								minY = wall.Adjoined.Sector.Floor.Y + SkyPitExtend;
 							}
 						}
 						float maxY = -y;
@@ -990,9 +1010,16 @@ namespace MZZT.DarkForces {
 						}
 
 						obj = await WallRenderer.CreateMeshAsync(minY, maxY, surface, wall, true);
+						objs.Add(obj);
 						obj.transform.SetParent(this.transform, true);
 						obj.name = $"Sky/Pit Wall";
 					}
+				}
+
+				if (surface == sector.Floor) {
+					this.FloorObjects = objs.ToArray();
+				} else {
+					this.CeilingObjects = objs.ToArray();
 				}
 			}
 		}

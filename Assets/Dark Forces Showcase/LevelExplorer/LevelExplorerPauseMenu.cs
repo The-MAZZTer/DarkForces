@@ -33,7 +33,7 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private Toggle noclip = null;
 		[SerializeField]
-		private CameraControl cameraControl = null;
+		private FpsCameraControl cameraControl = null;
 		[SerializeField]
 		private TMP_Dropdown playMusic = null;
 		[SerializeField]
@@ -133,7 +133,8 @@ namespace MZZT.DarkForces.Showcase {
 				ObjectGenerator.Instance.Show3dos = this.show3dos.isOn;
 			}
 
-			ObjectGenerator.Instance.Animate3dos = this.animate3dos.isOn;
+			ObjectGenerator.Instance.AnimateVues = this.animate3dos.isOn;
+			ObjectGenerator.Instance.Animate3doUpdates = this.animate3dos.isOn;
 
 			int levelIndex = this.levelSelection.SelectedValue != null ? LevelLoader.Instance.LevelList.Levels.IndexOf(this.levelSelection.SelectedValue) : 0;
 			if (levelIndex != LevelLoader.Instance.CurrentLevelIndex) {
@@ -152,11 +153,21 @@ namespace MZZT.DarkForces.Showcase {
 					LevelGeometryGenerator.Instance.RefreshVisiblity();
 				}
 				if (objectVisChanged) {
-					ObjectGenerator.Instance.RefreshVisiblity();
+					ObjectGenerator.Instance.RefreshVisibility();
 				}
 			}
 
 			await base.CloseMenuAsync();
+
+			FpsCameraControl.CaptureMouse();
+		}
+
+		public override async Task BeginLoadingAsync() {
+			if (this.loadingCount == 0) {
+				FpsCameraControl.ReleaseMouse();
+			}
+
+			await base.BeginLoadingAsync();
 		}
 
 		public override void EndLoading() {
@@ -164,6 +175,8 @@ namespace MZZT.DarkForces.Showcase {
 
 			if (this.loadingCount == 0) {
 				PlayerInput.all[0].SwitchCurrentActionMap(this.actionMap);
+
+				FpsCameraControl.CaptureMouse();
 			}
 		}
 
@@ -188,6 +201,18 @@ namespace MZZT.DarkForces.Showcase {
 				source.volume = value;
 			}
 			PlayerPrefs.SetFloat("Volume", value);
+		}
+
+		public override void OpenMenu() {
+			base.OpenMenu();
+
+			FpsCameraControl.ReleaseMouse();
+		}
+
+		protected override void OnDestroy() {
+			FpsCameraControl.ReleaseMouse();
+
+			base.OnDestroy();
 		}
 	}
 }

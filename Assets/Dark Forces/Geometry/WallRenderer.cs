@@ -38,11 +38,12 @@ namespace MZZT.DarkForces {
 				textureFile = wall.Sector.Ceiling.TextureFile;
 			}
 
+			ResourceCache cache = ResourceCache.Instance;
 			DfBitmap bm = null;
 			if (!string.IsNullOrEmpty(textureFile)) {
-				bm = await ResourceCache.Instance.GetBitmapAsync(textureFile);
+				bm = await cache.GetBitmapAsync(textureFile);
 			} else {
-				bm = await ResourceCache.Instance.GetBitmapAsync("DEFAULT.BM");
+				bm = await cache.GetBitmapAsync("DEFAULT.BM");
 			}
 
 			bool transparent = surface == wall.MainTexture &&
@@ -51,11 +52,11 @@ namespace MZZT.DarkForces {
 			bool usePlaneShader = forcePlaneShader || wall.Sector.Flags.HasFlag(SectorFlags.DrawWallsAsSkyPit);
 			Shader shader;
 			if (usePlaneShader) {
-				shader = ResourceCache.Instance.PlaneShader;
+				shader = cache.PlaneShader;
 			} else if (transparent) {
-				shader = ResourceCache.Instance.TransparentShader;
+				shader = cache.TransparentShader;
 			} else {
-				shader = ResourceCache.Instance.SimpleShader;
+				shader = cache.SimpleShader;
 			}
 
 			int light = wall.Sector.LightLevel + wall.LightLevel;
@@ -65,8 +66,9 @@ namespace MZZT.DarkForces {
 				light = 31;
 			}
 
-			Material material = bm != null ? ResourceCache.Instance.GetMaterial(
-				ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette, light >= 31 ? null : LevelLoader.Instance.ColorMap,
+			LevelLoader levelLoader = LevelLoader.Instance;
+			Material material = bm != null ? cache.GetMaterial(
+				cache.ImportBitmap(bm.Pages[0], levelLoader.Palette, light >= 31 ? null : levelLoader.ColorMap,
 					usePlaneShader ? 31 : light, transparent),
 				shader) : null;
 			if (usePlaneShader && material != null) {
@@ -84,30 +86,31 @@ namespace MZZT.DarkForces {
 				layer = LayerMask.NameToLayer("Geometry")
 			};
 
+			const float geometryScale = LevelGeometryGenerator.GEOMETRY_SCALE;
 			// Position on the left vertex.
 			// So local space of the left vertex at the floor is 0, 0, 0.
 			obj.transform.position = new Vector3(
-				left.x * LevelGeometryGenerator.GEOMETRY_SCALE,
-				-minY * LevelGeometryGenerator.GEOMETRY_SCALE,
-				left.y * LevelGeometryGenerator.GEOMETRY_SCALE
+				left.x * geometryScale,
+				-minY * geometryScale,
+				left.y * geometryScale
 			);
 
 			// Determine the bounds of the wall.
 			Vector3[] vertices = new Vector3[] {
 				new Vector3(
 					0,
-					(-maxY + minY) * LevelGeometryGenerator.GEOMETRY_SCALE,
+					(-maxY + minY) * geometryScale,
 					0
 				),
 				new Vector3(
-					(right.x - left.x) * LevelGeometryGenerator.GEOMETRY_SCALE,
-					(-maxY + minY) * LevelGeometryGenerator.GEOMETRY_SCALE,
-					(right.y - left.y) * LevelGeometryGenerator.GEOMETRY_SCALE
+					(right.x - left.x) * geometryScale,
+					(-maxY + minY) * geometryScale,
+					(right.y - left.y) * geometryScale
 				),
 				new Vector3(
-					(right.x - left.x) * LevelGeometryGenerator.GEOMETRY_SCALE,
+					(right.x - left.x) * geometryScale,
 					0,
-					(right.y - left.y) * LevelGeometryGenerator.GEOMETRY_SCALE
+					(right.y - left.y) * geometryScale
 				),
 				Vector3.zero
 			};
@@ -120,24 +123,25 @@ namespace MZZT.DarkForces {
 				triangles = new int[] { 0, 1, 3, 1, 2, 3 }
 			};
 
+			const float textureScale = LevelGeometryGenerator.TEXTURE_SCALE;
 			if (material != null) {
 				Vector2 offset = new(
-					surface.TextureOffset.X / material.mainTexture.width / LevelGeometryGenerator.TEXTURE_SCALE,
-					surface.TextureOffset.Y / material.mainTexture.height / LevelGeometryGenerator.TEXTURE_SCALE
+					surface.TextureOffset.X / material.mainTexture.width / textureScale,
+					surface.TextureOffset.Y / material.mainTexture.height / textureScale
 				);
 				// UVs of 0-1 will stretch the texture to fit.
 				// Use the size of the mesh and texture to make each texture pixel a consistent size in the world.
 				mesh.uv = new Vector2[] {
 					new Vector2(
 						offset.x,
-						offset.y + height / LevelGeometryGenerator.TEXTURE_SCALE / material.mainTexture.height
+						offset.y + height / textureScale / material.mainTexture.height
 					),
 					new Vector2(
-						offset.x + width / LevelGeometryGenerator.TEXTURE_SCALE / material.mainTexture.width,
-						offset.y + height / LevelGeometryGenerator.TEXTURE_SCALE / material.mainTexture.height
+						offset.x + width / textureScale / material.mainTexture.width,
+						offset.y + height / textureScale / material.mainTexture.height
 					),
 					new Vector2(
-						offset.x + width / LevelGeometryGenerator.TEXTURE_SCALE / material.mainTexture.width,
+						offset.x + width / textureScale / material.mainTexture.width,
 						offset.y
 					),
 					offset
@@ -166,13 +170,13 @@ namespace MZZT.DarkForces {
 			if (!usePlaneShader && wall.SignTexture.TextureFile != null) {
 				bm = null;
 				if (!string.IsNullOrEmpty(wall.SignTexture.TextureFile)) {
-					bm = await ResourceCache.Instance.GetBitmapAsync(wall.SignTexture.TextureFile);
+					bm = await cache.GetBitmapAsync(wall.SignTexture.TextureFile);
 				}
 				if (bm != null) {
-					material = ResourceCache.Instance.GetMaterial(
-						ResourceCache.Instance.ImportBitmap(bm.Pages[0], LevelLoader.Instance.Palette,
-							light >= 31 ? null : LevelLoader.Instance.ColorMap, light),
-						ResourceCache.Instance.TransparentShader);
+					material = cache.GetMaterial(
+						cache.ImportBitmap(bm.Pages[0], levelLoader.Palette,
+							light >= 31 ? null : levelLoader.ColorMap, light),
+						cache.TransparentShader);
 
 					GameObject sign = new() {
 						name = "SIGN",
@@ -182,10 +186,10 @@ namespace MZZT.DarkForces {
 
 					Vector3 pos = new(
 						0,
-						-wall.SignTexture.TextureOffset.Y * LevelGeometryGenerator.GEOMETRY_SCALE,
+						-wall.SignTexture.TextureOffset.Y * geometryScale,
 						0
 					);
-					Vector3 wallDirection = (vertices[1] - vertices[0]).normalized * LevelGeometryGenerator.GEOMETRY_SCALE;
+					Vector3 wallDirection = (vertices[1] - vertices[0]).normalized * geometryScale;
 					pos += wallDirection * (-surface.TextureOffset.X + wall.SignTexture.TextureOffset.X);
 
 					// Position the sign so it's slightly in front of the wall.
@@ -197,18 +201,18 @@ namespace MZZT.DarkForces {
 					vertices = new Vector3[] {
 						new Vector3(
 							0,
-							material.mainTexture.height * LevelGeometryGenerator.TEXTURE_SCALE * LevelGeometryGenerator.GEOMETRY_SCALE,
+							material.mainTexture.height * textureScale * geometryScale,
 							0
 						),
 						new Vector3(
-							material.mainTexture.width * LevelGeometryGenerator.TEXTURE_SCALE * wallDirection.x,
-							material.mainTexture.height * LevelGeometryGenerator.TEXTURE_SCALE * LevelGeometryGenerator.GEOMETRY_SCALE,
-							material.mainTexture.width * LevelGeometryGenerator.TEXTURE_SCALE * wallDirection.z
+							material.mainTexture.width * textureScale * wallDirection.x,
+							material.mainTexture.height * textureScale * geometryScale,
+							material.mainTexture.width * textureScale * wallDirection.z
 						),
 						new Vector3(
-							material.mainTexture.width * LevelGeometryGenerator.TEXTURE_SCALE * wallDirection.x,
+							material.mainTexture.width * textureScale * wallDirection.x,
 							0,
-							material.mainTexture.width * LevelGeometryGenerator.TEXTURE_SCALE * wallDirection.z
+							material.mainTexture.width * textureScale * wallDirection.z
 						),
 						Vector3.zero
 					};

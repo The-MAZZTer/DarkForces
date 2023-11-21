@@ -18,6 +18,12 @@ namespace MZZT.DarkForces.Showcase {
 		protected string uiMap = "UI";
 		[SerializeField]
 		protected string actionMap = null;
+		[SerializeField]
+		private bool enableLoadingScreen = true;
+		public bool EnableLoadingScreen {
+			get => this.enableLoadingScreen;
+			set => this.enableLoadingScreen = value;
+		}
 
 		protected virtual void Start() {
 			PlayerInput.all[0].SwitchCurrentActionMap(this.actionMap);
@@ -25,8 +31,8 @@ namespace MZZT.DarkForces.Showcase {
 
 		protected int loadingCount;
 		private TaskCompletionSource<bool> taskSource;
-		public async Task BeginLoadingAsync() {
-			if (this.loadingCount == 0) {
+		public virtual async Task BeginLoadingAsync() {
+			if (this.loadingCount == 0 && this.enableLoadingScreen) {
 				if (this.background != null) {
 					this.MenuOpen = false;
 				}
@@ -58,7 +64,7 @@ namespace MZZT.DarkForces.Showcase {
 		public virtual void EndLoading() {
 			this.loadingCount--;
 
-			if (this.loadingCount == 0) {
+			if (this.loadingCount == 0 && this.loading.gameObject.activeSelf) {
 				this.loading.gameObject.SetActive(false);
 				this.IsInUI = false;
 			}
