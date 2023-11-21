@@ -15,7 +15,6 @@ using System.Runtime.InteropServices;
 #endif
 using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -34,7 +33,9 @@ namespace MZZT.DarkForces.Showcase {
 
 		private async void Start() {
 #if UNITY_WEBGL
+#if !UNITY_EDITOR
 			WebGLInput.captureAllKeyboardInput = false;
+#endif
 #else
 			this.context = SynchronizationContext.Current;
 #endif
@@ -55,6 +56,8 @@ namespace MZZT.DarkForces.Showcase {
 
 #if UNITY_EDITOR
 			await this.ReloadDataFilesAsync();
+
+			//await this.AddModFileAsync(@"D:\ROMs\dos\PROGRAMS\GAMES\DARK\Levels\assassin\assassin.gob");
 
 			await this.LoadLevelListAsync();
 
@@ -1719,8 +1722,15 @@ namespace MZZT.DarkForces.Showcase {
 					float yMax = bounds.Max(x => x.max.y);
 					float xMax = bounds.Max(x => x.max.x);
 					float zMax = bounds.Max(x => x.max.z);
-					position = new Vector3((xMin + xMax) / 2, yMax, (zMin + zMax) / 2);
-					distance = (new Vector3(xMax, 0, zMax) - position).magnitude + 2;
+					// Don't use this as focal point... some maps may have sectors out in the middle of nowhere.
+					//Vector3 center = new Vector3((xMin + xMax) / 2, yMax, (zMin + zMax) / 2);
+					distance = new[] {
+						(new Vector3(xMin, 0, zMin) - position).magnitude,
+						(new Vector3(xMin, 0, zMax) - position).magnitude,
+						(new Vector3(xMax, 0, zMin) - position).magnitude,
+						(new Vector3(xMax, 0, zMax) - position).magnitude
+					}.Max() + 2;
+					distance = Math.Min(distance, 100); // in case a level has sectors in the middle of nowhere.
 				}
 				this.orbitCamera.FocusPoint = position;
 				Camera.main.transform.rotation = rotation;

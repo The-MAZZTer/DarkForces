@@ -45,6 +45,7 @@ namespace MZZT.IO.FileSystemProviders {
 				}
 
 				if (request.result != UnityWebRequest.Result.Success) {
+					Debug.LogError(request.error);
 					throw new IOException(request.error);
 				}
 

@@ -680,11 +680,13 @@ Completely resets the level preview state, unloading all level and object data, 
 
 #### Arguments
 
-string path - The path to the file.
+string path - The path to the file. For WebGL this should resolve to a URL of a file accessible by the client.
 
 #### Description
 
 Selects a mod file to load. You can select a GOB or a loose file. You should call this API after calling ReloadDataFiles and before any APIs to load level data, if you want to load mod files.
+
+The path can be absolute or relative to the Dark Forces folder.
 
 ### LoadLevelList
 

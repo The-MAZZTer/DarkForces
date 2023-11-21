@@ -165,7 +165,7 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		/// <param name="path">Path to the GOB file.</param>
 		public async Task AddGobFileAsync(string path) {
-			if (this.DarkForcesFolder != null) {
+			if (!Uri.IsWellFormedUriString(path, UriKind.Absolute) && this.DarkForcesFolder != null) {
 				path = Path.Combine(this.DarkForcesFolder, path);
 			}
 			string key = path;
@@ -174,7 +174,7 @@ namespace MZZT.DarkForces {
 				return;
 			}
 
-			switch (Path.GetExtension(key)) {
+			switch (Path.GetExtension(key).ToUpper()) {
 				case ".GOB": {
 					DfGobContainer gob = await DfFileManager.Instance.ReadAsync<DfGobContainer>(path);
 					List<string> files = new();
