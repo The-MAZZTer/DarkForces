@@ -165,8 +165,12 @@ namespace MZZT.DarkForces {
 		/// </summary>
 		/// <param name="path">Path to the GOB file.</param>
 		public async Task AddGobFileAsync(string path) {
-			if (!Uri.IsWellFormedUriString(path, UriKind.Absolute) && this.DarkForcesFolder != null) {
-				path = Path.Combine(this.DarkForcesFolder, path);
+			if (this.DarkForcesFolder != null) {
+				if (Uri.IsWellFormedUriString(this.DarkForcesFolder, UriKind.Absolute)) {
+					path = new Uri(new Uri(this.DarkForcesFolder), path).AbsoluteUri;
+				} else if (!Uri.IsWellFormedUriString(path, UriKind.Absolute)) {
+					path = Path.Combine(this.DarkForcesFolder, path);
+				}
 			}
 			string key = path;
 			// Skip if we already loaded it.

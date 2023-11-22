@@ -5,25 +5,25 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Dark Forces Showcase/Menu/Menu.unity
     guid: 0ff25144591ef034c955b2795785974f
-  - enabled: 0
+  - enabled: 1
     path: Assets/Dark Forces Showcase/LevelExplorer/LevelExplorer.unity
     guid: 66954acf1b4ec2542a944e93787d5690
-  - enabled: 0
+  - enabled: 1
     path: Assets/Dark Forces Showcase/Map Generator/MapGenerator.unity
     guid: 65f3f0331b35f7e48ab0190c76a4e007
-  - enabled: 0
+  - enabled: 1
     path: Assets/Dark Forces Showcase/Randomizer/Randomizer.unity
     guid: b580213e31f75b548abd9851d2ccc782
-  - enabled: 0
+  - enabled: 1
     path: Assets/Dark Forces Showcase/Resource Dumper/ResourceDumper.unity
     guid: 05738ae49795e444488d3abada781dfc
-  - enabled: 0
+  - enabled: 1
     path: Assets/Dark Forces Showcase/Resource Editor/ResourceEditor.unity
     guid: 8228075ee6e81da41a14b0e8928e3477
-  - enabled: 1
+  - enabled: 0
     path: Assets/Dark Forces Showcase/LevelPreview/LevelPreview.unity
     guid: 822a7966cd5debc4b9c6cd031b45640d
   m_configObjects: {}

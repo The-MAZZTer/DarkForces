@@ -665,8 +665,58 @@
 
 			<p><button onclick="window.preview.setUseMouseCapture(true); window.preview.setUseOrbitCamera(false)">Use FPS controls with mouse capture</button></p>
 
+			<h1>Settings - HUD</h1>
+
+			<p><button onclick="window.preview.setShowHud(false);">Hide HUD</button></p>
+
+			<p><button onclick="window.preview.setShowHud(true);">Show HUD (default)</button></p>
+
+			<p><button onclick="window.preview.setHudAlign('TopLeft');">Align HUD top left (default)</button></p>
+
+			<p><button onclick="window.preview.setHudAlign('TopRight');">Align HUD top right</button></p>
+			
+			<p><button onclick="window.preview.setHudFontSize(36);">Font size 36 (default)</button></p>
+			
+			<p><button onclick="window.preview.setHudFontSize(18);">Font size 18</button></p>
+
+			<p><button onclick="window.preview.setHudColor(1, 0, 0, 1);">Color red (default)</button></p>
+
+			<p><button onclick="window.preview.setHudColor(0, 0, 0, 0.5);">Color transparent black</button></p>
+
+			<p><button onclick="window.preview.setShowHudCoordinates(false);">Hide camera stats</button></p>
+
+			<p><button onclick="window.preview.setShowHudCoordinates(true);">Show camera stats (default)</button></p>
+
+			<p><button onclick="window.preview.setHudFpsCoordinates('Pos: {x:F2} {y:F2} {z:F2}\nRot: {pitch:F2} {yaw:F2}');">Default FPS camera stats format</button></p>
+
+			<p><button onclick="window.preview.setHudFpsCoordinates('OMG you\'re at {x:F0} {y:F0} {z:F0}!!!');">Altered FPS camera stats format</button></p>
+
+			<p><button onclick="window.preview.setHudOrbitCoordinates('Focus: {x:F2} {y:F2} {z:F2}\nRot: {pitch:F2} {yaw:F2}\nDist: {distance:F2}');">Default orbit camera stats format</button></p>
+
+			<p><button onclick="window.preview.setHudOrbitCoordinates('OMG you\'re looking at {x:F0} {y:F0} {z:F0} from {distance:F0} away!!!');">Altered orbit camera stats format</button></p>
+
+			<p><button onclick="window.preview.setShowHudRaycastHit(false);">Hide pointer info</button></p>
+
+			<p><button onclick="window.preview.setShowHudRaycastHit(true);">Show pointer info (default)</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastFloor('Sector {sector} Floor\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nTexture: {textureFile}\nLight: {light}\nLayer: {layer}\nFlags: {flags}');">Default floor info format</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastFloor('Hey look it\'s sector {sector}\'s floor!');">Altered floor info format</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastCeiling('Sector {sector} Ceiling\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nTexture: {textureFile}\nLight: {light}\nLayer: {layer}\nFlags: {flags}');">Default ceiling info format</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastCeiling('Hey look it\'s sector {sector}\'s ceiling!');">Altered ceiling info format</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastWall('Sector {sector} Wall {wall}\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nLeft: {x1:F2} {z1:F2} Right: {x2:F2} {z2:F2}\nAdjoin: {adjoinSector} {adjoinWall}\nWall Light: {wallLight}\nMain Texture: {midTextureFile}\nTop Texture: {topTextureFile}\nBot Texture: {botTextureFile}\nSign Texture: {signTextureFile}\nTexture/Map Flags: {textureMapFlags}\nAdjoin Flags: {adjoinFlags}');">Default wall info format</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastWall('Hey look it\'s sector {sector}\'s wall number {wall}!');">Altered wall info format</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastObject('Sector {sector} Object {object} Type {type}\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nFile: {filename}\nPosition: {x:F2} {y:F2} {z:F2}\nRotation: {pitch:F2} {yaw:F2} {roll:F2}\nDifficulty: {difficulty}\n{logic}');">Default object info format</button></p>
+
+			<p><button onclick="window.preview.setHudRaycastObject('Hey look it\'s object {object}! It\'s a {type} in sector {sector}!');">Altered object info format</button></p>
+
 			<h1>Level</h1>
-	
+
 			<p><button onclick="window.preview.reloadLevelInPlace();">Reload level</button></p>
 			
 			<p><button onclick="window.preview.initEmptyLevel('SECBASE', 0, 'SECBASE');">Init empty level</button></p>

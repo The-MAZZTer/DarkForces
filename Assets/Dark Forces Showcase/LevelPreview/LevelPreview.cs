@@ -5,19 +5,24 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-#if !UNITY_WEBGL
 using System.Net;
+#if !UNITY_WEBGL
 using System.Net.Http;
 using System.Runtime.Serialization;
-
 #else
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #endif
 using System.Runtime.Serialization.Json;
 using System.Text;
+#if !UNITY_WEBGL
+using System.Threading;
+#endif
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using Debug = UnityEngine.Debug;
 using NVector2 = System.Numerics.Vector2;
 
@@ -30,6 +35,12 @@ namespace MZZT.DarkForces.Showcase {
 		private FpsCameraControl fpsCamera;
 		[SerializeField]
 		private OrbitCameraControl orbitCamera;
+		[SerializeField]
+		private PhysicsRaycaster raycaster;
+		[SerializeField]
+		private Canvas hudCanvas;
+		[SerializeField]
+		private TMP_Text hudText;
 
 		private async void Start() {
 #if UNITY_WEBGL
@@ -114,7 +125,20 @@ namespace MZZT.DarkForces.Showcase {
 			this.SetZoomSensitivity(settings.ZoomSensitivity);
 			this.SetUseOrbitCamera(settings.UseOrbitCamera);
 			this.SetUseMouseCapture(settings.UseMouseCapture);
+			this.SetShowHud(settings.ShowHud);
+			this.SetHudAlign(settings.HudAlign);
+			this.SetHudFontSize(settings.HudFontSize);
+			this.SetHudColor(settings.HudColorR, settings.HudColorG, settings.HudColorB, settings.HudColorA);
+			this.SetShowHudCoordinates(settings.ShowHudCoordinates);
+			this.SetHudFpsCoordinates(settings.HudFpsCoordinates);
+			this.SetHudOrbitCoordinates(settings.HudOrbitCoordinates);
+			this.SetShowHudRaycastHit(settings.ShowHudRaycastHit);
+			this.SetHudRaycastFloor(settings.HudRaycastFloor);
+			this.SetHudRaycastCeiling(settings.HudRaycastCeiling);
+			this.SetHudRaycastWall(settings.HudRaycastWall);
+			this.SetHudRaycastObject(settings.HudRaycastObject);
 		}
+
 		private bool playMusic = true;
 
 		public async void OnApiCall(string json) {
@@ -360,6 +384,86 @@ namespace MZZT.DarkForces.Showcase {
 						throw new FormatException();
 					}
 					this.SetUseMouseCapture(value);
+				} break;
+				case nameof(this.SetShowHud): {
+					if (args.Length < 1 || !bool.TryParse(args[0], out bool value)) {
+						throw new FormatException();
+					}
+					this.SetShowHud(value);
+				} break;
+				case nameof(this.SetHudAlign): {
+					if (args.Length < 1) {
+						throw new FormatException();
+					}
+					if (int.TryParse(args[0], out int intValue)) {
+						this.SetHudAlign((TextAlignmentOptions)intValue);
+					} else if (Enum.TryParse(args[0], true, out TextAlignmentOptions value)) {
+						this.SetHudAlign(value);
+					} else {
+						throw new FormatException();
+					}
+				} break;
+				case nameof(this.SetHudFontSize): {
+					if (args.Length < 1 || !float.TryParse(args[0], out float value)) {
+						throw new FormatException();
+					}
+					this.SetHudFontSize(value);
+				} break;
+				case nameof(this.SetHudColor): {
+					if (args.Length < 4 || !float.TryParse(args[0], out float r) || !float.TryParse(args[1], out float g) ||
+						!float.TryParse(args[2], out float b) || !float.TryParse(args[3], out float a)) {
+
+						throw new FormatException();
+					}
+					this.SetHudColor(r, g, b, a);
+				} break;
+				case nameof(this.SetShowHudCoordinates): {
+					if (args.Length < 1 || !bool.TryParse(args[0], out bool value)) {
+						throw new FormatException();
+					}
+					this.SetShowHudCoordinates(value);
+				} break;
+				case nameof(this.SetHudFpsCoordinates): {
+					if (args.Length < 1) {
+						throw new FormatException();
+					}
+					this.SetHudFpsCoordinates(args[0]);
+				} break;
+				case nameof(this.SetHudOrbitCoordinates): {
+					if (args.Length < 1) {
+						throw new FormatException();
+					}
+					this.SetHudOrbitCoordinates(args[0]);
+				} break;
+				case nameof(this.SetShowHudRaycastHit): {
+					if (args.Length < 1 || !bool.TryParse(args[0], out bool value)) {
+						throw new FormatException();
+					}
+					this.SetShowHudRaycastHit(value);
+				} break;
+				case nameof(this.SetHudRaycastFloor): {
+					if (args.Length < 1) {
+						throw new FormatException();
+					}
+					this.SetHudRaycastFloor(args[0]);
+				} break;
+				case nameof(this.SetHudRaycastCeiling): {
+					if (args.Length < 1) {
+						throw new FormatException();
+					}
+					this.SetHudRaycastCeiling(args[0]);
+				} break;
+				case nameof(this.SetHudRaycastWall): {
+					if (args.Length < 1) {
+						throw new FormatException();
+					}
+					this.SetHudRaycastWall(args[0]);
+				} break;
+				case nameof(this.SetHudRaycastObject): {
+					if (args.Length < 1) {
+						throw new FormatException();
+					}
+					this.SetHudRaycastObject(args[0]);
 				} break;
 				case "ReloadLevelGeometry": {
 					if (args.Length < 1) {
@@ -1194,6 +1298,62 @@ namespace MZZT.DarkForces.Showcase {
 			this.fpsCamera.HoldButtonToLook = !value;
 		}
 
+		public void SetShowHud(bool value) {
+			this.hudCanvas.gameObject.SetActive(value);
+		}
+
+		public void SetHudAlign(TextAlignmentOptions value) {
+			this.hudText.alignment = value;
+		}
+
+		public void SetHudFontSize(float value) {
+			this.hudText.fontSizeMax = value;
+		}
+
+		public void SetHudColor(float r, float g, float b, float a) {
+			this.hudText.color = new Color(r, g, b, a);
+		}
+
+		private bool showHudCoordinates = true;
+		public void SetShowHudCoordinates(bool value) {
+			this.showHudCoordinates = value;
+		}
+
+		private string hudFpsCoordinates = string.Empty;
+		public void SetHudFpsCoordinates(string value) {
+			this.hudFpsCoordinates = value;
+		}
+
+		private string hudOrbitCoordinates = string.Empty;
+		public void SetHudOrbitCoordinates(string value) {
+			this.hudOrbitCoordinates = value;
+		}
+
+		private bool showHudRaycastHit = true;
+		public void SetShowHudRaycastHit(bool value) {
+			this.showHudRaycastHit = value;
+		}
+
+		private string hudRaycastFloor = string.Empty;
+		public void SetHudRaycastFloor(string value) {
+			this.hudRaycastFloor = value;
+		}
+
+		private string hudRaycastCeiling = string.Empty;
+		public void SetHudRaycastCeiling(string value) {
+			this.hudRaycastCeiling = value;
+		}
+
+		private string hudRaycastWall = string.Empty;
+		public void SetHudRaycastWall(string value) {
+			this.hudRaycastWall = value;
+		}
+
+		private string hudRaycastObject = string.Empty;
+		public void SetHudRaycastObject(string value) {
+			this.hudRaycastObject = value;
+		}
+
 		public async Task ReloadLevelGeometryAsync(LevelInfo levelInfo) {
 			await PauseMenu.Instance.BeginLoadingAsync();
 
@@ -1733,8 +1893,8 @@ namespace MZZT.DarkForces.Showcase {
 					distance = Math.Min(distance, 100); // in case a level has sectors in the middle of nowhere.
 				}
 				this.orbitCamera.FocusPoint = position;
-				Camera.main.transform.rotation = rotation;
 				Camera.main.transform.position = position - Camera.main.transform.forward * distance;
+				Camera.main.transform.LookAt(position);
 			}
 		}
 
@@ -1782,12 +1942,279 @@ namespace MZZT.DarkForces.Showcase {
 			Camera.main.transform.LookAt(target);
 		}
 
+		private string FormatText(string formatString, Dictionary<string, object> args) {
+			int index = 0;
+			string current = formatString;
+			foreach (string key in args.Keys) {
+				current = current.Replace($"{{{key}}}", $"{{{index}}}").Replace($"{{{key}:", $"{{{index}:").Replace($"{{{key},", $"{{{index},");
+				index++;
+			}
+			try {
+				return string.Format(current, args.Values.ToArray());
+			} catch (FormatException ex) {
+				Debug.LogException(ex);
+				return $"INVALID SETTING STRING: {formatString}";
+			}
+		}
+
 		private CursorLockMode lastLockMode = CursorLockMode.None;
 		private void Update() {
 			if (Cursor.lockState != this.lastLockMode) {
 				this.lastLockMode = Cursor.lockState;
 
 				_ = this.DispatchEventAsync("OnCursorLockStateChanged", (int)Cursor.lockState);
+			}
+
+			if (this.hudText.isActiveAndEnabled) {
+				StringBuilder hudText = new();
+
+				if (this.showHudCoordinates) {
+					if (this.fpsCamera.isActiveAndEnabled) {
+						hudText.Append(this.FormatText(this.hudFpsCoordinates, new() {
+							["x"] = Camera.main.transform.position.x / LevelGeometryGenerator.GEOMETRY_SCALE,
+							["y"] = Camera.main.transform.position.y / -LevelGeometryGenerator.GEOMETRY_SCALE,
+							["z"] = Camera.main.transform.position.z / LevelGeometryGenerator.GEOMETRY_SCALE,
+							["pitch"] = Camera.main.transform.eulerAngles.x,
+							["yaw"] = Camera.main.transform.eulerAngles.y,
+							["roll"] = Camera.main.transform.eulerAngles.z
+						}));
+					} else {
+						hudText.Append(this.FormatText(this.hudOrbitCoordinates, new() {
+							["x"] = this.orbitCamera.FocusPoint.x / -LevelGeometryGenerator.GEOMETRY_SCALE,
+							["y"] = this.orbitCamera.FocusPoint.y / -LevelGeometryGenerator.GEOMETRY_SCALE,
+							["z"] = this.orbitCamera.FocusPoint.z / LevelGeometryGenerator.GEOMETRY_SCALE,
+							["pitch"] = Camera.main.transform.eulerAngles.x,
+							["yaw"] = Camera.main.transform.eulerAngles.y,
+							["roll"] = Camera.main.transform.eulerAngles.z,
+							["distance"] = (Camera.main.transform.position - this.orbitCamera.FocusPoint).magnitude
+						}));
+					}
+				}
+
+				if (this.showHudRaycastHit) {
+					List<RaycastResult> rays = new();
+					this.raycaster.Raycast(new PointerEventData(EventSystem.current) {
+						position = Pointer.current.position.value
+					}, rays);
+
+					RaycastResult hit = rays.OrderBy(x => x.distance).FirstOrDefault();
+					if (hit.isValid) {
+						ObjectRenderer obj = hit.gameObject.GetComponentInParent<ObjectRenderer>();
+						if (obj != null) {
+							int index = obj.CurrentSector == null ? -1 : LevelLoader.Instance.Level.Sectors.IndexOf(obj.CurrentSector.Sector);
+
+							string difficulty = obj.Object.Difficulty switch {
+								(DfLevelObjects.Difficulties)(-3) => "All",
+								DfLevelObjects.Difficulties.EasyMedium => "Easy Medium",
+								DfLevelObjects.Difficulties.Easy => "Easy ",
+								DfLevelObjects.Difficulties.EasyMediumHard => "All",
+								(DfLevelObjects.Difficulties)1 => "All",
+								DfLevelObjects.Difficulties.MediumHard => "Medium Hard",
+								DfLevelObjects.Difficulties.Hard => "Hard",
+								_ => "Invalid Value"
+							};
+
+							if (hudText.Length > 0) {
+								hudText.Append("\n\n");
+							}
+							hudText.Append(this.FormatText(this.hudRaycastObject, new() {
+								["hitX"] = hit.worldPosition.x / LevelGeometryGenerator.GEOMETRY_SCALE,
+								["hitY"] = hit.worldPosition.y / -LevelGeometryGenerator.GEOMETRY_SCALE,
+								["hitZ"] = hit.worldPosition.z / LevelGeometryGenerator.GEOMETRY_SCALE,
+								["sectorIndex"] = index,
+								["sectorName"] = obj.CurrentSector?.Sector.Name ?? string.Empty,
+								["sector"] = obj.CurrentSector == null ? "<NONE>" : (obj.CurrentSector.Sector.Name ?? index.ToString()),
+								["object"] = LevelLoader.Instance.Objects.Objects.IndexOf(obj.Object),
+								["x"] = obj.Object.Position.X / LevelGeometryGenerator.GEOMETRY_SCALE,
+								["y"] = obj.Object.Position.Y / -LevelGeometryGenerator.GEOMETRY_SCALE,
+								["z"] = obj.Object.Position.Z / LevelGeometryGenerator.GEOMETRY_SCALE,
+								["pitch"] = obj.Object.EulerAngles.X,
+								["yaw"] = obj.Object.EulerAngles.Y,
+								["roll"] = obj.Object.EulerAngles.Z,
+								["difficulty"] = difficulty,
+								["filename"] = obj.Object.FileName ?? string.Empty,
+								["logic"] = obj.Object.Logic ?? string.Empty,
+								["type"] = obj.Object.Type
+							}));
+						} else {
+							WallRenderer wall = hit.gameObject.GetComponentInParent<WallRenderer>();
+							if (wall != null) {
+								DfLevel.Sector sector = wall.Wall.Sector;
+
+								int index = LevelLoader.Instance.Level.Sectors.IndexOf(sector);
+								int adjoinedIndex = wall.Wall.Adjoined == null ? -1 : LevelLoader.Instance.Level.Sectors.IndexOf(wall.Wall.Adjoined.Sector);
+
+								StringBuilder flagString = new();
+								DfLevel.SectorFlags flags = sector.Flags;
+								foreach (DfLevel.SectorFlags flag in Enum.GetValues(typeof(DfLevel.SectorFlags))) {
+									if (flags.HasFlag(flag)) {
+										if (flagString.Length > 0) {
+											flagString.Append(' ');
+										}
+										flagString.Append(Enum.GetName(typeof(DfLevel.SectorFlags), flag));
+									}
+								}
+
+								StringBuilder adjoinFlagString = new();
+								DfLevel.WallAdjoinFlags adjoinFlags = wall.Wall.AdjoinFlags;
+								foreach (DfLevel.WallAdjoinFlags flag in Enum.GetValues(typeof(DfLevel.WallAdjoinFlags))) {
+									if (adjoinFlags.HasFlag(flag)) {
+										if (adjoinFlagString.Length > 0) {
+											adjoinFlagString.Append(' ');
+										}
+										adjoinFlagString.Append(Enum.GetName(typeof(DfLevel.WallAdjoinFlags), flag));
+									}
+								}
+
+								StringBuilder textureMapFlagString = new();
+								DfLevel.WallTextureAndMapFlags textureMapFlags = wall.Wall.TextureAndMapFlags;
+								foreach (DfLevel.WallTextureAndMapFlags flag in Enum.GetValues(typeof(DfLevel.WallTextureAndMapFlags))) {
+									if (textureMapFlags.HasFlag(flag)) {
+										if (textureMapFlagString.Length > 0) {
+											textureMapFlagString.Append(' ');
+										}
+										textureMapFlagString.Append(Enum.GetName(typeof(DfLevel.WallTextureAndMapFlags), flag));
+									}
+								}
+
+								if (hudText.Length > 0) {
+									hudText.Append("\n\n");
+								}
+								hudText.Append(this.FormatText(this.hudRaycastWall, new() {
+									["hitX"] = hit.worldPosition.x / LevelGeometryGenerator.GEOMETRY_SCALE,
+									["hitY"] = hit.worldPosition.y / -LevelGeometryGenerator.GEOMETRY_SCALE,
+									["hitZ"] = hit.worldPosition.z / LevelGeometryGenerator.GEOMETRY_SCALE,
+									["sectorIndex"] = index,
+									["sectorName"] = sector.Name ?? string.Empty,
+									["sector"] = sector.Name ?? index.ToString(),
+									["wall"] = wall.Wall.Sector.Walls.IndexOf(wall.Wall),
+									["light"] = sector.LightLevel,
+									["altLight"] = sector.AltLightLevel,
+									["flags"] = flagString.ToString(),
+									["layer"] = sector.Layer,
+									["unusedFlags"] = sector.UnusedFlags2,
+									["walls"] = sector.Walls.Count,
+									["vertices"] = sector.Walls.SelectMany(x => new[] { x.LeftVertex, x.RightVertex }).Distinct().Count(),
+									["adjoinSectorIndex"] = adjoinedIndex,
+									["adjoinSectorName"] = wall.Wall.Adjoined?.Sector.Name ?? string.Empty,
+									["adjoinSector"] = wall.Wall.Adjoined?.Sector.Name ?? (adjoinedIndex >= 0 ? adjoinedIndex.ToString() : "<NONE>"),
+									["adjoinWall"] = wall.Wall.Adjoined?.Sector.Walls.IndexOf(wall.Wall.Adjoined),
+									["adjoinFlags"] = adjoinFlagString.ToString(),
+									["botTextureFile"] = wall.Wall?.BottomEdgeTexture.TextureFile ?? string.Empty,
+									["botTextureOffsetX"] = wall.Wall?.BottomEdgeTexture.TextureOffset.X ?? 0,
+									["botTextureOffsetY"] = wall.Wall?.BottomEdgeTexture.TextureOffset.Y ?? 0,
+									["botTextureUnknown"] = wall.Wall?.BottomEdgeTexture.TextureUnknown ?? 0,
+									["x1"] = wall.Wall.LeftVertex.Position.X,
+									["z1"] = wall.Wall.LeftVertex.Position.Y,
+									["wallLight"] = wall.Wall.LightLevel,
+									["midTextureFile"] = wall.Wall?.MainTexture.TextureFile ?? string.Empty,
+									["midTextureOffsetX"] = wall.Wall?.MainTexture.TextureOffset.X ?? 0,
+									["midTextureOffsetY"] = wall.Wall?.MainTexture.TextureOffset.Y ?? 0,
+									["midTextureUnknown"] = wall.Wall?.MainTexture.TextureUnknown ?? 0,
+									["x2"] = wall.Wall.RightVertex.Position.X,
+									["z2"] = wall.Wall.RightVertex.Position.Y,
+									["signTextureFile"] = wall.Wall?.SignTexture.TextureFile ?? string.Empty,
+									["signTextureOffsetX"] = wall.Wall?.SignTexture.TextureOffset.X ?? 0,
+									["signTextureOffsetY"] = wall.Wall?.SignTexture.TextureOffset.Y ?? 0,
+									["signTextureUnknown"] = wall.Wall?.SignTexture.TextureUnknown ?? 0,
+									["textureMapFlags"] = textureMapFlagString.ToString(),
+									["topTextureFile"] = wall.Wall?.TopEdgeTexture.TextureFile ?? string.Empty,
+									["topTextureOffsetX"] = wall.Wall?.TopEdgeTexture.TextureOffset.X ?? 0,
+									["topTextureOffsetY"] = wall.Wall?.TopEdgeTexture.TextureOffset.Y ?? 0,
+									["topTextureUnknown"] = wall.Wall?.TopEdgeTexture.TextureUnknown ?? 0,
+									["wallUnusedFlags"] = wall.Wall.UnusedFlags2
+								}));
+							} else {
+								FloorCeilingRenderer floorCeiling = hit.gameObject.GetComponentInParent<FloorCeilingRenderer>();
+								if (floorCeiling != null) {
+									SectorRenderer sector = floorCeiling.GetComponentInParent<SectorRenderer>();
+
+									bool isCeiling = floorCeiling.CeilingObjects.Any(x => hit.gameObject.transform.IsChildOf(x.transform));
+									if (isCeiling) {
+										int index = LevelLoader.Instance.Level.Sectors.IndexOf(sector.Sector);
+
+										StringBuilder flagString = new();
+										DfLevel.SectorFlags flags = sector.Sector.Flags;
+										foreach (DfLevel.SectorFlags flag in Enum.GetValues(typeof(DfLevel.SectorFlags))) {
+											if (flags.HasFlag(flag)) {
+												if (flagString.Length > 0) {
+													flagString.Append(' ');
+												}
+												flagString.Append(Enum.GetName(typeof(DfLevel.SectorFlags), flag));
+											}
+										}
+
+										if (hudText.Length > 0) {
+											hudText.Append("\n\n");
+										}
+										hudText.Append(this.FormatText(this.hudRaycastCeiling, new() {
+											["hitX"] = hit.worldPosition.x / LevelGeometryGenerator.GEOMETRY_SCALE,
+											["hitY"] = hit.worldPosition.y / -LevelGeometryGenerator.GEOMETRY_SCALE,
+											["hitZ"] = hit.worldPosition.z / LevelGeometryGenerator.GEOMETRY_SCALE,
+											["sectorIndex"] = index,
+											["sectorName"] = sector.Sector.Name ?? string.Empty,
+											["sector"] = sector.Sector.Name ?? index.ToString(),
+											["light"] = sector.Sector.LightLevel,
+											["altLight"] = sector.Sector.AltLightLevel,
+											["flags"] = flagString.ToString(),
+											["layer"] = sector.Sector.Layer,
+											["unusedFlags"] = sector.Sector.UnusedFlags2,
+											["walls"] = sector.Sector.Walls.Count,
+											["vertices"] = sector.Sector.Walls.SelectMany(x => new[] { x.LeftVertex, x.RightVertex }).Distinct().Count(),
+											["textureFile"] = sector.Sector.Ceiling.TextureFile ?? string.Empty,
+											["textureOffsetX"] = sector.Sector.Ceiling.TextureOffset.X,
+											["textureOffsetZ"] = sector.Sector.Ceiling.TextureOffset.Y,
+											["textureUnknown"] = sector.Sector.Ceiling.TextureUnknown,
+											["y"] = sector.Sector.Ceiling.Y
+										}));
+									} else {
+										bool isFloor = floorCeiling.FloorObjects.Any(x => hit.gameObject.transform.IsChildOf(x.transform));
+										if (isFloor) {
+											int index = LevelLoader.Instance.Level.Sectors.IndexOf(sector.Sector);
+
+											StringBuilder flagString = new();
+											DfLevel.SectorFlags flags = sector.Sector.Flags;
+											foreach (DfLevel.SectorFlags flag in Enum.GetValues(typeof(DfLevel.SectorFlags))) {
+												if (flags.HasFlag(flag)) {
+													if (flagString.Length > 0) {
+														flagString.Append(' ');
+													}
+													flagString.Append(Enum.GetName(typeof(DfLevel.SectorFlags), flag));
+												}
+											}
+
+											if (hudText.Length > 0) {
+												hudText.Append("\n\n");
+											}
+											hudText.Append(this.FormatText(this.hudRaycastFloor, new() {
+												["hitX"] = hit.worldPosition.x / LevelGeometryGenerator.GEOMETRY_SCALE,
+												["hitY"] = hit.worldPosition.y / -LevelGeometryGenerator.GEOMETRY_SCALE,
+												["hitZ"] = hit.worldPosition.z / LevelGeometryGenerator.GEOMETRY_SCALE,
+												["sectorIndex"] = index,
+												["sectorName"] = sector.Sector.Name ?? string.Empty,
+												["sector"] = sector.Sector.Name ?? index.ToString(),
+												["light"] = sector.Sector.LightLevel,
+												["altLight"] = sector.Sector.AltLightLevel,
+												["flags"] = flagString.ToString(),
+												["layer"] = sector.Sector.Layer,
+												["unusedFlags"] = sector.Sector.UnusedFlags2,
+												["walls"] = sector.Sector.Walls.Count,
+												["vertices"] = sector.Sector.Walls.SelectMany(x => new[] { x.LeftVertex, x.RightVertex }).Distinct().Count(),
+												["textureFile"] = sector.Sector.Floor.TextureFile ?? string.Empty,
+												["textureOffsetX"] = sector.Sector.Floor.TextureOffset.X,
+												["textureOffsetZ"] = sector.Sector.Floor.TextureOffset.Y,
+												["textureUnknown"] = sector.Sector.Floor.TextureUnknown,
+												["y"] = sector.Sector.Floor.Y
+											}));
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				this.hudText.text = hudText.ToString();
 			}
 		}
 	}

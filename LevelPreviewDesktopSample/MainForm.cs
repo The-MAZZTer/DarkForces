@@ -165,7 +165,7 @@ public partial class MainForm : Form {
 	}
 
 	private async void buttonSetBackground0_Click(object sender, EventArgs e) {
-		await this.LevelPreview!.SetBackgroundAsync(Color.Black);
+		await this.LevelPreview!.SetBackgroundAsync(0, 0, 0);
 	}
 
 	private async void buttonSetBackground1_Click(object sender, EventArgs e) {
@@ -819,5 +819,101 @@ public partial class MainForm : Form {
 
 	private void LevelPreview_ObjectClicked(object? sender, ObjectEventArgs e) {
 		this.statusText.Text = $"Object {e.ObjectIndex} clicked.";
+	}
+
+	private async void buttonSetShowHud0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetShowHudAsync(false);
+	}
+
+	private async void buttonSetShowHud1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetShowHudAsync(true);
+	}
+
+	private async void buttonSetHudAlign0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudAlignAsync("TopLeft");
+	}
+
+	private async void buttonSetHudAlign1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudAlignAsync("TopRight");
+	}
+
+	private async void buttonSetHudFontSize0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudFontSizeAsync(36);
+	}
+
+	private async void buttonSetHudFontSize1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudFontSizeAsync(18);
+	}
+
+	private async void buttonSetHudColor0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudColorAsync(Color.Red);
+	}
+
+	private async void buttonSetHudColor1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudColorAsync(1, 1, 1, 0.5f);
+	}
+
+	private async void buttonSetShowHudCoordinates0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetShowHudCoordinatesAsync(false);
+	}
+
+	private async void buttonSetShowHudCoordinates1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetShowHudCoordinatesAsync(true);
+	}
+
+	private async void buttonSetHudFpsCoordinates0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudFpsCoordinatesAsync("Pos: {x:F2} {y:F2} {z:F2}\nRot: {pitch:F2} {yaw:F2}");
+	}
+
+	private async void buttonSetHudFpsCoordinates1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudFpsCoordinatesAsync("OMG you're at {x:F0} {y:F0} {z:F0}!!!");
+	}
+
+	private async void buttonSetHudOrbitCoordinates0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudOrbitCoordinatesAsync("Focus: {x:F2} {y:F2} {z:F2}\nRot: {pitch:F2} {yaw:F2}\nDist: {distance:F2}");
+	}
+
+	private async void buttonSetHudOrbitCoordinates1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudOrbitCoordinatesAsync("OMG you're looking at {x:F0} {y:F0} {z:F0} from {distance:F0} away!!!");
+	}
+
+	private async void buttonSetShowHudRaycastHit0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetShowHudRaycastHitAsync(false);
+	}
+
+	private async void buttonSetShowHudRaycastHit1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetShowHudRaycastHitAsync(true);
+	}
+
+	private async void buttonSetHudRaycastFloor0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastFloorAsync("Sector {sector} Floor\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nTexture: {textureFile}\nLight: {light}\nLayer: {layer}\nFlags: {flags}");
+	}
+
+	private async void buttonSetHudRaycastFloor1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastFloorAsync("Hey look it's sector {sector}'s floor!");
+	}
+
+	private async void buttonSetHudRaycastCeiling0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastCeilingAsync("Sector {sector} Ceiling\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nTexture: {textureFile}\nLight: {light}\nLayer: {layer}\nFlags: {flags}");
+	}
+
+	private async void buttonSetHudRaycastCeiling1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastCeilingAsync("Hey look it's sector {sector}'s ceiling!");
+	}
+
+	private async void buttonSetHudRaycastWall0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastWallAsync("Sector {sector} Wall {wall}\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nLeft: {x1:F2} {z1:F2} Right: {x2:F2} {z2:F2}\nAdjoin: {adjoinSector} {adjoinWall}\nWall Light: {wallLight}\nMain Texture: {midTextureFile}\nTop Texture: {topTextureFile}\nBot Texture: {botTextureFile}\nSign Texture: {signTextureFile}\nTexture/Map Flags: {textureMapFlags}\nAdjoin Flags: {adjoinFlags}");
+	}
+
+	private async void buttonSetHudRaycastWall1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastWallAsync("Hey look it's sector {sector}'s wall number {wall}!");
+	}
+
+	private async void buttonSetHudRaycastObject0_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastObjectAsync("Sector {sector} Object {object} Type {type}\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nFile: {filename}\nPosition: {x:F2} {y:F2} {z:F2}\nRotation: {pitch:F2} {yaw:F2} {roll:F2}\nDifficulty: {difficulty}\n{logic}");
+	}
+
+	private async void buttonSetHudRaycastObject1_Click(object sender, EventArgs e) {
+		await this.LevelPreview!.SetHudRaycastObjectAsync("Hey look it\'s object {object}! It\'s a {type} in sector {sector}!");
 	}
 }

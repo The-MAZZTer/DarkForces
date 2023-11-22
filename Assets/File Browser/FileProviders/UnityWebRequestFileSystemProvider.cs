@@ -45,8 +45,8 @@ namespace MZZT.IO.FileSystemProviders {
 				}
 
 				if (request.result != UnityWebRequest.Result.Success) {
-					Debug.LogError(request.error);
-					throw new IOException(request.error);
+					Debug.LogError($"{path}: {request.error}");
+					throw new IOException($"{path}: {request.error}");
 				}
 
 				data = request.downloadHandler.data;

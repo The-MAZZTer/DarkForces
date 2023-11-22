@@ -37,6 +37,7 @@
 			Label labelObjects;
 			Label labelObjectsHelp;
 			Label labelCamera;
+			Label labelSettingsHud;
 			this.split = new SplitContainer();
 			this.flow = new FlowLayoutPanel();
 			this.buttonQuit = new Button();
@@ -88,6 +89,30 @@
 			this.buttonSetOrbitCamera = new Button();
 			this.buttonSetUseMouseCapture0 = new Button();
 			this.buttonSetUseMouseCapture1 = new Button();
+			this.buttonSetShowHud0 = new Button();
+			this.buttonSetShowHud1 = new Button();
+			this.buttonSetHudAlign0 = new Button();
+			this.buttonSetHudAlign1 = new Button();
+			this.buttonSetHudFontSize0 = new Button();
+			this.buttonSetHudFontSize1 = new Button();
+			this.buttonSetHudColor0 = new Button();
+			this.buttonSetHudColor1 = new Button();
+			this.buttonSetShowHudCoordinates0 = new Button();
+			this.buttonSetShowHudCoordinates1 = new Button();
+			this.buttonSetHudFpsCoordinates0 = new Button();
+			this.buttonSetHudFpsCoordinates1 = new Button();
+			this.buttonSetHudOrbitCoordinates0 = new Button();
+			this.buttonSetHudOrbitCoordinates1 = new Button();
+			this.buttonSetShowHudRaycastHit0 = new Button();
+			this.buttonSetShowHudRaycastHit1 = new Button();
+			this.buttonSetHudRaycastFloor0 = new Button();
+			this.buttonSetHudRaycastFloor1 = new Button();
+			this.buttonSetHudRaycastCeiling0 = new Button();
+			this.buttonSetHudRaycastCeiling1 = new Button();
+			this.buttonSetHudRaycastWall0 = new Button();
+			this.buttonSetHudRaycastWall1 = new Button();
+			this.buttonSetHudRaycastObject0 = new Button();
+			this.buttonSetHudRaycastObject1 = new Button();
 			this.buttonReloadLevelInPlace = new Button();
 			this.buttonInitEmptyLevel = new Button();
 			this.buttonReloadLevelGeometry = new Button();
@@ -128,6 +153,7 @@
 			labelObjects = new Label();
 			labelObjectsHelp = new Label();
 			labelCamera = new Label();
+			labelSettingsHud = new Label();
 			((System.ComponentModel.ISupportInitialize)this.split).BeginInit();
 			this.split.Panel2.SuspendLayout();
 			this.split.SuspendLayout();
@@ -229,10 +255,10 @@
 			labelLevel.AutoEllipsis = true;
 			labelLevel.AutoSize = true;
 			labelLevel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			labelLevel.Location = new Point(3, 1637);
+			labelLevel.Location = new Point(3, 2402);
 			labelLevel.Name = "labelLevel";
 			labelLevel.Size = new Size(50, 21);
-			labelLevel.TabIndex = 58;
+			labelLevel.TabIndex = 83;
 			labelLevel.Text = "Level";
 			// 
 			// labelGeometry
@@ -240,10 +266,10 @@
 			labelGeometry.AutoEllipsis = true;
 			labelGeometry.AutoSize = true;
 			labelGeometry.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			labelGeometry.Location = new Point(3, 1720);
+			labelGeometry.Location = new Point(3, 2485);
 			labelGeometry.Name = "labelGeometry";
 			labelGeometry.Size = new Size(86, 21);
-			labelGeometry.TabIndex = 61;
+			labelGeometry.TabIndex = 86;
 			labelGeometry.Text = "Geometry";
 			// 
 			// labelGeometryHelp
@@ -251,10 +277,10 @@
 			labelGeometryHelp.AutoEllipsis = true;
 			labelGeometryHelp.AutoSize = true;
 			labelGeometryHelp.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-			labelGeometryHelp.Location = new Point(3, 1741);
+			labelGeometryHelp.Location = new Point(3, 2506);
 			labelGeometryHelp.Name = "labelGeometryHelp";
 			labelGeometryHelp.Size = new Size(268, 30);
-			labelGeometryHelp.TabIndex = 62;
+			labelGeometryHelp.TabIndex = 87;
 			labelGeometryHelp.Text = "Use the first button then mess with the others for examples.";
 			// 
 			// labelObjects
@@ -262,10 +288,10 @@
 			labelObjects.AutoEllipsis = true;
 			labelObjects.AutoSize = true;
 			labelObjects.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			labelObjects.Location = new Point(3, 2174);
+			labelObjects.Location = new Point(3, 2939);
 			labelObjects.Name = "labelObjects";
 			labelObjects.Size = new Size(67, 21);
-			labelObjects.TabIndex = 76;
+			labelObjects.TabIndex = 101;
 			labelObjects.Text = "Objects";
 			// 
 			// labelObjectsHelp
@@ -273,10 +299,10 @@
 			labelObjectsHelp.AutoEllipsis = true;
 			labelObjectsHelp.AutoSize = true;
 			labelObjectsHelp.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-			labelObjectsHelp.Location = new Point(3, 2195);
+			labelObjectsHelp.Location = new Point(3, 2960);
 			labelObjectsHelp.Name = "labelObjectsHelp";
 			labelObjectsHelp.Size = new Size(268, 30);
-			labelObjectsHelp.TabIndex = 77;
+			labelObjectsHelp.TabIndex = 102;
 			labelObjectsHelp.Text = "Use the first button then mess with the others for examples.";
 			// 
 			// labelCamera
@@ -284,11 +310,22 @@
 			labelCamera.AutoEllipsis = true;
 			labelCamera.AutoSize = true;
 			labelCamera.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			labelCamera.Location = new Point(3, 2318);
+			labelCamera.Location = new Point(3, 3083);
 			labelCamera.Name = "labelCamera";
 			labelCamera.Size = new Size(68, 21);
-			labelCamera.TabIndex = 81;
+			labelCamera.TabIndex = 106;
 			labelCamera.Text = "Camera";
+			// 
+			// labelSettingsHud
+			// 
+			labelSettingsHud.AutoEllipsis = true;
+			labelSettingsHud.AutoSize = true;
+			labelSettingsHud.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			labelSettingsHud.Location = new Point(3, 1637);
+			labelSettingsHud.Name = "labelSettingsHud";
+			labelSettingsHud.Size = new Size(122, 21);
+			labelSettingsHud.TabIndex = 58;
+			labelSettingsHud.Text = "Settings - HUD";
 			// 
 			// split
 			// 
@@ -368,6 +405,31 @@
 			this.flow.Controls.Add(this.buttonSetOrbitCamera);
 			this.flow.Controls.Add(this.buttonSetUseMouseCapture0);
 			this.flow.Controls.Add(this.buttonSetUseMouseCapture1);
+			this.flow.Controls.Add(labelSettingsHud);
+			this.flow.Controls.Add(this.buttonSetShowHud0);
+			this.flow.Controls.Add(this.buttonSetShowHud1);
+			this.flow.Controls.Add(this.buttonSetHudAlign0);
+			this.flow.Controls.Add(this.buttonSetHudAlign1);
+			this.flow.Controls.Add(this.buttonSetHudFontSize0);
+			this.flow.Controls.Add(this.buttonSetHudFontSize1);
+			this.flow.Controls.Add(this.buttonSetHudColor0);
+			this.flow.Controls.Add(this.buttonSetHudColor1);
+			this.flow.Controls.Add(this.buttonSetShowHudCoordinates0);
+			this.flow.Controls.Add(this.buttonSetShowHudCoordinates1);
+			this.flow.Controls.Add(this.buttonSetHudFpsCoordinates0);
+			this.flow.Controls.Add(this.buttonSetHudFpsCoordinates1);
+			this.flow.Controls.Add(this.buttonSetHudOrbitCoordinates0);
+			this.flow.Controls.Add(this.buttonSetHudOrbitCoordinates1);
+			this.flow.Controls.Add(this.buttonSetShowHudRaycastHit0);
+			this.flow.Controls.Add(this.buttonSetShowHudRaycastHit1);
+			this.flow.Controls.Add(this.buttonSetHudRaycastFloor0);
+			this.flow.Controls.Add(this.buttonSetHudRaycastFloor1);
+			this.flow.Controls.Add(this.buttonSetHudRaycastCeiling0);
+			this.flow.Controls.Add(this.buttonSetHudRaycastCeiling1);
+			this.flow.Controls.Add(this.buttonSetHudRaycastWall0);
+			this.flow.Controls.Add(this.buttonSetHudRaycastWall1);
+			this.flow.Controls.Add(this.buttonSetHudRaycastObject0);
+			this.flow.Controls.Add(this.buttonSetHudRaycastObject1);
 			this.flow.Controls.Add(labelLevel);
 			this.flow.Controls.Add(this.buttonReloadLevelInPlace);
 			this.flow.Controls.Add(this.buttonInitEmptyLevel);
@@ -990,14 +1052,302 @@
 			this.buttonSetUseMouseCapture1.UseVisualStyleBackColor = true;
 			this.buttonSetUseMouseCapture1.Click += this.buttonSetUseMouseCapture1_Click;
 			// 
+			// buttonSetShowHud0
+			// 
+			this.buttonSetShowHud0.AutoSize = true;
+			this.buttonSetShowHud0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetShowHud0.Location = new Point(3, 1661);
+			this.buttonSetShowHud0.Name = "buttonSetShowHud0";
+			this.buttonSetShowHud0.Size = new Size(70, 25);
+			this.buttonSetShowHud0.TabIndex = 59;
+			this.buttonSetShowHud0.Text = "Hide HUD";
+			this.buttonSetShowHud0.UseVisualStyleBackColor = true;
+			this.buttonSetShowHud0.Click += this.buttonSetShowHud0_Click;
+			// 
+			// buttonSetShowHud1
+			// 
+			this.buttonSetShowHud1.AutoSize = true;
+			this.buttonSetShowHud1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetShowHud1.Location = new Point(3, 1692);
+			this.buttonSetShowHud1.Name = "buttonSetShowHud1";
+			this.buttonSetShowHud1.Size = new Size(122, 25);
+			this.buttonSetShowHud1.TabIndex = 60;
+			this.buttonSetShowHud1.Text = "Show HUD (default)";
+			this.buttonSetShowHud1.UseVisualStyleBackColor = true;
+			this.buttonSetShowHud1.Click += this.buttonSetShowHud1_Click;
+			// 
+			// buttonSetHudAlign0
+			// 
+			this.buttonSetHudAlign0.AutoSize = true;
+			this.buttonSetHudAlign0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudAlign0.Location = new Point(3, 1723);
+			this.buttonSetHudAlign0.Name = "buttonSetHudAlign0";
+			this.buttonSetHudAlign0.Size = new Size(162, 25);
+			this.buttonSetHudAlign0.TabIndex = 61;
+			this.buttonSetHudAlign0.Text = "Align HUD top left (default)";
+			this.buttonSetHudAlign0.UseVisualStyleBackColor = true;
+			this.buttonSetHudAlign0.Click += this.buttonSetHudAlign0_Click;
+			// 
+			// buttonSetHudAlign1
+			// 
+			this.buttonSetHudAlign1.AutoSize = true;
+			this.buttonSetHudAlign1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudAlign1.Location = new Point(3, 1754);
+			this.buttonSetHudAlign1.Name = "buttonSetHudAlign1";
+			this.buttonSetHudAlign1.Size = new Size(122, 25);
+			this.buttonSetHudAlign1.TabIndex = 62;
+			this.buttonSetHudAlign1.Text = "Align HUD top right";
+			this.buttonSetHudAlign1.UseVisualStyleBackColor = true;
+			this.buttonSetHudAlign1.Click += this.buttonSetHudAlign1_Click;
+			// 
+			// buttonSetHudFontSize0
+			// 
+			this.buttonSetHudFontSize0.AutoSize = true;
+			this.buttonSetHudFontSize0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudFontSize0.Location = new Point(3, 1785);
+			this.buttonSetHudFontSize0.Name = "buttonSetHudFontSize0";
+			this.buttonSetHudFontSize0.Size = new Size(126, 25);
+			this.buttonSetHudFontSize0.TabIndex = 63;
+			this.buttonSetHudFontSize0.Text = "Font size 36 (default)";
+			this.buttonSetHudFontSize0.UseVisualStyleBackColor = true;
+			this.buttonSetHudFontSize0.Click += this.buttonSetHudFontSize0_Click;
+			// 
+			// buttonSetHudFontSize1
+			// 
+			this.buttonSetHudFontSize1.AutoSize = true;
+			this.buttonSetHudFontSize1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudFontSize1.Location = new Point(3, 1816);
+			this.buttonSetHudFontSize1.Name = "buttonSetHudFontSize1";
+			this.buttonSetHudFontSize1.Size = new Size(78, 25);
+			this.buttonSetHudFontSize1.TabIndex = 64;
+			this.buttonSetHudFontSize1.Text = "Font size 18";
+			this.buttonSetHudFontSize1.UseVisualStyleBackColor = true;
+			this.buttonSetHudFontSize1.Click += this.buttonSetHudFontSize1_Click;
+			// 
+			// buttonSetHudColor0
+			// 
+			this.buttonSetHudColor0.AutoSize = true;
+			this.buttonSetHudColor0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudColor0.Location = new Point(3, 1847);
+			this.buttonSetHudColor0.Name = "buttonSetHudColor0";
+			this.buttonSetHudColor0.Size = new Size(114, 25);
+			this.buttonSetHudColor0.TabIndex = 65;
+			this.buttonSetHudColor0.Text = "Color red (default)";
+			this.buttonSetHudColor0.UseVisualStyleBackColor = true;
+			this.buttonSetHudColor0.Click += this.buttonSetHudColor0_Click;
+			// 
+			// buttonSetHudColor1
+			// 
+			this.buttonSetHudColor1.AutoSize = true;
+			this.buttonSetHudColor1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudColor1.Location = new Point(3, 1878);
+			this.buttonSetHudColor1.Name = "buttonSetHudColor1";
+			this.buttonSetHudColor1.Size = new Size(141, 25);
+			this.buttonSetHudColor1.TabIndex = 66;
+			this.buttonSetHudColor1.Text = "Color transparent white";
+			this.buttonSetHudColor1.UseVisualStyleBackColor = true;
+			this.buttonSetHudColor1.Click += this.buttonSetHudColor1_Click;
+			// 
+			// buttonSetShowHudCoordinates0
+			// 
+			this.buttonSetShowHudCoordinates0.AutoSize = true;
+			this.buttonSetShowHudCoordinates0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetShowHudCoordinates0.Location = new Point(3, 1909);
+			this.buttonSetShowHudCoordinates0.Name = "buttonSetShowHudCoordinates0";
+			this.buttonSetShowHudCoordinates0.Size = new Size(111, 25);
+			this.buttonSetShowHudCoordinates0.TabIndex = 67;
+			this.buttonSetShowHudCoordinates0.Text = "Hide camera stats";
+			this.buttonSetShowHudCoordinates0.UseVisualStyleBackColor = true;
+			this.buttonSetShowHudCoordinates0.Click += this.buttonSetShowHudCoordinates0_Click;
+			// 
+			// buttonSetShowHudCoordinates1
+			// 
+			this.buttonSetShowHudCoordinates1.AutoSize = true;
+			this.buttonSetShowHudCoordinates1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetShowHudCoordinates1.Location = new Point(3, 1940);
+			this.buttonSetShowHudCoordinates1.Name = "buttonSetShowHudCoordinates1";
+			this.buttonSetShowHudCoordinates1.Size = new Size(163, 25);
+			this.buttonSetShowHudCoordinates1.TabIndex = 68;
+			this.buttonSetShowHudCoordinates1.Text = "Show camera stats (default)";
+			this.buttonSetShowHudCoordinates1.UseVisualStyleBackColor = true;
+			this.buttonSetShowHudCoordinates1.Click += this.buttonSetShowHudCoordinates1_Click;
+			// 
+			// buttonSetHudFpsCoordinates0
+			// 
+			this.buttonSetHudFpsCoordinates0.AutoSize = true;
+			this.buttonSetHudFpsCoordinates0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudFpsCoordinates0.Location = new Point(3, 1971);
+			this.buttonSetHudFpsCoordinates0.Name = "buttonSetHudFpsCoordinates0";
+			this.buttonSetHudFpsCoordinates0.Size = new Size(185, 25);
+			this.buttonSetHudFpsCoordinates0.TabIndex = 69;
+			this.buttonSetHudFpsCoordinates0.Text = "Default FPS camera stats format";
+			this.buttonSetHudFpsCoordinates0.UseVisualStyleBackColor = true;
+			this.buttonSetHudFpsCoordinates0.Click += this.buttonSetHudFpsCoordinates0_Click;
+			// 
+			// buttonSetHudFpsCoordinates1
+			// 
+			this.buttonSetHudFpsCoordinates1.AutoSize = true;
+			this.buttonSetHudFpsCoordinates1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudFpsCoordinates1.Location = new Point(3, 2002);
+			this.buttonSetHudFpsCoordinates1.Name = "buttonSetHudFpsCoordinates1";
+			this.buttonSetHudFpsCoordinates1.Size = new Size(185, 25);
+			this.buttonSetHudFpsCoordinates1.TabIndex = 70;
+			this.buttonSetHudFpsCoordinates1.Text = "Altered FPS camera stats format";
+			this.buttonSetHudFpsCoordinates1.UseVisualStyleBackColor = true;
+			this.buttonSetHudFpsCoordinates1.Click += this.buttonSetHudFpsCoordinates1_Click;
+			// 
+			// buttonSetHudOrbitCoordinates0
+			// 
+			this.buttonSetHudOrbitCoordinates0.AutoSize = true;
+			this.buttonSetHudOrbitCoordinates0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudOrbitCoordinates0.Location = new Point(3, 2033);
+			this.buttonSetHudOrbitCoordinates0.Name = "buttonSetHudOrbitCoordinates0";
+			this.buttonSetHudOrbitCoordinates0.Size = new Size(191, 25);
+			this.buttonSetHudOrbitCoordinates0.TabIndex = 71;
+			this.buttonSetHudOrbitCoordinates0.Text = "Default orbit camera stats format";
+			this.buttonSetHudOrbitCoordinates0.UseVisualStyleBackColor = true;
+			this.buttonSetHudOrbitCoordinates0.Click += this.buttonSetHudOrbitCoordinates0_Click;
+			// 
+			// buttonSetHudOrbitCoordinates1
+			// 
+			this.buttonSetHudOrbitCoordinates1.AutoSize = true;
+			this.buttonSetHudOrbitCoordinates1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudOrbitCoordinates1.Location = new Point(3, 2064);
+			this.buttonSetHudOrbitCoordinates1.Name = "buttonSetHudOrbitCoordinates1";
+			this.buttonSetHudOrbitCoordinates1.Size = new Size(191, 25);
+			this.buttonSetHudOrbitCoordinates1.TabIndex = 72;
+			this.buttonSetHudOrbitCoordinates1.Text = "Altered orbit camera stats format";
+			this.buttonSetHudOrbitCoordinates1.UseVisualStyleBackColor = true;
+			this.buttonSetHudOrbitCoordinates1.Click += this.buttonSetHudOrbitCoordinates1_Click;
+			// 
+			// buttonSetShowHudRaycastHit0
+			// 
+			this.buttonSetShowHudRaycastHit0.AutoSize = true;
+			this.buttonSetShowHudRaycastHit0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetShowHudRaycastHit0.Location = new Point(3, 2095);
+			this.buttonSetShowHudRaycastHit0.Name = "buttonSetShowHudRaycastHit0";
+			this.buttonSetShowHudRaycastHit0.Size = new Size(107, 25);
+			this.buttonSetShowHudRaycastHit0.TabIndex = 73;
+			this.buttonSetShowHudRaycastHit0.Text = "Hide pointer info";
+			this.buttonSetShowHudRaycastHit0.UseVisualStyleBackColor = true;
+			this.buttonSetShowHudRaycastHit0.Click += this.buttonSetShowHudRaycastHit0_Click;
+			// 
+			// buttonSetShowHudRaycastHit1
+			// 
+			this.buttonSetShowHudRaycastHit1.AutoSize = true;
+			this.buttonSetShowHudRaycastHit1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetShowHudRaycastHit1.Location = new Point(3, 2126);
+			this.buttonSetShowHudRaycastHit1.Name = "buttonSetShowHudRaycastHit1";
+			this.buttonSetShowHudRaycastHit1.Size = new Size(159, 25);
+			this.buttonSetShowHudRaycastHit1.TabIndex = 74;
+			this.buttonSetShowHudRaycastHit1.Text = "Show pointer info (default)";
+			this.buttonSetShowHudRaycastHit1.UseVisualStyleBackColor = true;
+			this.buttonSetShowHudRaycastHit1.Click += this.buttonSetShowHudRaycastHit1_Click;
+			// 
+			// buttonSetHudRaycastFloor0
+			// 
+			this.buttonSetHudRaycastFloor0.AutoSize = true;
+			this.buttonSetHudRaycastFloor0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastFloor0.Location = new Point(3, 2157);
+			this.buttonSetHudRaycastFloor0.Name = "buttonSetHudRaycastFloor0";
+			this.buttonSetHudRaycastFloor0.Size = new Size(146, 25);
+			this.buttonSetHudRaycastFloor0.TabIndex = 75;
+			this.buttonSetHudRaycastFloor0.Text = "Default floor info format";
+			this.buttonSetHudRaycastFloor0.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastFloor0.Click += this.buttonSetHudRaycastFloor0_Click;
+			// 
+			// buttonSetHudRaycastFloor1
+			// 
+			this.buttonSetHudRaycastFloor1.AutoSize = true;
+			this.buttonSetHudRaycastFloor1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastFloor1.Location = new Point(3, 2188);
+			this.buttonSetHudRaycastFloor1.Name = "buttonSetHudRaycastFloor1";
+			this.buttonSetHudRaycastFloor1.Size = new Size(146, 25);
+			this.buttonSetHudRaycastFloor1.TabIndex = 76;
+			this.buttonSetHudRaycastFloor1.Text = "Altered floor info format";
+			this.buttonSetHudRaycastFloor1.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastFloor1.Click += this.buttonSetHudRaycastFloor1_Click;
+			// 
+			// buttonSetHudRaycastCeiling0
+			// 
+			this.buttonSetHudRaycastCeiling0.AutoSize = true;
+			this.buttonSetHudRaycastCeiling0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastCeiling0.Location = new Point(3, 2219);
+			this.buttonSetHudRaycastCeiling0.Name = "buttonSetHudRaycastCeiling0";
+			this.buttonSetHudRaycastCeiling0.Size = new Size(156, 25);
+			this.buttonSetHudRaycastCeiling0.TabIndex = 77;
+			this.buttonSetHudRaycastCeiling0.Text = "Default ceiling info format";
+			this.buttonSetHudRaycastCeiling0.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastCeiling0.Click += this.buttonSetHudRaycastCeiling0_Click;
+			// 
+			// buttonSetHudRaycastCeiling1
+			// 
+			this.buttonSetHudRaycastCeiling1.AutoSize = true;
+			this.buttonSetHudRaycastCeiling1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastCeiling1.Location = new Point(3, 2250);
+			this.buttonSetHudRaycastCeiling1.Name = "buttonSetHudRaycastCeiling1";
+			this.buttonSetHudRaycastCeiling1.Size = new Size(156, 25);
+			this.buttonSetHudRaycastCeiling1.TabIndex = 78;
+			this.buttonSetHudRaycastCeiling1.Text = "Altered ceiling info format";
+			this.buttonSetHudRaycastCeiling1.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastCeiling1.Click += this.buttonSetHudRaycastCeiling1_Click;
+			// 
+			// buttonSetHudRaycastWall0
+			// 
+			this.buttonSetHudRaycastWall0.AutoSize = true;
+			this.buttonSetHudRaycastWall0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastWall0.Location = new Point(3, 2281);
+			this.buttonSetHudRaycastWall0.Name = "buttonSetHudRaycastWall0";
+			this.buttonSetHudRaycastWall0.Size = new Size(142, 25);
+			this.buttonSetHudRaycastWall0.TabIndex = 79;
+			this.buttonSetHudRaycastWall0.Text = "Default wall info format";
+			this.buttonSetHudRaycastWall0.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastWall0.Click += this.buttonSetHudRaycastWall0_Click;
+			// 
+			// buttonSetHudRaycastWall1
+			// 
+			this.buttonSetHudRaycastWall1.AutoSize = true;
+			this.buttonSetHudRaycastWall1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastWall1.Location = new Point(3, 2312);
+			this.buttonSetHudRaycastWall1.Name = "buttonSetHudRaycastWall1";
+			this.buttonSetHudRaycastWall1.Size = new Size(142, 25);
+			this.buttonSetHudRaycastWall1.TabIndex = 80;
+			this.buttonSetHudRaycastWall1.Text = "Altered wall info format";
+			this.buttonSetHudRaycastWall1.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastWall1.Click += this.buttonSetHudRaycastWall1_Click;
+			// 
+			// buttonSetHudRaycastObject0
+			// 
+			this.buttonSetHudRaycastObject0.AutoSize = true;
+			this.buttonSetHudRaycastObject0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastObject0.Location = new Point(3, 2343);
+			this.buttonSetHudRaycastObject0.Name = "buttonSetHudRaycastObject0";
+			this.buttonSetHudRaycastObject0.Size = new Size(154, 25);
+			this.buttonSetHudRaycastObject0.TabIndex = 81;
+			this.buttonSetHudRaycastObject0.Text = "Default object info format";
+			this.buttonSetHudRaycastObject0.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastObject0.Click += this.buttonSetHudRaycastObject0_Click;
+			// 
+			// buttonSetHudRaycastObject1
+			// 
+			this.buttonSetHudRaycastObject1.AutoSize = true;
+			this.buttonSetHudRaycastObject1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.buttonSetHudRaycastObject1.Location = new Point(3, 2374);
+			this.buttonSetHudRaycastObject1.Name = "buttonSetHudRaycastObject1";
+			this.buttonSetHudRaycastObject1.Size = new Size(154, 25);
+			this.buttonSetHudRaycastObject1.TabIndex = 82;
+			this.buttonSetHudRaycastObject1.Text = "Altered object info format";
+			this.buttonSetHudRaycastObject1.UseVisualStyleBackColor = true;
+			this.buttonSetHudRaycastObject1.Click += this.buttonSetHudRaycastObject1_Click;
+			// 
 			// buttonReloadLevelInPlace
 			// 
 			this.buttonReloadLevelInPlace.AutoSize = true;
 			this.buttonReloadLevelInPlace.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonReloadLevelInPlace.Location = new Point(3, 1661);
+			this.buttonReloadLevelInPlace.Location = new Point(3, 2426);
 			this.buttonReloadLevelInPlace.Name = "buttonReloadLevelInPlace";
 			this.buttonReloadLevelInPlace.Size = new Size(80, 25);
-			this.buttonReloadLevelInPlace.TabIndex = 59;
+			this.buttonReloadLevelInPlace.TabIndex = 84;
 			this.buttonReloadLevelInPlace.Text = "Reload level";
 			this.buttonReloadLevelInPlace.UseVisualStyleBackColor = true;
 			this.buttonReloadLevelInPlace.Click += this.buttonReloadLevelInPlace_Click;
@@ -1006,10 +1356,10 @@
 			// 
 			this.buttonInitEmptyLevel.AutoSize = true;
 			this.buttonInitEmptyLevel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonInitEmptyLevel.Location = new Point(3, 1692);
+			this.buttonInitEmptyLevel.Location = new Point(3, 2457);
 			this.buttonInitEmptyLevel.Name = "buttonInitEmptyLevel";
 			this.buttonInitEmptyLevel.Size = new Size(98, 25);
-			this.buttonInitEmptyLevel.TabIndex = 60;
+			this.buttonInitEmptyLevel.TabIndex = 85;
 			this.buttonInitEmptyLevel.Text = "Init empty level";
 			this.buttonInitEmptyLevel.UseVisualStyleBackColor = true;
 			this.buttonInitEmptyLevel.Click += this.buttonInitEmptyLevel_Click;
@@ -1018,10 +1368,10 @@
 			// 
 			this.buttonReloadLevelGeometry.AutoSize = true;
 			this.buttonReloadLevelGeometry.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonReloadLevelGeometry.Location = new Point(3, 1774);
+			this.buttonReloadLevelGeometry.Location = new Point(3, 2539);
 			this.buttonReloadLevelGeometry.Name = "buttonReloadLevelGeometry";
 			this.buttonReloadLevelGeometry.Size = new Size(127, 25);
-			this.buttonReloadLevelGeometry.TabIndex = 63;
+			this.buttonReloadLevelGeometry.TabIndex = 88;
 			this.buttonReloadLevelGeometry.Text = "Inject level geometry";
 			this.buttonReloadLevelGeometry.UseVisualStyleBackColor = true;
 			this.buttonReloadLevelGeometry.Click += this.buttonReloadLevelGeometry_Click;
@@ -1030,10 +1380,10 @@
 			// 
 			this.buttonSetLevelMetadata0.AutoSize = true;
 			this.buttonSetLevelMetadata0.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonSetLevelMetadata0.Location = new Point(3, 1805);
+			this.buttonSetLevelMetadata0.Location = new Point(3, 2570);
 			this.buttonSetLevelMetadata0.Name = "buttonSetLevelMetadata0";
 			this.buttonSetLevelMetadata0.Size = new Size(227, 25);
-			this.buttonSetLevelMetadata0.TabIndex = 64;
+			this.buttonSetLevelMetadata0.TabIndex = 89;
 			this.buttonSetLevelMetadata0.Text = "Force SECBASE.PAL and normal parallax";
 			this.buttonSetLevelMetadata0.UseVisualStyleBackColor = true;
 			this.buttonSetLevelMetadata0.Click += this.buttonSetLevelMetadata0_Click;
@@ -1042,10 +1392,10 @@
 			// 
 			this.buttonSetLevelMetadata1.AutoSize = true;
 			this.buttonSetLevelMetadata1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonSetLevelMetadata1.Location = new Point(3, 1836);
+			this.buttonSetLevelMetadata1.Location = new Point(3, 2601);
 			this.buttonSetLevelMetadata1.Name = "buttonSetLevelMetadata1";
 			this.buttonSetLevelMetadata1.Size = new Size(260, 25);
-			this.buttonSetLevelMetadata1.TabIndex = 65;
+			this.buttonSetLevelMetadata1.TabIndex = 90;
 			this.buttonSetLevelMetadata1.Text = "Force SECBASE.PAL and double parallax speed";
 			this.buttonSetLevelMetadata1.UseVisualStyleBackColor = true;
 			this.buttonSetLevelMetadata1.Click += this.buttonSetLevelMetadata1_Click;
@@ -1054,10 +1404,10 @@
 			// 
 			this.buttonReloadSector.AutoSize = true;
 			this.buttonReloadSector.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonReloadSector.Location = new Point(3, 1867);
+			this.buttonReloadSector.Location = new Point(3, 2632);
 			this.buttonReloadSector.Name = "buttonReloadSector";
 			this.buttonReloadSector.Size = new Size(102, 25);
-			this.buttonReloadSector.TabIndex = 66;
+			this.buttonReloadSector.TabIndex = 91;
 			this.buttonReloadSector.Text = "Replace sector 0";
 			this.buttonReloadSector.UseVisualStyleBackColor = true;
 			this.buttonReloadSector.Click += this.buttonReloadSector_Click;
@@ -1066,10 +1416,10 @@
 			// 
 			this.buttonSetSector.AutoSize = true;
 			this.buttonSetSector.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonSetSector.Location = new Point(3, 1898);
+			this.buttonSetSector.Location = new Point(3, 2663);
 			this.buttonSetSector.Name = "buttonSetSector";
 			this.buttonSetSector.Size = new Size(174, 25);
-			this.buttonSetSector.TabIndex = 67;
+			this.buttonSetSector.TabIndex = 92;
 			this.buttonSetSector.Text = "Randomize sector 0 light level";
 			this.buttonSetSector.UseVisualStyleBackColor = true;
 			this.buttonSetSector.Click += this.buttonSetSector_Click;
@@ -1078,10 +1428,10 @@
 			// 
 			this.buttonMoveSector.AutoSize = true;
 			this.buttonMoveSector.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonMoveSector.Location = new Point(3, 1929);
+			this.buttonMoveSector.Location = new Point(3, 2694);
 			this.buttonMoveSector.Name = "buttonMoveSector";
 			this.buttonMoveSector.Size = new Size(91, 25);
-			this.buttonMoveSector.TabIndex = 68;
+			this.buttonMoveSector.TabIndex = 93;
 			this.buttonMoveSector.Text = "Move sector 0";
 			this.buttonMoveSector.UseVisualStyleBackColor = true;
 			this.buttonMoveSector.Click += this.buttonMoveSector_Click;
@@ -1090,10 +1440,10 @@
 			// 
 			this.buttonDeleteSector.AutoSize = true;
 			this.buttonDeleteSector.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonDeleteSector.Location = new Point(3, 1960);
+			this.buttonDeleteSector.Location = new Point(3, 2725);
 			this.buttonDeleteSector.Name = "buttonDeleteSector";
 			this.buttonDeleteSector.Size = new Size(94, 25);
-			this.buttonDeleteSector.TabIndex = 69;
+			this.buttonDeleteSector.TabIndex = 94;
 			this.buttonDeleteSector.Text = "Delete sector 0";
 			this.buttonDeleteSector.UseVisualStyleBackColor = true;
 			this.buttonDeleteSector.Click += this.buttonDeleteSector_Click;
@@ -1102,10 +1452,10 @@
 			// 
 			this.buttonSetSectorFloor.AutoSize = true;
 			this.buttonSetSectorFloor.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonSetSectorFloor.Location = new Point(3, 1991);
+			this.buttonSetSectorFloor.Location = new Point(3, 2756);
 			this.buttonSetSectorFloor.Name = "buttonSetSectorFloor";
 			this.buttonSetSectorFloor.Size = new Size(130, 25);
-			this.buttonSetSectorFloor.TabIndex = 70;
+			this.buttonSetSectorFloor.TabIndex = 95;
 			this.buttonSetSectorFloor.Text = "Replace sector 0 floor";
 			this.buttonSetSectorFloor.UseVisualStyleBackColor = true;
 			this.buttonSetSectorFloor.Click += this.buttonSetSectorFloor_Click;
@@ -1114,10 +1464,10 @@
 			// 
 			this.buttonSetSectorCeiling.AutoSize = true;
 			this.buttonSetSectorCeiling.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonSetSectorCeiling.Location = new Point(3, 2022);
+			this.buttonSetSectorCeiling.Location = new Point(3, 2787);
 			this.buttonSetSectorCeiling.Name = "buttonSetSectorCeiling";
 			this.buttonSetSectorCeiling.Size = new Size(140, 25);
-			this.buttonSetSectorCeiling.TabIndex = 71;
+			this.buttonSetSectorCeiling.TabIndex = 96;
 			this.buttonSetSectorCeiling.Text = "Replace sector 0 ceiling";
 			this.buttonSetSectorCeiling.UseVisualStyleBackColor = true;
 			this.buttonSetSectorCeiling.Click += this.buttonSetSectorCeiling_Click;
@@ -1126,10 +1476,10 @@
 			// 
 			this.buttonReloadWall.AutoSize = true;
 			this.buttonReloadWall.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonReloadWall.Location = new Point(3, 2053);
+			this.buttonReloadWall.Location = new Point(3, 2818);
 			this.buttonReloadWall.Name = "buttonReloadWall";
 			this.buttonReloadWall.Size = new Size(135, 25);
-			this.buttonReloadWall.TabIndex = 72;
+			this.buttonReloadWall.TabIndex = 97;
 			this.buttonReloadWall.Text = "Replace sector 0 wall 0";
 			this.buttonReloadWall.UseVisualStyleBackColor = true;
 			this.buttonReloadWall.Click += this.buttonReloadWall_Click;
@@ -1138,10 +1488,10 @@
 			// 
 			this.buttonInsertWall.AutoSize = true;
 			this.buttonInsertWall.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonInsertWall.Location = new Point(3, 2084);
+			this.buttonInsertWall.Location = new Point(3, 2849);
 			this.buttonInsertWall.Name = "buttonInsertWall";
 			this.buttonInsertWall.Size = new Size(79, 25);
-			this.buttonInsertWall.TabIndex = 73;
+			this.buttonInsertWall.TabIndex = 98;
 			this.buttonInsertWall.Text = "Insert wall 4";
 			this.buttonInsertWall.UseVisualStyleBackColor = true;
 			this.buttonInsertWall.Click += this.buttonInsertWall_Click;
@@ -1150,10 +1500,10 @@
 			// 
 			this.buttonDeleteWall.AutoSize = true;
 			this.buttonDeleteWall.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonDeleteWall.Location = new Point(3, 2115);
+			this.buttonDeleteWall.Location = new Point(3, 2880);
 			this.buttonDeleteWall.Name = "buttonDeleteWall";
 			this.buttonDeleteWall.Size = new Size(83, 25);
-			this.buttonDeleteWall.TabIndex = 74;
+			this.buttonDeleteWall.TabIndex = 99;
 			this.buttonDeleteWall.Text = "Delete wall 4";
 			this.buttonDeleteWall.UseVisualStyleBackColor = true;
 			this.buttonDeleteWall.Click += this.buttonDeleteWall_Click;
@@ -1162,10 +1512,10 @@
 			// 
 			this.buttonSetVertex.AutoSize = true;
 			this.buttonSetVertex.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonSetVertex.Location = new Point(3, 2146);
+			this.buttonSetVertex.Location = new Point(3, 2911);
 			this.buttonSetVertex.Name = "buttonSetVertex";
 			this.buttonSetVertex.Size = new Size(135, 25);
-			this.buttonSetVertex.TabIndex = 75;
+			this.buttonSetVertex.TabIndex = 100;
 			this.buttonSetVertex.Text = "Move sector 0 vertex 0";
 			this.buttonSetVertex.UseVisualStyleBackColor = true;
 			this.buttonSetVertex.Click += this.buttonSetVertex_Click;
@@ -1174,10 +1524,10 @@
 			// 
 			this.buttonReloadLevelObjects.AutoSize = true;
 			this.buttonReloadLevelObjects.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonReloadLevelObjects.Location = new Point(3, 2228);
+			this.buttonReloadLevelObjects.Location = new Point(3, 2993);
 			this.buttonReloadLevelObjects.Name = "buttonReloadLevelObjects";
 			this.buttonReloadLevelObjects.Size = new Size(87, 25);
-			this.buttonReloadLevelObjects.TabIndex = 78;
+			this.buttonReloadLevelObjects.TabIndex = 103;
 			this.buttonReloadLevelObjects.Text = "Inject objects";
 			this.buttonReloadLevelObjects.UseVisualStyleBackColor = true;
 			this.buttonReloadLevelObjects.Click += this.buttonReloadLevelObjects_Click;
@@ -1186,10 +1536,10 @@
 			// 
 			this.buttonSetObject.AutoSize = true;
 			this.buttonSetObject.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonSetObject.Location = new Point(3, 2259);
+			this.buttonSetObject.Location = new Point(3, 3024);
 			this.buttonSetObject.Name = "buttonSetObject";
 			this.buttonSetObject.Size = new Size(78, 25);
-			this.buttonSetObject.TabIndex = 79;
+			this.buttonSetObject.TabIndex = 104;
 			this.buttonSetObject.Text = "Set object 4";
 			this.buttonSetObject.UseVisualStyleBackColor = true;
 			this.buttonSetObject.Click += this.buttonSetObject_Click;
@@ -1198,10 +1548,10 @@
 			// 
 			this.buttonDeleteObject.AutoSize = true;
 			this.buttonDeleteObject.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonDeleteObject.Location = new Point(3, 2290);
+			this.buttonDeleteObject.Location = new Point(3, 3055);
 			this.buttonDeleteObject.Name = "buttonDeleteObject";
 			this.buttonDeleteObject.Size = new Size(95, 25);
-			this.buttonDeleteObject.TabIndex = 80;
+			this.buttonDeleteObject.TabIndex = 105;
 			this.buttonDeleteObject.Text = "Delete object 4";
 			this.buttonDeleteObject.UseVisualStyleBackColor = true;
 			this.buttonDeleteObject.Click += this.buttonDeleteObject_Click;
@@ -1210,10 +1560,10 @@
 			// 
 			this.buttonResetCamera.AutoSize = true;
 			this.buttonResetCamera.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonResetCamera.Location = new Point(3, 2342);
+			this.buttonResetCamera.Location = new Point(3, 3107);
 			this.buttonResetCamera.Name = "buttonResetCamera";
 			this.buttonResetCamera.Size = new Size(87, 25);
-			this.buttonResetCamera.TabIndex = 82;
+			this.buttonResetCamera.TabIndex = 107;
 			this.buttonResetCamera.Text = "Reset camera";
 			this.buttonResetCamera.UseVisualStyleBackColor = true;
 			this.buttonResetCamera.Click += this.buttonResetCamera_Click;
@@ -1222,10 +1572,10 @@
 			// 
 			this.buttonMoveCamera.AutoSize = true;
 			this.buttonMoveCamera.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonMoveCamera.Location = new Point(3, 2373);
+			this.buttonMoveCamera.Location = new Point(3, 3138);
 			this.buttonMoveCamera.Name = "buttonMoveCamera";
 			this.buttonMoveCamera.Size = new Size(137, 25);
-			this.buttonMoveCamera.TabIndex = 83;
+			this.buttonMoveCamera.TabIndex = 108;
 			this.buttonMoveCamera.Text = "Move camera to origin";
 			this.buttonMoveCamera.UseVisualStyleBackColor = true;
 			this.buttonMoveCamera.Click += this.buttonMoveCamera_Click;
@@ -1234,10 +1584,10 @@
 			// 
 			this.buttonRotateCamera.AutoSize = true;
 			this.buttonRotateCamera.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonRotateCamera.Location = new Point(3, 2404);
+			this.buttonRotateCamera.Location = new Point(3, 3169);
 			this.buttonRotateCamera.Name = "buttonRotateCamera";
 			this.buttonRotateCamera.Size = new Size(182, 25);
-			this.buttonRotateCamera.TabIndex = 85;
+			this.buttonRotateCamera.TabIndex = 109;
 			this.buttonRotateCamera.Text = "Rotate camera to point forward";
 			this.buttonRotateCamera.UseVisualStyleBackColor = true;
 			this.buttonRotateCamera.Click += this.buttonRotateCamera_Click;
@@ -1246,10 +1596,10 @@
 			// 
 			this.buttonMoveAndRotateCamera.AutoSize = true;
 			this.buttonMoveAndRotateCamera.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonMoveAndRotateCamera.Location = new Point(3, 2435);
+			this.buttonMoveAndRotateCamera.Location = new Point(3, 3200);
 			this.buttonMoveAndRotateCamera.Name = "buttonMoveAndRotateCamera";
 			this.buttonMoveAndRotateCamera.Size = new Size(194, 25);
-			this.buttonMoveAndRotateCamera.TabIndex = 86;
+			this.buttonMoveAndRotateCamera.TabIndex = 110;
 			this.buttonMoveAndRotateCamera.Text = "Move and rotate camera to origin";
 			this.buttonMoveAndRotateCamera.UseVisualStyleBackColor = true;
 			this.buttonMoveAndRotateCamera.Click += this.buttonMoveAndRotateCamera_Click;
@@ -1258,10 +1608,10 @@
 			// 
 			this.buttonPointCameraAt.AutoSize = true;
 			this.buttonPointCameraAt.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonPointCameraAt.Location = new Point(3, 2466);
+			this.buttonPointCameraAt.Location = new Point(3, 3231);
 			this.buttonPointCameraAt.Name = "buttonPointCameraAt";
 			this.buttonPointCameraAt.Size = new Size(134, 25);
-			this.buttonPointCameraAt.TabIndex = 87;
+			this.buttonPointCameraAt.TabIndex = 111;
 			this.buttonPointCameraAt.Text = "Point camera at origin";
 			this.buttonPointCameraAt.UseVisualStyleBackColor = true;
 			this.buttonPointCameraAt.Click += this.buttonPointCameraAt_Click;
@@ -1270,10 +1620,10 @@
 			// 
 			this.buttonCaptureMouse.AutoSize = true;
 			this.buttonCaptureMouse.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			this.buttonCaptureMouse.Location = new Point(3, 2497);
-			this.buttonCaptureMouse.Name = "buttonCaptureeMouse";
+			this.buttonCaptureMouse.Location = new Point(3, 3262);
+			this.buttonCaptureMouse.Name = "buttonCaptureMouse";
 			this.buttonCaptureMouse.Size = new Size(98, 25);
-			this.buttonCaptureMouse.TabIndex = 88;
+			this.buttonCaptureMouse.TabIndex = 112;
 			this.buttonCaptureMouse.Text = "Capture mouse";
 			this.buttonCaptureMouse.UseVisualStyleBackColor = true;
 			this.buttonCaptureMouse.Click += this.buttonCaptureMouse_Click;
@@ -1392,5 +1742,29 @@
 		private StatusStrip status;
 		private ToolStripStatusLabel statusText;
 		private Button buttonCaptureMouse;
+		private Button buttonSetShowHud0;
+		private Button buttonSetShowHud1;
+		private Button buttonSetHudAlign0;
+		private Button buttonSetHudAlign1;
+		private Button buttonSetHudFontSize0;
+		private Button buttonSetHudFontSize1;
+		private Button buttonSetHudColor0;
+		private Button buttonSetHudColor1;
+		private Button buttonSetShowHudCoordinates0;
+		private Button buttonSetShowHudCoordinates1;
+		private Button buttonSetHudFpsCoordinates0;
+		private Button buttonSetHudFpsCoordinates1;
+		private Button buttonSetHudOrbitCoordinates0;
+		private Button buttonSetHudOrbitCoordinates1;
+		private Button buttonSetShowHudRaycastHit0;
+		private Button buttonSetShowHudRaycastHit1;
+		private Button buttonSetHudRaycastFloor0;
+		private Button buttonSetHudRaycastFloor1;
+		private Button buttonSetHudRaycastCeiling0;
+		private Button buttonSetHudRaycastCeiling1;
+		private Button buttonSetHudRaycastWall0;
+		private Button buttonSetHudRaycastWall1;
+		private Button buttonSetHudRaycastObject0;
+		private Button buttonSetHudRaycastObject1;
 	}
 }

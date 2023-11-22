@@ -476,6 +476,282 @@ You can click on the window to capture the mouse and then look around freely wit
 
 If this option is off, you must hold left click to temporarily capture the mouse and look around.
 
+### ShowHud
+
+#### Type
+
+bool
+
+#### Description
+
+Show or hide the label that contains camera statistics and hover information.
+
+### HudAlign
+
+#### Type
+
+int / string
+
+#### Description
+
+The valid values are listed here:
+
+https://docs.unity3d.com/Packages/com.unity.textmeshpro@2.0/api/TMPro.TextAlignmentOptions.html
+
+For API use you may pass in the string or numeric value. For the settings.json you must use the numeric value.
+
+The default is TopLeft / 257.
+
+### HudFontSize
+
+#### Type
+
+float
+
+#### Description
+
+Adjusts the maximum font size used by the HUD. The default is 36.
+
+### HudColorR / HudColorG / HudColorB / HudColorA
+
+#### Type
+
+float (0 to 1)
+
+#### Description
+
+Adjusts the color of the HUD text, including its opacity.
+
+### ShowHudCoordinates
+
+#### Type
+
+bool
+
+#### Description
+
+Whether or not camera stats are shown on the HUD.
+
+### HudFpsCoordinates
+
+#### Type
+
+string
+
+#### Description
+
+The format string used for camera stats when using the FPS camera.
+
+The string can follow all conventions allowed by the .NET string.Format function: https://learn.microsoft.com/en-us/dotnet/api/system.string.format?view=net-8.0
+
+A major difference is instead of using numbered arguments, named arguments are used, still inside {}.
+
+The list of allowed placeholders is as follows.
+
+* x - The x coordinate of the camera in DFUs.
+* y - The y coordinate of the camera in DFUs.
+* z - The z coordinate of the camera in DFUs.
+* pitch - The pitch of the camera.
+* yaw - The yaw of the camera.
+* roll - The roll of the camera (should always be 0).
+
+### HudOrbitCoordinates
+
+#### Type
+
+string
+
+#### Description
+
+The format string used for camera stats when using the orbit camera.
+
+The string can follow all conventions allowed by the .NET string.Format function: https://learn.microsoft.com/en-us/dotnet/api/system.string.format?view=net-8.0
+
+A major difference is instead of using numbered arguments, named arguments are used, still inside {}.
+
+The list of allowed placeholders is as follows.
+
+* x - The x coordinate of the point the camera orbits around in DFUs.
+* y - The y coordinate of the point the camera orbits around in DFUs.
+* z - The z coordinate of the point the camera orbits around in DFUs.
+* pitch - The pitch of the camera.
+* yaw - The yaw of the camera.
+* roll - The roll of the camera (should always be 0).
+* distance - The distance from the camera to its focus point in DFUs.
+
+### ShowHudRaycastHit
+
+#### Type
+
+bool
+
+#### Description
+
+Whether or not information about geometry/objects the pointer is over is shown on the HUD.
+
+### HudRaycastFloor
+
+#### Type
+
+string
+
+#### Description
+
+The format string used to display information about a floor the pointer is aiming at.
+
+The string can follow all conventions allowed by the .NET string.Format function: https://learn.microsoft.com/en-us/dotnet/api/system.string.format?view=net-8.0
+
+A major difference is instead of using numbered arguments, named arguments are used, still inside {}.
+
+The list of allowed placeholders is as follows.
+
+* hitX - The x coordinate the pointer is aiming at in DFUs.
+* hitY - The y coordinate the pointer is aiming at in DFUs.
+* hitZ - The z coordinate the pointer is aiming at in DFUs.
+* sectorIndex - The index number of the sector the pointer is aiming at.
+* sectorName - The name of the sector the pointer is aiming at, or a blank string if it doesn't have a name.
+* sector - The name of the sector the pointer is aiming at, or the index number if it doesn't have a name.
+* altLight - The alt light level of the sector.
+* flags - A text list of the flags on the sector.
+* layer - The layer the sector is on.
+* light - The light level of the sector.
+* unusedFlags - The integer value of UnusedFlags2 for the sector.
+* walls - The number of walls the sector has.
+* vertices - The number of vertices the sector has.
+* textureFile - The texture of the floor.
+* textureOffsetX - The texture offset x of the floor.
+* textureOffsetZ - The texture offset z of the floor.
+* textureUnknown - The integer value of the floor's TextureUnknown field.
+* y - The height of the floor in DFUs.
+
+### HudRaycastCeiling
+
+#### Type
+
+string
+
+#### Description
+
+The format string used to display information about a ceiling the pointer is aiming at.
+
+The string can follow all conventions allowed by the .NET string.Format function: https://learn.microsoft.com/en-us/dotnet/api/system.string.format?view=net-8.0
+
+A major difference is instead of using numbered arguments, named arguments are used, still inside {}.
+
+The list of allowed placeholders is as follows.
+
+* hitX - The x coordinate the pointer is aiming at in DFUs.
+* hitY - The y coordinate the pointer is aiming at in DFUs.
+* hitZ - The z coordinate the pointer is aiming at in DFUs.
+* sectorIndex - The index number of the sector the pointer is aiming at.
+* sectorName - The name of the sector the pointer is aiming at, or a blank string if it doesn't have a name.
+* sector - The name of the sector the pointer is aiming at, or the index number if it doesn't have a name.
+* altLight - The alt light level of the sector.
+* flags - A text list of the flags on the sector.
+* layer - The layer the sector is on.
+* light - The light level of the sector.
+* unusedFlags - The integer value of UnusedFlags2 for the sector.
+* walls - The number of walls the sector has.
+* vertices - The number of vertices the sector has.
+* textureFile - The texture of the ceiling.
+* textureOffsetX - The texture offset x of the ceiling.
+* textureOffsetZ - The texture offset z of the ceiling.
+* textureUnknown - The integer value of the ceiling's TextureUnknown field.
+* y - The height of the ceiling in DFUs.
+
+### HudRaycastWall
+
+#### Type
+
+string
+
+#### Description
+
+The format string used to display information about a wall the pointer is aiming at.
+
+The string can follow all conventions allowed by the .NET string.Format function: https://learn.microsoft.com/en-us/dotnet/api/system.string.format?view=net-8.0
+
+A major difference is instead of using numbered arguments, named arguments are used, still inside {}.
+
+The list of allowed placeholders is as follows.
+
+* hitX - The x coordinate the pointer is aiming at in DFUs.
+* hitY - The y coordinate the pointer is aiming at in DFUs.
+* hitZ - The z coordinate the pointer is aiming at in DFUs.
+* sectorIndex - The index number of the sector the pointer is aiming at.
+* sectorName - The name of the sector the pointer is aiming at, or a blank string if it doesn't have a name.
+* sector - The name of the sector the pointer is aiming at, or the index number if it doesn't have a name.
+* wall - The index number of the wall the pointer is aiming at.
+* altLight - The alt light level of the sector.
+* flags - A text list of the flags on the sector.
+* layer - The layer the sector is on.
+* light - The light level of the sector.
+* unusedFlags - The integer value of UnusedFlags2 for the sector.
+* walls - The number of walls the sector has.
+* vertices - The number of vertices the sector has.
+* adjoinSectorIndex - The index number of the sector this wall is adjoined to, or -1 if none.
+* adjoinSectorName - The name of the sector this wall is adjoined to, or empty string if there is none or it doesn't habe a name.
+* adjoinSector - The name of the sector this wall is adjoined to, or the index number if it doesn't have a name, or "\<NONE\>" if none.
+* adjoinWall - The index number of the wall this wall is adjoined to, or -1 if none.
+* adjoinFlags - A text list of the adjoin flags on the wall.
+* botTextureFile - The texture of the wall's bottom part.
+* botTextureOffsetX - The texture offset x of the wall's bottom part.
+* botTextureOffsetZ - The texture offset z of the wall's bottom part.
+* botTextureUnknown - The integer value of the wall's bottom part's TextureUnknown field.
+* x1 - The x coordinate of the wall's left vertex.
+* z1 - The z coordinate of the wall's left vertex.
+* wallLight - The extra light level of the wall.
+* midTextureFile - The texture of the wall's main part.
+* midTextureOffsetX - The texture offset x of the wall's main part.
+* midTextureOffsetZ - The texture offset z of the wall's main part.
+* midTextureUnknown - The integer value of the wall's main part's TextureUnknown field.
+* x2 - The x coordinate of the wall's right vertex.
+* z2 - The z coordinate of the wall's right vertex.
+* signTextureFile - The texture of the wall's sign.
+* signTextureOffsetX - The texture offset x of the wall's sign.
+* signTextureOffsetZ - The texture offset z of the wall's sign.
+* signTextureUnknown - The integer value of the wall's sign's TextureUnknown field.
+* textureMapFlags - A text list of the texture / map flags on the wall.
+* topTextureFile - The texture of the wall's top part.
+* topTextureOffsetX - The texture offset x of the wall's top part.
+* topTextureOffsetZ - The texture offset z of the wall's top part.
+* topTextureUnknown - The integer value of the wall's top part's TextureUnknown field.
+* wallUnusedFlags - The integer value of UnusedFlags2 for the wall.
+
+### HudRaycastObject
+
+#### Type
+
+string
+
+#### Description
+
+The format string used to display information about an object the pointer is aiming at.
+
+The string can follow all conventions allowed by the .NET string.Format function: https://learn.microsoft.com/en-us/dotnet/api/system.string.format?view=net-8.0
+
+A major difference is instead of using numbered arguments, named arguments are used, still inside {}.
+
+The list of allowed placeholders is as follows.
+
+* hitX - The x coordinate the pointer is aiming at in DFUs.
+* hitY - The y coordinate the pointer is aiming at in DFUs.
+* hitZ - The z coordinate the pointer is aiming at in DFUs.
+* sectorIndex - The index number of the sector the object is in, -1 if a sector can't be found.
+* sectorName - The name of the sector the object is in, or a blank string if it doesn't have a name or the sector can't be found.
+* sector - The name of the sector the object is in, or the index number if it doesn't have a name, or "\<NONE\>" if there is no sector.
+* object - The index number of the object.
+* x - The x coorinate of the object in DFUs.
+* y - The y coorinate of the object in DFUs.
+* z - The z coorinate of the object in DFUs.
+* pitch - The pitch of the object.
+* yaw - The yaw of the object.
+* roll - The roll of the object.
+* difficulty - Text showing which difficulties the object is active for.
+* filename - The filename the object uses for display, or a blank string if none.
+* logic - The logic text associated with the object.
+* type - The type of object, as a string.
+
 ## Events
 
 The LevelPreview wrapper class will emit a few different events. The implementation differs between WebGL and Windows but the class  handles that for you.
@@ -618,11 +894,11 @@ Below are some notes on using the APIs to set specific settings.
 
 You must call ReloadDataFiles for this to take effect.
 
-#### SetBackground
+#### SetBackground / SetHudColor
 
 In JavaScript, R, G, B values are specified in one set command as individual arguments.
 
-In C# pass in a Color object. Alpha channel is ignored.
+In C# you can pass in individual floats or pass in a single Color object. Alpha channel is ignored for the background.
 
 #### SetLookSensitivity / SetMoveSensitivity
 

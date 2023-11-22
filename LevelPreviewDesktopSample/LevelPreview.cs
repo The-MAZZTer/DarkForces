@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MZZT.DarkForces.Showcase;
 
@@ -276,9 +277,13 @@ public class LevelPreview : IDisposable {
 	public async Task SetDarkForcesPathAsync(string path) {
 		await this.ApiCallAsync("SetDarkForcesPath", path);
 	}
+	
+	public async Task SetBackgroundAsync(float r, float g, float b) {
+		await this.ApiCallAsync("SetBackground", r.ToString(), g.ToString(), b.ToString());
+	}
 
-	public async Task SetBackgroundAsync(Color color) {
-		await this.ApiCallAsync("SetBackground", (color.R / 255f).ToString(), (color.G / 255f).ToString(), (color.B / 255f).ToString());
+	public async Task SetBackgroundAsync(Color value) {
+		await this.ApiCallAsync("SetBackground", (value.R / 255f).ToString(), (value.G / 255f).ToString(), (value.B / 255f).ToString());
 	}
 
 	public async Task SetShowWaitBitmapAsync(bool value) {
@@ -367,6 +372,62 @@ public class LevelPreview : IDisposable {
 
 	public async Task SetUseMouseCaptureAsync(bool value) {
 		await this.ApiCallAsync("SetUseMouseCapture", value.ToString());
+	}
+	
+	public async Task SetShowHudAsync(bool value) {
+		await this.ApiCallAsync("SetShowHud", value.ToString());
+	}
+
+	public async Task SetHudAlignAsync(int value) {
+		await this.ApiCallAsync("SetHudAlign", value.ToString());
+	}
+
+	public async Task SetHudAlignAsync(string value) {
+		await this.ApiCallAsync("SetHudAlign", value);
+	}
+
+	public async Task SetHudFontSizeAsync(float value) {
+		await this.ApiCallAsync("SetHudFontSize", value.ToString());
+	}
+
+	public async Task SetHudColorAsync(float r, float g, float b, float a) {
+		await this.ApiCallAsync("SetHudColor", r.ToString(), g.ToString(), b.ToString(), a.ToString());
+	}
+
+	public async Task SetHudColorAsync(Color value) {
+		await this.ApiCallAsync("SetHudColor", (value.R / 255f).ToString(), (value.G / 255f).ToString(), (value.B / 255f).ToString(), (value.A / 255f).ToString());
+	}
+
+	public async Task SetShowHudCoordinatesAsync(bool value) {
+		await this.ApiCallAsync("SetShowHudCoordinates", value.ToString());
+	}
+
+	public async Task SetHudFpsCoordinatesAsync(string value) {
+		await this.ApiCallAsync("SetHudFpsCoordinates", value);
+	}
+
+	public async Task SetHudOrbitCoordinatesAsync(string value) {
+		await this.ApiCallAsync("SetHudOrbitCoordinates", value);
+	}
+
+	public async Task SetShowHudRaycastHitAsync(bool value) {
+		await this.ApiCallAsync("SetShowHudRaycastHit", value.ToString());
+	}
+
+	public async Task SetHudRaycastFloorAsync(string value) {
+		await this.ApiCallAsync("SetHudRaycastFloor", value);
+	}
+
+	public async Task SetHudRaycastCeilingAsync(string value) {
+		await this.ApiCallAsync("SetHudRaycastCeiling", value);
+	}
+
+	public async Task SetHudRaycastWallAsync(string value) {
+		await this.ApiCallAsync("SetHudRaycastWall", value);
+	}
+
+	public async Task SetHudRaycastObjectAsync(string value) {
+		await this.ApiCallAsync("SetHudRaycastObject", value);
 	}
 
 	public async Task ReloadLevelGeometryAsync(LevelInfo level) {

@@ -29,5 +29,20 @@
 	"RunMultiplier": 2,
 	"ZoomSensitivity": -0.01,
 	"UseOrbitCamera": true,
-	"UseMouseCapture": false
+	"UseMouseCapture": false,
+	"ShowHud": true,
+	"HudAlign": 257,
+	"HudFontSize": 36,
+	"HudColorR": 1,
+	"HudColorG": 0,
+	"HudColorB": 0,
+	"HudColorA": 1,
+	"ShowHudCoordinates": true,
+	"HudFpsCoordinates": "Pos: {x:F2} {y:F2} {z:F2}\nRot: {pitch:F2} {yaw:F2}",
+	"HudOrbitCoordinates": "Focus: {x:F2} {y:F2} {z:F2}\nRot: {pitch:F2} {yaw:F2}\nDist: {distance:F2}",
+	"ShowHudRaycastHit": true,
+	"HudRaycastFloor": "Sector {sector} Floor\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nTexture: {textureFile}\nLight: {light}\nLayer: {layer}\nFlags: {flags}",
+	"HudRaycastCeiling": "Sector {sector} Ceiling\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nTexture: {textureFile}\nLight: {light}\nLayer: {layer}\nFlags: {flags}",
+	"HudRaycastWall": "Sector {sector} Wall {wall}\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nLeft: {x1:F2} {z1:F2} Right: {x2:F2} {z2:F2}\nAdjoin: {adjoinSector} {adjoinWall}\nWall Light: {wallLight}\nMain Texture: {midTextureFile}\nTop Texture: {topTextureFile}\nBot Texture: {botTextureFile}\nSign Texture: {signTextureFile}\nTexture/Map Flags: {textureMapFlags}\nAdjoin Flags: {adjoinFlags}",
+	"HudRaycastObject": "Sector {sector} Object {object} Type {type}\nCursor: {hitX:F2} {hitY:F2} {hitZ:F2}\nFile: {filename}\nPosition: {x:F2} {y:F2} {z:F2}\nRotation: {pitch:F2} {yaw:F2} {roll:F2}\nDifficulty: {difficulty}\n{logic}"
 }

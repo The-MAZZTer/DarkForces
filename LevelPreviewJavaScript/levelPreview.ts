@@ -152,7 +152,55 @@ export class LevelPreview {
 	public setUseMouseCapture(value: boolean) {
 		return this.apiCall("SetUseMouseCapture", value.toString());
 	}
+	
+	public setShowHud(value: boolean) {
+		return this.apiCall("SetShowHud", value.toString());
+	}
 
+	public setHudAlign(value: number | string) {
+		return this.apiCall("SetHudAlign", value.toString());
+	}
+
+	public setHudFontSize(value: number) {
+		return this.apiCall("SetHudFontSize", value.toString());
+	}
+
+	public setHudColor(r: number, g: number, b: number, a: number) {
+		return this.apiCall("SetHudColor", r.toString(), g.toString(), b.toString(), a.toString());
+	}
+
+	public setShowHudCoordinates(value: boolean) {
+		return this.apiCall("SetShowHudCoordinates", value.toString());
+	}
+
+	public setHudFpsCoordinates(value: string) {
+		return this.apiCall("SetHudFpsCoordinates", value);
+	}
+
+	public setHudOrbitCoordinates(value: string) {
+		return this.apiCall("SetHudOrbitCoordinates", value);
+	}
+
+	public setShowHudRaycastHit(value: boolean) {
+		return this.apiCall("SetShowHudRaycastHit", value.toString());
+	}
+
+	public setHudRaycastFloor(value: string) {
+		return this.apiCall("SetHudRaycastFloor", value);
+	}
+
+	public setHudRaycastCeiling(value: string) {
+		return this.apiCall("SetHudRaycastCeiling", value);
+	}
+	
+	public setHudRaycastWall(value: string) {
+		return this.apiCall("SetHudRaycastWall", value);
+	}
+
+	public setHudRaycastObject(value: string) {
+		return this.apiCall("SetHudRaycastObject", value);
+	}
+	
 	public reloadLevelGeometry(level: LevelInfo) {
 		return this.apiCall("ReloadLevelGeometry", JSON.stringify(level));
 	}
