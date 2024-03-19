@@ -2,7 +2,7 @@
 
 Find out more about Star Wars Dark Forces on [Wikipedia](https://en.wikipedia.org/wiki/Star_Wars:_Dark_Forces).
 
-Purchase a copy of the game on [Steam](https://store.steampowered.com/app/32400/STAR_WARS__Dark_Forces/)! In fact, buy that Jedi Knight Collection while you're there. They're all good games.
+Purchase a copy of the game on [Steam](https://store.steampowered.com/app/2292260/STAR_WARS_Dark_Forces_Remaster/)! In fact, buy that Jedi Knight Collection while you're there. They're all good games.
 
 This showcase contains my Dark Forces libraries for .NET and Unity.
 
@@ -36,6 +36,14 @@ I'll leave everything else up to you to explore and discover!
 ## Level Previeew Usage
 
 The Level Preview tool is intended for embedding in web or desktop applications, and is a separate download. The documentation is [here](LevelPreview.md).
+
+## Dark Forces Compatibility
+
+This tool is compatible with the DOS version of Dark Forces and the Steam remaster.
+
+This tool cannot yet read any of the enhanced file formats added to the remaster. However you can still read quite a bit including browsing the AVENGER level.
+
+Simply load in the extra GOBs as a mod into this tool. EXTRAS.GOB contains AVENGER. ENHANCED.GOB contains mostly new files; you can't view most of them but can export them. OVERRIDE.GOB contains a few files altered for presumably legal purposes.
 
 ## Version Compatibility
 
