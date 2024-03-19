@@ -143,7 +143,7 @@ namespace MZZT.Input {
 				if (extraValidate.Length > 1) {
 					throw new InvalidOperationException($"Class \"{type.Name}\" has more than one member with the {nameof(ProgramValidateArgumentsAttribute)} attribute.");
 				} else if (extraValidate.Length == 1) {
-					object ret = extraValidate[0].validate.Invoke(obj, new object[] { });
+					object ret = extraValidate[0].validate.Invoke(obj, []);
 					if (ret is ParseResult result) {
 						if (result.SkipNormalErrorHandling) {
 							return false;
@@ -239,9 +239,9 @@ namespace MZZT.Input {
 				MethodInfo method = member as MethodInfo;
 				object ret;
 				if (method.GetParameters().Length > 0) {
-					ret = method.Invoke(obj, new object[] { parsedValue });
+					ret = method.Invoke(obj, [parsedValue]);
 				} else {
-					ret = method.Invoke(obj, new object[] { });
+					ret = method.Invoke(obj, []);
 				}
 
 				if (ret is ParseResult parseResult) {
@@ -405,7 +405,7 @@ namespace MZZT.Input {
 	public class ProgramSwitchAttribute : ProgramArgumentAttribute {
 		public ProgramSwitchAttribute(string name = null, char flag = default) {
 			if (name != null) {
-				this.LongNames = new[] { name };
+				this.LongNames = [name];
 			}
 			this.ShortFlag = flag;
 		}

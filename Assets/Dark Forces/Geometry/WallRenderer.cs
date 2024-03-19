@@ -270,14 +270,14 @@ namespace MZZT.DarkForces {
 				if ((wall.Adjoined.Sector.Flags & SectorFlags.SectorIsDoor) > 0) {
 					adjoinedMaxY = adjoinedMinY;
 				}
-				if (adjoinedMaxY > maxY && (!sector.Flags.HasFlag(SectorFlags.AdjoinAdjacentSkies | SectorFlags.CeilingIsSky) ||
-					!wall.Adjoined.Sector.Flags.HasFlag(SectorFlags.CeilingIsSky))) {
+				if (adjoinedMaxY > maxY && (!sector.Flags.HasFlag(SectorFlags.CeilingIsSky) ||
+					!wall.Adjoined.Sector.Flags.HasFlag(SectorFlags.AdjoinAdjacentSkies | SectorFlags.CeilingIsSky))) {
 
 					GameObject obj = await CreateMeshAsync(adjoinedMaxY, maxY, wall.TopEdgeTexture, wall);
 					obj.transform.SetParent(this.transform, true);
 				}
-				if (adjoinedMinY < minY && (!sector.Flags.HasFlag(SectorFlags.AdjoinAdjacentPits | SectorFlags.FloorIsPit) ||
-					!wall.Adjoined.Sector.Flags.HasFlag(SectorFlags.FloorIsPit))) {
+				if (adjoinedMinY < minY && (!sector.Flags.HasFlag( SectorFlags.FloorIsPit) ||
+					!wall.Adjoined.Sector.Flags.HasFlag(SectorFlags.AdjoinAdjacentPits | SectorFlags.FloorIsPit))) {
 
 					GameObject obj = await CreateMeshAsync(minY, adjoinedMinY, wall.BottomEdgeTexture, wall);
 					obj.transform.SetParent(this.transform, true);

@@ -29589,9 +29589,21 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: d7ad9bcb-6510-4425-b86a-e64151459eb5
     m_ActionName: UI/Look[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 16a4accf-9c22-4a3b-8263-bbf219d9444b
+    m_ActionName: LevelExplorer/Drag[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7d0f5cd8-593a-415f-8e10-e7e88743f4cf
+    m_ActionName: LevelExplorer/Rotate[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7ae68097-554d-4cd9-ad15-5cbb1d5ebae9
+    m_ActionName: LevelExplorer/Zoom[/Mouse/scroll/y]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
-  m_DefaultActionMap: MapGenerator
+  m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!114 &472987094
@@ -64921,7 +64933,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Mirror mode mirrorss an entire level including geometry, object placement
+  m_text: Mirror mode mirrors an entire level including geometry, object placement
     and orientaiton,  script movement directions, textures, 3D models, 3D animations,
     and sprites.
   m_isRightToLeft: 0
@@ -71870,7 +71882,7 @@ GameObject:
   - component: {fileID: 1223185388}
   - component: {fileID: 1223185387}
   - component: {fileID: 1223185386}
-  - component: {fileID: 1223185385}
+  - component: {fileID: 1223185390}
   m_Layer: 0
   m_Name: Pause
   m_TagString: Untagged
@@ -71878,24 +71890,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1223185385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1223185384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dfdbcd56fe9e5f2458dcaa89e8cba99a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  duplicateAction: 2
-  persistAcrossScenes: 0
-  background: {fileID: 0}
-  loading: {fileID: 1805275168}
-  uiMap: UI
-  actionMap: UI
 --- !u!114 &1223185386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71979,6 +71973,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1223185390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1223185384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfdbcd56fe9e5f2458dcaa89e8cba99a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duplicateAction: 2
+  persistAcrossScenes: 0
+  background: {fileID: 0}
+  loading: {fileID: 1805275168}
+  uiMap: UI
+  actionMap: UI
+  enableLoadingScreen: 1
 --- !u!1 &1225369042
 GameObject:
   m_ObjectHideFlags: 0
@@ -103163,7 +103176,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1223185385}
+      - m_Target: {fileID: 1223185390}
         m_TargetAssemblyTypeName: MZZT.DarkForces.Showcase.PauseMenu, Assembly-CSharp
         m_MethodName: OnReturnToMenu
         m_Mode: 1
@@ -117243,7 +117256,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Override map draw mode
+  m_text: 'Mirror mode:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

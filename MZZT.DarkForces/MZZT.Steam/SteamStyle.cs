@@ -9,7 +9,7 @@ namespace MZZT.Steam {
 		public SteamSubstitutionValue<int> CornerRounding { get; set; } = null;
 
 		[SteamName("render_bg")]
-		public SteamValue<SteamSubstitutionValue<SteamRenderRule>[]> BackgroundRenderRules { get; set; } = new SteamValue<SteamSubstitutionValue<SteamRenderRule>[]>(new SteamSubstitutionValue<SteamRenderRule>[] { });
+		public SteamValue<SteamSubstitutionValue<SteamRenderRule>[]> BackgroundRenderRules { get; set; } = new SteamValue<SteamSubstitutionValue<SteamRenderRule>[]>([]);
 
 		[SteamName("font-family")]
 		public SteamSubstitutionValue<string> FontFamily { get; set; } = null;
@@ -60,7 +60,7 @@ namespace MZZT.Steam {
 		public SteamSubstitutionValue<int> PaddingTop { get; set; } = null;
 
 		[SteamName("render")]
-		public SteamValue<SteamSubstitutionValue<SteamRenderRule>[]> RenderRules { get; set; } = new SteamValue<SteamSubstitutionValue<SteamRenderRule>[]>(new SteamSubstitutionValue<SteamRenderRule>[] { });
+		public SteamValue<SteamSubstitutionValue<SteamRenderRule>[]> RenderRules { get; set; } = new SteamValue<SteamSubstitutionValue<SteamRenderRule>[]>([]);
 
 		[SteamName("selectedbgcolor")]
 		public SteamSubstitutionValue<Color> SelectedBackgroundColor { get; set; } = null;

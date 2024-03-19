@@ -448,7 +448,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "LEV", "2.1" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(["LEV", "2.1"]) ?? false)) {
 				this.AddWarning("LEV file header not found.");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);

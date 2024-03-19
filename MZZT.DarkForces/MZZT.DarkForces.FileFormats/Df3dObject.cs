@@ -533,7 +533,7 @@ namespace MZZT.DarkForces.FileFormats {
 
 			foreach (Object obj in this.Objects) {
 				int[] vertexCount = obj.Polygons
-					.SelectMany(x => x.TextureVertices.Count > 0 ? new[] { x.Vertices.Count, x.TextureVertices.Count } : new[] { x.Vertices.Count })
+					.SelectMany(x => x.TextureVertices.Count > 0 ? new[] { x.Vertices.Count, x.TextureVertices.Count } : [x.Vertices.Count])
 					.Distinct().ToArray();
 				if (vertexCount.Length > 1 || (vertexCount[0] != 3 && vertexCount[0] != 4)) {
 					this.AddWarning("All polygons in an object must be either all triangles or all quads.");

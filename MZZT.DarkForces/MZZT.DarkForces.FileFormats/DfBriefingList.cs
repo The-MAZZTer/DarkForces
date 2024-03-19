@@ -54,7 +54,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "BRF", "1.0" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(["BRF", "1.0"]) ?? false)) {
 				this.AddWarning("BRF file header not found.");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);

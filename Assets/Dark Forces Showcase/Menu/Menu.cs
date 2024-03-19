@@ -149,11 +149,9 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private async void Start() {
-#if UNITY_WEBGL
-			WebGLInput.captureAllKeyboardInput = false;
-#endif
-
 #if UNITY_WEBGL && !UNITY_EDITOR
+			WebGLInput.captureAllKeyboardInput = false;
+
 			this.closeContainer.SetActive(false);
 #endif
 

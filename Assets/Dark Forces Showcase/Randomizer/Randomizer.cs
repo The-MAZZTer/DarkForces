@@ -25,52 +25,6 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField]
 		private SeedUi seedInput;
 
-		private async void Start() {
-			// This is here in case you run directly from this scene instead of the menu.
-			if (!FileLoader.Instance.Gobs.Any()) {
-				await FileLoader.Instance.LoadStandardFilesAsync();
-			}
-
-			await PauseMenu.Instance.BeginLoadingAsync();
-
-			ResourceCache.Instance.ClearWarnings();
-
-			if (await this.LoadSettingsAsync()) {
-				await LevelLoader.Instance.ShowWarningsAsync("RNDMIZER.JSO");
-			}
-
-			await LevelLoader.Instance.LoadLevelListAsync(true);
-			this.cutscenes = await FileLoader.Instance.LoadGobFileAsync<DfCutsceneList>("CUTSCENE.LST");
-
-			await LevelLoader.Instance.ShowWarningsAsync(FileLoader.Instance.ModGob ?? "DARK.GOB");
-
-			PauseMenu.Instance.EndLoading();
-		}
-
-		private DfCutsceneList cutscenes;
-
-		private async Task<bool> LoadSettingsAsync() {
-			Stream stream = await FileLoader.Instance.GetGobFileStreamAsync("RNDMIZER.JSO");
-			if (stream == null) {
-				return false;
-			}
-
-			using (stream) {
-				DataContractJsonSerializer serializer = new(typeof(RandomizerSettings), new DataContractJsonSerializerSettings() {
-					UseSimpleDictionaryFormat = true
-				});
-
-				try {
-					this.Settings = (RandomizerSettings)serializer.ReadObject(stream);
-				} catch (Exception ex) {
-					Debug.LogException(ex);
-					ResourceCache.Instance.AddError("RNDMIZER.JSO", ex);
-					return false;
-				}
-			}
-			return true;
-		}
-
 		/// <summary>
 		/// Loads in all level data required to randomize the level.
 		/// </summary>
@@ -192,7 +146,7 @@ namespace MZZT.DarkForces.Showcase {
 		/// Customizes CUTSCENE.LST based on selected settings.
 		/// </summary>
 		/// <returns>A customized CUTSCENE.LST, or null if no customizations needed.</returns>
-		private DfCutsceneList RandomizeCutscenes() {
+		private async Task<DfCutsceneList> RandomizeCutscenesAsync() {
 			RandomizerCutscenesSettings settings = this.Settings.Cutscenes;
 			if (!settings.RemoveCutscenes && !settings.AdjustCutsceneSpeed.Enabled &&
 				settings.AdjustCutsceneMusicVolume == 1) {
@@ -201,8 +155,8 @@ namespace MZZT.DarkForces.Showcase {
 				return null;
 			}
 
-			// Copy the object so we don't modify the base object, in case it's used elsewhere later.
-			DfCutsceneList cutscenes = this.cutscenes.Clone();
+			DfCutsceneList cutscenes = await FileLoader.Instance.LoadGobFileAsync<DfCutsceneList>("CUTSCENE.LST");
+
 			if (settings.RemoveCutscenes) {
 				cutscenes.Cutscenes.Clear();
 			} else {
@@ -530,11 +484,11 @@ namespace MZZT.DarkForces.Showcase {
 
 		// If the campaign pool is used, these objects will store the pool for the whole campaign.
 		// It's not necessary to compute them more than once.
-		Dictionary<string[], List<DfLevelObjects.Object>> enemySpawnPool =
+		Dictionary<string, List<DfLevelObjects.Object>> enemySpawnPool =
 			new();
-		Dictionary<string[], List<DfLevelObjects.Object>> bossSpawnPool =
+		Dictionary<string, List<DfLevelObjects.Object>> bossSpawnPool =
 			new();
-		Dictionary<string[], List<DfLevelObjects.Object>> itemSpawnPool =
+		Dictionary<string, List<DfLevelObjects.Object>> itemSpawnPool =
 			new();
 		/// <summary>
 		/// Indexes all the objects of a type (enemy, boss, item) in a level for use in the randomized pool of objects..
@@ -545,7 +499,7 @@ namespace MZZT.DarkForces.Showcase {
 		/// <param name="anyMohc">Whether or not we have a mohc elevator.</param>
 		/// <param name="o">The O file for the level.</param>
 		/// <param name="findBosses">The value of the BOSS flag on the objects to look for.</param>
-		private void AddLevelToSpawnMap(Dictionary<string[], List<DfLevelObjects.Object>> spawnPool,
+		private void AddLevelToSpawnMap(Dictionary<string, List<DfLevelObjects.Object>> spawnPool,
 			IEnumerable<string> spawnLocationPoolLogics, bool anyBoss, bool anyMohc,
 			DfLevelObjects o, bool findBosses, bool findItems) {
 
@@ -664,12 +618,11 @@ namespace MZZT.DarkForces.Showcase {
 				}
 
 				// Create a new pool for this set of logics.
-				string[] key = spawnPool.Keys.FirstOrDefault(x => x.SequenceEqual(logics));
-				if (key == null) {
-					key = logics;
-					spawnPool[key] = new List<DfLevelObjects.Object>();
+				string key = string.Join('~', logics);
+				if (!spawnPool.TryGetValue(key, out List<DfLevelObjects.Object> objects)) {
+					spawnPool[key] = objects = new();
 				}
-				spawnPool[key].Add(obj);
+				objects.Add(obj);
 			}
 		}
 
@@ -724,7 +677,7 @@ namespace MZZT.DarkForces.Showcase {
 			DfLevelInformation inf = LevelLoader.Instance.Information.Clone();
 
 			// Determine if there are any boss elevator(s) in the level.
-			// This is important for determineing if we can randomize a boss or not.
+			// This is important for determining if we can randomize a boss or not.
 			// If there is no boss elevator, the boss will have no effect when killed, so we can randomize it.
 			DfLevelInformation.Item[] bossElev = inf.Items
 				.Where(x => x.Type == DfLevelInformation.ScriptTypes.Sector && x.SectorName?.ToUpper() == "BOSS").ToArray();
@@ -768,7 +721,7 @@ namespace MZZT.DarkForces.Showcase {
 				}
 
 				// The pool of objects we'll select from to spawn.
-				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool =
+				Dictionary<string, List<DfLevelObjects.Object>> spawnPool =
 					new();
 				// Existing locations we removed existing spawned objects from, which we can spawn new objects in.
 				List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)> existingSpawns =
@@ -888,8 +841,9 @@ namespace MZZT.DarkForces.Showcase {
 					}
 
 					// Add this object to the spawn pool.
-					if (!spawnPool.TryGetValue(logics, out List<DfLevelObjects.Object> objects)) {
-						spawnPool[logics] = objects = new List<DfLevelObjects.Object>();
+					string key = string.Join('~', logics);
+					if (!spawnPool.TryGetValue(key, out List<DfLevelObjects.Object> objects)) {
+						spawnPool[key] = objects = new();
 					}
 					objects.Add(obj);
 				}
@@ -1012,7 +966,7 @@ namespace MZZT.DarkForces.Showcase {
 				// This can be either weighted rng (so you won't always get the exact same count of each logic).
 				// Or the same count of each logic in random positions.
 				// Adjust according to settings.
-				Dictionary<string[], int> logicWeights = spawnPool.ToDictionary(x => x.Key, x => x.Value.Count);
+				Dictionary<string[], int> logicWeights = spawnPool.ToDictionary(x => x.Key.Split('~'), x => x.Value.Count);
 				foreach (LogicSpawnWeight weight in settings.EnemyLogicSpawnWeights) {
 					(string[] logics, int count) = logicWeights.FirstOrDefault(x => x.Key.Length == 1 && x.Key[0] == weight.Logic);
 					if (logics == null) {
@@ -1359,9 +1313,11 @@ namespace MZZT.DarkForces.Showcase {
 					// If we somehow have an invalid value just take the last one.
 					logic ??= sectorLogics.Last();
 
-					// Get a rnadom object from the spawn pool, or a default template.
+					// Get a random object from the spawn pool, or a default template.
 					DfLevelObjects.Object obj;
-					if (spawnPool.TryGetValue(logic, out List<DfLevelObjects.Object> objects)) {
+
+					string spawnKey = string.Join('~', logic);
+					if (spawnPool.TryGetValue(spawnKey, out List<DfLevelObjects.Object> objects)) {
 						obj = objects[this.rng.Next(objects.Count)].Clone();
 					} else {
 						string filename = templates[logic[0]];
@@ -1398,7 +1354,7 @@ namespace MZZT.DarkForces.Showcase {
 					if (settings.LessenEnemyProbabilityWhenSpawned) {
 						if (--logicWeights[logic] <= 0) {
 							logicWeights.Remove(logic);
-							spawnPool.Remove(logic);
+							spawnPool.Remove(spawnKey);
 						}
 					}
 
@@ -1531,8 +1487,8 @@ namespace MZZT.DarkForces.Showcase {
 			// I decided not to bother with that; Mohc is never reandomized.
 			if (settings.RandomizeBosses) {
 				// We're doing the same thing we did for enemies but some of the options which aren't as useful are stripped out.
-				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool = new();
-				Dictionary<string[], List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>> existingBossSpawns =
+				Dictionary<string, List<DfLevelObjects.Object>> spawnPool = new();
+				Dictionary<string, List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>> existingBossSpawns =
 					new();
 				foreach (DfLevelObjects.Object obj in o.Objects) {
 					Dictionary<string, string[]> properties = this.GetLogicProperties(obj);
@@ -1561,19 +1517,20 @@ namespace MZZT.DarkForces.Showcase {
 						continue;
 					}
 
-					if (!existingBossSpawns.TryGetValue(logics, out List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)> spawns)) {
-						existingBossSpawns[logics] = spawns = new List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>();
+					string key = string.Join('~', logics);
+					if (!existingBossSpawns.TryGetValue(key, out List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)> spawns)) {
+						existingBossSpawns[key] = spawns = new List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)>();
 					}
 					spawns.Add((obj.Position, obj.EulerAngles));
 
-					if (!spawnPool.TryGetValue(logics, out List<DfLevelObjects.Object> objects)) {
-						spawnPool[logics] = objects = new List<DfLevelObjects.Object>();
+					if (!spawnPool.TryGetValue(key, out List<DfLevelObjects.Object> objects)) {
+						spawnPool[key] = objects = new List<DfLevelObjects.Object>();
 					}
 					objects.Add(obj);
 				}
 
-				bool bossEnemies = spawnPool.Keys.Any(x => x[0] != MOHC_LOGICS[0]);
-				bool mohcEnemies = spawnPool.Keys.Any(x => x[0] == MOHC_LOGICS[0]);
+				bool bossEnemies = spawnPool.Keys.Any(x => !x.Split('~').Contains(MOHC_LOGICS[0]));
+				bool mohcEnemies = spawnPool.Keys.Any(x => x.Split('~').Contains(MOHC_LOGICS[0]));
 
 				Dictionary<DfLevelObjects.Difficulties, int> difficultyCounts = spawnPool.SelectMany(x => x.Value).GroupBy(x => x.Difficulty).ToDictionary(x => x.Key, x => x.Count());
 
@@ -1581,7 +1538,7 @@ namespace MZZT.DarkForces.Showcase {
 				// This just removes mohc from randomizing.
 				// Possibly later we can tackle that.
 				if ((bossEnemies && bossElev.Length > 0) || (mohcEnemies && mohcElev.Length > 0)) {
-					foreach (string[] logic in existingBossSpawns.Keys.Where(x => x.Contains(MOHC_LOGICS[0])).ToArray()) {
+					foreach (string logic in existingBossSpawns.Keys.Where(x => x.Split('~').Contains(MOHC_LOGICS[0])).ToArray()) {
 						existingBossSpawns.Remove(logic);
 					}
 				}
@@ -1643,7 +1600,7 @@ namespace MZZT.DarkForces.Showcase {
 				}
 
 				if ((bossEnemies && bossElev.Length > 0) || (mohcEnemies && mohcElev.Length > 0)) {
-					foreach (string[] logic in spawnPool.Keys.Where(x => x.Contains(MOHC_LOGICS[0])).ToArray()) {
+					foreach (string logic in spawnPool.Keys.Where(x => x.Split('~').Contains(MOHC_LOGICS[0])).ToArray()) {
 						spawnPool.Remove(logic);
 					}
 					mohcEnemies = false;
@@ -1651,7 +1608,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)> existingSpawns =
 					existingBossSpawns.SelectMany(x => x.Value).ToList();
-				Dictionary<string[], int> logicWeights = spawnPool.ToDictionary(x => x.Key, x => x.Value.Count);
+				Dictionary<string[], int> logicWeights = spawnPool.ToDictionary(x => x.Key.Split('~'), x => x.Value.Count);
 
 				while (difficultyCounts.Any() && logicWeights.Any() && existingSpawns.Count > 0) {
 					System.Numerics.Vector3 spawnPosition = default;
@@ -1715,7 +1672,7 @@ namespace MZZT.DarkForces.Showcase {
 							}
 						}
 
-						IEnumerable<string[]> logics = spawnPool.Keys;
+						IEnumerable<string[]> logics = spawnPool.Keys.Select(x => x.Split('~'));
 						sectorLogics = logics.ToArray();
 					}
 
@@ -1740,7 +1697,8 @@ namespace MZZT.DarkForces.Showcase {
 					logic ??= sectorLogics.Last();
 
 					DfLevelObjects.Object obj;
-					if (spawnPool.TryGetValue(logic, out List<DfLevelObjects.Object> objects)) {
+					string key = string.Join('~', logic);
+					if (spawnPool.TryGetValue(key, out List<DfLevelObjects.Object> objects)) {
 						obj = objects[this.rng.Next(objects.Count)].Clone();
 					} else {
 						string filename = templates[logic[0]];
@@ -1771,7 +1729,7 @@ namespace MZZT.DarkForces.Showcase {
 					if (settings.LessenEnemyProbabilityWhenSpawned) {
 						if (--logicWeights[logic] <= 0) {
 							logicWeights.Remove(logic);
-							spawnPool.Remove(logic);
+							spawnPool.Remove(key);
 						}
 					}
 
@@ -1949,7 +1907,7 @@ namespace MZZT.DarkForces.Showcase {
 					});
 				}
 
-				Dictionary<string[], List<DfLevelObjects.Object>> spawnPool =
+				Dictionary<string, List<DfLevelObjects.Object>> spawnPool =
 					new();
 				List<(System.Numerics.Vector3 position, System.Numerics.Vector3 rotation)> existingSpawns =
 					new();
@@ -1978,8 +1936,9 @@ namespace MZZT.DarkForces.Showcase {
 
 					existingSpawns.Add((obj.Position, obj.EulerAngles));
 
-					if (!spawnPool.TryGetValue(logics, out List<DfLevelObjects.Object> objects)) {
-						spawnPool[logics] = objects = new List<DfLevelObjects.Object>();
+					string key = string.Join('~', logics);
+					if (!spawnPool.TryGetValue(key, out List<DfLevelObjects.Object> objects)) {
+						spawnPool[key] = objects = new List<DfLevelObjects.Object>();
 					}
 					objects.Add(obj);
 				}
@@ -1991,7 +1950,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				// Don't actually spawn keys.
 				if (settings.UnlockAllDoorsAndIncludeKeysInSpawnLocationPool) {
-					foreach (string[] key in spawnPool.Keys.Where(x => x.Any(y => y == "BLUE" || y == "YELLOW" || y == "RED")).ToArray()) {
+					foreach (string key in spawnPool.Keys.Where(x => x.Split('~').Any(y => y == "BLUE" || y == "YELLOW" || y == "RED")).ToArray()) {
 						spawnPool.Remove(key);
 					}
 				}
@@ -2062,7 +2021,7 @@ namespace MZZT.DarkForces.Showcase {
 						break;
 				}
 
-				Dictionary<string[], int> logicWeights = spawnPool.ToDictionary(x => x.Key, x => x.Value.Count);
+				Dictionary<string[], int> logicWeights = spawnPool.ToDictionary(x => x.Key.Split('~'), x => x.Value.Count);
 				foreach (LogicSpawnWeight weight in settings.ItemLogicSpawnWeights) {
 					(string[] logics, int count) = logicWeights.FirstOrDefault(x => x.Key.Length == 1 && x.Key[0] == weight.Logic);
 					if (logics == null) {
@@ -2350,7 +2309,8 @@ namespace MZZT.DarkForces.Showcase {
 					logic ??= sectorLogics.Last();
 
 					DfLevelObjects.Object obj;
-					if (spawnPool.TryGetValue(logic, out List<DfLevelObjects.Object> objects)) {
+					string key = string.Join('~', logic);
+					if (spawnPool.TryGetValue(key, out List<DfLevelObjects.Object> objects)) {
 						obj = objects[this.rng.Next(objects.Count)].Clone();
 					} else {
 						string filename = templates[logic[0]];
@@ -2383,7 +2343,7 @@ namespace MZZT.DarkForces.Showcase {
 					if (settings.LessenItemProbabilityWhenSpawned) {
 						if (--logicWeights[logic] <= 0) {
 							logicWeights.Remove(logic);
-							spawnPool.Remove(logic);
+							spawnPool.Remove(key);
 						}
 					}
 
@@ -2436,8 +2396,7 @@ namespace MZZT.DarkForces.Showcase {
 
 			// Add the items.
 			foreach (ItemAward award in spawnItems) {
-				List<DfLevelObjects.Object> objects = this.itemSpawnPool?
-					.FirstOrDefault(x => x.Key.Length == 1 && x.Key[0] == award.Logic).Value;
+				List<DfLevelObjects.Object> objects = this.itemSpawnPool.GetValueOrDefault(award.Logic);
 				DfLevelObjects.Object obj;
 				if (objects != null) {
 					obj = objects[this.rng.Next(objects.Count)].Clone();
@@ -2689,8 +2648,74 @@ namespace MZZT.DarkForces.Showcase {
 
 					float wallLength = (wall.RightVertex.Position - wall.LeftVertex.Position).Length();
 
-					int textureWidth;
-					foreach (var texture in new[] { wall.BottomEdgeTexture, wall.MainTexture, wall.TopEdgeTexture }) {
+					int textureWidth = 0;
+					int signWidth = 0;
+					if (!string.IsNullOrEmpty(wall.SignTexture.TextureFile) &&
+						!textureWidths.TryGetValue(wall.SignTexture.TextureFile.ToUpper(), out signWidth)) {
+
+						DfBitmap bitmap = null;
+						try {
+							bitmap = await FileLoader.Instance.LoadGobFileAsync<DfBitmap>(wall.SignTexture.TextureFile);
+						} catch (Exception e) {
+							ResourceCache.Instance.AddError(wall.SignTexture.TextureFile, e);
+						}
+
+						if (bitmap != null) {
+							signWidth = bitmap.Pages[0].Width;
+						}
+
+						textureWidths[wall.SignTexture.TextureFile.ToUpper()] = signWidth;
+					}
+
+					DfLevel.WallSurface surface;
+					if (wall.Adjoined == null || wall.TextureAndMapFlags.HasFlag(DfLevel.WallTextureAndMapFlags.ShowTextureOnAdjoin)) {
+						surface = wall.MainTexture;
+					} else if (wall.Adjoined.Sector.Floor.Y < wall.Sector.Floor.Y) {
+						surface = wall.BottomEdgeTexture;
+					} else if (wall.Adjoined.Sector.Ceiling.Y > wall.Sector.Ceiling.Y) {
+						surface = wall.TopEdgeTexture;
+					} else {
+						surface = null;
+					}
+
+					if (surface != null) {
+						if (!string.IsNullOrEmpty(surface.TextureFile) &&
+							!textureWidths.TryGetValue(surface.TextureFile.ToUpper(), out textureWidth)) {
+
+							DfBitmap bitmap = null;
+							try {
+								bitmap = await FileLoader.Instance.LoadGobFileAsync<DfBitmap>(surface.TextureFile);
+							} catch (Exception e) {
+								ResourceCache.Instance.AddError(surface.TextureFile, e);
+							}
+
+							if (bitmap != null) {
+								textureWidth = bitmap.Pages[0].Width;
+							}
+
+							textureWidths[surface.TextureFile.ToUpper()] = textureWidth;
+						}
+
+						if (wall.Sector.Name == "enthall" && wall.Sector.Walls.IndexOf(wall) == 21) {
+							Debug.Log(wallLength); // ~6
+							Debug.Log(textureWidth / 8f); // 8
+							Debug.Log(signWidth / 8f); // 4
+							Debug.Log(surface.TextureOffset.X); // -2.62
+							Debug.Log(wall.SignTexture.TextureOffset.X); // -1.63
+
+							// mirrored surface offset 4.62
+							// desired: ~5.61?
+
+							Debug.Log(-surface.TextureOffset.X + wall.SignTexture.TextureOffset.X); // ~1
+						}
+
+						float wallOffset = (textureWidth / 8f) - wallLength - surface.TextureOffset.X;
+						float offset = (-surface.TextureOffset.X + wall.SignTexture.TextureOffset.X);
+
+						wall.SignTexture.TextureOffset = new System.Numerics.Vector2(wallLength - (signWidth / 8f) - offset + wallOffset, wall.SignTexture.TextureOffset.Y);
+					}
+
+					foreach (DfLevel.WallSurface texture in new[] { wall.BottomEdgeTexture, wall.MainTexture, wall.TopEdgeTexture }) {
 						textureWidth = 0;
 						if (!string.IsNullOrEmpty(texture.TextureFile) &&
 							!textureWidths.TryGetValue(texture.TextureFile.ToUpper(), out textureWidth)) {
@@ -2711,26 +2736,6 @@ namespace MZZT.DarkForces.Showcase {
 
 						texture.TextureOffset = new System.Numerics.Vector2((textureWidth / 8f) - wallLength - texture.TextureOffset.X, texture.TextureOffset.Y);
 					}
-
-					textureWidth = 0;
-					if (!string.IsNullOrEmpty(wall.SignTexture.TextureFile) &&
-						!textureWidths.TryGetValue(wall.SignTexture.TextureFile.ToUpper(), out textureWidth)) {
-
-						DfBitmap bitmap = null;
-						try {
-							bitmap = await FileLoader.Instance.LoadGobFileAsync<DfBitmap>(wall.SignTexture.TextureFile);
-						} catch (Exception e) {
-							ResourceCache.Instance.AddError(wall.SignTexture.TextureFile, e);
-						}
-
-						if (bitmap != null) {
-							textureWidth = bitmap.Pages[0].Width;
-						}
-
-						textureWidths[wall.SignTexture.TextureFile.ToUpper()] = textureWidth;
-					}
-
-					wall.SignTexture.TextureOffset = new System.Numerics.Vector2((textureWidth / 8f) - wall.SignTexture.TextureOffset.X, wall.SignTexture.TextureOffset.Y);
 				}
 			}
 
@@ -3011,7 +3016,7 @@ namespace MZZT.DarkForces.Showcase {
 					await gob.AddFileAsync("JEDI.LVL", levels);
 				}
 
-				DfCutsceneList cutscenes = this.RandomizeCutscenes();
+				DfCutsceneList cutscenes = await this.RandomizeCutscenesAsync();
 				if (cutscenes != null) {
 					await gob.AddFileAsync("CUTSCENE.LST", cutscenes);
 				}

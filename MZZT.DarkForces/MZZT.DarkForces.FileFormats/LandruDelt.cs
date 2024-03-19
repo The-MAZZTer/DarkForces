@@ -220,7 +220,7 @@ namespace MZZT.DarkForces.FileFormats {
 				this.Height = 1;
 				this.OffsetX = 0;
 				this.OffsetY = 0;
-				this.Pixels = new byte[] { 0 };
+				this.Pixels = [0];
 				this.Mask = new BitArray(new bool[] { false });
 				return;
 			}

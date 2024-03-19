@@ -1,4 +1,5 @@
 ﻿using MZZT.DarkForces.FileFormats;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -79,7 +80,7 @@ namespace MZZT.DarkForces.Showcase {
 
 				Time.timeScale = value ? 0 : 1;
 				PlayerInput.all[0].SwitchCurrentActionMap(value ? this.uiMap : this.actionMap);
-				PlayerInput.all[0].uiInputModule.enabled = false;
+				//PlayerInput.all[0].uiInputModule.enabled = false;
 			}
 		}
 
@@ -96,7 +97,7 @@ namespace MZZT.DarkForces.Showcase {
 
 		private int taskCount = 0;
 		protected virtual void Update() {
-			PlayerInput.all[0].uiInputModule.enabled = true;
+			//PlayerInput.all[0].uiInputModule.enabled = true;
 
 			if (this.taskSource != null) {
 				this.taskCount++;
@@ -124,7 +125,7 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		public async virtual void OnMenuAsync(InputAction.CallbackContext context) {
-			if (this.loadingCount > 0 || context.phase != InputActionPhase.Started) {
+			if (this.loadingCount > 0 || context.phase != InputActionPhase.Performed) {
 				return;
 			}
 

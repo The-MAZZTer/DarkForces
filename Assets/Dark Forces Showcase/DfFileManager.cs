@@ -142,9 +142,9 @@ namespace MZZT.DarkForces.Showcase {
 				if (item is not IVirtualFolder folder) {
 					throw new DirectoryNotFoundException();
 				}
-				stream = await folder.OpenChildAsync(Path.GetFileName(path), FileMode.Open, FileAccess.Write, FileShare.None);
+				stream = await folder.OpenChildAsync(Path.GetFileName(path), FileMode.Create, FileAccess.Write, FileShare.None);
 			} else {
-				stream = await file.OpenAsync(FileMode.Open, FileAccess.Write, FileShare.None);
+				stream = await file.OpenAsync(FileMode.Create, FileAccess.Write, FileShare.None);
 			}
 
 			using (stream) {

@@ -47,7 +47,7 @@ namespace MZZT.DarkForces.FileFormats {
 			bool readExtraLine = false;
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "MSG", "1.0" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(["MSG", "1.0"]) ?? false)) {
 				this.AddWarning("MSG file header not found.");
 			} else {
 				readExtraLine = true;

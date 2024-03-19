@@ -177,7 +177,7 @@ namespace MZZT.DarkForces.FileFormats {
 			int pos = 0;
 			while (true) {
 				// Look for characters of interest.
-				int index = line.IndexOfAny(new[] { '"', '/', '#' }, pos);
+				int index = line.IndexOfAny(['"', '/', '#'], pos);
 				if (index < 0) {
 					return line;
 				}
@@ -221,7 +221,7 @@ namespace MZZT.DarkForces.FileFormats {
 				if (string.IsNullOrWhiteSpace(str)) {
 					throw new FormatException("Can't write an empty string!");
 				}
-				if (str.IndexOfAny(new[] { '\r', '\n' }) >= 0) {
+				if (str.IndexOfAny(['\r', '\n']) >= 0) {
 					throw new FormatException("Tried to write a field containing newlines, this is not permitted!");
 				}
 				if (str.EndsWith(":")) {
@@ -229,7 +229,7 @@ namespace MZZT.DarkForces.FileFormats {
 				}
 
 				bool quoted = str.Length >= 2 && str[0] == '"' && str[str.Length - 1] == '"';
-				if (!quoted && str.IndexOfAny(new[] { ' ', '\t'}) >= 0) {
+				if (!quoted && str.IndexOfAny([' ', '\t']) >= 0) {
 					throw new FormatException("Tried to write a field with whitespace in it, this is not permitted!");
 				}
 				int index = str.IndexOf('"', 1);

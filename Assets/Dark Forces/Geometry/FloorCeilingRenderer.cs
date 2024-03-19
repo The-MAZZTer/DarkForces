@@ -150,7 +150,7 @@ namespace MZZT.DarkForces {
 				return (false, 0);
 			}
 
-			// Do the same thing fromn the vector 2 side.
+			// Do the same thing from the vector 2 side.
 			// First get the angle between the new line and the vector 1 line.
 			wall1dir = vectors[0] - vectors[2];
 			wall2dir = vectors[1] - vectors[2];

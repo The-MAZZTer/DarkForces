@@ -81,6 +81,10 @@ namespace MZZT.IO.FileProviders {
 
 			if (current == null) {
 				FileSystemProviderItemInfo item = this.Provider.GetByPath(path);
+				if (item == null) {
+					return null;
+				}
+
 				IVirtualItem ret = transforms?.PerformTransform(this.Provider, item);
 				if (ret != null) {
 					return ret;

@@ -110,7 +110,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "O", "1.1" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(["O", "1.0"]) ?? false) && !(line?.Select(x => x.ToUpper()).SequenceEqual(["O", "1.1"]) ?? false)) {
 				this.AddWarning("O file format not found!");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);

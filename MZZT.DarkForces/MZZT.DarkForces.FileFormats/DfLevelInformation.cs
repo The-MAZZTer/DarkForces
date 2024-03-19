@@ -113,7 +113,7 @@ namespace MZZT.DarkForces.FileFormats {
 			using StreamReader reader = new(stream, Encoding.ASCII, false, 1024, true);
 
 			string[] line = await this.ReadTokenizedLineAsync(reader);
-			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(new[] { "INF", "1.0" }) ?? false)) {
+			if (!(line?.Select(x => x.ToUpper()).SequenceEqual(["INF", "1.0"]) ?? false)) {
 				this.AddWarning("INF file format not found!");
 			} else {
 				line = await this.ReadTokenizedLineAsync(reader);

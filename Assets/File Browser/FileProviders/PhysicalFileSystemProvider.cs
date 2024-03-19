@@ -37,7 +37,11 @@ namespace MZZT.IO.FileSystemProviders {
 				return this.EnumerateFolders(path);
 			}
 
-			return Directory.EnumerateFileSystemEntries(path).Select(x => this.GetByPath(x)!);
+			try {
+				return Directory.EnumerateFileSystemEntries(path).Select(x => this.GetByPath(x)!);
+			} catch (IOException) {
+				return Enumerable.Empty<FileSystemProviderItemInfo>();
+			}
 		}
 
 		public IEnumerable<FileSystemProviderItemInfo> EnumerateFiles(string path) {
@@ -45,7 +49,11 @@ namespace MZZT.IO.FileSystemProviders {
 				return Enumerable.Empty<FileSystemProviderItemInfo>();
 			}
 
-			return Directory.EnumerateFiles(path).Select(x => this.GetByPath(x)!);
+			try { 
+				return Directory.EnumerateFiles(path).Select(x => this.GetByPath(x)!);
+			} catch (IOException) {
+				return Enumerable.Empty<FileSystemProviderItemInfo>();
+			}
 		}
 
 		public IEnumerable<FileSystemProviderItemInfo> EnumerateFolders(string path) {
@@ -58,8 +66,12 @@ namespace MZZT.IO.FileSystemProviders {
 				path = Path.VolumeSeparatorChar.ToString();
 			}
 
-			return Directory.EnumerateDirectories(path).Select(x => new FileSystemProviderItemInfo(
-				FileSystemProviderItemTypes.Folder, x));
+			try {
+				return Directory.EnumerateDirectories(path).Select(x => new FileSystemProviderItemInfo(
+					FileSystemProviderItemTypes.Folder, x));
+			} catch (IOException) {
+				return Enumerable.Empty<FileSystemProviderItemInfo>();
+			}
 		}
 
 		public FileSystemProviderItemInfo CreateFolder(string path) {

@@ -194,11 +194,16 @@ namespace MZZT.DarkForces.Showcase {
 		}
 
 		private async void Start() {
+			// This is here in case you run directly from this scene instead of the menu.
 			if (!FileLoader.Instance.Gobs.Any()) {
 				await FileLoader.Instance.LoadStandardFilesAsync();
 			}
 
 			await this.UpdateModTextAsync();
+
+			await PauseMenu.Instance.BeginLoadingAsync();
+
+			ResourceCache.Instance.ClearWarnings();
 
 			Stream jsonStream = await FileLoader.Instance.GetGobFileStreamAsync("RNDMIZER.JSO");
 			if (jsonStream != null) {
@@ -210,9 +215,13 @@ namespace MZZT.DarkForces.Showcase {
 					RandomizerSettings settings = null;
 					try {
 						settings = (RandomizerSettings)serializer.ReadObject(jsonStream);
-					} catch (Exception) {
+					} catch (Exception ex) {
+						Debug.LogException(ex);
+						ResourceCache.Instance.AddError("RNDMIZER.JSO", ex);
 					}
 					if (settings != null) {
+						await LevelLoader.Instance.ShowWarningsAsync("RNDMIZER.JSO");
+
 						Dictionary<string, string> modPaths = settings.ModSourcePaths;
 
 						Randomizer.Instance.Settings = settings;
@@ -238,7 +247,13 @@ namespace MZZT.DarkForces.Showcase {
 			if (Randomizer.Instance.Settings == null) {
 				Randomizer.Instance.Settings = DEFAULT_PRESET.Settings.Clone();
 			}
-		}
+
+			await LevelLoader.Instance.LoadLevelListAsync(true);
+
+			await LevelLoader.Instance.ShowWarningsAsync(FileLoader.Instance.ModGob ?? "DARK.GOB");
+
+			PauseMenu.Instance.EndLoading();
+	}
 
 		public static readonly Preset DEFAULT_PRESET = new() {
 			Name = "Default",
