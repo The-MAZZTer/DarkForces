@@ -9,7 +9,7 @@
 		//--Public Methods
 		public System.IO.Stream GetDataStream() => new System.IO.MemoryStream(this.sampled_data);
 		public WaveHelper.WaveChunkType GetChunkType() => WaveHelper.WaveChunkType.Data;
-		public string GetChunkId() => new string(this.chkID);
+		public string GetChunkId() => new(this.chkID);
 		public int GetChunkSize() => this.chksize;
 	}
 }

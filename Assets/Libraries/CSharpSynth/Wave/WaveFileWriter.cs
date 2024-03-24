@@ -29,7 +29,7 @@ namespace CSharpSynth.Wave {
 			this.BW.BaseStream.Dispose();
             //UnitySynth
             // BW.Dispose();
-            BinaryWriter bw2 = new BinaryWriter(File.OpenRead(Path.GetDirectoryName(this.fileN)));
+            BinaryWriter bw2 = new(File.OpenRead(Path.GetDirectoryName(this.fileN)));
             bw2.Write(1179011410);
             bw2.Write(44 + this.length - 8);
             bw2.Write(1163280727);
@@ -43,7 +43,7 @@ namespace CSharpSynth.Wave {
             bw2.Write((short)this.bits);
             bw2.Write(1635017060);
             bw2.Write(this.length);
-            BinaryReader br = new BinaryReader(File.OpenRead(Path.GetDirectoryName(this.fileN) + "RawWaveData_1tmp"));
+            BinaryReader br = new(File.OpenRead(Path.GetDirectoryName(this.fileN) + "RawWaveData_1tmp"));
             for (int x = 0; x < this.length; x++) {
 				bw2.Write(br.ReadByte());
 			}

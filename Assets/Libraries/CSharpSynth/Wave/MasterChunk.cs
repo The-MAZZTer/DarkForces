@@ -6,7 +6,7 @@
         public char[] WAVEID = new char[4];
         public int WAVEchunks = 0;
 		public WaveHelper.WaveChunkType GetChunkType() => WaveHelper.WaveChunkType.Master;
-		public string GetChunkId() => new string(this.chkID);
+		public string GetChunkId() => new(this.chkID);
 		public int GetChunkSize() => this.chksize;
 	}
 }

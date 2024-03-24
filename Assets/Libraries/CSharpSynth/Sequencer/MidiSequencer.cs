@@ -24,9 +24,9 @@ namespace CSharpSynth.Sequencer {
 		public bool IsPlaying { get; private set; } = false;
 		public int SampleTime { get; private set; }
 		public int EndSampleTime => (int)this._MidiFile.Tracks[this.track].TotalTime;
-		public TimeSpan EndTime => new TimeSpan(0, 0, (int)SynthHelper.GetTimeFromSample(this.synth.SampleRate, (int)this._MidiFile.Tracks[this.track].TotalTime));
+		public TimeSpan EndTime => new(0, 0, (int)SynthHelper.GetTimeFromSample(this.synth.SampleRate, (int)this._MidiFile.Tracks[this.track].TotalTime));
 		public TimeSpan Time {
-			get => new TimeSpan(0, 0, (int)SynthHelper.GetTimeFromSample(this.synth.SampleRate, this.SampleTime));
+			get => new(0, 0, (int)SynthHelper.GetTimeFromSample(this.synth.SampleRate, this.SampleTime));
 			set => this.SetTime(value);
 		}
 		public double PitchWheelRange { get; set; } = 2.0;

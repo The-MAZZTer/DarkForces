@@ -14,7 +14,7 @@
         public int dwChannelMask = 0;
         public char[] SubFormat = new char[16];
 		public WaveHelper.WaveChunkType GetChunkType() => WaveHelper.WaveChunkType.Format;
-		public string GetChunkId() => new string(this.chkID);
+		public string GetChunkId() => new(this.chkID);
 		public int GetChunkSize() => this.chksize;
 	}
 }

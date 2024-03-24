@@ -11,30 +11,36 @@ using System.Text.RegularExpressions;
 namespace MZZT.Input {
 	public static class ProgramArguments {
 		public static string AppName { get; set; }
+		public static string AppVersion { get; set; }
 		public static IProgramArgumentsParser Parser { get; set; }
 
 		public static object Inject<T>() {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			return Inject(typeof(T));
 		}
 
 		public static bool Inject<T>(T obj) {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			return Inject(typeof(T), obj);
 		}
 
 		public static bool InjectIntoStatic<T>() {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			return Inject(typeof(T), null);
 		}
 
 		public static bool InjectIntoStatic(Type type) {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			return Inject(type, null);
 		}
 
 		public static object Inject(Type type) {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			object obj = Activator.CreateInstance(type);
 			if (!Inject(type, obj)) {
 				return null;
@@ -44,6 +50,7 @@ namespace MZZT.Input {
 
 		public static bool Inject(Type type, object obj) {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			Parser = Parser ?? new ProgramCommandLineParser();
 
 			(MemberInfo member, ProgramArgumentAttribute attribute)[] members = type.GetMembers()
@@ -258,11 +265,13 @@ namespace MZZT.Input {
 
 		public static void ShowHelp<T>() {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			ShowHelp(typeof(T));
 		}
 
 		public static string GetHelp<T>() {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			return GetHelp(typeof(T));
 		}
 
@@ -304,6 +313,7 @@ namespace MZZT.Input {
 
 		public static string GetHelp(Type type) {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			int width = OverrideConsoleWidth > 0 ? OverrideConsoleWidth : Console.WindowWidth;
 
 			ProgramHelpInfoAttribute info = type.GetCustomAttribute<ProgramHelpInfoAttribute>();
@@ -317,7 +327,9 @@ namespace MZZT.Input {
 				.Where(x => !(x.attribute is ProgramSwitchAttribute))
 				.ToArray();
 			StringBuilder str = new(width);
-			str.Append($"Usage: {AppName}{(members.Length > 0 ? " [OPTIONS]" : "")}");
+			str.Append($"{AppName} v{AppVersion}{Environment.NewLine}{Environment.NewLine}");
+
+			str.Append($"Usage: \"{AppName}\"{(members.Length > 0 ? " [OPTIONS]" : "")}");
 			if (extras.Any()) {
 				str.Append(' ');
 				str.Append(string.Join(" ", extras.Select(x => $"{(x.attribute.Required ? '{' : '[')}{GetArgName(x.attribute, x.member).ToUpper()}{(x.attribute.Required ? '}' : ']')}")));
@@ -396,6 +408,7 @@ namespace MZZT.Input {
 
 		public static void ShowHelp(Type type) {
 			AppName = AppName ?? Path.GetFileNameWithoutExtension((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).ManifestModule.Name);
+			AppVersion = AppVersion ?? (Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Version.ToString();
 			Console.Write(GetHelp(type));
 		}
 	}

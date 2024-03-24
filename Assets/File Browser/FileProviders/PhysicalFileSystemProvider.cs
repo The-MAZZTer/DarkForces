@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -167,6 +168,24 @@ namespace MZZT.IO.FileSystemProviders {
 						Debug.LogException(e);
 					}
 					break;
+			}
+		}
+
+		private bool? isCaseSensitive;
+		public bool IsCaseSensitive {
+			get {
+				if (this.isCaseSensitive == null) {
+					try {
+						string name = Path.GetTempFileName();
+						this.isCaseSensitive = !File.Exists(name.ToLower()) || !File.Exists(name.ToUpper());
+						File.Delete(name);
+					} catch (IOException) {
+						if (this.isCaseSensitive == null) {
+							return !RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+						}
+					}
+				}
+				return this.isCaseSensitive.Value;
 			}
 		}
 	}

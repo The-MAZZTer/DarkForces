@@ -63,42 +63,11 @@ namespace MZZT.DarkForces {
 		[SerializeField]
 		private ThreeDoPolygonRenderer[] polygons;
 
+		private int currentLightLevel = -1;
 		public override async Task RenderAsync(DfLevelObjects.Object obj) {
 			await base.RenderAsync(obj);
 
-			int lightLevel;
-			if (this.CurrentSector != null) {
-				lightLevel = this.CurrentSector.Sector.LightLevel;
-			} else {
-				lightLevel = 31;
-			}
-
-			Df3dObject threeDo = await ResourceCache.Instance.Get3dObjectAsync(obj.FileName);
-			if (threeDo != null) {
-				Queue<ThreeDoPolygonRenderer> renderers = new(this.polygons);
-				int vertexColor = threeDo.Objects.SelectMany(x => x.Polygons).FirstOrDefault(x => x.ShadingMode == ShadingModes.Vertex)?.Color ?? -1;
-				foreach (Df3dObject.Object obj2 in threeDo.Objects) {
-					// Recreate the polygon groups from the last function.
-					foreach (IGrouping<(byte color, ShadingModes mode), Polygon> group in obj2.Polygons.GroupBy(x => {
-						byte color = x.Color;
-						ShadingModes mode = vertexColor < 0 ? x.ShadingMode : ShadingModes.Vertex;
-						switch (mode) {
-							case ShadingModes.Plane:
-								color = 255;
-								break;
-							case ShadingModes.Texture:
-								color = 255;
-								break;
-							case ShadingModes.Vertex:
-								color = (byte)vertexColor;
-								break;
-						}
-						return (color, mode);
-					})) {
-						await renderers.Dequeue().ApplyMaterialsAsync(obj2, group.ToArray(), group.Key.mode, group.Key.color, lightLevel);
-					}
-				}
-			}
+			await this.UpdateTexturesAsync();
 
 			await this.ApplyLogicAsync();
 		}
@@ -230,7 +199,7 @@ namespace MZZT.DarkForces {
 
 		private float animationSpeed = VUE_DEFAULT_FRAMERATE;
 		private bool twoVues = false;
-		private void Update() {
+		private async void Update() {
 			Animation animation = this.GetComponent<Animation>();
 			ObjectGenerator generator = ObjectGenerator.Instance;
 			if (generator.Animate3doUpdates) {
@@ -247,9 +216,65 @@ namespace MZZT.DarkForces {
 						animation.PlayQueued("VUE_APPEND").speed = this.animationSpeed;
 					}
 				}
+
+				await this.UpdateSectorAsync();
 			} else {
 				if (animation != null && animation.isPlaying) {
 					animation.Stop();
+
+					await this.UpdateSectorAsync();
+				}
+			}
+		}
+
+		private async Task UpdateSectorAsync() {
+			SectorRenderer sector = this.FindCurrentSector();
+			if (sector == this.CurrentSector) {
+				return;
+			}
+
+			this.CurrentSector = sector;
+			await this.UpdateTexturesAsync();
+		}
+
+		private async Task UpdateTexturesAsync() {
+			int lightLevel;
+			if (this.CurrentSector != null) {
+				lightLevel = this.CurrentSector.Sector.LightLevel;
+			} else {
+				lightLevel = 31;
+			}
+
+			if (lightLevel == this.currentLightLevel) {
+				return;
+			}
+
+			this.currentLightLevel = lightLevel;
+
+			Df3dObject threeDo = await ResourceCache.Instance.Get3dObjectAsync(this.Object.FileName);
+			if (threeDo != null) {
+				Queue<ThreeDoPolygonRenderer> renderers = new(this.polygons);
+				int vertexColor = threeDo.Objects.SelectMany(x => x.Polygons).FirstOrDefault(x => x.ShadingMode == ShadingModes.Vertex)?.Color ?? -1;
+				foreach (Df3dObject.Object obj2 in threeDo.Objects) {
+					// Recreate the polygon groups from the last function.
+					foreach (IGrouping<(byte color, ShadingModes mode), Polygon> group in obj2.Polygons.GroupBy(x => {
+						byte color = x.Color;
+						ShadingModes mode = vertexColor < 0 ? x.ShadingMode : ShadingModes.Vertex;
+						switch (mode) {
+							case ShadingModes.Plane:
+								color = 255;
+								break;
+							case ShadingModes.Texture:
+								color = 255;
+								break;
+							case ShadingModes.Vertex:
+								color = (byte)vertexColor;
+								break;
+						}
+						return (color, mode);
+					})) {
+						await renderers.Dequeue().ApplyMaterialsAsync(obj2, group.ToArray(), group.Key.mode, group.Key.color, lightLevel);
+					}
 				}
 			}
 		}

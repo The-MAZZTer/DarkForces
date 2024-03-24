@@ -5,7 +5,7 @@
         public int chksize = 0;
         public int dwSampleLength = 0;
 		public WaveHelper.WaveChunkType GetChunkType() => WaveHelper.WaveChunkType.Fact;
-		public string GetChunkId() => new string(this.chkID);
+		public string GetChunkId() => new(this.chkID);
 		public int GetChunkSize() => this.chksize;
 	}
 }

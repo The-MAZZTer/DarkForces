@@ -13,11 +13,11 @@ using UnityEngine;
 namespace CSharpSynth.Banks {
   public class InstrumentBank {
     //--Variables
-    private readonly List<Instrument> Bank = new List<Instrument>();
-    private readonly List<Instrument> DrumBank = new List<Instrument>();
+    private readonly List<Instrument> Bank = new();
+    private readonly List<Instrument> DrumBank = new();
 
     //--Static Variables
-    public static Sample nullSample = new Sample(SynthHelper.DEFAULT_SAMPLERATE);
+    public static Sample nullSample = new(SynthHelper.DEFAULT_SAMPLERATE);
     //--Public Methods
     public InstrumentBank(int sampleRate, string bankfile) {
       this.SampleRate = sampleRate;
@@ -76,8 +76,8 @@ namespace CSharpSynth.Banks {
       this.LoadStream(bankStream, Path.GetDirectoryName(this.BankPath) + "/", Programs, DrumPrograms);
     }
     public void LoadStream(Stream bankStream, string directory, byte[] Programs, byte[] DrumPrograms) {
-      StreamReader reader = new StreamReader(bankStream);
-      List<string> text = new List<string>();
+      StreamReader reader = new(bankStream);
+      List<string> text = new();
       while (reader.Peek() > -1) {
         text.Add(reader.ReadLine());
       }
@@ -216,7 +216,7 @@ namespace CSharpSynth.Banks {
       bool ISdrum = args[4] == "d";
       int start = int.Parse(args[2], CultureInfo.InvariantCulture);
       int end = int.Parse(args[3], CultureInfo.InvariantCulture);
-      List<int> Indices = new List<int>();
+      List<int> Indices = new();
 
       if (ISdrum == false) {
         if (Programs == null) {
@@ -266,7 +266,7 @@ namespace CSharpSynth.Banks {
       bool ISdrum = args[4] == "d";
       int start = int.Parse(args[2], CultureInfo.InvariantCulture);
       int end = int.Parse(args[3], CultureInfo.InvariantCulture);
-      List<int> Indices = new List<int>();
+      List<int> Indices = new();
 
       if (ISdrum == false) {
         if (Programs == null) {
@@ -316,7 +316,7 @@ namespace CSharpSynth.Banks {
       bool ISdrum = args[4] == "d";
       int start = int.Parse(args[2], CultureInfo.InvariantCulture);
       int end = int.Parse(args[3], CultureInfo.InvariantCulture);
-      List<int> Indices = new List<int>();
+      List<int> Indices = new();
 
       if (ISdrum == false) {
         if (Programs == null) {

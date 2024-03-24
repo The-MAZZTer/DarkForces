@@ -13,5 +13,6 @@ namespace MZZT.IO.FileSystemProviders {
 		FileSystemProviderItemInfo GetByPath(string path);
 		Task<Stream> OpenFileAsync(string path, FileMode mode, FileAccess access, FileShare share);
 		void ShowInFileManager(string path);
+		bool IsCaseSensitive { get; }
 	}
 }

@@ -80,8 +80,8 @@ namespace CSharpSynth.Banks.Sfz {
     }
     //--Private Methods
     private void ReadFromStream(Stream InstrumentStream, string path, InstrumentBank bank) {
-      StreamReader reader = new StreamReader(InstrumentStream);
-      List<string> text = new List<string>();
+      StreamReader reader = new(InstrumentStream);
+      List<string> text = new();
       while (reader.Peek() > -1) {
         text.Add(reader.ReadLine());
       }
@@ -92,11 +92,11 @@ namespace CSharpSynth.Banks.Sfz {
     }
     private void ParseInstrumentData(string[] text, string InstrumentPath, InstrumentBank bank) {
       this.allSamplesHaveDualChannels = true;
-      SfzRegion Group = new SfzRegion();
+      SfzRegion Group = new();
       bool[] groupValues = new bool[21];
-      List<Sample> Samples = new List<Sample>();
-      List<string> SampleNames = new List<string>();
-      List<SfzRegion> Regions = new List<SfzRegion>();
+      List<Sample> Samples = new();
+      List<string> SampleNames = new();
+      List<SfzRegion> Regions = new();
       for (int x = 0; x < text.Length; x++) {
         string line = text[x].Trim();
         if (line != "") {
@@ -244,7 +244,7 @@ namespace CSharpSynth.Banks.Sfz {
                   }
                 }
               } else if (line == "<region>") {
-                SfzRegion r = new SfzRegion();
+                SfzRegion r = new();
                 while (text[x] != "") {
                   x++;
                   if (x >= text.Length) {

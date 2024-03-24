@@ -99,7 +99,7 @@ namespace CSharpSynth.Banks.Fm {
     }
     private void LoadProgramFile(string file) {
       //UnitySynth
-      StreamReader reader = new StreamReader(File.Open(Application.dataPath + "/Resources/" + file, FileMode.Open));
+      StreamReader reader = new(File.Open(Application.dataPath + "/Resources/" + file, FileMode.Open));
       //Debug.Log(this.ToString() + " AppDataPath " + Application.dataPath + " Filename: " + file);
       //StreamReader reader = new StreamReader(Application.dataPath + "/Resources/" + file);
 
@@ -153,8 +153,8 @@ namespace CSharpSynth.Banks.Fm {
     private IFMComponent GetOpsAndValues(string arg, bool isFrequencyFunction) {
       arg += "    ";
       char[] chars = arg.ToCharArray();
-      List<byte> opList = new List<byte>();
-      List<double> valueList = new List<double>();
+      List<byte> opList = new();
+      List<double> valueList = new();
       string start = arg.Substring(0, 4).ToLower();
       if (isFrequencyFunction) {
         if (!start.Contains("freq")) {//if "freq" isnt used then we make sure the value passed in is negated by *0;

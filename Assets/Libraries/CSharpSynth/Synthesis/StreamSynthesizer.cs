@@ -139,7 +139,7 @@ namespace CSharpSynth.Synthesis {
         }
       }
       // Create a key for this event
-      NoteRegistryKey r = new NoteRegistryKey((byte)channel, (byte)note);
+      NoteRegistryKey r = new((byte)channel, (byte)note);
       // Get the correct instrument depending if it is a drum or not
       if (channel == 9) {
         freeVoice.SetInstrument(this.SoundBank.GetInstrument(program, true));
@@ -155,7 +155,7 @@ namespace CSharpSynth.Synthesis {
         this.keyRegistry[r].Add(freeVoice);
       } else//The first noteOn of it's own type will create a list for multiple occurences
         {
-        List<Voice> Vlist = new List<Voice>(this.MaxPolyPerNote) {
+        List<Voice> Vlist = new(this.MaxPolyPerNote) {
           freeVoice
         };
         this.keyRegistry.Add(r, Vlist);
@@ -164,7 +164,7 @@ namespace CSharpSynth.Synthesis {
       this.activeVoices.AddLast(freeVoice);
     }
     public void NoteOff(int channel, int note) {
-      NoteRegistryKey r = new NoteRegistryKey((byte)channel, (byte)note);
+      NoteRegistryKey r = new((byte)channel, (byte)note);
       if (this.keyRegistry.TryGetValue(r, out List<Voice> voice)) {
         if (voice.Count > 0) {
           voice[0].Stop();

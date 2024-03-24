@@ -2622,10 +2622,30 @@ namespace MZZT.DarkForces.Showcase {
 			}
 		}
 
-		private IEnumerable<KeyValuePair<string, string>> GetScriptProperties(DfLevelInformation.Item item) =>
-			item.Script?.Split('\r', '\n')
+		private IEnumerable<(string type, List<KeyValuePair<string, string>> properties)> GetScriptProperties(DfLevelInformation.Item item) {
+			KeyValuePair<string, string>[] pairs = item.Script?.Split('\r', '\n')
 				.SelectMany(x => TextBasedFile.SplitKeyValuePairs(TextBasedFile.TokenizeLine(x)))
-				.Select(x => new KeyValuePair<string, string>(x.Key.ToLower(), string.Join(" ", x.Value)));
+				.Select(x => new KeyValuePair<string, string>(x.Key.ToLower(), string.Join(" ", x.Value))).ToArray();
+
+			string type = null;
+			List<KeyValuePair<string, string>> current = null;
+			for (int i = 0; i < pairs.Length; i++) {
+				if (pairs[i].Key == "class") {
+					if (current != null) {
+						yield return (type, current.ToList());
+					}
+					type = pairs[i].Value;
+					current = new();
+				} else if (current == null) {
+					continue;
+				} else {
+					current.Add(pairs[i]);
+				}
+			}
+			if (current != null) {
+				yield return (type, current.ToList());
+			}
+		}
 
 		private async Task MirrorAsync(DfGobContainer gob, DfLevel level, DfLevelInformation inf, DfLevelObjects o) {
 			RandomizerCrossFileSettings settings = this.Settings.CrossFile;
@@ -2696,19 +2716,6 @@ namespace MZZT.DarkForces.Showcase {
 							textureWidths[surface.TextureFile.ToUpper()] = textureWidth;
 						}
 
-						if (wall.Sector.Name == "enthall" && wall.Sector.Walls.IndexOf(wall) == 21) {
-							Debug.Log(wallLength); // ~6
-							Debug.Log(textureWidth / 8f); // 8
-							Debug.Log(signWidth / 8f); // 4
-							Debug.Log(surface.TextureOffset.X); // -2.62
-							Debug.Log(wall.SignTexture.TextureOffset.X); // -1.63
-
-							// mirrored surface offset 4.62
-							// desired: ~5.61?
-
-							Debug.Log(-surface.TextureOffset.X + wall.SignTexture.TextureOffset.X); // ~1
-						}
-
 						float wallOffset = (textureWidth / 8f) - wallLength - surface.TextureOffset.X;
 						float offset = (-surface.TextureOffset.X + wall.SignTexture.TextureOffset.X);
 
@@ -2743,99 +2750,102 @@ namespace MZZT.DarkForces.Showcase {
 				if (item.Type == DfLevelInformation.ScriptTypes.Level) {
 					continue;
 				}
-
-				List<KeyValuePair<string, string>> properties = this.GetScriptProperties(item).ToList();
-				string classProp = properties.FirstOrDefault(x => x.Key == "class").Value;
-				if (classProp == null) {
-					continue;
-				}
-
-				string[] infClass = classProp.Split(' ');
-				if (infClass.Length < 2 || infClass[0].ToLower() != "elevator") {
-					continue;
-				}
-
-				for (int i = 0; i < properties.Count; i++) {
-					KeyValuePair<string, string> property = properties[i];
-					switch (infClass[1].ToUpper()) {
-						case "SCROLL_FLOOR":
-						case "SCROLL_CEILING":
-						case "MORPH_MOVE1":
-						case "MORPH_MOVE2":
-						case "MOVE_WALL":
-						case "SCROLL_WALL":
-							if (property.Key == "angle") {
-								if (double.TryParse(property.Value, out double value)) {
-									value = -value;
-									property = new KeyValuePair<string, string>(property.Key, value.ToString());
-									properties[i] = property;
-								}
-							}
-							break;
-						case "MORPH_SPIN1":
-						case "MORPH_SPIN2":
-						case "ROTATE_WALL":
-							if (property.Key == "stop") {
-								string[] stopSplit = property.Value.Split(' ');
-								bool relative = false;
-								if (stopSplit[0].StartsWith('@')) {
-									relative = true;
-									stopSplit[0] = stopSplit[0].Substring(1);
-								}
-								if (double.TryParse(stopSplit[0], out double stopValue)) {
-									stopValue = -stopValue;
-									stopSplit[0] = $"{(relative ? "@" : string.Empty)}{stopValue}";
-									property = new KeyValuePair<string, string>(property.Key, string.Join(' ', stopSplit));
-									properties[i] = property;
-								}
-							} else if (property.Key == "center") {
-								string[] centerSplit = property.Value.Split(' ');
-								if (double.TryParse(centerSplit[0], out double centerX)) {
-									centerX = -centerX + X_OFFSET;
-									centerSplit[0] = centerX.ToString();
-									property = new KeyValuePair<string, string>(property.Key, string.Join(' ', centerSplit));
-									properties[i] = property;
-								}
-							}
-							break;
+				List<(string classProp, List<KeyValuePair<string, string>> properties)> script = this.GetScriptProperties(item).ToList();
+				for (int j = 0; j < script.Count; j++) {
+					(string classProp, List<KeyValuePair<string, string>> properties) = script[j];
+					string[] infClass = classProp.Split(' ');
+					if (infClass.Length < 2 || infClass[0].ToLower() != "elevator") {
+						continue;
 					}
-					if (property.Key == "message") {
-						string[] messageSplit = property.Value.Split(' ');
-						if (messageSplit.Length < 5 || !messageSplit[1].Contains('(') ||
-							(messageSplit[2].ToUpper() != "clear_bits" && messageSplit[2].ToUpper() != "set_bits") || messageSplit[3] != "1") {
 
-							continue;
+					for (int i = 0; i < properties.Count; i++) {
+						KeyValuePair<string, string> property = properties[i];
+						switch (infClass[1].ToUpper()) {
+							case "SCROLL_FLOOR":
+							case "SCROLL_CEILING":
+							case "MORPH_MOVE1":
+							case "MORPH_MOVE2":
+							case "MOVE_WALL":
+							case "SCROLL_WALL":
+								if (property.Key == "angle") {
+									if (double.TryParse(property.Value, out double value)) {
+										value = -value;
+										property = new KeyValuePair<string, string>(property.Key, value.ToString());
+										properties[i] = property;
+									}
+								}
+								break;
+							case "MORPH_SPIN1":
+							case "MORPH_SPIN2":
+							case "ROTATE_WALL":
+								if (property.Key == "stop") {
+									string[] stopSplit = property.Value.Split(' ');
+									bool relative = false;
+									if (stopSplit[0].StartsWith('@')) {
+										relative = true;
+										stopSplit[0] = stopSplit[0].Substring(1);
+									}
+									if (double.TryParse(stopSplit[0], out double stopValue)) {
+										stopValue = -stopValue;
+										stopSplit[0] = $"{(relative ? "@" : string.Empty)}{stopValue}";
+										property = new KeyValuePair<string, string>(property.Key, string.Join(' ', stopSplit));
+										properties[i] = property;
+									}
+								} else if (property.Key == "center") {
+									string[] centerSplit = property.Value.Split(' ');
+									if (double.TryParse(centerSplit[0], out double centerX)) {
+										centerX = -centerX + X_OFFSET;
+										centerSplit[0] = centerX.ToString();
+										property = new KeyValuePair<string, string>(property.Key, string.Join(' ', centerSplit));
+										properties[i] = property;
+									}
+								} else if (property.Key == "speed" && !properties.Any(x => x.Key == "stop")) {
+									if (double.TryParse(property.Value, out double speedValue)) {
+										speedValue = -speedValue;
+										property = new KeyValuePair<string, string>(property.Key, speedValue.ToString());
+										properties[i] = property;
+									}
+								}
+								break;
 						}
+						if (property.Key == "message") {
+							string[] messageSplit = property.Value.Split(' ');
+							if (messageSplit.Length < 5 || !messageSplit[1].Contains('(') ||
+								(messageSplit[2].ToUpper() != "clear_bits" && messageSplit[2].ToUpper() != "set_bits") || messageSplit[3] != "1") {
 
-						bool set = messageSplit[2].ToUpper() == "set_bits";
-						if (!int.TryParse(messageSplit[4], out int flags)) {
-							continue;
-						}
-						if (!((DfLevel.WallTextureAndMapFlags)flags).HasFlag(DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally)) {
-							continue;
-						}
-						flags ^= (int)DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally;
-						if (flags == 0) {
-							messageSplit[4] = ((int)DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally).ToString();
-							if (set) {
-								messageSplit[2] = "clear_bits";
+								continue;
+							}
+
+							bool set = messageSplit[2].ToUpper() == "set_bits";
+							if (!int.TryParse(messageSplit[4], out int flags)) {
+								continue;
+							}
+							if (!((DfLevel.WallTextureAndMapFlags)flags).HasFlag(DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally)) {
+								continue;
+							}
+							flags ^= (int)DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally;
+							if (flags == 0) {
+								messageSplit[4] = ((int)DfLevel.WallTextureAndMapFlags.FlipTextureHorizontally).ToString();
+								if (set) {
+									messageSplit[2] = "clear_bits";
+								} else {
+									messageSplit[2] = "set_bits";
+								}
+								property = new KeyValuePair<string, string>(property.Key, string.Join(' ', messageSplit));
+								properties[i] = property;
 							} else {
-								messageSplit[2] = "set_bits";
+								messageSplit[4] = flags.ToString();
+								property = new KeyValuePair<string, string>(property.Key, string.Join(' ', messageSplit));
+								properties[i] = property;
+								i++;
+								property = new KeyValuePair<string, string>(property.Key, $"{messageSplit[0]} {messageSplit[1]} {(set ? "clear_bits" : "set_bits")} 1 4");
+								properties.Insert(i, property);
 							}
-							property = new KeyValuePair<string, string>(property.Key, string.Join(' ', messageSplit));
-							properties[i] = property;
-						} else {
-							messageSplit[4] = flags.ToString();
-							property = new KeyValuePair<string, string>(property.Key, string.Join(' ', messageSplit));
-							properties[i] = property;
-							i++;
-							property = new KeyValuePair<string, string>(property.Key, $"{messageSplit[0]} {messageSplit[1]} {(set ? "clear_bits" : "set_bits")} 1 4");
-							properties.Insert(i, property);
 						}
 					}
 				}
 
-				item.Script = string.Join(Environment.NewLine, properties.Select(x => $"{x.Key}: {x.Value}"));
+				item.Script = string.Join(Environment.NewLine, script.SelectMany(x => x.properties.Select(x => $"{x.Key}: {x.Value}").Prepend($"class: {x.classProp}")));
 			}
 
 			foreach (DfLevelObjects.Object obj in o.Objects) {

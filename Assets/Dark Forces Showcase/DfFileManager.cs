@@ -5,7 +5,6 @@ using MZZT.IO.FileProviders;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace MZZT.DarkForces.Showcase {
 	public class DfFileManager : Singleton<DfFileManager> {
@@ -29,7 +28,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			if (item is IVirtualFolder folder && item is not VirtualFolder) {
-				item = await folder.GetChildAsync(null);
+				item = await folder.GetChildAsync(folder.Name);
 			}
 
 			if (item is IVirtualFile file) {
@@ -67,7 +66,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			if (item is IVirtualFolder folder && item is not VirtualFolder) {
-				item = await folder.GetChildAsync(null);
+				item = await folder.GetChildAsync(folder.Name);
 			}
 
 			if (item is IVirtualFile file) {
@@ -103,7 +102,7 @@ namespace MZZT.DarkForces.Showcase {
 			}
 
 			if (item is IVirtualFolder folder && item is not VirtualFolder) {
-				item = await folder.GetChildAsync(null);
+				item = await folder.GetChildAsync(folder.Name);
 			}
 
 			if (item is IVirtualFile file) {

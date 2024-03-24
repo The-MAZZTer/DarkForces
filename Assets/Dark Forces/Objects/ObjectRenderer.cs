@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -20,7 +21,7 @@ namespace MZZT.DarkForces {
 		/// <summary>
 		/// The sector we think the object is currently in.
 		/// </summary>
-		public SectorRenderer CurrentSector { get; private set; }
+		public SectorRenderer CurrentSector { get; protected set; }
 
 		/// <summary>
 		/// Generate the visual representation of the object in Unity.
@@ -40,6 +41,7 @@ namespace MZZT.DarkForces {
 			Vector3 euler = obj.EulerAngles.ToUnity();
 			euler = new Vector3(-euler.x, euler.y, euler.z);
 			Quaternion rotation = Quaternion.Euler(euler);
+			this.gameObject.transform.SetPositionAndRotation(position, rotation);
 
 			// Grab item logic.
 			string[] lines = obj.Logic?.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
@@ -50,22 +52,7 @@ namespace MZZT.DarkForces {
 			float height = 0;
 
 			// Look down and then up and try to find a sector floor/ceiling. Then verify we're in the proper Y range.
-			SectorRenderer sector = null;
-			int layer = LayerMask.GetMask("Geometry");
-			if (Physics.Raycast(new Ray(position, Vector3.down), out RaycastHit hit, float.PositiveInfinity, layer)) {
-				sector = hit.collider.GetComponentInParent<SectorRenderer>();
-				if (obj.Position.Y > sector.Sector.Floor.Y || obj.Position.Y < sector.Sector.Ceiling.Y) {
-					sector = null;
-				}
-			}
-			if (sector == null) {
-				if (Physics.Raycast(new Ray(position, Vector3.up), out hit, float.PositiveInfinity, layer)) {
-					sector = hit.collider.GetComponentInParent<SectorRenderer>();
-					if (obj.Position.Y > sector.Sector.Floor.Y || obj.Position.Y < sector.Sector.Ceiling.Y) {
-						sector = null;
-					}
-				}
-			}
+			SectorRenderer sector = this.FindCurrentSector();
 			this.CurrentSector = sector;
 			if (sector == null) {
 				ResourceCache.Instance.AddWarning($"{LevelLoader.Instance.CurrentLevelName}.O",
@@ -102,9 +89,28 @@ namespace MZZT.DarkForces {
 				Eye = this;
 			}
 
-			this.gameObject.transform.SetPositionAndRotation(position, rotation);
-
 			return Task.CompletedTask;
+		}
+
+		protected SectorRenderer FindCurrentSector() {
+			SectorRenderer sector = null;
+			int layer = LayerMask.GetMask("Geometry");
+			float y = this.Object.Position.Y;
+			if (Physics.Raycast(new Ray(this.transform.position, Vector3.down), out RaycastHit hit, float.PositiveInfinity, layer)) {
+				sector = hit.collider.GetComponentInParent<SectorRenderer>();
+				if (y > sector.Sector.Floor.Y || y < sector.Sector.Ceiling.Y) {
+					sector = null;
+				}
+			}
+			if (sector == null) {
+				if (Physics.Raycast(new Ray(this.transform.position, Vector3.up), out hit, float.PositiveInfinity, layer)) {
+					sector = hit.collider.GetComponentInParent<SectorRenderer>();
+					if (y > sector.Sector.Floor.Y || y < sector.Sector.Ceiling.Y) {
+						sector = null;
+					}
+				}
+			}
+			return sector;
 		}
 
 		private void OnDestroy() {

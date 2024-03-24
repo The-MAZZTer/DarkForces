@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Debug = UnityEngine.Debug;
 
 namespace MZZT.DarkForces.IO {
 	public class LfdTransform : VirtualItemTransform {
@@ -74,13 +73,13 @@ namespace MZZT.DarkForces.IO {
 		public void ShowInFileManager() => this.provider.ShowInFileManager(this.data.FullPath);
 
 		public async Task<IVirtualItem> GetChildAsync(string name) {
-			if (string.IsNullOrEmpty(name)) {
+			if (name == this.data.Name) {
 				return new LfdVirtualFile(this.provider, this.data);
 			}
 
 			int index = name.IndexOf('.');
 			string type = name.Substring(index + 1);
-			name = name.Substring(index);
+			name = name.Substring(0, index);
 
 			LfdVirtualChild child = null;
 			using (Stream stream = await this.provider.OpenFileAsync(this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read)) {

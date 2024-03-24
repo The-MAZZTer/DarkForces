@@ -245,6 +245,8 @@ namespace MZZT.IO.FileSystemProviders {
 			Task.FromResult<Stream>(new MemoryFileSystemProviderStream(item, item.Data, mode, access, share));
 
 		public virtual void ShowInFileManager(string path) { }
+
+		public bool IsCaseSensitive => true;
 	}
 
 	public class MemoryFileSystemItem : IDisposable {

@@ -46,7 +46,7 @@ namespace CSharpSynth.Midi {
 			}
     }
     public List<MidiEvent> GetAllMidiEventsofType(MidiHelper.MidiChannelEvent eventChannelType, MidiHelper.MidiMetaEvent eventMetaType) {
-      List<MidiEvent> matchList = new List<MidiEvent>();
+      List<MidiEvent> matchList = new();
       for (int x = 0; x < this.Tracks.Length; x++) {
         for (int i = 0; i < this.Tracks[x].MidiEvents.Length; i++) {
           if (this.Tracks[x].MidiEvents[i].midiMetaEvent == eventMetaType && this.Tracks[x].MidiEvents[i].midiChannelEvent == eventChannelType) {
@@ -57,7 +57,7 @@ namespace CSharpSynth.Midi {
       return matchList;
     }
     public List<MidiEvent> GetAllMidiEventsofType(byte channel, MidiHelper.MidiChannelEvent eventChannelType, MidiHelper.MidiMetaEvent eventMetaType) {
-      List<MidiEvent> matchList = new List<MidiEvent>();
+      List<MidiEvent> matchList = new();
       for (int x = 0; x < this.Tracks.Length; x++) {
         for (int i = 0; i < this.Tracks[x].MidiEvents.Length; i++) {
           if (this.Tracks[x].MidiEvents[i].midiMetaEvent == eventMetaType
@@ -76,8 +76,8 @@ namespace CSharpSynth.Midi {
 
 			int total_eventCount = 0;
 			ulong total_notesPlayed = 0;
-      List<byte> programsUsed = new List<byte>();
-      List<byte> DrumprogramsUsed = new List<byte>();
+      List<byte> programsUsed = new();
+      List<byte> DrumprogramsUsed = new();
       //Loop to get track info
       for (int x = 0; x < this.Tracks.Length; x++) {
         total_eventCount += this.Tracks[x].MidiEvents.Length;
@@ -94,7 +94,7 @@ namespace CSharpSynth.Midi {
 				}
       }
       //Now process the midi events
-      Dictionary<uint, LinkedList<MidiEvent>> OrderedTrack = new Dictionary<uint, LinkedList<MidiEvent>>(total_eventCount);
+      Dictionary<uint, LinkedList<MidiEvent>> OrderedTrack = new(total_eventCount);
 
       for (int x = 0; x < this.Tracks.Length; x++) {
         uint CurrentDeltaTime_ = 0;
@@ -108,7 +108,7 @@ namespace CSharpSynth.Midi {
             tmplist = OrderedTrack[TrackSeq[x2].deltaTime];
             tmplist.AddLast(TrackSeq[x2]);
           } else {
-            LinkedList<MidiEvent> tmplist = new LinkedList<MidiEvent>();
+            LinkedList<MidiEvent> tmplist = new();
             tmplist.AddLast(TrackSeq[x2]);
             OrderedTrack.Add(TrackSeq[x2].deltaTime, tmplist);
           }
@@ -190,9 +190,9 @@ namespace CSharpSynth.Midi {
       this.MidiHeader.TimeFormat = ((delta & 0x8000) > 0) ? MidiHelper.MidiTimeFormat.FamesPerSecond : MidiHelper.MidiTimeFormat.TicksPerBeat;
       //Begin Reading Each Track
       for (int x = 0; x < trackCount; x++) {
-        List<byte> Programs = new List<byte>();
-        List<byte> DrumPrograms = new List<byte>();
-        List<MidiEvent> midiEvList = new List<MidiEvent>();
+        List<byte> Programs = new();
+        List<byte> DrumPrograms = new();
+        List<MidiEvent> midiEvList = new();
         this.Tracks[x] = new MidiTrack();
         Programs.Add(0); //assume the track uses program at 0 in case no program changes are used
         DrumPrograms.Add(0);
@@ -214,7 +214,7 @@ namespace CSharpSynth.Midi {
         while (index <= tmp.Length - 5) {
 					ushort numofbytes = 0;
 					uint ScrmbledDta = BitConverter.ToUInt32(tmp, index);
-					MidiEvent MEv = new MidiEvent {
+					MidiEvent MEv = new() {
 						deltaTime = this.GetTime(ScrmbledDta, ref numofbytes)
 					};
 					index += 4 - (4 - numofbytes);

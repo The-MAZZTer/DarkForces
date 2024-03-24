@@ -67,7 +67,7 @@ namespace MZZT.DarkForces.IO {
 		public void ShowInFileManager() => this.provider.ShowInFileManager(this.data.FullPath);
 
 		public async Task<IVirtualItem> GetChildAsync(string name) {
-			if (string.IsNullOrEmpty(name)) {
+			if (name == this.data.Name) {
 				return new GobVirtualFile(this.provider, this.data);
 			}
 

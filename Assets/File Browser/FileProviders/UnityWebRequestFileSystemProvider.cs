@@ -57,5 +57,7 @@ namespace MZZT.IO.FileSystemProviders {
 		}
 
 		public void ShowInFileManager(string path) => throw new PlatformNotSupportedException();
+
+		public bool IsCaseSensitive => true;
 	}
 }

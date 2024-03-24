@@ -6,7 +6,6 @@ using MZZT.DarkForces.Showcase;
 using MZZT.Extensions;
 using MZZT.FileFormats;
 using MZZT.IO.FileProviders;
-using MZZT.IO.FileSystemProviders;
 #if UNITY_WEBGL && !UNITY_EDITOR
 using MZZT.IO.FileSystemProviders;
 #endif
@@ -15,13 +14,11 @@ using MZZT.Steam;
 #endif
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace MZZT.DarkForces {
 	/// <summary>
@@ -257,7 +254,11 @@ namespace MZZT.DarkForces {
 				path = Path.Combine(this.DarkForcesFolder, path);
 			}
 			string key = path;
-			string[] files = this.gobFiles[key];
+			string[] files = this.gobFiles.GetValueOrDefault(key);
+			if (files == null) {
+				return;
+			}
+
 			this.gobFiles.Remove(key);
 			foreach (string file in files) {
 				List<ResourceLocation> results = this.gobMap[file];

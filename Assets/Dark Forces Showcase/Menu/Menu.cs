@@ -1,6 +1,9 @@
 ﻿using MZZT.DarkForces.FileFormats;
 using MZZT.Input;
 using MZZT.IO.FileProviders;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using MZZT.IO.FileSystemProviders;
+#endif
 using System;
 using System.IO;
 using System.Linq;
@@ -21,7 +24,7 @@ namespace MZZT.DarkForces.Showcase {
 		[SerializeField, Header("References")]
 		private Image background = null;
 		[SerializeField]
-#pragma warning disable CS0414 
+#pragma warning disable CS0414
 		private GameObject closeContainer = null;
 #pragma warning restore CS0414
 		[SerializeField]
@@ -44,7 +47,8 @@ namespace MZZT.DarkForces.Showcase {
 			}
 			init = true;
 
-			ProgramArguments.AppName = "\"Dark Forces Showcase\"";
+			ProgramArguments.AppName = "Dark Forces Showcase";
+			ProgramArguments.AppVersion = Application.version;
 			ProgramArguments.OverrideConsoleWidth = 1000;
 			ProgramArguments.HelpDescriptionIndent = 36;
 #if !UNITY_EDITOR
@@ -159,19 +163,35 @@ namespace MZZT.DarkForces.Showcase {
 
 			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
 				FileLoader.Instance.DarkForcesFolder = this.CommandLineDarkForcesFolder;
-				if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-					FileLoader.Instance.DarkForcesFolder = PlayerPrefs.GetString("DarkForcesFolder");
-					if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-						FileLoader.Instance.DarkForcesFolder = await FileLoader.Instance.LocateDarkForcesAsync();
-						if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-							FileLoader.Instance.DarkForcesFolder = await this.ShowDarkForcesDialogAsync();
-							if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
-								this.menu.SetActive(false);
-								FileLoader.Instance.DarkForcesFolder = null;
-							}
-						}
-					}
+			}
+			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+				FileLoader.Instance.DarkForcesFolder = PlayerPrefs.GetString("DarkForcesFolder");
+			}
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+			if (FileManager.Instance.Provider is WebFileSystemProvider) {
+				while (!WebFileSystemProviderBrowserCallback.Instance.BrowserFilesUploaded) {
+					await Task.Delay(25);
 				}
+			}
+#endif
+
+			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+				FileLoader.Instance.DarkForcesFolder = await FileLoader.Instance.LocateDarkForcesAsync();
+			}
+			if (!string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+				if (!FileManager.Instance.FileExists(Path.Combine(FileLoader.Instance.DarkForcesFolder, "DARK.GOB"))) {
+					FileLoader.Instance.DarkForcesFolder = null;
+					PlayerPrefs.DeleteKey("DarkForcesFolder");
+				}
+			}
+
+			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+				FileLoader.Instance.DarkForcesFolder = await this.ShowDarkForcesDialogAsync();
+			}
+			if (string.IsNullOrEmpty(FileLoader.Instance.DarkForcesFolder)) {
+				this.menu.SetActive(false);
+				FileLoader.Instance.DarkForcesFolder = null;
 			}
 
 			this.darkForcesFolderText.text = FileLoader.Instance.DarkForcesFolder ?? "Location not set";
@@ -258,6 +278,8 @@ namespace MZZT.DarkForces.Showcase {
 			ResourceCache.Instance.Clear();
 
 			await FileLoader.Instance.LoadStandardFilesAsync();
+
+			await Mod.Instance.LoadModAsync();
 
 			this.menu.SetActive(true);
 

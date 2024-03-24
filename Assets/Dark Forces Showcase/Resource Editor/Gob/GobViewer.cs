@@ -1,8 +1,10 @@
 using MZZT.DarkForces.FileFormats;
+using MZZT.DarkForces.IO;
 using MZZT.Data.Binding;
 using MZZT.FileFormats;
 using MZZT.IO.FileProviders;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -82,7 +84,9 @@ namespace MZZT.DarkForces.Showcase {
 
 			this.lastFolder = Path.GetDirectoryName(path);
 
-			long size = await FileManager.Instance.GetSizeAsync(path);
+			VirtualItemTransformHandler transforms = new();
+			transforms.AddTransform(new GobTransform());
+			long size = (await FileManager.Instance.GetByPathAsync(path, transforms)).Size.Value;
 			if (size > uint.MaxValue) {
 				await DfMessageBox.Instance.ShowAsync("File is too big to add to a GOB.");
 				return;
@@ -95,6 +99,45 @@ namespace MZZT.DarkForces.Showcase {
 				Size = (uint)size,
 				ResourcePath = path
 			});
+
+			this.OnDirty();
+		}
+
+		public async void MassAddAsync() {
+			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
+				AllowNavigateGob = true,
+				AllowNavigateLfd = false,
+				SelectFolder = true,
+				SelectButtonText = "Add",
+				SelectedFileMustExist = true,
+				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
+				Title = "Add folder to GOB"
+			});
+			if (path == null) {
+				return;
+			}
+
+			this.lastFolder = path;
+
+			VirtualItemTransformHandler transforms = new();
+			transforms.AddTransform(new GobTransform());
+			IVirtualFolder folder = (IVirtualFolder)await FileManager.Instance.GetByPathAsync(path, transforms);
+			List<IVirtualFile> files = new();
+			await foreach (IVirtualFile file in folder.GetFilesAsync()) {
+				if (file.Size > uint.MaxValue) {
+					await DfMessageBox.Instance.ShowAsync($"File {file.Name} is too big to add to a GOB.");
+					return;
+				}
+
+				files.Add(file);
+			}
+			this.list.AddRange(files.Select(x => new FileLocationInfo() {
+				Name = x.Name,
+				SourceFile = x.FullPath,
+				SourceOffset = 0,
+				Size = (uint)x.Size,
+				ResourcePath = x.FullPath
+			}));
 
 			this.OnDirty();
 		}
@@ -182,6 +225,39 @@ namespace MZZT.DarkForces.Showcase {
 				await DfFileManager.Instance.SaveAsync(file, path);
 			} catch (Exception ex) {
 				await DfMessageBox.Instance.ShowAsync($"Error saving file: {ex.Message}");
+			}
+		}
+
+		public async void ExportAllAsync() {
+			string path = await FileBrowser.Instance.ShowAsync(new FileBrowser.FileBrowserOptions() {
+				AllowNavigateGob = false,
+				AllowNavigateLfd = false,
+				SelectFolder = true,
+				SelectButtonText = "Export",
+				SelectedPathMustExist = false,
+				StartPath = this.lastFolder ?? FileLoader.Instance.DarkForcesFolder,
+				Title = "Export all files from GOB",
+				ValidateFileName = true
+			});
+			if (path == null) {
+				return;
+			}
+
+			this.lastFolder = path;
+
+			if (!FileManager.Instance.FolderExists(path)) {
+				await FileManager.Instance.FolderCreateAsync(path);
+			}
+
+			foreach (FileLocationInfo info in this.list) {
+				string sourcePath = info.ResourcePath;
+
+				Raw file = await DfFileManager.Instance.ReadAsync<Raw>(sourcePath);
+				try {
+					await DfFileManager.Instance.SaveAsync(file, Path.Combine(path, info.Name));
+				} catch (Exception ex) {
+					await DfMessageBox.Instance.ShowAsync($"Error saving file {info.Name}: {ex.Message}");
+				}
 			}
 		}
 	}

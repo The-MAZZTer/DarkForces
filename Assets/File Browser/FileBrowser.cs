@@ -108,7 +108,7 @@ namespace MZZT {
 				DisplayName = "Folders",
 				Wildcards = Array.Empty<string>()
 			};
-			public static FileType Generate(string displayName, IEnumerable<string> wildcards) => new FileType() {
+			public static FileType Generate(string displayName, IEnumerable<string> wildcards) => new() {
 				DisplayName = $"{displayName} ({string.Join(';', wildcards)})",
 				Wildcards = (wildcards is string[] x) ? x : wildcards.ToArray()
 			};
@@ -138,7 +138,7 @@ namespace MZZT {
 				Databind<IVirtualItem> selectedItem = (Databind<IVirtualItem>)this.fileList.SelectedDatabound;
 				Databind<IVirtualItem> newSelectedItem = null;
 				if (!Path.GetInvalidPathChars().Any(x => this.fileInput.text.Contains(x))) {
-					string path = Path.GetFullPath(Path.Combine(this.folderTree.SelectedValue?.FullPath ?? string.Empty, this.fileInput.text));
+					string path = Path.GetFullPath(Path.Combine(this.fileList.Container.FullPath, this.fileInput.text));
 					newSelectedItem = this.fileList.Children.Cast<Databind<IVirtualItem>>().FirstOrDefault(x => x.Value.FullPath == path);
 					newSelectedItem ??= this.fileList.Children.Cast<Databind<IVirtualItem>>().FirstOrDefault(x => string.Compare(x.Value.FullPath, path, true) == 0);
 				}
@@ -238,6 +238,8 @@ namespace MZZT {
 					this.fileList.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FullPath.ToLower() == options.StartSelectedFile.ToLower());
 
 				this.fileInput.text = Path.GetFileName(options.StartSelectedFile);
+			} else {
+				this.fileInput.text = string.Empty;
 			}
 
 			await this.UpdateButtonsAsync();
@@ -280,16 +282,18 @@ namespace MZZT {
 			FileViewItem currentNode = (FileViewItem)this.folderTree.Children.First();
 			currentNode.Expanded = true;
 
+			bool caseSensitive = FileManager.Instance.Provider.IsCaseSensitive;
+
 			FileView currentView = currentNode.ChildView;
 			while (pathStack.Count > 0) {
 				current = pathStack.Pop();
-				currentNode = currentView.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FullPath == current);
+				currentNode = currentView.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FullPath.Equals(current, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase));
 				// If we don't find one of the nodes...
 				if (currentNode == null) {
 					// Refresh its children.
 					await currentView.RefreshAsync();
 					// Check again.
-					currentNode = currentView.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FullPath == current);
+					currentNode = currentView.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FullPath.Equals(current, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase));
 					if (currentNode == null) {
 						// Path doesn't exist (probably), give up.
 						return;
@@ -434,11 +438,13 @@ namespace MZZT {
 		/// </summary>
 		/// <param name="path">The folder to navigate to.</param>
 		public async Task NavigateToFolderAsync(string path) {
+			IVirtualFolder folder = await FileManager.Instance.GetByPathAsync(path, this.transforms) as IVirtualFolder;
+			if (folder == null) {
+				return;
+			}
+
 			this.fileList.SelectedDatabound = null;
 			this.fileList.Clear();
-
-			// These checks might not be necessary, we'll figure out later if the path isn't valid.
-			IVirtualFolder folder = await FileManager.Instance.GetByPathAsync(path, this.transforms) as IVirtualFolder;
 
 			this.initializing++;
 			try {
@@ -450,9 +456,7 @@ namespace MZZT {
 			// We want to call this one first to update the file list first.
 			await this.OnSelectedTreeNodeChangedAsync(path);
 
-			if (folder != null) {
-				await this.SelectTreeNodeAsync(path);
-			}
+			await this.SelectTreeNodeAsync(path);
 		}
 
 		/// <summary>
@@ -475,7 +479,8 @@ namespace MZZT {
 
 		private async Task<bool> IsSelectionValidAsync() {
 			// File Containers and Folders can be navigated into so the select button should be enabled.
-			IVirtualItem selected = this.fileList.SelectedValue;
+			string fullPath = Path.GetFullPath(Path.Combine(this.fileList.Container.FullPath, this.fileInput.text));
+			IVirtualItem selected = await FileManager.Instance.GetByPathAsync(fullPath, this.transforms);
 			if (selected?.FullPath != null && selected is IVirtualFolder) {
 				return true;
 			}
@@ -590,7 +595,9 @@ namespace MZZT {
 		/// </summary>
 		public async void OnSelectedFileChanged() {
 			string path = this.fileList.SelectedValue?.FullPath;
-			this.fileInput.text = path != null ? Path.GetFileName(path) : string.Empty;
+			if (path != null) {
+				this.fileInput.text = Path.GetFileName(path);
+			}
 
 			await this.UpdateButtonsAsync();
 		}
@@ -625,14 +632,19 @@ namespace MZZT {
 						await this.NavigateToFolderAsync(folder);
 					}
 
-					item = this.fileList.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FullPath == fullPath);
+					bool caseSensitive = FileManager.Instance.Provider.IsCaseSensitive;
+
+					item = this.fileList.Children.Cast<FileViewItem>().FirstOrDefault(x => x.Value.FullPath.Equals(fullPath, caseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase));
 				}
 
 				this.fileList.SelectedDatabound = item;
 				if (item != null) {
 					item.EnsureVisible();
 				}
-				this.fileInput.text = (fullPath != null ? Path.GetFileName(fullPath) : null) ?? string.Empty;
+				string name = (fullPath != null ? Path.GetFileName(fullPath) : null);
+				if (!string.IsNullOrEmpty(name)) {
+					this.fileInput.text = name;
+				}
 
 				await this.UpdateButtonsAsync();
 			} finally {
@@ -661,7 +673,8 @@ namespace MZZT {
 				return;
 			}
 
-			IVirtualItem selected = this.fileList.SelectedValue;
+			string fullPath = Path.GetFullPath(Path.Combine(this.fileList.Container.FullPath, this.fileInput.text));
+			IVirtualItem selected = await FileManager.Instance.GetByPathAsync(fullPath, this.transforms);
 
 			// Navigate if double click on non-file
 
@@ -673,7 +686,7 @@ namespace MZZT {
 			}
 
 			// Set the return value and hide the window.
-			this.ret = Path.Combine(this.fileList.Container.FullPath, this.fileInput.text);
+			this.ret = fullPath;
 			this.transforms = null;
 			this.fileList.Clear();
 			this.folderTree.Clear();
@@ -735,7 +748,7 @@ namespace MZZT {
 			try {
 				if (((FileView)item.Parent)?.ToggleGroup == this.fileList.ToggleGroup) {
 					// Update the path displayed for the selected item, and the select button state.
-					this.fileInput.text = Path.GetFileName(item.Value.FullPath);
+					this.fileInput.text = item.Value.Name;
 
 					await this.UpdateButtonsAsync();
 					return;

@@ -100,7 +100,7 @@ namespace CSharpSynth.Synthesis {
       }
     }
     public float GetPan() => this.pan;
-    public NoteRegistryKey GetKey() => new NoteRegistryKey((byte)this.channel, (byte)this.note);
+    public NoteRegistryKey GetKey() => new((byte)this.channel, (byte)this.note);
     public void Process(float[,] workingBuffer, int startIndex, int endIndex) {
       if (this.IsInUse) {
         //quick checks to do before we go through our main loop

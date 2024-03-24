@@ -97,17 +97,17 @@ namespace MZZT.DarkForces {
 
 			// Determine the bounds of the wall.
 			Vector3[] vertices = new Vector3[] {
-				new Vector3(
+				new(
 					0,
 					(-maxY + minY) * geometryScale,
 					0
 				),
-				new Vector3(
+				new(
 					(right.x - left.x) * geometryScale,
 					(-maxY + minY) * geometryScale,
 					(right.y - left.y) * geometryScale
 				),
-				new Vector3(
+				new(
 					(right.x - left.x) * geometryScale,
 					0,
 					(right.y - left.y) * geometryScale
@@ -132,15 +132,15 @@ namespace MZZT.DarkForces {
 				// UVs of 0-1 will stretch the texture to fit.
 				// Use the size of the mesh and texture to make each texture pixel a consistent size in the world.
 				mesh.uv = new Vector2[] {
-					new Vector2(
+					new(
 						offset.x,
 						offset.y + height / textureScale / material.mainTexture.height
 					),
-					new Vector2(
+					new(
 						offset.x + width / textureScale / material.mainTexture.width,
 						offset.y + height / textureScale / material.mainTexture.height
 					),
-					new Vector2(
+					new(
 						offset.x + width / textureScale / material.mainTexture.width,
 						offset.y
 					),
@@ -199,17 +199,17 @@ namespace MZZT.DarkForces {
 					sign.transform.localPosition = pos;
 
 					vertices = new Vector3[] {
-						new Vector3(
+						new(
 							0,
 							material.mainTexture.height * textureScale * geometryScale,
 							0
 						),
-						new Vector3(
+						new(
 							material.mainTexture.width * textureScale * wallDirection.x,
 							material.mainTexture.height * textureScale * geometryScale,
 							material.mainTexture.width * textureScale * wallDirection.z
 						),
-						new Vector3(
+						new(
 							material.mainTexture.width * textureScale * wallDirection.x,
 							0,
 							material.mainTexture.width * textureScale * wallDirection.z
@@ -221,9 +221,9 @@ namespace MZZT.DarkForces {
 						vertices = vertices,
 						triangles = new int[] { 0, 1, 3, 1, 2, 3 },
 						uv = new Vector2[] {
-							new Vector2(0, 1),
+							new(0, 1),
 							Vector2.one,
-							new Vector2(1, 0),
+							new(1, 0),
 							Vector2.zero
 						}
 					};

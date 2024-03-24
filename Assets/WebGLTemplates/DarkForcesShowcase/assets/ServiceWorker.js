@@ -7,11 +7,7 @@ const contentToCache = [
 	"../Build/{{{ WORKER_FILENAME }}}",
 #endif
 	"../Build/{{{ DATA_FILENAME }}}",
-	"../Build/{{{ CODE_FILENAME }}}",
-	"../main.484b3dc897195c77.js",
-	"../styles.8ca4312f8466b334.css",
-	"../polyfills.f54e0bab386c5fb9.js",
-	"../runtime.f2fbf9b96c6be5fa.js"
+	"../Build/{{{ CODE_FILENAME }}}"
 ];
 #endif
 

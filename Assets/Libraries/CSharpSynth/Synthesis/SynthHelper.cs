@@ -12,7 +12,7 @@ namespace CSharpSynth.Synthesis {
     public const float DEFAULT_AMPLITUDE = .25f;
     public enum WaveFormType { Sine = 0, Sawtooth = 1, Square = 2, Triangle = 3, WhiteNoise = 4 }
     //--Private Static
-    private static readonly Random rnd = new Random();
+    private static readonly Random rnd = new();
     //--Public Static Methods
     public static double GetRandom() => rnd.NextDouble();
     public static int GetSampleFromTime(int sampleRate, float timeInSeconds) => (int)(sampleRate * timeInSeconds);

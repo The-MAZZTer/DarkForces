@@ -1,6 +1,7 @@
 ﻿using MZZT.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -248,7 +249,8 @@ namespace MZZT.DarkForces.FileFormats {
 			this.Vues.Clear();
 
 			switch (line?[0].ToLower()) {
-				case "vue": {
+				case "vue":
+				case "transform": {
 					this.Format = Formats.MultiVue;
 
 					SubVue currentVue = null;
@@ -283,7 +285,7 @@ namespace MZZT.DarkForces.FileFormats {
 									break;
 								}
 								string id = line[1];
-								// Constract the 4x4 matrix used to position, rotate, and scale the 3D object.
+								// Construct the 4x4 matrix used to position, rotate, and scale the 3D object.
 								Matrix4x4 transform = new() {
 									M11 = m00,
 									M21 = m10,
@@ -303,6 +305,11 @@ namespace MZZT.DarkForces.FileFormats {
 									M44 = 1
 								};
 
+								if (currentVue == null) {
+									this.Vues.Add(currentVue = new SubVue() {
+										Id = 0
+									});
+								}
 								if (!currentVue.Objects.TryGetValue(id, out VueObject obj)) {
 									currentVue.Objects[id] = obj = new();
 								}

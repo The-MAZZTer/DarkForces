@@ -21,5 +21,19 @@ namespace MZZT.DarkForces.Showcase {
 			ResourceEditorResource resource = ResourceEditors.Instance.FindResource(path) ?? new ResourceEditorResource(path, async () => await DfFileManager.Instance.ReadAsync(path), false);
 			ResourceEditors.Instance.OpenResource(resource);
 		}
+
+		public void MarkDirty() {
+			GobViewer gobViewer = this.GetComponentInParent<GobViewer>();
+			if (gobViewer != null) {
+				gobViewer.OnDirty();
+				return;
+			}
+
+			LfdViewer lfdViewer = this.GetComponentInParent<LfdViewer>();
+			if (lfdViewer != null) {
+				lfdViewer.OnDirty();
+				return;
+			}
+		}
 	}
 }

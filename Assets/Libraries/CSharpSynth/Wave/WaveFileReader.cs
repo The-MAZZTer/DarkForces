@@ -22,7 +22,7 @@ namespace CSharpSynth.Wave {
       this.BR = new BinaryReader(waveFileStream);
     }
     public IChunk[] ReadAllChunks() {
-      List<IChunk> CList = new List<IChunk>();
+      List<IChunk> CList = new();
       while (this.BR.BaseStream.Position < this.BR.BaseStream.Length) {
         IChunk tchk = this.ReadNextChunk();
         if (tchk != null) {
@@ -39,21 +39,21 @@ namespace CSharpSynth.Wave {
       string chkid = (System.Text.Encoding.UTF8.GetString(this.BR.ReadBytes(4), 0, 4)).ToLower();
       switch (chkid) {
         case "riff":
-          MasterChunk mc = new MasterChunk {
+          MasterChunk mc = new() {
             chkID = new char[] { 'R', 'I', 'F', 'F' },
             chksize = BitConverter.ToInt32(this.BR.ReadBytes(4), 0),
             WAVEID = this.BR.ReadChars(4)
           };
           return mc;
         case "fact":
-          FactChunk fc = new FactChunk {
+          FactChunk fc = new() {
             chkID = new char[] { 'f', 'a', 'c', 't' },
             chksize = BitConverter.ToInt32(this.BR.ReadBytes(4), 0),
             dwSampleLength = BitConverter.ToInt32(this.BR.ReadBytes(4), 0)
           };
           return fc;
         case "data":
-          DataChunk dc = new DataChunk {
+          DataChunk dc = new() {
             chkID = new char[] { 'd', 'a', 't', 'a' },
             chksize = BitConverter.ToInt32(this.BR.ReadBytes(4), 0)
           };
@@ -66,7 +66,7 @@ namespace CSharpSynth.Wave {
           dc.sampled_data = this.BR.ReadBytes(dc.chksize);
           return dc;
         case "fmt ":
-          FormatChunk fc2 = new FormatChunk {
+          FormatChunk fc2 = new() {
             chkID = new char[] { 'f', 'm', 't', ' ' },
             chksize = BitConverter.ToInt32(this.BR.ReadBytes(4), 0),
             wFormatTag = BitConverter.ToInt16(this.BR.ReadBytes(2), 0),
@@ -90,7 +90,7 @@ namespace CSharpSynth.Wave {
       }
       return null;
     }
-    public WaveFile ReadWaveFile() => new WaveFile(this.ReadAllChunks());
+    public WaveFile ReadWaveFile() => new(this.ReadAllChunks());
     public void Close() => this.BR.BaseStream.Dispose();//UnitySynth//BR.Dispose();
   }
 }

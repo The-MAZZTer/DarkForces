@@ -176,9 +176,9 @@ namespace CSharpSynth.Banks.Fm {
       }
     }
     //--Static
-    public static Envelope CreateBasicFadeIn(double maxTime) => new Envelope(new double[] { 0.0, maxTime }, new double[] { 0.0, 1.0 });
-    public static Envelope CreateBasicFadeOut(double maxTime) => new Envelope(new double[] { 0.0, maxTime }, new double[] { 1.0, 0.0 });
-    public static Envelope CreateBasicFadeInAndOut(double fadeInTime, double fadeOutTime) => new Envelope(new double[] { 0.0, fadeInTime, fadeInTime + fadeOutTime }, new double[] { 0.0, 1.0, 0.0 });
-    public static Envelope CreateBasicConstant() => new Envelope(new double[] { 0.0, 1.0 }, new double[] { 1.0, 1.0 });
+    public static Envelope CreateBasicFadeIn(double maxTime) => new(new double[] { 0.0, maxTime }, new double[] { 0.0, 1.0 });
+    public static Envelope CreateBasicFadeOut(double maxTime) => new(new double[] { 0.0, maxTime }, new double[] { 1.0, 0.0 });
+    public static Envelope CreateBasicFadeInAndOut(double fadeInTime, double fadeOutTime) => new(new double[] { 0.0, fadeInTime, fadeInTime + fadeOutTime }, new double[] { 0.0, 1.0, 0.0 });
+    public static Envelope CreateBasicConstant() => new(new double[] { 0.0, 1.0 }, new double[] { 1.0, 1.0 });
   }
 }
