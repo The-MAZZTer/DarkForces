@@ -33,7 +33,7 @@ You can use the Mod button to load mod files to use the showcase with them.
 
 I'll leave everything else up to you to explore and discover!
 
-## Level Previeew Usage
+## Level Preview Usage
 
 The Level Preview tool is intended for embedding in web or desktop applications, and is a separate download. The documentation is [here](LevelPreview.md).
 
