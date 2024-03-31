@@ -73,6 +73,15 @@ namespace MZZT.DarkForces.Showcase {
 
 		private string showHelp;
 
+		[ProgramSwitch("reset", 'r',
+			HelpOrder = 1000,
+			PrependedGroupName = "Misc:",
+			HelpDescription = "Reset user preferences."
+		)]
+		public void ResetPrefs() {
+			PlayerPrefs.DeleteAll();
+		}
+
 		[ProgramSwitch("darkDir", 'd',
 			HelpOrder = 0,
 			ValueName = "PATH",
@@ -98,7 +107,6 @@ namespace MZZT.DarkForces.Showcase {
 
 		[ProgramSwitch("help", '?',
 			HelpOrder = 9001,
-			PrependedGroupName = "Misc:",
 			HelpDescription = "Display this help screen.",
 			IgnoreOtherArgs = true
 		)]

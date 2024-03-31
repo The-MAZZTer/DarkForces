@@ -2898,6 +2898,12 @@ namespace MZZT.DarkForces.Showcase {
 					obj.Logic = string.Join(Environment.NewLine, properties.SelectMany(x => x.Value.Select(y => $"{x.Key}: {y}")));
 				}
 
+				// This boss in EXECUTOR is too close to the wall, when you mirror the level he doesn't spawn any more!
+				// This moves him to the middle of the sector.
+				if (o.LevelFile == "EXECUTOR" && obj.Position.X == -362 && obj.Position.Y == -94 && obj.Position.Z == 204) {
+					obj.Position = new System.Numerics.Vector3(-364, -94, 212);
+				}
+
 				obj.Position = new System.Numerics.Vector3(-obj.Position.X + X_OFFSET, obj.Position.Y, obj.Position.Z);
 
 				if ((obj.Type == DfLevelObjects.ObjectTypes.ThreeD || (settings.MirrorSprites &&

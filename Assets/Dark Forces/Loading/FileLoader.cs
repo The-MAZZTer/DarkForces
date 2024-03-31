@@ -77,8 +77,8 @@ namespace MZZT.DarkForces {
 			path = path.Replace('/', Path.DirectorySeparatorChar);
 
 			// Is Dark Forces installed in the Steam folder?
-			if (FileManager.Instance.FileExists(Path.Combine(path, "SteamApps", "common", "Dark Forces", "Game", "DARK.GOB"))) {
-				return Path.Combine(path, "SteamApps", "common", "Dark Forces", "Game");
+			if (FileManager.Instance.FileExists(Path.Combine(path, "steamapps", "common", "STAR WARS Dark Forces Remaster", "dark.gob"))) {
+				return Path.Combine(path, "steamapps", "common", "STAR WARS Dark Forces Remaster");
 			}
 
 			// Check other library folders. Start by reading the list of library folders.
@@ -107,6 +107,16 @@ namespace MZZT.DarkForces {
 				}
 
 				libraryFolders.Add(value);
+			}
+
+			foreach (string libraryFolder in libraryFolders) {
+				if (FileManager.Instance.FileExists(Path.Combine(libraryFolder, "steamapps", "common", "STAR WARS Dark Forces Remaster", "dark.gob"))) {
+					return Path.Combine(libraryFolder, "steamapps", "common", "STAR WARS Dark Forces Remaster");
+				}
+			}
+
+			if (FileManager.Instance.FileExists(Path.Combine(path, "SteamApps", "common", "Dark Forces", "Game", "DARK.GOB"))) {
+				return Path.Combine(path, "SteamApps", "common", "Dark Forces", "Game");
 			}
 
 			foreach (string libraryFolder in libraryFolders) {
